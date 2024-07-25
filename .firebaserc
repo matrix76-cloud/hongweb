@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "help-bbcb5",
+    "help-4902e": "help-bbcb5"
+  },
+  "targets": {
+    "help-bbcb5": {
+      "hosting": {
+        "help-4902e": [
+          "help-4902e"
+        ]
+      }
+    }
+  }
+}

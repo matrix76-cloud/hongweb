@@ -1,0 +1,6 @@
+
+export const LINKTYPE = {
+	DEVICEINFO : 0,
+	CURRENTPOS :1,
+    TELEPHONE:2,
+}

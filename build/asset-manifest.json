@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5a1013e9.css",
+    "main.js": "/static/js/main.e201bd47.js",
+    "static/media/SF-Pro-Text-Semibold.otf": "/static/media/SF-Pro-Text-Semibold.e8d7e38b235561b478f2.otf",
+    "static/media/SF-Pro-Text-Regular.otf": "/static/media/SF-Pro-Text-Regular.8d787d56b24a91d245f1.otf",
+    "static/media/hongmove.png": "/static/media/hongmove.f8b6cb52901b2cf794b4.png",
+    "static/media/CODE39-1.TTF": "/static/media/CODE39-1.e907e55d6bcb912b2294.TTF",
+    "index.html": "/index.html",
+    "main.5a1013e9.css.map": "/static/css/main.5a1013e9.css.map",
+    "main.e201bd47.js.map": "/static/js/main.e201bd47.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5a1013e9.css",
+    "static/js/main.e201bd47.js"
+  ]
+}

@@ -1,0 +1,128 @@
+.site-mobile-footer{
+  /* background: #3c3b3b; */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding:20px 0px 20px 00px;
+}
+.bottomapply{
+  bottom:80px;
+}
+.bottomnoapply{
+  bottom:0px;
+}
+
+.site-mobile-footer2{
+  height: 50px;
+  background: #fff;
+  width: 100%;
+  bottom: 0%;
+  position: fixed;
+  bottom:0px;
+  z-index: 5;
+  border : 1px solid #f0f0f0;
+}
+
+.site-mobile-footer2 .buttonview{
+  display: flex;
+  flex-direction: row;
+  height:100%;
+
+}
+
+.site-mobile-footer2 .buttonview .button
+{
+  flex-grow: 1;
+  display: flex;
+  flex-direction : column;
+  justify-content: center;
+  align-items: center;
+
+  
+}
+.site-mobile-footer2 .buttonview .upbutton
+{
+  flex-grow: 1;
+  display: flex;
+  flex-direction : column;
+  justify-content: center;
+  align-items: center;
+  margin-top:-25px;
+
+  width:10px;
+  height: 60px;  
+  padding: '0px 20px';
+}
+
+
+.buttonEnableText{
+  font-size:10px;
+  color :#FF4E19;
+}
+.buttonDisableText{
+  font-size:10px;
+  color :#9b9b9b 
+}
+
+
+
+
+
+.imgicon{
+  width: 30px;
+  height: 30px;
+}
+
+
+.site-mobile-footer .main{
+  font-size :18px;
+  letter-spacing: -0.32px;
+  color :#bbb7b7;
+  line-height: 25px;
+  height:35px;
+
+}
+
+.site-mobile-footer .content{
+  font-size :12px;
+  letter-spacing: -0.32px;
+  color :#bbb7b7;
+  line-height: 25px;
+}
+.site-pc-footer{
+  background: #242323;
+  width: 100%;
+  position:absolute;
+  bottom:0%;
+}
+
+.moving{
+  font-size: 5em;
+  animation: motion 0.5s /* 속도 */
+             linear 0s   /* 처음부터 끝까지 일정 속도로 진행 */
+             infinite alternate; /* 무한 반복 */
+}
+@keyframes motion {
+0% {margin-top: 0px;} /* 처음 위치 */
+100% {margin-top: 10px;} /* 마지막 위치 */
+}
+
+.movingforward{
+  font-size: 5em;
+  animation: motion2 4s linear infinite;
+
+}
+@keyframes motion2 {
+	0% { transform: translate(60px, 0px); }
+  20% { transform: translate(80px, 0px); }
+  30% { transform: translate(100px, 0px); }
+  40% { transform: translate(120px, 0px); }
+  50% { transform: translate(140px, 0px); }
+  60% { transform: translate(160px, 0px); }
+  70% { transform: translate(180px, 0px); }
+	80% { transform: translate(200px, 0px); }
+	90% { transform: translate(250px, 0px); }
+  100% { transform: translate(300px, 0px); }
+
+}
