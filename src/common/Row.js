@@ -1,50 +1,38 @@
-import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
-import { UserContext } from "../context/User";
 
-
-
-const Container = styled.div`
+export const Row = styled.div`
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+  width :${({width}) => width};
+  padding :${({padding}) => padding};
 
 `
-const style = {
-  display: "flex"
-};
+export const BetweenRow = styled.div`
+  display:flex;
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:center;
+  width :${({width}) => width};
+  padding :${({padding}) => padding};
+`
 
-const Skeleton =({containerStyle}) =>  {
+export const FlexstartRow = styled.div`
+  display:flex;
+  flex-direction:row;
+  justify-content:flex-start;
+  align-items:center;
+  width :${({width}) => width};
+  padding :${({padding}) => padding};
+`
 
-  const { dispatch, user } = useContext(UserContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(1);
-
-  useLayoutEffect(() => {
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    return () => {};
-  }, []);
-
-  useEffect(()=>{
-    async function FetchData(){
-    } 
-    FetchData();
-  }, [])
-  useEffect(()=>{
-
-  },[refresh])
-
- 
-  return (
-
-    <Container style={containerStyle}>
-   
-    </Container>
-  );
-
-}
-
-export default Skeleton;
+export const FlexEndRow = styled.div`
+  display:flex;
+  flex-direction:row;
+  justify-content:flex-end;
+  align-items:center;
+  width :${({width}) => width};
+  padding :${({padding}) => padding};
+`
 

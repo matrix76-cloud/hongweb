@@ -162,7 +162,6 @@
 
 .maxheaderblink{
   color: #fff;
-  background-color :#fb5555;
   padding: 5px;
   font-size: 12px;
   -webkit-border-radius: 20px;
@@ -176,7 +175,6 @@
   animation-timing-function: linear;
   min-width: 50px;
   text-align: center;
-  width:65%;
   /* animation: blink-effect 2s step-end infinite; */
   animation: box-ani 1s linear infinite;
   z-index: -5;
@@ -524,3 +522,49 @@ th:first-child, td:first-child {
   width: 320px;
   height: 180px;
 }
+
+/**
+* Modal dialog 에서 바탕 색깔을 지정한다
+*/
+.css-sox5kk-MuiBackdrop-root {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+/**
+* 버튼 mouse hover시에 움직일수 있도록 처리
+*/
+.RegisterShowButton{
+  height: 50px;
+  width: 100px; 
+  background-color: #ff2a75;
+  position: fixed;
+  bottom: 30px;
+  right: 70px;
+  border-radius: 100px;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  transition: width 2s;
+}
+.RegisterShowButton:hover{
+  width : 150px;
+}
+
+/**
+
+*/
+.CategoryMenuHovered{
+  color :#ff2a75;
+  
+}
+/* .CategoryMenuHovered:before{
+  content: "";
+  position: absolute;
+  height: 3px;
+  background-color: #ff2a75;
+  width:60px;
+  top:90%;
+
+} */
