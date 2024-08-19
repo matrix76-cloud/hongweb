@@ -4,7 +4,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import "firebase/compat/storage";
-
+import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyBe1PFtU89t61ULsIPIfowduJyy6PgpFB4",
@@ -21,4 +21,12 @@ const db = firebaseApp.firestore();
 const auth = firebase.auth();
 const storage = firebase.storage();
 
-export { db, auth, storage, firebaseApp };
+// Initialize the Vertex AI service
+const vertexAI = getVertexAI(firebaseApp);
+
+// Initialize the generative model with a model that supports your use case
+// Gemini 1.5 models are versatile and can be used with all API capabilities
+const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
+
+
+export { db, auth, storage, firebaseApp, vertexAI, model };

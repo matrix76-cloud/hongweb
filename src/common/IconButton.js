@@ -1,0 +1,58 @@
+import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { UserContext } from "../context/User";
+import { IoFilterCircle } from "react-icons/io5";
+import { MdOutlineRecommend } from "react-icons/md";
+import { MdLockReset } from "react-icons/md";
+import { FaArrowLeft } from "react-icons/fa";
+
+
+const Container = styled.div`
+
+    height: ${({height})=> height};
+    width: ${({width})=> width};
+    border-radius: ${({radius})=> radius};
+    background: ${({bgcolor})=> bgcolor};
+    color :${({color})=> color};
+
+    margin: 0px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+
+
+`
+const style = {
+  display: "flex"
+};
+
+const IconButton =({containerStyle, text, height,width, radius, bgcolor, color, onPress, icon, iconcolor}) =>  {
+
+  return (
+
+    <Container 
+    onClick={onPress}
+    style={containerStyle} height={height} width={width} radius={radius} bgcolor={bgcolor} color={color}>
+      {
+        icon =='filter' &&  <IoFilterCircle size={30} color={iconcolor}/>
+      }
+      {
+        icon =='recommend' &&  <MdOutlineRecommend size={30} color={iconcolor}/>
+      }
+      {
+        icon =='reset' &&  <MdLockReset size={30} color={iconcolor}/>
+      }
+         {
+        icon =='prev' &&  <FaArrowLeft size={30} color={iconcolor}/>
+      }
+        
+      <div style={{marginLeft:5}}>{text}</div>
+    </Container>
+  );
+
+}
+
+export default IconButton;
+

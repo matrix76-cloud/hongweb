@@ -7,44 +7,37 @@ import { UserContext } from "../context/User";
 
 const Container = styled.div`
 
+    height: ${({height})=> height};
+    width: ${({width})=> width};
+    border-radius: ${({radius})=> radius};
+    background: ${({bgcolor})=> bgcolor};
+    color :${({color})=> color};
+    margin: 0px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border : ${({enable}) => enable == true ? ('2px solid #76baff'):('1px solid')};
+    &:hover{
+      background :#76baff;
+      color :#fff;
+    } 
 `
 const style = {
   display: "flex"
 };
 
-const Skeleton =({containerStyle}) =>  {
+const Button =({containerStyle, text, height,width, radius, bgcolor, color, onPress, enable}) =>  {
 
-  const { dispatch, user } = useContext(UserContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(1);
-
-  useLayoutEffect(() => {
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    return () => {};
-  }, []);
-
-  useEffect(()=>{
-    async function FetchData(){
-    } 
-    FetchData();
-  }, [])
-  useEffect(()=>{
-
-  },[refresh])
-
- 
   return (
 
-    <Container style={containerStyle}>
-   
+    <Container 
+    onClick={onPress} enable={enable}
+    style={containerStyle} height={height} width={width} radius={radius} bgcolor={bgcolor} color={color}>
+        <div>{text}</div>
     </Container>
   );
 
 }
 
-export default Skeleton;
+export default Button;
 

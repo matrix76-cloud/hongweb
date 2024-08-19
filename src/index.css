@@ -1,4 +1,37 @@
 
+@font-face {
+  font-family: "Pretendard-Light";
+  font-weight: normal;
+  src: url("./fonts/Pretendard-Light.woff") format("truetype");
+}
+
+@font-face {
+  font-family: "Pretendard-Black";
+  font-weight: normal;
+  src: url("./fonts/Pretendard-Black.woff") format("truetype");
+}
+@font-face {
+  font-family: "Pretendard-Bold";
+  font-weight: normal;
+  src: url("./fonts/Pretendard-Bold.woff") format("truetype");
+}
+@font-face {
+  font-family: "Pretendard-SemiBold";
+  font-weight: normal;
+  src: url("./fonts/Pretendard-SemiBold.woff") format("truetype");
+}
+@font-face {
+  font-family: "Pretendard-Regular";
+  font-weight: normal;
+  src: url("./fonts/Pretendard-Regular.woff") format("truetype");
+}
+
+
+@font-face {
+  font-family: "SF-Pro-Text-Regular";
+  font-weight: normal;
+  src: url("./fonts/SF-Pro-Text-Regular.otf") format("truetype");
+}
 
 
 @font-face {
@@ -19,12 +52,13 @@
 }
 
 body {
-  text-align: center;
+  text-align: left;
   color: #3f4850;
-  font-family: "SF-Pro-Text-Regular","SF-Pro-Text-Semibold","free3of9", Helvetica, Arial, sans-serif;
+  font-family: "Pretendard-Regular","Pretendard-Light","Pretendard-Black","Pretendard-Bold","Pretendard-SemiBold","SF-Pro-Text-Regular","SF-Pro-Text-Semibold","free3of9", Helvetica, Arial, sans-serif;
   margin :unset;
   letter-spacing: -0.32px;
   overflow-x: hidden !important;
+  line-height: 1.3;
 }
 
 .container{
@@ -255,5 +289,20 @@ input {
     -moz-transform: rotate(45deg);
     -o-transform: rotate(45deg);
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.fade-in-bottom {
+  animation: fadeInBottom 1s ease-in-out forwards;
+}
+
+@keyframes fadeInBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px); /* 하단에서 시작 */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* 제자리에서 끝 */
   }
 }
