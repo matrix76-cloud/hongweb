@@ -6,45 +6,24 @@ import { UserContext } from "../context/User";
 
 
 const Container = styled.div`
-
+  height :${({height}) => height}px;
+  background-color : ${({bgcolor}) =>bgcolor};
+  margin: 50px 0px 30px;
 `
 const style = {
   display: "flex"
 };
 
-const Skeleton =({containerStyle}) =>  {
-
-  const { dispatch, user } = useContext(UserContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(1);
-
-  useLayoutEffect(() => {
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    return () => {};
-  }, []);
-
-  useEffect(()=>{
-    async function FetchData(){
-    } 
-    FetchData();
-  }, [])
-  useEffect(()=>{
-
-  },[refresh])
-
+const Empty =({containerStyle, height, bgcolor}) =>  {
  
   return (
 
-    <Container style={containerStyle}>
+    <Container style={containerStyle} height={height} bgcolor={bgcolor}>
    
     </Container>
   );
 
 }
 
-export default Skeleton;
+export default Empty;
 

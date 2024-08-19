@@ -1,8 +1,8 @@
 
 
 import React, { useContext } from "react";
-import Homeheader from "../Header/Homeheader";
-import HomeFooter from "../Footer/HomeFooter";
+import Homeheader from "../Header/Mobileheader";
+import HomeFooter from "../Footer/MobileFooter";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/User";
 

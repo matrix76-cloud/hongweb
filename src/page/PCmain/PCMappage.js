@@ -21,6 +21,7 @@ const PCMappage =() =>  {
 
   const { dispatch, user } = useContext(UserContext);
   const location = useLocation();
+  console.log("TCL: PCMappage -> location", location)
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
 
@@ -44,8 +45,8 @@ const PCMappage =() =>  {
  
   return (
 
-    <PCLayout main={false} name={PCMAINMENU.REGIONMENU}>
-        <PCMapcontainer/>
+    <PCLayout main={false} name={PCMAINMENU.REGIONMENU} height={180}>
+        <PCMapcontainer  ID={location.state.ID} TYPE={location.state.TYPE}  />
     </PCLayout>
   );
 

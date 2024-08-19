@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { imageDB } from "../../../utility/imageData";
 import { UserContext } from "../../../context/User";
-import { Badge } from "@mui/material";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
-import Image from "../../../common/Image";
+import { GrPrevious } from "react-icons/gr";
 
 const Container = styled.div``;
 
@@ -25,14 +23,15 @@ const LogoText = styled.div`
 
 
 
-const Homeheader = ({callback, name}) => {
+const MobilePrevheader = ({callback, registbtn, name}) => {
   const navigation = useNavigate();
   const { user, dispatch } = useContext(UserContext);
   const [refresh, setRefresh] = useState(1);
 
-  useEffect(() => {
 
-  }, [refresh]);
+  const _handleprev = () =>{
+    navigation(-1);
+  }
 
 
 
@@ -45,35 +44,28 @@ const Homeheader = ({callback, name}) => {
         position: "fixed",
         background: "#fff",
         width: "100%",
-        height: "60px",
-        top: -10,
+        height: "50px",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
+        borderBottom: "1px solid #ededed"
   
       }}
     >
 
-      <LogoText >{name}</LogoText>
-
-
-      <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", marginRight:10, width:50}}>
-        <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} >
-          <Image source={imageDB.bell} containerStyle={{width:20}} />
-          <Badge badgeContent={0} color="warning"  style={{paddingBottom:15}}></Badge>
-        </div>
-        <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} onClick={()=>{}}>
-        <IoChatbubbleEllipsesOutline size={22} />
-          <Badge badgeContent={1} color="warning" style={{paddingBottom:15}} className="alertblink" ></Badge>
-        </div>
+      <div style={{paddingLeft:15, width:'30%', display:"flex"}}>
+        <GrPrevious onClick={_handleprev} size={22} />
       </div>
+
+
+
+
     
     </Container>
   );
 };
 
-export default Homeheader;
+export default MobilePrevheader;

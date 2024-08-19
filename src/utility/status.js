@@ -7,6 +7,11 @@ export const WORKSTATUS ={
 	OPEN : 0,
 	CLOSE :1,
 }
+export const ROOMSTATUS ={
+	OPEN : 0,
+	CLOSE :1,
+}
+
 
 export const HELPSTATUS ={
 	REQUEST : 0,
@@ -39,4 +44,10 @@ export const POINTDIRECTION ={
 export const APPROVALSTATUS = {
 	ESCRO : 0,
 	COMPLETE :1
+}
+
+export const COMMUNITYSTATUS = {
+	REGIST : 0,
+	TMPREGIST : 1,
+	REPORT :2,
 }

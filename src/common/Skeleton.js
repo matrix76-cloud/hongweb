@@ -5,12 +5,17 @@ import { UserContext } from "../context/User";
 
 
 
+
 const Container = styled.div`
 
 `
 const style = {
   display: "flex"
 };
+
+
+
+
 
 const Skeleton =({containerStyle}) =>  {
 
@@ -28,28 +33,11 @@ const Skeleton =({containerStyle}) =>  {
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
 
-  useLayoutEffect(() => {
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    return () => {};
-  }, []);
-
-  useEffect(()=>{
-    async function FetchData(){
-    } 
-    FetchData();
-  }, [])
-  useEffect(()=>{
-
-  },[refresh])
 
  
   return (
 
     <Container style={containerStyle}>
-   
     </Container>
   );
 

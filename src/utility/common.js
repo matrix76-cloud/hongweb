@@ -8,6 +8,41 @@ export const serverUrl = () =>{
 
 }
 
+/**
+ * 전체문자열 data에서 특정 문자 위치 findstr를 발견 했을때 위치를 구한다
+ */
+export const searchpos = (data, findstr) =>{
+	var position = data.indexOf(findstr);
+	return position;
+}
+
+/**
+ * 전체문자열 data의  시작위치를 pos 에서 특정 문자 위치 findstr를 발견 했을때 위치를 구한다
+ */
+export const searchposfrom = (data, pos, findstr) =>{
+
+	var position = data.indexOf(findstr,pos);
+	return position;
+}
+
+/**
+ * 전체문자열 data에서 시작 위치 firstpos 와 끝위치 lastpost 사이에 문자열을 구한다
+ */
+export const searchposfromto = (data, firstpos, lastpos) =>{
+
+	var findstsr = data.slice(firstpos, lastpos);
+	return findstsr;
+}
+
+ /**
+  * !html Tag를 없애 주고 실제 데이타만 뽑아줌
+  */
+ export const  extractTextFromHTML = (html) => {
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(html, 'text/html');
+	return doc.body.textContent || '';
+  }
+
 export const useSleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 
 export const validateEmail = email =>{
@@ -55,4 +90,6 @@ export const fn_telShare =(phone) =>
 
 	return  "tel:"+phone;
 }
+
+
 

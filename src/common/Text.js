@@ -1,50 +1,42 @@
-import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React,{useState, useEffect} from 'react';
+import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, Link, useNavigate} from "react-router-dom";
 import styled from 'styled-components';
-import { UserContext } from "../context/User";
-
-
 
 const Container = styled.div`
+  font-size : ${({size}) =>size}px;
+  color :${({color}) =>color};
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align : left;
+  font-weight: ${({weight}) =>weight};
 
 `
-const style = {
-  display: "flex"
-};
 
-const Skeleton =({containerStyle}) =>  {
+const Text = ({containerStyle, value, size, color,shorten, weight}) => {
 
-  const { dispatch, user } = useContext(UserContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(1);
 
-  useLayoutEffect(() => {
-  }, []);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    return () => {};
-  }, []);
-
-  useEffect(()=>{
-    async function FetchData(){
-    } 
-    FetchData();
-  }, [])
-  useEffect(()=>{
-
-  },[refresh])
-
- 
   return (
+    <Container style={containerStyle} size={size} color={color} weight={weight}>
 
-    <Container style={containerStyle}>
-   
+      <>
+      {
+        shorten == true ? (
+          <>
+          {value.slice(0, 25)}
+          {value.length > 25 ? "..." : null}
+          </>
+        ):(<>{value}</>)
+      }
+      </>
+      
     </Container>
   );
-
 }
 
-export default Skeleton;
+Text.defaultProps = {
+  color :"#000",
+  weight : 500
+}
 
+export default Text;

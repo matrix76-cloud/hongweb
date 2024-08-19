@@ -12,10 +12,11 @@ const PCLayout = (props) => {
   const { user, dispatch } = useContext(UserContext);
   const navigation = useNavigate();
 
+
   return (
     <div> 
       {
-        props.main == true ? (    <PCMainheader/> ):( <PCSubheader name={props.name}/> )
+        props.main == true ? (    <PCMainheader  name={props.name} registbtn={props.registbtn} height={props.height}/> ):( <PCSubheader name={props.name}/> )
       }
       <main>
         {props.children}

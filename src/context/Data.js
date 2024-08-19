@@ -1,43 +1,36 @@
 import React, { useState, createContext } from "react";
 
-const UserContext = createContext({
-  user: {
-    email: "",
-    uid: "",
-    deviceid: "",
-    nickname: "",
-    latitude: "",
-    longitude: "",
-
+const DataContext = createContext({
+  data: {
+    communityitems :[],
+    workitems :[],
+    roomitems :[],
+    workmenu : ""
 
   },
-  dispatch: () => {},
+  datadispatch: () => {},
 });
 
-const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+const DataProvider = ({ children }) => {
+  const [data, setData] = useState({});
 
-  const dispatch = ({
-    email,
-    uid,
-    deviceid,
-    nickname,
-    latitude,
-    longitude,
+  const datadispatch = ({
+    communityitems,
+    workitems,
+    roomitems,
+    workmenu,
  
   }) => {
-    setUser({
-      email,
-      uid,
-      deviceid,
-      nickname,
-      latitude,
-      longitude,
+    setData({
+      communityitems,
+      workitems,
+      roomitems,
+      workmenu
     });
   };
 
-  const value = { user, dispatch };
+  const value = { data, datadispatch };
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
-export { UserContext, UserProvider };
+export { DataContext, DataProvider };

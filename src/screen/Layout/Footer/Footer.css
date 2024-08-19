@@ -126,3 +126,24 @@
   100% { transform: translate(300px, 0px); }
 
 }
+.spotlight-animation {
+
+
+  background-color:#f9f9f9;
+  animation: highlightColorChange 1s infinite;
+}
+
+@keyframes highlightColorChange {
+  0% {
+
+      background-color : #f9f9f9;
+  }
+  50% {
+   
+      background-color : #efefef;
+  }
+  100% {
+
+      background-color : #f9f9f9;
+  }
+}

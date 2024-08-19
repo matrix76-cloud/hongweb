@@ -3,7 +3,7 @@ import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation
 import styled from 'styled-components';
 import Maincontainer from "../../container/main/Maincontainer";
 import Mapcontainer from "../../container/main/Mapcontainer";
-import PCCommunitycontainer from "../../container/PCmain/PCCommnunitycontainer";
+import PCCommunitycontainer from "../../container/PCmain/PCCommunitycontainer";
 import PCHongguidecontainer from "../../container/PCmain/PCHongguidecontainer";
 import PCMaincontainer from "../../container/PCmain/PCMaincontainer";
 import PCMapcontainer from "../../container/PCmain/PCMapcontainer";
@@ -46,7 +46,7 @@ const PCHongguidepage =() =>  {
  
   return (
 
-    <PCLayout main={false} name={PCMAINMENU.HONGGUIDE}>
+    <PCLayout main={false} name={PCMAINMENU.RANKINGMENU}>
         <PCHongguidecontainer/>
     </PCLayout>
   );

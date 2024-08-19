@@ -1,0 +1,7 @@
+.hoverChat {
+  background-color: #fff;
+}
+
+.hoverChat:hover {
+  background-color: #ededed;
+}

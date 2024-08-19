@@ -8,6 +8,11 @@ const UserContext = createContext({
     nickname: "",
     latitude: "",
     longitude: "",
+    address_name : "",
+    main_address_no :"",
+    region_1depth_name :"",
+    region_2depth_name :"",
+    region_3depth_name : "",
 
 
   },
@@ -24,6 +29,11 @@ const UserProvider = ({ children }) => {
     nickname,
     latitude,
     longitude,
+    address_name,
+    main_address_no,
+    region_1depth_name,
+    region_2depth_name,
+    region_3depth_name,
  
   }) => {
     setUser({
@@ -33,6 +43,11 @@ const UserProvider = ({ children }) => {
       nickname,
       latitude,
       longitude,
+      address_name,
+      main_address_no,
+      region_1depth_name,
+      region_2depth_name,
+      region_3depth_name,
     });
   };
 

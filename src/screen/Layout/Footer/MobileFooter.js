@@ -17,7 +17,7 @@ const FooterContent = styled.div`
   flex-direction: column;
 `
 
-const HomeFooter = ({type}) => {
+const MobileFooter = ({type}) => {
   const navigation = useNavigate();
   const {user, dispatch} = useContext(UserContext);
   const [foottype, setFoottype] = useState(0);
@@ -29,15 +29,15 @@ const HomeFooter = ({type}) => {
   },[refresh])
 
   const _handleMain=()=>{
-    navigation("/main");
-  }
-  const _handleWork=()=>{
-    navigation("/work");  
-  }
-  const _handleMap=()=>{
-    navigation("/map");
+    navigation("/Mobilemain");
   }
   const _handleRoom=()=>{
+    navigation("/Mobileroom");  
+  }
+  const _handleMap=()=>{
+    navigation("/Mobilemap" ,{state :{WORK_ID :"", TYPE : ""}});
+  }
+  const _handleCommunity=()=>{
     navigation("/room");
   }
   const _handleConfig=()=>{
@@ -70,17 +70,19 @@ const HomeFooter = ({type}) => {
               <div className="button">
                 {type == "hong" ? (
                   <>
-                    <div className="imageicon" onClick={_handleWork}>
-                    <FiUser size={25}/>
+                    <div className="imageicon" onClick={_handleRoom}>
+               
+                    <FiGrid size={25}/>
                     </div>
-                    <div className="buttonEnableText">홍여사구함</div>
+                    <div className="buttonEnableText">공간대여</div>
                   </>
                 ) : (
                   <>
-                    <div className="imageicon" onClick={_handleWork}>
-                    <FiUser size={25}/>
+                    <div className="imageicon" onClick={_handleRoom}>
+           
+                    <FiGrid size={25}/>
                     </div>
-                    <div className="buttonDisableText">홍여사구함</div>
+                    <div className="buttonDisableText">공간대여</div>
                   </>
                 )}
               </div>
@@ -88,28 +90,31 @@ const HomeFooter = ({type}) => {
               <div className="upbutton" onClick={_handleMap}>
                 <div
                   style={{
-                    backgroundColor: "#FF4E19",
+                    backgroundColor: "#FFF",
                     borderRadius: "100px",
-                    border: "1px solid #fff",
+                    border: "2px solid rgb(242 240 240)",
                     height: 50,
                     width: 50,
                     display: "flex",
                     justifyContent: "center",
                     padding: 5,
                   }}
+                  className="spotlight-animation"
                 >
+
+
                   <div
                     style={{
                       display: "flex",
-                      marginTop: -55,
+                      marginTop: -45,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
                     <div className="moving">
                       <img
-                        src={imageDB.hongmoveicon}
-                        style={{ width: 25, height: 25 }}
+                        src={imageDB.logo}
+                        style={{ width: 30, height: 30 }}
                       />
                       
                   
@@ -119,7 +124,7 @@ const HomeFooter = ({type}) => {
                   <div
                     style={{
                       fontSize: 10,
-                      color: "white",
+                      color: "#9b9b9b",
                       paddingTop: 5,
                       position: "absolute",
                       top: 10,
@@ -133,18 +138,18 @@ const HomeFooter = ({type}) => {
               <div className="button">
                 {type == "room" ? (
                   <>
-                    <div className="imageicon" onClick={_handleRoom}>
-                    <FiGrid size={25}/>
+                    <div className="imageicon" onClick={_handleCommunity}>
+                    <FiUser size={25}/>
                     </div>
-                    <div className="buttonEnableText">공간대여</div>
+                    <div className="buttonEnableText">커뮤니티</div>
                   </>
                 ) : (
                   <>
-                    <div className="imageicon" onClick={_handleRoom}>
-                    <FiGrid size={25}/>
+                    <div className="imageicon" onClick={_handleCommunity}>
+                    <FiUser size={25}/>
 
                     </div>
-                    <div className="buttonDisableText">공간대여</div>
+                    <div className="buttonDisableText">커뮤니티</div>
                   </>
                 )}
               </div>
@@ -179,4 +184,4 @@ const HomeFooter = ({type}) => {
   );
 };
 
-export default HomeFooter;
+export default MobileFooter;

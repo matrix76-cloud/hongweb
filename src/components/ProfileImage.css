@@ -1,0 +1,17 @@
+.border-animation {
+
+  border: 1px solid #FF2121;
+  animation: borderColorChange 1s infinite;
+}
+
+@keyframes borderColorChange {
+  0% {
+      border-color: #FF2121;
+  }
+  50% {
+      border-color: red;
+  }
+  100% {
+      border-color: #ededed;
+  }
+}

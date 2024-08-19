@@ -68,3 +68,25 @@ export const StartTimeCurrentTimeDiff = (start, end) =>{
 	return false;
 
 }
+
+/**
+ * 기록된 시간이 주어진 시간 보다 경과 하지 않았다면 true 경과 햇다면 false 반환
+ */
+export const WriteTimeCurrentTimeDiff = (write, elapsetime) =>{
+
+    const current = new Date();
+
+	let writetime = new Date(write);
+
+	writetime.setHours(writetime.getHours() + elapsetime);
+
+
+	if(writetime < current){
+		return false;
+	}else{
+
+		return true;
+	}
+
+
+}

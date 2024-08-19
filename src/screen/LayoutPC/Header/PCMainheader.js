@@ -10,53 +10,65 @@ import Image from "../../../common/Image";
 import { WORKNAME } from "../../../utility/work";
 import { WORK } from "../../../utility/db";
 import { colors } from "../../../theme/theme";
-import { BetweenRow, Row } from "../../../common/Row";
+import { AroundRow, BetweenRow, FlexstartRow, Row } from "../../../common/Row";
 import Categorymenu from "../../../common/Categorymenu";
-import { PCMAINMENU } from "../../../utility/screen";
+import { CENTERTYPE, EventItems, EVENTTYPE, LAWTYPE, LoadingType, PCMAINMENU } from "../../../utility/screen";
+import ReactTyped from "react-typed";
 
-import './PCMainheader.css';
+import { ROOMSIZE, ROOMSIZEDISPALY } from "../../../utility/room";
+import { GoPlus } from "react-icons/go";
+import { DataContext } from "../../../context/Data";
+import { model } from "../../../api/config";
+import PcAipopup from "../../../modal/PcAiPopup/PcAiPopup";
+import Loading from "../../../components/Loading";
+
+import { useDispatch, useSelector } from "react-redux";
+import { ALLWORK, HOMECLEAN,BUSINESSCLEAN,
+  MOVECLEAN,FOODPREPARE,ERRAND,GOOUTSCHOOL,BABYCARE,LESSON,PATIENTCARE,CARRYLOAD,
+  GOHOSPITAL,RECIPETRANSMIT,GOSCHOOLEVENT,SHOPPING,GODOGHOSPITAL,GODOGWALK,ALLROOM, SMALLROOM, MEDIUMROOM, LARGEROOM} from "../../../store/menu/MenuSlice"
+
+
 
 
 const PCHeader = styled.div`
-  height: 200px;
+  height: ${({height}) => height}px;
   text-align: center;
   background-color: #fff;
   display: flex;
   flex-direction: column;
   z-index: 2;
   width: 1400px;
+
 `;
 
-const Container = styled.div`
+const CategoryContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #fafafa;
-  border-top: 1px solid #f0f0f0;
-  padding:20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
+  background-color: #fff;
+  padding:10px 0px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
 `;
 
 
 const OneHeaderMainMenu = styled.div`
   display: flex;
-  padding-left: 20px;
+  padding-left: 24px;
   color : #ff4e19;
   font-size:30px;
-  width:35%;
+  width:45%;
   align-items:center;
-  justify-content: space-between;
+  justify-content: flex-start;
 `;
 const OneHeaderOptionMenu = styled.div`
   display: flex;
-  padding-left: 20px;
   flex-direction:row;
   font-size:14px;
-  width:50%;
+  justify-content:space-between;
+  width:38%;
 `
 const OneHeaderLoginMenu = styled.div`
-  width: 10%;
   display: flex;
   justify-content: space-around;
   margin-right: 30px;
@@ -76,15 +88,23 @@ const EventDesc = styled.div`
 `
 
 const MainMenuText = styled.div`
-  font-size: 18px;
-  color: ${({clickstatus}) => clickstatus == true ? ('#ff2a75') :('#595959') };
-  fontweight: ${({clickstatus}) => clickstatus == true ? ('600') :('') };
+  font-size: 20px;
+  color: ${({clickstatus}) => clickstatus == true ? ('#ff2a75') :('#131313') };
+  font-weight: ${({clickstatus}) => clickstatus == true ? ('600') :('400') };
 `
 
 const EventMainText ={
   fontSize: '14px',
-  color: '#484848'
+  color: '#3896C3',
+  fontWeight:600,
 }
+
+const EventSubText ={
+  fontSize: '14px',
+  color: '#9F7E74',
+  fontWeight:400,
+}
+
 const EventBtn ={
   display:"flex",
   justifyContent:"space-between",
@@ -97,7 +117,8 @@ const CategoryLine = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 95%;
+  width: 100%;
+  height:49px;
 `;
 const CategoryItem = styled.div`
   height: 48px;
@@ -117,8 +138,8 @@ const OneContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 50px;
-  background-color: #fff;
+  height: 34px;
+  background-color: #FFF5EF;
   position: fixed;
   z-index: 5;
   color: #595959;
@@ -132,24 +153,28 @@ const TwoContainer = styled.div`
   width: 100%;
   background-color: #fff;
   z-index: 5;
-  margin-top: 55px;
+  margin-top: 34px;
+
+  
 `;
 
 
 
 
 const LineControl = styled.div`
-  border: 1px solid #f0f0f0;
+
   width: 100%;
   position: absolute;
   margin-top: 45px;
 `;
 
 const Inputstyle ={
-  border: '2px solid #ff4e19',
+  border: '1px solid #C3C3C3',
   background: '#fff',
   width: '100%',
-  borderRadius:'5px'
+  borderRadius:'5px',
+  fontSize:'16px',
+  padding :'12px'
 
 }
 
@@ -157,8 +182,21 @@ const Inputstyle ={
 
 const Searchstyle={
   position: "relative",
-  left: '-40px'
+  left: '-35px'
 }
+const Search2style={
+  position: "relative",
+  left: '0px',
+  top: '5px'
+}
+
+
+const LoginBtn = styled.div`
+  padding: 10px 30px;
+  background: #ffd6ac;
+  border-radius: 10px;
+`;
+
 
 
 
@@ -170,6 +208,7 @@ const WorkItems=[
   WORKNAME.FOODPREPARE,
   WORKNAME.GOOUTSCHOOL,
   WORKNAME.BABYCARE,
+  WORKNAME.LESSON,
   WORKNAME.ERRAND,
   WORKNAME.PATIENTCARE,
   WORKNAME.CARRYLOAD,
@@ -180,22 +219,72 @@ const WorkItems=[
   WORKNAME.GODOGHOSPITAL,
   WORKNAME.GODOGWALK,
 
+]
+
+const RoomItems =[
+  ROOMSIZE.ALLROOM,
+  ROOMSIZE.SMALL,
+  ROOMSIZE.MEDIUM,
+  ROOMSIZE.LARGE,
 
 ]
 
-const PCMainheader = ({callback, name}) => {
 
+const PCMainheader = ({name, registbtn, height}) => {
+
+  const reduxdispatch = useDispatch();
 
   const navigation = useNavigate();
   const {user, dispatch } = useContext(UserContext);
+  const {data, datadispatch } = useContext(DataContext);
   const [refresh, setRefresh] = useState(1);
   const [registbutton, setReigstbutton] = useState(false);
   const [mainmenustatus, setMainmenustatus] = useState(name);
   const [categorystatus, setCategorystatus] = useState(WORKNAME.ALLWORK);
+  const [search, setSearch] = useState('');
+  const [popupstatus, setPopupstatus] = useState(false);
 
 
 
+  useEffect(() => {
+    setMainmenustatus(mainmenustatus);
+    setCategorystatus(categorystatus);
+    setSearch(search);
+    setPopupstatus(popupstatus);
 
+  }, [refresh]);
+
+  const popupcallback = async () => {
+    setPopupstatus(!popupstatus);
+
+    setSearch("");
+    setRefresh((refresh) => refresh +1);
+  };
+
+
+  const AiSearch = async(input) =>{
+    setSearch(input);
+    setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleAI = async() =>{
+
+    setPopupstatus(true);
+    setRefresh((refresh) => refresh +1);
+
+  }
+
+/**
+ * 둥록이 헤더쪽에 있기 때문에 일감 등록과 공간 등록을 구분할수 있어여 한다
+ * 파라미터에서 들어온 name 을 가지고 등록유형을 구분하자
+ */
+  const _handleRegister = () =>{
+    if(name == PCMAINMENU.HOMEMENU){
+      navigation("/Pcworkregister");
+    }else if(name == PCMAINMENU.ROOMMENU){
+      navigation("/PCroomregister");
+    }
+  }
   /**
    * 메인 메뉴의 클릭상태를 표시 한다
    * 메인 메뉴에서 선택된 메뉴 페이지로 이동한다
@@ -206,35 +295,117 @@ const PCMainheader = ({callback, name}) => {
     setMainmenustatus(status);
 
     if(status == PCMAINMENU.HOMEMENU){
-      navigation("/");
+      reduxdispatch(ALLWORK());
+      navigation("/PCmain");
+    }else if(status == PCMAINMENU.ROOMMENU){
+      reduxdispatch(ALLROOM());
+      navigation("/PCroom");
     }else if(status == PCMAINMENU.REGIONMENU){
-      navigation("/PCmap");
+      navigation("/PCmap" ,{state :{WORK_ID :"", TYPE : ""}});
     }else if(status == PCMAINMENU.COMMUNITYMENU){
       navigation("/PCcommunity");
-    }else if(status == PCMAINMENU.HONGGUIDE){
+    }else if(status == PCMAINMENU.RANKINGMENU){
       navigation("/PChongguide");
-    }else if(status == PCMAINMENU.ROOMGUIDE){
-      navigation("/PCroomguide");
+    }else if(status == PCMAINMENU.EVENTMENU){
+      navigation("/PCevent");
+    }else if(status == PCMAINMENU.CHATMENU){
+      navigation("/PCchat");
     }
 
     setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleLogin = () =>{
+    navigation("/PClogin"); 
+  }
+  const _handleProfile =() =>{
+    navigation("/PCprofile"); 
+  }
+  const _handleCenter = () =>{
+    navigation("/PCcenter",{state :{CENTERTYPE :CENTERTYPE.NOTICE}});
+  }
+
+  const _handleAttendance = () =>{
+
+    navigation("/PCattendanceevent");
+  }
+  const _handleRullet = () =>{
+
+    navigation("/PCrulletevent");
+  }
+
+  const _handlePolicy =() =>{
+    navigation("/PCPolicy" ,{state :{LAWTYPE :LAWTYPE.USELAW}});
+  }
+
+  const _handleroomprice =() =>{
+    setCategorystatus("");
+    setRefresh((refresh) => refresh +1);
+    navigation("/PCroomprice");
   }
 
   /**
    *  카테고리 메뉴의 클릭상태를 표시 한다
    */
   const _handleCategorystatus = (status) =>{
-    console.log("TCL: _handleCategorystatus -> status", status)
+    console.log("TCL: _handleCategorystatus -> status", status);
+
+    if(status == WORKNAME.ALLWORK){
+      reduxdispatch(ALLWORK());
+    }else if(status == WORKNAME.HOMECLEAN){
+      reduxdispatch(HOMECLEAN());
+    }else if(status == WORKNAME.BUSINESSCLEAN){
+      reduxdispatch(BUSINESSCLEAN());
+    }else if(status == WORKNAME.MOVECLEAN){
+      reduxdispatch(MOVECLEAN());
+    }else if(status == WORKNAME.FOODPREPARE){
+      reduxdispatch(FOODPREPARE());
+    }else if(status == WORKNAME.ERRAND){
+      reduxdispatch(ERRAND());
+    }else if(status == WORKNAME.GOOUTSCHOOL){
+      reduxdispatch(GOOUTSCHOOL());
+    }else if(status == WORKNAME.BABYCARE){
+      reduxdispatch(BABYCARE());
+    }else if(status == WORKNAME.LESSON){
+      reduxdispatch(LESSON());
+    }else if(status == WORKNAME.PATIENTCARE){
+      reduxdispatch(PATIENTCARE());
+    }else if(status == WORKNAME.CARRYLOAD){
+      reduxdispatch(CARRYLOAD());
+    }else if(status == WORKNAME.GOHOSPITAL){
+      reduxdispatch(GOHOSPITAL());
+    }else if(status == WORKNAME.RECIPETRANSMIT){
+      reduxdispatch(RECIPETRANSMIT());
+    }else if(status == WORKNAME.GOSCHOOLEVENT){
+      reduxdispatch(GOSCHOOLEVENT());
+    }else if(status == WORKNAME.SHOPPING){
+      reduxdispatch(SHOPPING());
+    }else if(status == WORKNAME.GODOGHOSPITAL){
+      reduxdispatch(GODOGHOSPITAL());
+    }else if(status == WORKNAME.GODOGWALK){
+      reduxdispatch(GODOGWALK());
+    }else if(status == ROOMSIZE.ALLROOM){
+      reduxdispatch(ALLROOM());
+    }else if(status == ROOMSIZE.SMALL){
+      reduxdispatch(SMALLROOM());
+    }else if(status == ROOMSIZE.MEDIUM){
+      reduxdispatch(MEDIUMROOM());
+    }else if(status == ROOMSIZE.LARGE){
+      reduxdispatch(LARGEROOM());
+    } 
+
     setCategorystatus(status);
     setRefresh((refresh) => refresh +1);
-    
+
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      _handleAI();
+    }
+  };
 
-  useEffect(() => {
-    setMainmenustatus(mainmenustatus);
-    setCategorystatus(categorystatus);
-  }, [refresh]);
+
 
 /**
  * 마우스를 움직일때 사라지고 없어지고 한다
@@ -253,6 +424,7 @@ const PCMainheader = ({callback, name}) => {
         element = document.getElementById("twoheader");
 
         if (element != null) {
+          document.getElementById("twosubheader").style.margin = "10px 0px";
           document.getElementById("twoheader").style.marginTop = "0px";
           document.getElementById("twoheader").style.width = "100%";
           document.getElementById("twoheader").style.borderBottom =
@@ -267,6 +439,7 @@ const PCMainheader = ({callback, name}) => {
 
         element = document.getElementById("twoheader");
         if (element != null) {
+          document.getElementById("twosubheader").style.margin = "0px 0px 10px 0px";
           document.getElementById("twoheader").style.marginTop = "55px";
           document.getElementById("twoheader").style.height = "115px";
           document.getElementById("twoheader").style.border = "none";
@@ -291,80 +464,136 @@ const PCMainheader = ({callback, name}) => {
   }, []);
 
 
+
+
   return (
-    <PCHeader>
+    <>
+
+
+    {popupstatus == true ? (
+        <PcAipopup callback={popupcallback}
+        search ={search}
+        top={'30px'}  left={'18%'} height={'640px'} width={'1080px'} image={imageDB.sample11}></PcAipopup>
+      ) : null}
+
+    <PCHeader height={height}>
       <OneContainer id="eventheader">
-        {/* <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", width:"100%", padding:"0px 20px"}}> */}
-        <BetweenRow width={'100%'} padding={'0px 20px'}>
-          <Row>
+        <BetweenRow width={'100%'} padding={'0px 24px'}>
+          <FlexstartRow style={{width:'10%'}}>
             <div style={EventMainText}>홍여사 앱 설치하기</div>
-            <div><img src={imageDB.sample1} width={20} height={20}/></div>     
-          </Row>
-          <BetweenRow width={'30%'}>
-              <div style={EventMainText}>이벤트보기</div>
-              <div style={EventMainText}>자주하는 질문</div>
-              <div style={EventMainText}>1:1카톡 문의</div>
-              <div style={EventMainText}>공지사항</div>
-              <div style={EventMainText}>이용 약관</div>
-          </BetweenRow>
+            <div style={{display:"flex", paddingLeft:10}}><img src={imageDB.download} width={14} height={14}/></div>     
+          </FlexstartRow>
+          <FlexstartRow  style={{width:'60%',color:'#93442D', fontSize:14, fontWeight:400}}>
+            <div style={{color:'#93442D', fontSize:14, fontWeight:600, marginRight:10}}>공지사항</div>
+            <ReactTyped
+                    strings={["홍여사 출석체크 하고 매일매일 1000point 받아가세요"]}
+                    typeSpeed={100}
+                    loop
+            />
+          </FlexstartRow>
+
+          <AroundRow style={{width:'40%'}}>
+              <div style={EventSubText}>홍여사 알아보기</div>
+              <div style={EventSubText}>공간대여 알아보기</div>
+              <div style={EventSubText}  onClick={_handleCenter}>고객센타</div>
+              <div style={EventSubText}  onClick={_handleAttendance}>출석체크이벤트</div>
+              <div style={EventSubText}  onClick={_handleRullet}>룰렛이벤트</div>
+              <div style={EventSubText}  onClick={_handlePolicy}>이용 약관</div>
+          </AroundRow>
         </BetweenRow>    
         <LineControl></LineControl>
       </OneContainer>
 
       <TwoContainer id="twoheader">
-        <BetweenRow>
+        <BetweenRow style={{height:72}} id="twosubheader">
           <OneHeaderMainMenu onClick={()=>{}}>
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}>
-              <img src={imageDB.sample2} width={40} height={45} style={{borderRadius:50}} />
-              <div>{PCMAINMENU.HOMEMENU}</div>
+         
+                <img src={imageDB.pclogo} width={118} height={34} />
+            
+
             </Row>
-      
+            <Row width={'460px'} style={{marginLeft:'25px', paddingTop:'paddingTop:5'}}>
+        
+              <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 무엇이든 물어주세요 예)짜장라면 맛있게 끓이기"
+                  value={search}
+                  onChange={(e) => {   
+                    AiSearch(e.target.value);
+                  }}
+                  onKeyDown={handleKeyDown} 
+              />
+              <div style={Searchstyle}>
+              <img src={imageDB.searchgif} width={24} height={24} onClick={_handleAI} />
+              </div>
+
+            </Row>
+   
+          </OneHeaderMainMenu>
+          <OneHeaderOptionMenu>
+            {/* <Row width={'40%'}>
+              <div className="maxheaderblink"> <img src={imageDB.sample3} width={70} height={60} style={{borderRadius:50}} /></div>
+              <EventDesc>출석시마다 포인트 언제든지 이용 모은 포인트는 바로 사용</EventDesc>
+            </Row> */}
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.COMMUNITYMENU)}}><MainMenuText clickstatus={PCMAINMENU.COMMUNITYMENU == mainmenustatus}>{PCMAINMENU.COMMUNITYMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HONGGUIDE)}}><MainMenuText clickstatus={PCMAINMENU.HONGGUIDE == mainmenustatus}>{PCMAINMENU.HONGGUIDE}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMGUIDE)}}><MainMenuText clickstatus={PCMAINMENU.ROOMGUIDE == mainmenustatus}>{PCMAINMENU.ROOMGUIDE}</MainMenuText></Row> 
-          </OneHeaderMainMenu>
-
-          <OneHeaderOptionMenu>
-            <Row width={'35%'}>
-              <div className="maxheaderblink"> <img src={imageDB.sample3} width={70} height={60} style={{borderRadius:50}} /></div>
-              <EventDesc>출석시마다 포인트 언제든지 이용 모은 포인트는 바로 사용 가능</EventDesc>
-            </Row>
-            <Row width={'55%'} style={{marginLeft:'35px'}}>
-              <input  style={Inputstyle} type="text" placeholder="AI 검색어를 입력해주세요"/>
-              <div style={Searchstyle}>
-              <img src={imageDB.sample5} width={30} height={30} style={{borderRadius:50}} />
-              </div>
-            </Row>
-        
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.CHATMENU)}}><MainMenuText clickstatus={PCMAINMENU.CHATMENU == mainmenustatus}>{PCMAINMENU.CHATMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row> 
 
           </OneHeaderOptionMenu>
           <OneHeaderLoginMenu id="infoheader">
-            <div onClick={()=>{}}>로그인</div>
-            <div onClick={()=>{}}>회원가입</div>
-
+            <img src={imageDB.logout} onClick={_handleLogin} style={{width:24, height:24, marginRight:10}}/>
+            <img src={imageDB.user} onClick={_handleProfile}  style={{width:24, height:24}}/>
+  
           </OneHeaderLoginMenu>
         </BetweenRow>
 
 
-   
-        <Container>
-            <CategoryLine id="categoryheader">
+        {
+          (name == PCMAINMENU.HOMEMENU  || name == PCMAINMENU.ROOMMENU ) && <CategoryContainer>
+          <CategoryLine id="categoryheader">
+
             {
-              WorkItems.map((data, index)=>(
-                  <Categorymenu callback={_handleCategorystatus} menu={data}
-                  clickstatus={data == categorystatus}>{data}</Categorymenu>
-              ))
+              name == PCMAINMENU.HOMEMENU &&
+              <BetweenRow style={{width:'100%', margin:"0px auto", paddingLeft:4}}>
+              {
+                WorkItems.map((data, index)=>(
+                    <Categorymenu callback={_handleCategorystatus} menu={data}
+                    clickstatus={data == categorystatus}>{data}</Categorymenu>
+                ))
+              }
+              </BetweenRow>
             }
-            </CategoryLine>
-        </Container>
+            {
+              name == PCMAINMENU.ROOMMENU &&
+              <BetweenRow style={{width:'100%', margin:"0px auto"}}>
+                <FlexstartRow style={{width:'70%'}}>
+                {
+                  RoomItems.map((data, index)=>(
+                      <Categorymenu callback={_handleCategorystatus} menu={data}
+                      clickstatus={data == categorystatus}>{data}</Categorymenu>
+                  ))
+                }
+                </FlexstartRow>
+                <div onClick={_handleroomprice} style={{width:"10%",textDecoration:"underline", textUnderlineOffset:5}}>사이즈 알아보기</div>
+              </BetweenRow>
+              
+            }
+
+          </CategoryLine>
+          </CategoryContainer>
+        }
+
         
      
       </TwoContainer>
-      {registbutton == true && (
-          <div className="RegisterShowButton" onClick={()=>{}}> 등록</div>
+      {registbutton == true && (registbtn == true ) && (
+          <div className="RegisterShowButton" onClick={_handleRegister}>
+            <GoPlus/> 등록</div>
         )}
-  </PCHeader>
+    </PCHeader>
+    </>
   );
 };
 
