@@ -42,6 +42,8 @@ import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
 import MobileRoomregistserpage from "./page/main/MobileRoomregisterpage";
 import MobileRegistpage from "./page/main/MobileRegistpage";
 import MobileMappage from "./page/main/Mobilemappage";
+import MobileSearchpage from "./page/main/MobileSearchpage";
+import MobileSearchHistorypage from "./page/main/MobileSearchHistorypage";
 
 
 
@@ -101,6 +103,8 @@ const App =() =>  {
       <Route path="/Mobileroomregister" element={<MobileRoomregistserpage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
       <Route path="/Mobilemap" element={<MobileMappage />} />
+      <Route path="/Mobilesearch" element={<MobileSearchpage />} />
+      <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
 
       <Route path="/PCmap" element={<PCMappage />} />
       <Route path="/PCchat" element={<PCChatpage />} />

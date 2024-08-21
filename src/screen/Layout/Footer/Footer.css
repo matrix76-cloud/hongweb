@@ -129,21 +129,21 @@
 .spotlight-animation {
 
 
-  background-color:#f9f9f9;
+  background-color:#dafbec;
   animation: highlightColorChange 1s infinite;
 }
 
 @keyframes highlightColorChange {
   0% {
 
-      background-color : #f9f9f9;
+      background-color : #dafbec;
   }
   50% {
    
-      background-color : #efefef;
+      background-color : #fff;
   }
   100% {
 
-      background-color : #f9f9f9;
+      background-color : #FFF;
   }
 }

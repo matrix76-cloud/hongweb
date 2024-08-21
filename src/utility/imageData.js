@@ -16,8 +16,14 @@ export const imageDB = {
   logo: require("../assets/imageset/logo.png"),
   uploadenable : require("../assets/imageset/uploadenable.png"),
   uploaddisable : require("../assets/imageset/uploaddisable.png"),
-
-
+  mobilebanner1 :require("../assets/imageset/mobilebanner1.png"),
+  mobilebanner2 :require("../assets/imageset/mobilebanner2.png"),
+  mobilebanner3 :require("../assets/imageset/mobilebanner3.png"),
+  movegps :require("../assets/imageset/movegps.png"),
+  check:require("../assets/imageset/check.png"),
+  enablecheck:require("../assets/imageset/enablecheck.png"),
+  filter:require("../assets/imageset/filter.png"),
+  reset:require("../assets/imageset/reset.png"),
 
   roomsample1: require("../assets/imageset/roomsample1.png"),
   roomsample2: require("../assets/imageset/roomsample2.png"),

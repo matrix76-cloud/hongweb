@@ -10,15 +10,18 @@
     align-items: center;
     overscroll-behavior-x: contain;
     width: 100%;
-    overflow-x : scroll;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-    height:60px;
-    z-index:2;
-    padding: 0px 15px;
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    height: 40px;
+    z-index: 2;
+    padding: 0px 15px 15px;
+
+
+
   }
   input::placeholder{
     color : #999;
     font-size:13px;
-  
+
   }

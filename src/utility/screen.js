@@ -8,7 +8,8 @@ export const PCMAINMENU={
     RANKINGMENU : "홍여사순위",
     CHATMENU : '채팅하기',
     ROOMGUIDE :"공간알아보기",
-    EVENTMENU : "이벤트"
+    EVENTMENU : "이벤트",
+    REGISTMENU :"등록"
 }
 
 export const MOBILEMAINMENU={

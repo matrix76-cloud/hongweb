@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { imageDB } from "../../../utility/imageData";
 import { UserContext } from "../../../context/User";
 import { GrPrevious } from "react-icons/gr";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 const Container = styled.div``;
 
@@ -23,16 +24,19 @@ const LogoText = styled.div`
 
 
 
-const MobilePrevheader = ({callback, registbtn, name}) => {
+const MobilePrevheader = ({callback, registbtn, name, iconname}) => {
   const navigation = useNavigate();
   const { user, dispatch } = useContext(UserContext);
-  const [refresh, setRefresh] = useState(1);
+
 
 
   const _handleprev = () =>{
     navigation(-1);
   }
 
+  const _handlehistory = () =>{
+    navigation("/Mobilesearchhistory");
+  }
 
 
 
@@ -60,9 +64,14 @@ const MobilePrevheader = ({callback, registbtn, name}) => {
         <GrPrevious onClick={_handleprev} size={22} />
       </div>
 
-
-
-
+      {
+        iconname == 'searchmenu' &&  <div 
+        onClick={_handlehistory}
+        style={{paddingRight:20, width:'70%', display:"flex", justifyContent:"flex-end"}}>
+        <GiHamburgerMenu size={22}/>
+      </div>
+      }
+    
     
     </Container>
   );

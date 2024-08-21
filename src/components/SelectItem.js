@@ -19,7 +19,7 @@ const Container = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 200px;
+    width: 100%;
 
 `;
 
@@ -92,7 +92,7 @@ const SelectItem = ({
     return (
       <Container style={containerStyle}>
      
-        <div>
+        <div style={{width:"100%"}}>
           {option == OPTIONTYPE.COMMNUNITYOPTION && (
             <BetweenRow style={{width:180}}>
               <LabelItem>{'카테고리'}</LabelItem>
@@ -106,11 +106,11 @@ const SelectItem = ({
           )}
 
           {option == OPTIONTYPE.DAYOPTION && (
-            <div style={{width:150}}>
+            <div style={{width:"100%"}}>
               <SelectBox
                 options={DAYOPTION}
                 callback={selectcallback}
-                width={150}
+                width={'100%'}
               ></SelectBox>
             </div>
   

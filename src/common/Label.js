@@ -7,7 +7,7 @@ import { UserContext } from "../context/User";
 
 const Container = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-direction: row;
   align-items: center;
   width: 100%;

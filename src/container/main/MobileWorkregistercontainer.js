@@ -45,19 +45,22 @@ const Title = styled.div`
 
 `
 const Box = styled.div`
-  background : #f9f9f9;
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction:column;
   height: 80px;
   width: 22%;
-  background: #f9f9f9;
   margin-right: 5px;
-  margin-bottom: 20px;
-  border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
-  border-radius: 15px;
+  margin-bottom: 30px;
 
+
+`
+const BoxImg = styled.div`
+  background: #f9f9f9;
+  border-radius: 100px;
+  border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
+  padding: 10px;
 `
 
 
@@ -156,11 +159,11 @@ const MobileWorkregistercontainer =({containerStyle}) =>  {
 
         <Column style={{ backgroundColor:"#fff", height:"95%"}}>
           <TitleLayer><Title>홍여사에 요청할 일감 유형을 선택해 주세요</Title></TitleLayer>
-          <Row style={{flexWrap:"wrap", margin:"0px 20px"}}>
+          <Row style={{flexWrap:"wrap", margin:"0px 10px"}}>
             {
               WorkItems.map((data, index)=>(
-                <Box onClick={()=>{_handlemenuclick(data.name)}} clickstatus={menu == data.name}>
-                  <div><img src={data.img} style={{width:48, height:48}}/></div>
+                <Box onClick={()=>{_handlemenuclick(data.name)}}>
+                  <BoxImg  clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
                   <div style={{ fontSize:12}}>{data.name}</div>
                 </Box>
               ))

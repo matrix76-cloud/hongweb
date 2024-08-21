@@ -1,11 +1,15 @@
 import React, { Component, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
+import MobileSearchcontainer from "../../container/main/MobileSearchcontainer";
+import MobileSearchHistorycontainer from "../../container/main/MobileSearchHistorycontainer";
+import MobileWorkregistercontainer from "../../container/main/MobileWorkregistercontainer";
 
 import PCMaincontainer from "../../container/PCmain/PCMaincontainer";
 import PCWorkRegistercontainer from "../../container/PCmain/PCWorkRegistercontainer";
 
 import { UserContext } from "../../context/User";
+import MobilePrevLayout from "../../screen/Layout/Layout/MobilePrevLayout";
 
 import PCLayout from "../../screen/LayoutPC/Layout/PCLayout";
 
@@ -18,8 +22,7 @@ const style = {
   display: "flex"
 };
 
-const PCWorkregistserpage =() =>  {
-
+const MobileSearchHistorypage =() =>  {
   const { dispatch, user } = useContext(UserContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,15 +45,17 @@ const PCWorkregistserpage =() =>  {
 
   },[refresh])
 
+  
  
   return (
+    <MobilePrevLayout>
+        <MobileSearchHistorycontainer  />
+    </MobilePrevLayout>
 
-    <PCLayout main={false} name={PCMAINMENU.REGISTMENU} height={180}>
-        <PCWorkRegistercontainer/>
-    </PCLayout>
+   
   );
 
 }
 
-export default PCWorkregistserpage;
+export default MobileSearchHistorypage;
 

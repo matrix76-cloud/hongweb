@@ -3,7 +3,7 @@ import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
 import moment from "moment";
-import { imageDB } from "../../utility/imageData";
+import { imageDB, Seekimage } from "../../utility/imageData";
 import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import StoreInfo from "../../components/StoreInfo";
@@ -17,12 +17,14 @@ import { LoadingType } from "../../utility/screen";
 import { Column, FlexstartColumn } from "../../common/Column";
 import Button from "../../common/Button";
 import { WORKNAME, WORKPOLICY } from "../../utility/work";
+import { GoPlus } from "react-icons/go";
 
 
 const Container = styled.div`
-    background :#d8d8d8;
-    height:750px;
-    padding-top:10px;
+    background :#f3f3f3;
+    height:650px;
+    display:flex;
+    flex-direction:column;
 
 `
 const style = {
@@ -46,18 +48,42 @@ const Title = styled.div`
 
 `
 const Box = styled.div`
-  background : #f9f9f9;
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction:column;
   height: 100px;
-  width: 20%;
-  background: #f9f9f9;
+  width: 9%;
   margin-right: 10px;
-  margin-bottom: 20px;
-  border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
+  margin-bottom: 50px;
   border-radius: 15px;
+
+`
+const BoxImg = styled.div`
+  background: #f9f9f9;
+  border-radius: 100px;
+  border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
+  padding: 10px;
+`
+const RegistButton = styled.div`
+    height: 50px;
+    width: 131px;
+    border-radius: 100px;
+    background: #FF7125;
+    color: #fff;
+    margin: 0px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid;
+    font-size: 18px;
+`
+const Label = styled.div`
+  font-size: 24px;
+  line-height: 26px;
+  font-weight :400;
+
+
 
 `
 
@@ -90,7 +116,10 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
   const [menu, setMenu] = useState('');
+  console.log("TCL: PCWorkregistercontainer -> [menu", menu);
   const [totalset, setTotalset] = useState(0);
+
+  
 
   useLayoutEffect(() => {
   }, []);
@@ -151,30 +180,83 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
     setRefresh((refresh) => refresh +1);
   }
 
+  function checkworkstep(menu){
+    if(menu == WORKNAME.HOMECLEAN){
+      return WORKPOLICY.HOMECLEAN;
+    }else if(menu == WORKNAME.BUSINESSCLEAN){
+      return WORKPOLICY.BUSINESSCLEAN;
+    }else if(menu == WORKNAME.MOVECLEAN){
+      return WORKPOLICY.MOVECLEAN;
+    }else if(menu == WORKNAME.FOODPREPARE){
+      return WORKPOLICY.FOODPREPARE;
+    }else if(menu == WORKNAME.ERRAND){
+      return WORKPOLICY.ERRAND;
+    }else if(menu == WORKNAME.GOOUTSCHOOL){
+      return WORKPOLICY.GOOUTSCHOOL;
+    }else if(menu == WORKNAME.BABYCARE){
+      return WORKPOLICY.BABYCARE;
+    }else if(menu == WORKNAME.LESSON){
+      return WORKPOLICY.LESSON;
+    }else if(menu == WORKNAME.PATIENTCARE){
+      return WORKPOLICY.PATIENTCARE;
+    }else if(menu == WORKNAME.CARRYLOAD){
+      return WORKPOLICY.CARRYLOAD;
+    }else if(menu == WORKNAME.GOHOSPITAL){
+      return WORKPOLICY.GOHOSPITAL;
+    }else if(menu == WORKNAME.RECIPETRANSMIT){
+      return WORKPOLICY.RECIPETRANSMIT;
+    }else if(menu == WORKNAME.GOSCHOOLEVENT){
+      return WORKPOLICY.GOSCHOOLEVENT;
+    }else if(menu == WORKNAME.SHOPPING){
+      return WORKPOLICY.SHOPPING;
+    }else if(menu == WORKNAME.GODOGHOSPITAL){
+      return WORKPOLICY.GODOGHOSPITAL;
+    }else if(menu == WORKNAME.GODOGWALK){
+      return WORKPOLICY.GODOGWALK;
+    }
+  }
+
+ 
   return (
     <>
       <Container style={containerStyle}>
 
-        <Column style={{width:'28%', margin:"0px auto", backgroundColor:"#fff", height:"95%"}}>
-          <TitleLayer><Title>홍여사에 요청할 일감 유형을 선택해 주세요</Title></TitleLayer>
-          <Row style={{flexWrap:"wrap", width:"100%"}}>
+        <FlexstartRow style={{background:"#fff", height:'80px', paddingLeft:'15%'}}>
+          {
+               menu != '' ? (<>
+                <img src={Seekimage(menu)} style={{width:40, height:40, marginRight:20}}/>
+                <Label>{menu}는 {checkworkstep(menu)}단계만 거치면 일감을 자유롭게 등록할수가 있습니다</Label>
+                </>) :(<div>
+                <Label>일감을 자유롭게 등록하세요</Label>
+                </div>)
+          }
+
+            
+            
+        </FlexstartRow>
+
+        <FlexstartColumn style={{width:'70%', margin:"100px auto 10px", justifyContent:"center"}}>
+
+          <FlexstartRow style={{flexWrap:"wrap", width:"100%"}}>
             {
               WorkItems.map((data, index)=>(
-                <Box onClick={()=>{_handlemenuclick(data.name)}} clickstatus={menu == data.name}>
-                  <div><img src={data.img} style={{width:64, height:64}}/></div>
-                  <div style={{ fontSize:14}}>{data.name}</div>
+                <Box onClick={()=>{_handlemenuclick(data.name)}} >
+                  <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
+                  <div style={{ fontSize:14, marginTop:10}}>{data.name}</div>
                 </Box>
               ))
             }
           
 
 
-          </Row>
+          </FlexstartRow>
 
-          <Button containerStyle={{ fontSize:18}} onPress={_handleworkselect} height={'45px'} width={'300px'} radius={'5px'} bgcolor={'#fffcfc'} color={'#222'} text={'등록하기'}/>
+          {/* <Button containerStyle={{ fontSize:18, borderRadius:100, marginTop:30}} onPress={_handleworkselect} height={'50px'} width={'131px'} radius={'5px'} bgcolor={'#FF7125'} color={'#fff'} text={'등록하기'}/> */}
+
+          <RegistButton onClick={_handleworkselect}><GoPlus size={24}/> 등록</RegistButton>
 
 
-        </Column>
+        </FlexstartColumn>
 
 
 

@@ -16,7 +16,7 @@ const MobilePrevLayout = (props) => {
 
   return (
     <div> 
-      <MobilePrevheader />
+      <MobilePrevheader  iconname ={props.iconname}/>
       <main>
         {props.children}
       </main>

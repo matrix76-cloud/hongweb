@@ -1,6 +1,6 @@
 
 
-.highlight {
+.mobilehighlight {
     position: absolute;
     background-color: #fb333342; /* 반투명한 빨간색 */
     border-radius: 50%; /* 하이라이트를 원형으로 만듭니다. */
@@ -11,7 +11,7 @@
     transition: opacity 1s ease-in-out;
   }
   
-  .highlight.show {
+  .mobilehighlight.show {
     opacity: 0;
     animation: blink-effect 0.5s step-end infinite;
   

@@ -20,6 +20,7 @@ import { ROOMSIZE, ROOMSIZEDISPALY } from "../../utility/room";
 
 import { MdLockReset } from "react-icons/md";
 import { imageDB } from "../../utility/imageData";
+import { setRef } from "@mui/material";
 
 const Fade = React.forwardRef(function Fade(props, ref) {
   const {
@@ -64,11 +65,7 @@ Fade.propTypes = {
 
 const style = {
   position: "absolute",
-  top: "10%",
-  left: "50%",
-  height: "600px",
-  transform: "translate(-50%, -50%)",
-  width: "600px",
+
 };
 const IconCloseView = styled.div`
   display: flex;
@@ -80,10 +77,9 @@ const IconCloseView = styled.div`
 
 
 const Poptilt = styled.div`
-  border-top-left-radius :15px;
-  border-top-right-radius :15px;
-  background-color: #fafafa;
-  height: 12%;
+
+  background-color: #FF7125;
+  height: 58px;
   position: relative;
   width :100%;
   display:flex;
@@ -91,38 +87,64 @@ const Poptilt = styled.div`
   align-items:center;
 `
 const Popcontent = styled.div`
-    height:77%;
     width:100%;
     background:#fff;
 `
 const Popbottom = styled.div`
-    height:12%;
+    height:68px;
     width:100%;
     background:#fafafa;
-    border-bottom-left-radius :15px;
-    border-bottom-right-radius :15px;
     display:flex;
 `
 const PopMainLabel = styled.div`
   font-size: 20px;
-  font-weight: 600;
-  padding-left: 50px;
-  line-height: 60px;
+  font-weight: 700;
+  padding-left: 20px;
+  line-height: 26px;
+  color :#fff;
+`
+const PopMainSubLabel = styled.div`
+  font-size: 16px;
+  font-weight: 500;
+  padding-left: 20px;
+  line-height: 26px;
+  color :#131313;
+`
+
+const BoxItem = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  flex-direction:column;
+  height: 128px;
+  width: 9%;
+  margin-right: 10px;
+  border-radius: 15px;
 
 `
+const BoxImg = styled.div`
+  background: #f9f9f9;
+  border-radius: 100px;
+  border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
+  padding: 10px;
+`
+const BoxText = styled.div`
+  color: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#000') };
+  font-size:14px;
+  margin-top:10px;
+
+`
+
 const CheckButton = styled.div`
-  color: ${({clickstatus}) => clickstatus == true ? ('#f32a89') :('#777070') };
-  background: ${({clickstatus}) => clickstatus == true ? ('#ffecf2') :('#f7f7f7') };
-  font-weight: ${({clickstatus}) => clickstatus == true ? ('600') :('600') };
-  padding: 5px 10px;
-  border-radius: 10px;
+  color: #131313;
+  border: ${({clickstatus}) => clickstatus == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
+  font-weight: 600;
+  border-radius: 4px;
   margin-left: 10px;
-  box-shadow: inset 0 0 5px #fff;
-  transition: .2s all;
-  font-size: 14px;
-  height: 36px;
-  line-height: 34px;
-  border-radius: 5px;
+  font-size: 16px;
+  height: 44px;
+  line-height: 20px;
+  padding : 0px 10px;
   margin-bottom:10px;
   display:flex;
   justify-content:center;
@@ -130,27 +152,7 @@ const CheckButton = styled.div`
 
 
 `
-const CheckButton2 = styled.div`
-  color: ${({clickstatus}) => clickstatus == true ? ('#f32a89') :('#777070') };
-  background: ${({clickstatus}) => clickstatus == true ? ('#ffecf2') :('#fff') };
-  font-weight: ${({clickstatus}) => clickstatus == true ? ('600') :('600') };
-  border: ${({clickstatus}) => clickstatus == true ? ('null') :('1px solid #ededed') };
-  padding: 5px 10px;
-  border-radius: 10px;
-  margin-left: 10px;
-  box-shadow: inset 0 0 5px #fff;
-  transition: .2s all;
-  font-size: 14px;
-  height: 36px;
-  line-height: 34px;
-  border-radius: 5px;
-  margin-bottom:10px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
 
-
-`
 
 const WorkItems=[
   {name : WORKNAME.HOMECLEAN, img:imageDB.house},
@@ -173,9 +175,9 @@ const WorkItems=[
 
 
 const RoomItems =[
-  ROOMSIZE.SMALL,
-  ROOMSIZE.MEDIUM,
-  ROOMSIZE.LARGE,
+  {name :ROOMSIZE.SMALL, img:imageDB.roomsize1},
+  {name :ROOMSIZE.MEDIUM, img:imageDB.roomsize2},
+  {name :ROOMSIZE.LARGE, img:imageDB.roomsize3},
 
 ]
 
@@ -206,18 +208,27 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
   const [filtermoney, setFiltermoney] = React.useState(FILTERITEMMONEY.ONE);
   const [filterperiod, setFitlerperiod] = React.useState(PeroidItems.ONE);
 
+  const [menu, setMenu] = React.useState('');
+  const [refresh, setRefresh] = React.useState(1);
+
+  const _handlemenuclick =(menu) =>{
+    setMenu(menu);
+    setRefresh((refresh) => refresh +1);
+
+  }
   const handleClose = () => {
     setOpen(false);
     callback();
   };
 
-  const [refresh, setRefresh] = React.useState(1);
+
 
   React.useEffect(() => {
     setFiltertype(filtertype);
     setFilterworkary(filterworkary);
     setFiltermoney(filtermoney);
     setFitlerperiod(filterperiod);
+    setMenu(menu);
   }, [refresh]);
 
   /**
@@ -273,42 +284,57 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
       >
         <Fade in={open}>
           <Box sx={[style, style.top={top},style.left={left}, style.height={height}, style.width={width}] }>
-            <Column style={{height:650, width:1000}}>
+            <Column style={{height:630, width:'100%'}}>
               <Poptilt>
                 <BetweenRow style={{width:"100%"}}>
                   <PopMainLabel>필터</PopMainLabel>
-                  <IconCloseView onClick={handleClose}><IoCloseSharp size={30}/></IconCloseView>
+                  <IconCloseView onClick={handleClose}><IoCloseSharp size={25} color={'#fff'}/></IconCloseView>
                 </BetweenRow>
               </Poptilt>
               <Popcontent>
                 <FlexstartRow style={{width:"100%", borderBottom: '1px solid #ededed',height: 80}}>
-                  <PopMainLabel>타입</PopMainLabel>
+                  <PopMainSubLabel>타입</PopMainSubLabel>
                   <FlexstartRow style={{marginLeft:20}}>
-                    <CheckButton className="checkbtn" clickstatus={filtertype == FILTERITMETYPE.HONG} onClick={()=>{_handleItemtype(FILTERITMETYPE.HONG)}}>
-                    <span style={{fontSize:16}}>{FILTERITMETYPE.HONG}</span></CheckButton>
-                    <CheckButton className="checkbtn"  clickstatus={filtertype == FILTERITMETYPE.ROOM}  onClick={()=>{_handleItemtype(FILTERITMETYPE.ROOM)}}>
-                    <span style={{fontSize:16}}>{FILTERITMETYPE.ROOM}</span></CheckButton>
+                    <CheckButton clickstatus={filtertype == FILTERITMETYPE.HONG} onClick={()=>{_handleItemtype(FILTERITMETYPE.HONG)}}>
+                    <span style={{fontSize:16}}>{FILTERITMETYPE.HONG}</span>
+                    {
+                      filtertype == FILTERITMETYPE.HONG ? (<img src={imageDB.enablecheck} style={{width:16, height:16,marginLeft:5}}/>):(<img src={imageDB.check} style={{width:16, height:16,marginLeft:5}}/>)
+                    }
+                    </CheckButton>
+                    <CheckButton  clickstatus={filtertype == FILTERITMETYPE.ROOM}  onClick={()=>{_handleItemtype(FILTERITMETYPE.ROOM)}}>
+                    <span style={{fontSize:16}}>{FILTERITMETYPE.ROOM}</span>
+                    
+                    {
+                      filtertype == FILTERITMETYPE.ROOM ? (<img src={imageDB.enablecheck} style={{width:16, height:16,marginLeft:5}}/>):(<img src={imageDB.check} style={{width:16, height:16,marginLeft:5}}/>)
+                    }
+                    </CheckButton>
                   </FlexstartRow>
                 </FlexstartRow>
 
                 <FlexstartRow style={{width:"100%", borderBottom: '1px solid #ededed',height: 160}}>
-                  <PopMainLabel>종류</PopMainLabel>
+                  <PopMainSubLabel>종류</PopMainSubLabel>
                   {
-                    filtertype == FILTERITMETYPE.HONG ? ( <FlexstartRow style={{marginLeft:20, flexWrap:"wrap", width:"80%"}}>
+                    filtertype == FILTERITMETYPE.HONG ? ( 
+                    <FlexstartRow style={{marginLeft:20, flexWrap:"nowrap", width:"90%",
+                    overflowX: "auto",
+                    scrollbarWidth: "none",  /* Firefox */
+                    marginTop: 10}}>
                     {
                       WorkItems.map((data, index)=>(
-                        <CheckButton2 className="checkbtn" clickstatus={filterworkary.findIndex(x=>x == data.name) != -1} onClick={()=>{_handleItemwork(data.name)}}>
-                          <img src={data.img} style={{width:22, height:22}}/> <span style={{fontSize:16, marginLeft:5}}>{data.name}</span>
-                          </CheckButton2>
+                        <BoxItem onClick={()=>{_handlemenuclick(data.name)}} >
+                            <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
+                            <BoxText clickstatus={menu == data.name}>{data.name}</BoxText>
+                          </BoxItem>
                       ))
                     }
-                  </FlexstartRow>) :(
+                    </FlexstartRow>) :(
                       <FlexstartRow style={{marginLeft:20, flexWrap:"wrap", width:"80%"}}>
                       {
                         RoomItems.map((data, index)=>(
-                          <CheckButton2 className="checkbtn" clickstatus={filterworkary.findIndex(x=>x == data) != -1} onClick={()=>{_handleItemwork(data)}}>
-                             <span style={{fontSize:16}}>{data.name}</span>
-                          </CheckButton2>
+                          <BoxItem onClick={()=>{_handlemenuclick(data.name)}} >
+                          <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
+                          <BoxText clickstatus={menu == data.name}>{data.name}</BoxText>
+                        </BoxItem>
                         ))
                       }
                     </FlexstartRow>
@@ -318,38 +344,53 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                 </FlexstartRow>
 
                 <FlexstartRow style={{width:"100%", borderBottom: '1px solid #ededed',height: 160}}>
-                  <PopMainLabel>금액</PopMainLabel>
+                  <PopMainSubLabel>금액</PopMainSubLabel>
                   <FlexstartRow style={{marginLeft:20, flexWrap:"wrap", width:"80%"}}>
                     {
                       MoneyItems.map((data, index)=>(
-                        <CheckButton className="checkbtn" clickstatus={filtermoney == data}  onClick={()=>{_handleItemmoney(data)}}>
-                          <img src={imageDB.sample35} style={{width:22, height:22}}/>
-                          <span style={{fontSize:16, marginLeft:5}}>{data}</span></CheckButton>
+                        <CheckButton  clickstatus={filtermoney == data}  onClick={()=>{_handleItemmoney(data)}}>
+                          <span style={{fontSize:16, marginLeft:5}}>{data}</span>
+                          
+                          {
+                            filtermoney == data ? (<img src={imageDB.enablecheck} style={{width:16, height:16,marginLeft:5}}/>):(<img src={imageDB.check} style={{width:16, height:16,marginLeft:5}}/>)
+                          }
+                          
+                          </CheckButton>
                       ))
                     }
                   </FlexstartRow>
                 </FlexstartRow>
 
                 <FlexstartRow style={{width:"100%",height: 80}}>
-                  <PopMainLabel>기간</PopMainLabel>
+                  <PopMainSubLabel>기간</PopMainSubLabel>
                   <FlexstartRow style={{marginLeft:20, flexWrap:"wrap", width:"80%"}}>
                     {
                       PeroidItems.map((data, index)=>(
-                        <CheckButton className="checkbtn" clickstatus={filterperiod == data}  onClick={()=>{_handleItemperiod(data)}}>{data}</CheckButton>
+                        <CheckButton  clickstatus={filterperiod == data}  onClick={()=>{_handleItemperiod(data)}}>{data}
+                        
+                        {
+                          filterperiod == data ? (<img src={imageDB.enablecheck} style={{width:16, height:16,marginLeft:5}}/>):(<img src={imageDB.check} style={{width:16, height:16,marginLeft:5}}/>)
+                        }
+                        </CheckButton>
                       ))
                     }
                   </FlexstartRow>
                 </FlexstartRow>
               </Popcontent>
               <Popbottom>
-                <BetweenRow style={{width:"100%", paddingLeft:20}}>
-                  <PopMainLabel style={{width:"70%",display: 'flex',alignItems: 'center',paddingLeft: '20px'}}>
-                    <MdLockReset size={30} color={'#000'}/>
-                    <span style={{marginLeft:10}}>초기화</span>
-                    </PopMainLabel>
-                  <Button onPress={handleClose} height={'100%'} width={'30%'} radius={'5px'} bgcolor={'#ff4e19'} color={'#fff'} text={'5건 찾음'}
-                  containerStyle={{bordeBottomRightRadius :15, fontSize:25}}/>
-                </BetweenRow>
+                <FlexEndRow style={{width:"100%", marginRight:5}}>
+    
+                  <CheckButton  onClick={()=>{}} style={{height:44, width:96, borderRadius:5}}>
+                    <img src={imageDB.reset} style={{width:16, height:16,marginRight:5}}/> 초기화
+                  </CheckButton>
+
+                  <CheckButton  onClick={()=>{}} style={{height:44, width:96, borderRadius:5,
+                     background:"#FF7125", color :"#fff"}}>
+                     5건 찾음
+                  </CheckButton>
+
+        
+                </FlexEndRow>
 
               </Popbottom>
 

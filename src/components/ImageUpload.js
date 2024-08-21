@@ -9,14 +9,14 @@ import moment from "moment";
 
 
 const Container = styled.div`
-    height: 300px;
+    height: 250px;
     width: 90%;
     display: flex;
     justify-content: center;
     align-items: center;
     background: #fff;
     margin-top: 30px;
-    margin: 30px auto;
+    margin: 0px auto;
 `
 const PictureBoxLayer = styled.div`
   height: 200px;

@@ -45,7 +45,7 @@ const PCCommunitypage =() =>  {
  
   return (
 
-    <PCLayout main={false} name={PCMAINMENU.COMMUNITYMENU}>
+    <PCLayout main={true} name={PCMAINMENU.COMMUNITYMENU}>
         <PCCommunitycontainer/>
     </PCLayout>
   );

@@ -4,16 +4,16 @@
   position: absolute;
   background-color: #fb333342; /* 반투명한 빨간색 */
   border-radius: 50%; /* 하이라이트를 원형으로 만듭니다. */
-  width: 140px;
-  height: 140px;
+  width: 340px;
+  height: 340px;
   opacity: 0;
   z-index: 5;
   transition: opacity 1s ease-in-out;
 }
 
 .highlight.show {
-  opacity: 0;
-  animation: blink-effect 0.5s step-end infinite;
+  opacity: 1;
+  animation: blink-effect 3s step-end infinite;
 
 }
 @keyframes blink-effect {

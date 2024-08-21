@@ -37,7 +37,7 @@ const PCRegistpage =() =>  {
  
   return (
 
-    <PCLayout main={true} name={PCMAINMENU.HOMEMENU} height={180}>
+    <PCLayout main={false} name={PCMAINMENU.REGISTMENU} height={180}>
         <PCRegistcontainer type={state.WORKTYPE}  totalset={state.WORKTOTAL}/>
     </PCLayout>
   );

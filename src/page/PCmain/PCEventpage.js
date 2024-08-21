@@ -47,7 +47,7 @@ const PCEventpage =() =>  {
  
   return (
 
-    <PCLayout main={false} name={PCMAINMENU.EVENTMENU}>
+    <PCLayout main={true} name={PCMAINMENU.EVENTMENU}>
         <PCEventcontainer/>
     </PCLayout>
   );

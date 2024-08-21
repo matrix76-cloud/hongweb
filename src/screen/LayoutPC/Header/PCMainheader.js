@@ -57,7 +57,7 @@ const OneHeaderMainMenu = styled.div`
   padding-left: 24px;
   color : #ff4e19;
   font-size:30px;
-  width:45%;
+  width:55%;
   align-items:center;
   justify-content: flex-start;
 `;
@@ -66,7 +66,7 @@ const OneHeaderOptionMenu = styled.div`
   flex-direction:row;
   font-size:14px;
   justify-content:space-between;
-  width:38%;
+  width:32%;
 `
 const OneHeaderLoginMenu = styled.div`
   display: flex;
@@ -230,7 +230,7 @@ const RoomItems =[
 ]
 
 
-const PCMainheader = ({name, registbtn, height}) => {
+const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
 
   const reduxdispatch = useDispatch();
 
@@ -284,6 +284,9 @@ const PCMainheader = ({name, registbtn, height}) => {
     }else if(name == PCMAINMENU.ROOMMENU){
       navigation("/PCroomregister");
     }
+  }
+  const _handleMapRegister = () =>{
+    navigation("/Pcworkregister");
   }
   /**
    * 메인 메뉴의 클릭상태를 표시 한다
@@ -530,10 +533,7 @@ const PCMainheader = ({name, registbtn, height}) => {
    
           </OneHeaderMainMenu>
           <OneHeaderOptionMenu>
-            {/* <Row width={'40%'}>
-              <div className="maxheaderblink"> <img src={imageDB.sample3} width={70} height={60} style={{borderRadius:50}} /></div>
-              <EventDesc>출석시마다 포인트 언제든지 이용 모은 포인트는 바로 사용</EventDesc>
-            </Row> */}
+       
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row> 
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
@@ -580,6 +580,7 @@ const PCMainheader = ({name, registbtn, height}) => {
               </BetweenRow>
               
             }
+       
 
           </CategoryLine>
           </CategoryContainer>
@@ -588,10 +589,22 @@ const PCMainheader = ({name, registbtn, height}) => {
         
      
       </TwoContainer>
-      {registbutton == true && (registbtn == true ) && (
+
+      {/* 스크롤바에 따라 버튼 생성 만들기 */}
+      {/* {registbutton == true && (registbtn == true ) && (
+          <div className="RegisterShowButton" onClick={_handleRegister}>
+            <GoPlus/> 등록</div>
+        )} */}
+
+      {registbtn == true  && (
           <div className="RegisterShowButton" onClick={_handleRegister}>
             <GoPlus/> 등록</div>
         )}
+      {registmapbtn == true  && (
+          <div className="RegisterShowButton" onClick={_handleMapRegister}>
+            <GoPlus/> 등록</div>
+        )}
+
     </PCHeader>
     </>
   );

@@ -113,7 +113,7 @@ const MobileFooter = ({type}) => {
                   >
                     <div className="moving">
                       <img
-                        src={imageDB.logo}
+                        src={imageDB.movegps}
                         style={{ width: 30, height: 30 }}
                       />
                       

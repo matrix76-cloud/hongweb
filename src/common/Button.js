@@ -12,14 +12,12 @@ const Container = styled.div`
     border-radius: ${({radius})=> radius};
     background: ${({bgcolor})=> bgcolor};
     color :${({color})=> color};
-    margin: 0px auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    border : ${({enable}) => enable == true ? ('2px solid #76baff'):('1px solid')};
+    border : ${({enable}) => enable == true ? ('1px solid #F75100'):('1px solid #C3C3C3')};
     &:hover{
-      background :#76baff;
-      color :#fff;
+      color :#000;
     } 
 `
 const style = {

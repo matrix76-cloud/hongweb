@@ -180,13 +180,13 @@ const PCCommunitycontainer =({containerStyle}) =>  {
    * 
    */
   useEffect(()=>{
-    async function TimerProcess(){
-      const communityitems = await ReadCommunitySummary();
-      console.log("TCL: TimerProcess -> communityitems", communityitems)
-      setCommunitydata(communityitems);
-      setRefresh((refresh) => refresh +1);
-    }
-    TimerProcess();
+    // async function TimerProcess(){
+    //   const communityitems = await ReadCommunitySummary();
+    //   console.log("TCL: TimerProcess -> communityitems", communityitems)
+    //   setCommunitydata(communityitems);
+    //   setRefresh((refresh) => refresh +1);
+    // }
+    // TimerProcess();
   }, [])
 
   /**

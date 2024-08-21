@@ -1,4 +1,4 @@
-import React, { Component, useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { Component, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
@@ -24,9 +24,12 @@ import { GoNoEntry } from "react-icons/go";
 
 import "./MobileMaincontainer.css";
 import MobileStoreInfo from "../../components/MobileStoreInfo";
+import Swipe from "../../common/Swipe";
+import SlickSliderComponent from "../../common/Swipe";
+import { useSleep } from "../../utility/common";
 
 const Container = styled.div`
-  padding:50px 15px 0px 15px;
+  padding:50px 20px 0px 20px;
   min-height:1500px;
 `
 
@@ -37,19 +40,22 @@ const style = {
 
 
 const Box = styled.div`
-  background : #f9f9f9;
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction:column;
   width: 20%;
-  background: #f9f9f9;
   margin-right: 10px;
-  margin-bottom: 20px;
-  border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
+
   border-radius: 15px;
   padding : 5px 0px;
+  font-weight:700;
 
+`
+const BoxImg = styled.div`
+  border-radius: 30px;
+  background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#f9f9f9') };
+  padding: 10px;
 `
 
 const FilterBox = styled.div`
@@ -58,15 +64,21 @@ const FilterBox = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: #f6f6f6;
+  background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#fff') };
   margin-right: 10px;
-  border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
+  border:1px solid #ededed;
   border-radius: 5px;
-  padding: 5px;
+  padding: 5px 0px;
   width: 80px;
   flex: 0 0 auto; /* 아이템의 기본 크기 유지 */
 
 `
+
+const Bannerstyle={
+  width: '100%',
+  borderRadius: '10px',
+  margin: '20px 0px',
+}
 
 const Inputstyle ={
 
@@ -74,7 +86,7 @@ const Inputstyle ={
   width: '90%',
   borderRadius:'5px',
   fontSize: '16px',
-  padding: '8px 12px 12px 8px',
+  padding: '8px 20px 8px 20px',
   border : "none"
 
 }
@@ -83,7 +95,24 @@ const Searchstyle={
   left: '15px'
 }
 
+const InputLine = styled.div`
+  width: 100%;
+  background: rgb(249, 249, 249);
+  margin: 0px auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 
+`
+const StickyElementStyle ={
+  position: "sticky",
+  top: "50px",
+  height: '60px',
+  background: "white",
+  width: '100%', 
+  marginTop:100
+}
 
 
 /**
@@ -112,6 +141,11 @@ const WorkItems=[
   {name :WORKNAME.GODOGWALK, img:imageDB.dog, img2:imageDB.doggray},
 ]
 
+const BannerItems =[
+  imageDB.mobilebanner1,
+  imageDB.mobilebanner2,
+  imageDB.mobilebanner3,
+]
 
 /**
  * 메인 데이타페이지는 
@@ -138,9 +172,13 @@ const MobileMaincontainer =({containerStyle}) =>  {
   const [menu, setMenu] = useState('');
 
   const [showNewDiv, setShowNewDiv] = useState(false);
+  const [bannerimg, setBannerimg] = useState([]);
 
 
   const [search, setSearch] = useState('');
+
+  const recordRef = useRef(null);
+
 
   useLayoutEffect(() => {
   }, []);
@@ -153,6 +191,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
   useEffect(()=>{
     setCurrentloading(currentloading);
     setShowNewDiv(showNewDiv);
+    setMenu(menu);
+
   },[refresh])
 
   /**
@@ -238,6 +278,13 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
     } 
     FetchData();
+
+    let banner2 = [];
+    banner2.push(imageDB.mobilebanner1);
+    banner2.push(imageDB.mobilebanner2);
+    banner2.push(imageDB.mobilebanner3);
+    setBannerimg(banner2);
+
 
   }, [])
   useEffect(() => {
@@ -346,9 +393,79 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
   const _handleAI = async() =>{
 
+
+    navigate("/Mobilesearch" ,{state :{search :search}});
     setRefresh((refresh) => refresh +1);
 
   }
+
+  const _handlebasicmenuclick = async(checkmenu) =>{
+
+    let items = [];
+    const serverworkitems = data.workitems;
+    if(menu == checkmenu){
+      setMenu("");
+      items = FilterWorkitems(WORKNAME.ALLWORK, serverworkitems);
+    }else{
+      setMenu(checkmenu);
+      items = FilterWorkitems(checkmenu, serverworkitems);
+    }
+    setWorkitems(items);
+    setRefresh((refresh) => refresh +1);
+
+    if(recordRef.current){
+    console.log("TCL: _handlebasicmenuclick -> recordRef.current", recordRef.current)
+      
+   
+
+      const elementPosition = recordRef.current.getBoundingClientRect().top;
+      const offsetPosition = elementPosition - 100; // 100px 오프셋을 추가
+
+      window.scrollBy({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+
+    }
+
+
+  }
+
+  const _handlemenuclick = async(checkmenu) =>{
+
+    let items = [];
+    const serverworkitems = data.workitems;
+
+    if(menu == checkmenu){
+      setMenu("");
+      items = FilterWorkitems(WORKNAME.ALLWORK, serverworkitems);
+    }else{
+      setMenu(checkmenu);
+      items = FilterWorkitems(checkmenu, serverworkitems);
+    }
+
+
+    setWorkitems(items);
+    setRefresh((refresh) => refresh +1);
+
+    await useSleep(500);
+
+
+    if(recordRef.current){
+      
+        const elementPosition = recordRef.current.getBoundingClientRect().top;
+        const offsetPosition = elementPosition - 100; // 100px 오프셋을 추가
+
+        console.log("TCL: _handlemenuclick -> recordRef.current", recordRef.current,offsetPosition)
+  
+        window.scrollBy({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+  
+      }
+  }
+
 
   function workfilterapply(menu, items){
 
@@ -381,38 +498,46 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
       <Column>
           <Label label={'홍여사 서비스'}/>
-          <Row style={{flexWrap:"wrap", width:"100%"}}>
+          <BetweenRow style={{flexWrap:"wrap", width:"100%"}}>
 
             {
               WorkItems.map((data, index)=>(
-                <Box onClick={()=>{}} clickstatus={menu == data.name}>
-                  <div><img src={data.img} style={{width:32, height:32}}/></div>
+                <Box onClick={()=>{_handlebasicmenuclick(data.name)}} >
+                  <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:38, height:38}}/></BoxImg>
                   <div style={{ fontSize:12}}>{data.name}</div>
                 </Box>
               ))
             }
           
-          </Row>
-          <Row  id="sticky-element"  style={{width:"100%", position: "sticky",top: "50px",height: "70px", background:"#fff"}}>
+          </BetweenRow>
 
-            <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요 예)짜장라면 끊이는 법"
-                  value={search}
-                  onChange={(e) => {   
-                    AiSearch(e.target.value);
-                  }}
-                  onKeyDown={handleKeyDown} 
-              />
-            <div>
-              <img src={imageDB.searchgif} width={24} height={24} onClick={_handleAI} />
-            </div>
+          <SlickSliderComponent />
+
+          <Row  id="sticky-element"  style={StickyElementStyle}>
+
+              <InputLine>
+                <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요 예)짜장라면 끊이는 법"
+                      value={search}
+                      onChange={(e) => {   
+                        AiSearch(e.target.value);
+                      }}
+                      onKeyDown={handleKeyDown} 
+                  />
+                <Row style={{paddingRight:5}}>
+                  <img src={imageDB.searchgif} width={18} height={18} onClick={_handleAI} />
+                </Row>
+
+              </InputLine>
+
+      
           </Row>
 
           {showNewDiv && (
             <div className="new-div">
             {
               WorkItems.map((data, index)=>(
-                <FilterBox onClick={()=>{}} clickstatus={menu == data.name}>
-                  <div><img src={data.img2} style={{width:24, height:24}}/></div>
+                <FilterBox onClick={()=>{_handlemenuclick(data.name)}} clickstatus={menu == data.name}>
+                  <div><img src={data.img} style={{width:24, height:24}}/></div>
                   <div style={{ fontSize:12, color:"#788391", marginLeft:5}}>{data.name}</div>
                 </FilterBox>
               ))
@@ -420,8 +545,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
             </div>
           )}
 
-
-          <Label label={'님양주시 다산동에 등록된 전체일감'} sublabel={'12건'}/>
+          <div ref={recordRef} />
+          <Label label={menu + '일감'} sublabel={workitems.length +'건'}   />
 
           <FlexstartRow style={{flexWrap:"wrap"}}>
           {

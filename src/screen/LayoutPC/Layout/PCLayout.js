@@ -16,7 +16,8 @@ const PCLayout = (props) => {
   return (
     <div> 
       {
-        props.main == true ? (    <PCMainheader  name={props.name} registbtn={props.registbtn} height={props.height}/> ):( <PCSubheader name={props.name}/> )
+        props.main == true ? (    <PCMainheader  name={props.name} registbtn={props.registbtn} registmapbtn={props.registmapbtn}
+           height={props.height}/> ):( <PCSubheader name={props.name} registmapbtn={props.registmapbtn}/> )
       }
       <main>
         {props.children}

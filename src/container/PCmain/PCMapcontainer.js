@@ -27,6 +27,9 @@ import Position from "../../components/Position";
 import { ReadRoom } from "../../service/RoomService";
 import PCRoomMapItem from "../../components/PCRoomMapItem";
 
+import { IoMdTennisball } from "react-icons/io";
+import Requestdoc from "../../components/Requestdoc";
+
 const Container = styled.div`
   max-height:1000px;
   
@@ -34,7 +37,7 @@ const Container = styled.div`
 const mapstyle = {
   position: "absolute",
   overflow: "hidden",
-  top: '13%',
+  top: '10%',
   width:'100%',
 };
 const ListContainer= styled.div`
@@ -75,30 +78,87 @@ const GuideStyle={
   zIndex:5,
   display:"flex",
   flexDrirection :"row",
+  display:'flex',
+  justifyContent:"center",
+  alignItems:"center"
 
 }
 const GuideTextStyle={
   background: '#a1a2a4a3',
   color: '#fff',
   padding: '5px 10px',
+  display:'flex',
+  justifyContent:"center",
+  alignItems:"center"
+
 }
 const GuideButtonStyle={
   background: '#1960ff',
   color: '#fff',
   padding: '5px 10px',
   marginRight:10,
-  borderRadius: 10
+  borderRadius: 10,
+  display:'flex',
+  justifyContent:"center",
+  alignItems:"center"
 }
 
 const PopupWorkEx = styled.div`
     position: absolute;
-    width: 400px;
-    background: #f5f5f5;
+    width: 250px;
+    background: #fff;
     height: 100%;
-    top:95px;
     z-index: 2;
-    padding:20px;
+    padding:0px 30px;
 `
+
+const ItemLayer = styled.div`
+  display:flex;
+  flex-direction :row;
+  justify-content: center;
+  align-items:center;
+  width:100%; 
+  flex-wrap:wrap;
+`
+
+const Item = styled.div`
+  display:flex;
+  flex-direction :column;
+  justify-content: center;
+  align-items:flex-start;
+  width:${({width}) => width}; 
+  height:46px;
+  margin-top:10px;
+
+`
+const FullItem = styled.div`
+  display:flex;
+  flex-direction :column;
+  justify-content: center;
+  align-items:flex-start;
+  width:100%; 
+  height:46px;
+
+  margin-top:10px;
+
+`
+
+const ItemLabel = styled.div`
+
+  color :#131313;
+  font-weight : 700;
+  font-size :14px;
+  line-height:18.2px;
+`
+const ItemContent = styled.div`
+  color :#636363;
+  font-weight: 400;
+  font-size:15px;
+  line-height: 21.8px;
+`
+
+
+
 
 /**
 /**
@@ -106,8 +166,9 @@ const PopupWorkEx = styled.div`
  */
 const { kakao } = window;
 
-const DetailLevel = 1;
+const DetailLevel = 2;
 const DetailMeter =300;
+const BasicLevel =5;
 
 /**
  * 홍여사의 핵심서비스
@@ -441,7 +502,7 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
           center: new kakao.maps.LatLng(37.625660993622, 127.14833958893), // 지도의 중심좌표
-          level: 5 // 지도의 확대 레벨
+          level: BasicLevel // 지도의 확대 레벨
     };
 
     var map = new kakao.maps.Map(mapContainer, mapOption);
@@ -702,9 +763,15 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
   }, [])
 
   const _handleSupport=()=>{}
+
+
+  /**
+   * TODO 팝업을 닫있을때 지도를 원상 복구 해주자 !!!!
+   */
   const _handleClose = () =>{
     setSelectworkitemindex(-1);
     setSelectroomitemindex(-1);
+    curmap.setLevel(BasicLevel);
   }
   const positioncallback =()=>{}
 
@@ -714,151 +781,68 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
       {/* <Position type={PCMAINMENU.REGIONMENU} callback={positioncallback} containerStyle={{marginTop:20}} /> */}
 
       {popupstatus == true ? (
-        <PcFilterPopup type ={2} callback={popupcallback} top={'50%'}  left={'35%'} height={'550px'} width={'500px'} ></PcFilterPopup>
+        <PcFilterPopup type ={2} callback={popupcallback} top={'10%'}  left={'15%'} height={'630px'} width={'1080px'} ></PcFilterPopup>
       ) : null}
 
       {
         selectworkitemindex != -1 && <PopupWorkEx>
-            <table style={{marginTop:20,borderLeft:"1px solid"}}>
-             
-             <tbody>
-               {
-                 item.WORK_INFO.map((data)=>(
-                   <>
-                   {
-                   data.type =='response' &&
-                   <tr>
-                   <td>{data.requesttype}</td>
-                   <td>{data.result}</td>
-                   </tr>
-                   }
-                   </>                  
-                 ))
-               }
-             </tbody>
-           </table>
-           <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'90%',justifyContent: "space-around" }}>
-              <Button text={"지원하기"} onPress={_handleSupport}
-              containerStyle={{backgroundColor: "#FF4E19", color :"#fff", border :"1px solid #ededed",borderRadius: "10px",
-              fontSize: 16,height:45,margin: "10px 0px",width: "48%",}}/>
+          <Requestdoc INFO ={item.WORK_INFO} TYPE ={item.WORKTYPE} />
+          <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "100px",justifyContent: "space-around" }}>
               <Button text={"닫기"} onPress={_handleClose}
-              containerStyle={{backgroundColor: "#8b8988",color :"#fff",border :"1px solid #ededed",borderRadius: "10px",
-              fontSize: 16,height:45,margin: "10px 0px",width: "48%",}}/>   
-           </div>
+              containerStyle={{backgroundColor: "#fff",color :"#131313",border :"1px solid #C3C3C3",borderRadius: "4px",
+              fontSize: 16,height:44, marginRight:10, width: "76px",}}/>   
 
+              <Button text={"지원하기"} onPress={_handleSupport}
+              containerStyle={{backgroundColor: "#FF7125", color :"#fff", border :"1px solid #FF7125",borderRadius: "4px",
+              fontSize: 16,height:44,width: "160px",}}/>    
+          </div>
         </PopupWorkEx>
       }
 
       {
         selectroomitemindex != -1 && <PopupWorkEx>
-           <table style={{marginTop:20,borderLeft:"1px solid"}}>
-             
-             <tbody>
-               {
-                 item.ROOM_INFO.map((data)=>(
-                   <>
-                   {
-                   data.type =='response' &&
-                   <tr>
-                   <td>{data.requesttype}</td>
-                   <td>
-                   {
-                     data.requesttype == REQUESTINFO.ROOM ? (
-                       <img src= {data.result} style={{width:"100%", height:"150px"}}/>
-                     ) :(<span>{data.result}</span>)
-                   }  
-                   </td>
-                   </tr>
-                   }
-                   </>                  
-                 ))
-               }
-             </tbody>
-           </table>
-           <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'90%',justifyContent: "space-around" }}>
-              <Button text={"지원하기"} onPress={_handleSupport}
-              containerStyle={{backgroundColor: "#FF4E19", color :"#fff", border :"1px solid #ededed",borderRadius: "10px",
-              fontSize: 16,height:45,margin: "10px 0px",width: "48%",}}/>
-              <Button text={"닫기"} onPress={_handleClose}
-              containerStyle={{backgroundColor: "#8b8988",color :"#fff",border :"1px solid #ededed",borderRadius: "10px",
-              fontSize: 16,height:45,margin: "10px 0px",width: "48%",}}/>   
-           </div>
+          <Requestdoc INFO ={item.ROOM_INFO} TYPE={'공간대여'} />
+          <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "100px",justifyContent: "space-around" }}>
 
+            <Button text={"닫기"} onPress={_handleClose}
+            containerStyle={{backgroundColor: "#fff",color :"#131313",border :"1px solid #C3C3C3",borderRadius: "4px",
+            fontSize: 16,height:44, marginRight:10, width: "76px",}}/>   
+
+            <Button text={"지원하기"} onPress={_handleSupport}
+            containerStyle={{backgroundColor: "#FF7125", color :"#fff", border :"1px solid #FF7125",borderRadius: "4px",
+            fontSize: 16,height:44,width: "160px",}}/>
+          
+          </div>
         </PopupWorkEx>
       }
      
-      {/* <div
+      <div
         className={`highlight ${(selectworkitemindex != -1 || selectroomitemindex != -1) ? 'show' : ''}`}
-        style={{ top: '50%', left: '55%' }} // 원하는 위치 조정
-      /> */}
+        style={{ top: '25%', left: '38.5%' }} // 원하는 위치 조정
+      />
 
       <div style={WorkLayoutstyle}>
      
-
-      <FlexstartRow style ={{height:'50px', padding:"10px 30px",zIndex: 10,width: 300}}>
-
-        <IconButton onPress={_handleFilter} icon={'filter'} iconcolor={'#ff6969'} width={'40%'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'필터'} containerStyle={{fontSize:16, padding:"8px 10px", fontWeight:500,
-          background: "#ff4e1917"
+      <FlexstartRow style ={{height:'50px', padding:"10px 30px",zIndex: 10,width: 200}}>
+        <IconButton onPress={_handleFilter} icon={'filter'} iconcolor={'#F75100'} width={'90px'}  height={'44px'} radius={'4px'} bgcolor={'#fff'} color={'#F75100'} text={'필터'} containerStyle={{
+          fontSize:16, fontWeight:500,
+          border :"1px solid #F75100",
+          background: "#fff"
         }}/>
-        <IconButton icon={'reset'}  iconcolor={'#999'} onPress={()=>{}} width={'40%'}  radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'초기화'} containerStyle={{fontSize:16, padding:"8px 10px", fontWeight:500,
-          background: "#ff4e1917", marginLeft:10}}/>
+        <IconButton icon={'reset'}  iconcolor={'#131313'} onPress={()=>{}} width={'90px'}  height={'44px'} radius={'4px'} bgcolor={'#fff'} color={'#131313'} text={'초기화'} containerStyle={{
+          fontSize:16, fontWeight:500,
+          background: "#fff", marginLeft:10,
+          border :"1px solid #C3C3C3"}}/>
 
       </FlexstartRow>
      </div>
 
       <Row>
-        {/* <FlexEndRow style={{ width:'20%' ,zIndex:2, background:"#fff", alignItems:"flex-start"}}>    
-            <>
-            {
-              loading == true && 
-              <div style={WorkLayoutstyle}>
-     
-
-              <FlexstartRow style ={{height:'50px', padding:"10px 30px"}}>
-
-                <IconButton onPress={_handleFilter} icon={'filter'} iconcolor={'#ff6969'} width={'40%'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'필터'} containerStyle={{fontSize:16, padding:"8px 10px", fontWeight:500,
-                  background: "#ff4e1917"
-                }}/>
-                <IconButton icon={'reset'}  iconcolor={'#999'} onPress={()=>{}} width={'40%'}  radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'초기화'} containerStyle={{fontSize:16, padding:"8px 10px", fontWeight:500,
-                  background: "#ff4e1917", marginLeft:10}}/>
-        
-              </FlexstartRow>
-
-              <ListContainer>
-                {
-                  items.map((item, index)=>(
-                    <>
-                    {
-                      item.TYPE == FILTERITMETYPE.HONG &&
-                      <PCWorkMapItem key={index}  
-                      ref={(el) => itemRefs.current[index] = el}  
-                      selected = {index == selectworkitemindex}
-                      onPress={_handleSelectWork} index={index} width={'82%'} workdata={item} />
-                    }
-
-                   {
-                      item.TYPE == FILTERITMETYPE.ROOM &&
-                      <PCRoomMapItem key={index}  
-                      ref={(el) => itemRefs.current[index] = el}  
-                      selected = {index == selectroomitemindex}
-                      onPress={_handleSelectRoom} index={index} width={'82%'} roomdata={item} />
-                    }
-
-                    </>
-
-                  ))
-                }
-              </ListContainer>
-           
-              </div>
-            }
-            </>
-        </FlexEndRow> */}
         <div style={{display:"flex", width:'100%'}}>
           <div id="map" className="Map" style={mapstyle}></div>
         </div>  
       </Row>
-
+{/* 
       {
         guidedisplay == true &&
 
@@ -866,8 +850,10 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
         <div style={GuideButtonStyle}>지역범위 재설정</div>
         <span style={GuideTextStyle}>무분별한 지원 및 개인정보 보호를 위해 접속하신 위치에서 2.5KM 지역내 일감만 표시됩니다</span>
         </div>
-      }
+      } */}
    
+ 
+
 
 
     </Container>

@@ -261,7 +261,7 @@ export const Requestcleanmessages =[
       type:"requestregion", 
       show:false, 
       index:21,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -271,7 +271,7 @@ export const Requestcleanmessages =[
       type:"requestcomment", 
       show:false, 
       index:23,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -447,7 +447,7 @@ export const Requestbusinesscleanmessages =[
       type:"requestregion", 
       show:false, 
       index:21,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -457,7 +457,7 @@ export const Requestbusinesscleanmessages =[
       type:"requestcomment", 
       show:false, 
       index:23,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -631,7 +631,7 @@ export const Requestmovecleanmessages =[
       type:"requestregion", 
       show:false, 
       index:21,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -641,7 +641,7 @@ export const Requestmovecleanmessages =[
       type:"requestcomment", 
       show:false, 
       index:23,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -817,7 +817,7 @@ export const Requestfoodpreparemessages =[
       type:"requestregion", 
       show:false, 
       index:21,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -827,7 +827,7 @@ export const Requestfoodpreparemessages =[
       type:"requestcomment", 
       show:false, 
       index:23,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -963,7 +963,7 @@ export const Requesterrandmessages =[
       type:"requestregion", 
       show:false, 
       index:15,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -973,7 +973,7 @@ export const Requesterrandmessages =[
       type:"requestcomment", 
       show:false, 
       index:17,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -1121,7 +1121,7 @@ export const Requestgooutschoolmessages =[
       type:"requestregion", 
       show:false, 
       index:17,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -1131,7 +1131,7 @@ export const Requestgooutschoolmessages =[
       type:"requestcomment", 
       show:false, 
       index:19,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -1295,7 +1295,7 @@ export const Requestbabycaremessages =[
       type:"requestregion", 
       show:false, 
       index:19,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -1305,7 +1305,7 @@ export const Requestbabycaremessages =[
       type:"requestcomment", 
       show:false, 
       index:21,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -1476,7 +1476,7 @@ export const Requestlessonmessages =[
       type:"requestregion", 
       show:false, 
       index:19,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -1486,7 +1486,7 @@ export const Requestlessonmessages =[
       type:"requestcomment", 
       show:false, 
       index:21,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -1659,7 +1659,7 @@ export const Requestpatientcaremessages =[
       type:"requestregion", 
       show:false, 
       index:19,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -1669,7 +1669,7 @@ export const Requestpatientcaremessages =[
       type:"requestcomment", 
       show:false, 
       index:21,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -1808,7 +1808,7 @@ export const Requestcarryloadmessages =[
       type:"requestregion", 
       show:false, 
       index:15,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -1818,7 +1818,7 @@ export const Requestcarryloadmessages =[
       type:"requestcomment", 
       show:false, 
       index:17,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -1989,7 +1989,7 @@ export const Requestgohospitalmessages =[
       type:"requestregion", 
       show:false, 
       index:19,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -1999,7 +1999,7 @@ export const Requestgohospitalmessages =[
       type:"requestcomment", 
       show:false, 
       index:21,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -2160,7 +2160,7 @@ export const Requestrecipetranmitmessages =[
       type:"requestregion", 
       show:false, 
       index:19,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -2170,7 +2170,7 @@ export const Requestrecipetranmitmessages =[
       type:"requestcomment", 
       show:false, 
       index:21,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -2301,7 +2301,7 @@ export const Requestschooleventmessages =[
       type:"requestregion", 
       show:false, 
       index:15,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -2311,7 +2311,7 @@ export const Requestschooleventmessages =[
       type:"requestcomment", 
       show:false, 
       index:17,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -2442,7 +2442,7 @@ export const Requestshoppingmessages =[
       type:"requestregion", 
       show:false, 
       index:15,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -2452,7 +2452,7 @@ export const Requestshoppingmessages =[
       type:"requestcomment", 
       show:false, 
       index:17,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -2586,7 +2586,7 @@ export const Requestdoghospitalmessages =[
       type:"requestregion", 
       show:false, 
       index:15,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -2596,7 +2596,7 @@ export const Requestdoghospitalmessages =[
       type:"requestcomment", 
       show:false, 
       index:17,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },
@@ -2730,7 +2730,7 @@ export const Requestdogwalkmessages =[
       type:"requestregion", 
       show:false, 
       index:15,
-      info:"도움이 필요한곳의 지역을 지도에서 클릭해주세요",
+      info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
@@ -2740,7 +2740,7 @@ export const Requestdogwalkmessages =[
       type:"requestcomment", 
       show:false, 
       index:17,
-      info:"도움이 필요한내용을 간단하게 적어주세요(20자내외, 필수사항 아님)",
+      info:"도움이 필요한내용을 간단하게 적어주세요",
       selected : false,
     
     },

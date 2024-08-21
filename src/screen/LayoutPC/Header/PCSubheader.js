@@ -20,6 +20,7 @@ import PcAipopup from "../../../modal/PcAiPopup/PcAiPopup";
 import Loading from "../../../components/Loading";
 import { useDispatch } from "react-redux";
 import { ALLROOM, ALLWORK } from "../../../store/menu/MenuSlice";
+import { GoPlus } from "react-icons/go";
 
 
 const PCHeader = styled.div`
@@ -50,7 +51,7 @@ display: flex;
 padding-left: 24px;
 color : #ff4e19;
 font-size:30px;
-width:45%;
+width:55%;
 align-items:center;
 justify-content: flex-start;
 `;
@@ -60,7 +61,7 @@ padding-right: 20px;
 flex-direction:row;
 font-size:14px;
 justify-content:space-between;
-width:38%;
+width:32%;
 `
 const OneHeaderLoginMenu = styled.div`
 display: flex;
@@ -83,8 +84,8 @@ const EventDesc = styled.div`
 
 const MainMenuText = styled.div`
   font-size: 20px;
-  color: ${({clickstatus}) => clickstatus == true ? ('#ff2a75') :('#595959') };
-  font-weight: ${({clickstatus}) => clickstatus == true ? ('600') :('600') };
+  color: ${({clickstatus}) => clickstatus == true ? ('#ff2a75') :('#131313') };
+  font-weight: 400;
 `
 
 
@@ -158,7 +159,7 @@ export const Minibanner =({pagename}) =>{
 };
 
 
-const PCSubheader = ({callback, name}) => {
+const PCSubheader = ({callback, name, registmapbtn}) => {
   const navigation = useNavigate();
   const reduxdispatch = useDispatch();
 
@@ -186,6 +187,10 @@ const PCSubheader = ({callback, name}) => {
     }
   };
 
+
+  const _handleRegister = () =>{
+    navigation("/Pcworkregister");
+  }
 
   /**
    * 메인 메뉴의 클릭상태를 표시 한다
@@ -322,7 +327,11 @@ const PCSubheader = ({callback, name}) => {
      
       </TwoContainer>
       {registbutton == true && (
-          <div className="RegisterShowButton" onClick={()=>{}}> 등록</div>
+          <div className="RegisterShowButton" onClick={()=>{}}><GoPlus/>등록</div>
+        )}
+      {registmapbtn == true  && (
+          <div className="RegisterShowButton" onClick={_handleRegister}>
+            <GoPlus/>등록</div>
         )}
   </PCHeader>
   );
