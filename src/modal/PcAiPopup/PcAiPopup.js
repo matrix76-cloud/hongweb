@@ -38,6 +38,8 @@ import { FaListCheck } from "react-icons/fa6";
 import ReactTyped from "react-typed";
 
 import { GrUploadOption } from "react-icons/gr";
+import LottieAnimation from "../../common/LottieAnimation";
+import TypingText from "../../common/TypingText";
 
 
 const formatter = buildFormatter(koreanStrings); 
@@ -125,15 +127,13 @@ const SearchLayer = styled.div`
   width:309px; 
   background:#fff;
   height:100%;
-  padding : "24px 1px 24px 24px";
   font-family: 'Pretendard-SemiBold',
 
 `
 const SearchContent={
-  padding: '24px',
   display: 'flex',
   flexDirection: 'column',
-  maxHeight: '480px',
+  maxHeight: '530px',
   fontFamily: 'Pretendard-SemiBold',
   overflowY: "auto"
 }
@@ -156,10 +156,36 @@ const ResultContent = {
   backgroundColor:"#f9f9f9"
 }
 
+const ResultContent1 = {
+  width: '730px',
+  height: '300px',
+  padding: '20px 20px 0px 20px',
+  fontSize: '16px',
+  fontFamily: 'Pretendard-Light',
+  lineHeight: 2,
+  outline:"none",
+  resize :"none",
+  border:"none",
+  backgroundColor:"#f9f9f9"
+}
+
+const ResultContent2 = {
+  width: '700px',
+  height: '90px',
+  padding: '10px 25px 0px 25px',
+  fontSize: '16px',
+  fontFamily: 'Pretendard-Light',
+  lineHeight: 2,
+  outline:"none",
+  resize :"none",
+  border:"2px dotted #00B8A9",
+
+}
+
 const InputContent = {
-  width:'710px',
+  width:'600px',
   margin:'5px 10px',
-  border :'1px solid #FF7125',
+  border :'none',
   borderRadius: '5px',
   backgroundColor :'#fff',
   fontFamily: 'Pretendard-Light'
@@ -172,7 +198,6 @@ const SearchDBKeyword = styled.div`
   font-family: 'Pretendard-Regular';
   display:flex;
   flex-direction:row;
-  height:45px;
   gap:6px;
   font-weight:500;
   font-size:18px;
@@ -190,6 +215,8 @@ const ControlLayer = styled.div`
   flex-direction:row;
   height:14px;
   line-height:18.2px;
+  justify-content: center;
+  align-items:center;
 `
 const MemoInfoblink = styled.div`
     position: relative;
@@ -236,12 +263,33 @@ const KeywordMain = styled.div`
   font-size:20px;
   line-height:26px;
   color :#131313;
+  padding:15px;
+`
+const SearchItem = styled.div`
+  display:flex;
+  flex-direction:column;
+  background-color : ${({bgColor}) => bgColor};
+  height:70px; 
+  padding: 20px 15px;
+`
+const MemoButton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height:44px;
+  border: 1px solid #f75100;
+  width: 118px;
+  border-radius: 4px;
+
+
+
 `
 
 const PcAipopup = ({ search,callback, top, left, height, width }) =>{
   const [open, setOpen] = useState(true);
   const [currentloading, setCurrentloading] = useState(true);
   const [searchresult, setSearchresult] = useState('');
+
   const [searchitems, setSearchitems] = useState([]);
   const [search_id, setSearch_id] = useState('');
   const [search_comment, setSearch_comment] = useState('');
@@ -339,6 +387,7 @@ const PcAipopup = ({ search,callback, top, left, height, width }) =>{
 
     setCurrentloading(true);
     setSearchresult("");
+    // setSearch_id("");
     
 
     const result = await model.generateContent(research);
@@ -378,18 +427,15 @@ const PcAipopup = ({ search,callback, top, left, height, width }) =>{
 
     const FindIndex = items.findIndex(x=>x.SEARCH == search);
     setSearch_id(items[FindIndex].SEARCH_ID);
-    setSearch_comment(items[FindIndex].USERCOMMENT);
 
-    let AddComment = items[FindIndex].CONTENT;
-
-    if(items[FindIndex].USERCOMMENT != undefined){
-      AddComment +="\n";
-      AddComment +="[사용자 메모]";
-      AddComment +="\n";
-      AddComment +=items[FindIndex].USERCOMMENT;
+    if(items[FindIndex].USERCOMMENT != undefined && items[FindIndex].USERCOMMENT != '' ){
+      setSearch_comment(items[FindIndex].USERCOMMENT);
+    }else{
+      setSearch_comment('');
     }
+ 
 
-    setSearchresult(AddComment);
+    setSearchresult( items[FindIndex].CONTENT);
     setRefresh((refresh) => refresh +1);
   }
 
@@ -429,15 +475,6 @@ const PcAipopup = ({ search,callback, top, left, height, width }) =>{
       ) : null}
 
 
-      {
-        currentloading == true && 
-     
-
-        <img src={imageDB.sample30} style={{width:100, height:100,
-          zIndex:11,
-          position:"absolute", top:'40%', left:'57%'}} />
-
-      }
 
 
       <Modal
@@ -464,72 +501,125 @@ const PcAipopup = ({ search,callback, top, left, height, width }) =>{
               </Poptilt>
               <Popcontent>
                 <Row style={{height:"100%"}}>
-                  <SearchLayer>
-                    <div style={SearchContent}>
-                        <KeywordMain>{'검색어'}</KeywordMain>
 
-                        <div style={{marginTop:10}}>
-                          {
-                            searchitems.map((data)=>(
-                              <FlexstartColumn style={{height:70, margin:"20px 0px"}}>
-                               <FlexstartRow >
-                                
-                                <SearchDBKeyword onClick={()=>{_handleDBSearch(data.SEARCH, searchitems)}}> 
-                                  {data.SEARCH.slice(0, 50)}
-                                  {data.SEARCH.length > 50 ? "..." : null}
-                                </SearchDBKeyword> 
+                    {
+                      currentloading == true ?
                       
-                               </FlexstartRow>
+                      (<LottieAnimation containerStyle={{zIndex:11}} animationData={imageDB.loadinglarge}/>) :(
+                        <>
+                          <SearchLayer>
+                            <div style={SearchContent}>
+                                <KeywordMain>{'검색어'}</KeywordMain>
 
-                               <FlexEndRow style={{width:"100%", paddingTop:5, paddingBottom:10}}>
-                         
-                                <ControlLayer>
-                                  <TimeAgo date={getFullTime(data.CREATEDT)}formatter={formatter}/>
-                                  <div  onClick={()=>{_handleMemoDelete(data.SEARCH_ID)}} style={{textDecoration:"underline", marginLeft:10, color:'#A16D6D'}}>삭제</div>
-                                </ControlLayer>
+                                <div style={{marginTop:10}}>
+                                  {
+                                    searchitems.map((data, index)=>(
+                                      <SearchItem bgColor={ index % 2 == 0 ?("#fff") :('#F5FBFF')}>
+                                      <FlexstartRow >
+                                        
+                                        <SearchDBKeyword onClick={()=>{_handleDBSearch(data.SEARCH, searchitems)}}> 
+                                          {data.SEARCH.slice(0, 50)}
+                                          {data.SEARCH.length > 50 ? "..." : null}
+                                        </SearchDBKeyword> 
                               
-                              </FlexEndRow>
-                           
-                              </FlexstartColumn>
-                         
+                                      </FlexstartRow>
+
+                                      <Row style={{width:"100%", paddingTop:5, paddingBottom:10, justifyContent:"space-between"}}>
+                                
+                                        <ControlLayer>
+                                          {
+                                            data.USERCOMMENT != undefined && <img src={imageDB.memo} style={{width:'16px', height:'16px', marginRight:5}}/>
+                                          }
+                                          <TimeAgo date={getFullTime(data.CREATEDT)}formatter={formatter}
+                                            style={{fontWeight:400, fontSize:14, color :"#A3A3A3"}}
+                                          />
+                                        </ControlLayer>
+
+                                        <ControlLayer>
+                                          <div  onClick={()=>{_handleMemoDelete(data.SEARCH_ID)}} style={{textDecoration:"underline", marginLeft:10, color:'#A16D6D', fontWeight:500}}>삭제</div>
+                                        </ControlLayer>
+                                      
+                                      </Row>
+                                  
+                                      </SearchItem>
+                                      ))
+                                  }
+                                </div>
+                            </div>
+                          </SearchLayer>
+
+                          <ResultLayer>
+
                       
-                              ))
-                          }
-                        </div>
-                    </div>
-                  </SearchLayer>
 
-                  <ResultLayer>
-                    <textarea style={ResultContent} value={searchresult} />
-                    <div style={{height:48}}>
-                      <input type={'text'} style={InputContent} value={research}
-                        placeholder={'검색어로는 15자 이상 입력해주세요'}
-                        onKeyDown={handleKeyDown} 
-                        onChange={(e) => {
-                            setResearch(e.target.value);
-                            setRefresh((refresh) => refresh +1);
-                          }}/>
-                      <div style={{position: "absolute",top: "545px",right: "30px"}}>
-                        {
-                          research.length < 15  ? ( <img src={imageDB.uploaddisable} style={{width:30}}/>) :(
-                            <img src={imageDB.uploadenable} style={{width:30}} onClick={AIResearch} />
-                          )
-                        }
-                     
-                      </div>
-                    </div>
+                            {
+                              search_comment == '' ? ( 
+                                <>
+                                  {
+                                    search_id == '' ?(    <TypingText text={searchresult} style={ResultContent} speed={50} />):(
+                                      <textarea style={ResultContent} value={searchresult} />
+                                    )
+                                  }
+                                </>
+                          
+                          
+                              
+                              ):(
+                                <div>
+                                  <textarea style={ResultContent1} value={searchresult} />
+                                  <textarea style={ResultContent2} value={search_comment} />
+                                  <div style={{position:'absolute', top: '454px',left: '314px'}}><img src={imageDB.memo} style={{width:20, height:20}}/></div>
+                                </div>
+                              )
+                            }
+                  
+                            <Row>
 
-                    <div style={{height:44, marginTop:10, display:"flex",marginRight:20,
-                     flexDirection:"row", justifyContent:"flex-end", alignItems:"center"}}>
+                              <Column style={{width:"140px" , height:70}}>
 
-                      <div style={{color:"#00B8A9", border :"1px solid #00B8A9", padding:"10px 15px", marginRight:10, borderRadius:20, fontSize:12 }}>메모저장을 클릭하면 메모를 별도로 저장할 수 있습니다.</div>
-                      <Button text={"메모저장"} onPress={_handleMemo}
-                      containerStyle={{backgroundColor: "#FF7125", color :"#fff", border :"1px solid #ededed",borderRadius: "100px",
-                      fontSize: 16,height:38,width: "104px", gap:4, margin:"unset"}}/>
-                    </div>
+                                <MemoButton onClick={_handleMemo}>
+                                  <img src={imageDB.enablememo} style={{width:16, height:16}}/>
+                                  <span style={{color :'#F75100', fontSize:16, paddingLeft:5}}>메모저장</span>
 
-                 
-                  </ResultLayer>
+                                </MemoButton>
+              
+                              </Column>
+
+                              <Column style={{width:"620px" , height:70}}>
+                                <div style={{height:50}}>
+                                <input type={'text'} style={InputContent} value={research}
+                                  placeholder={'검색어로는 15자 이상 입력해주세요'}
+                                  onKeyDown={handleKeyDown} 
+                                  onChange={(e) => {
+                                      setResearch(e.target.value);
+                                      setRefresh((refresh) => refresh +1);
+                                    }}/>
+                                <div style={{position: "absolute",top: "560px",right: "30px"}}>
+                                  {
+                                    research.length < 15  ? ( <img src={imageDB.uploaddisable} style={{width:30}}/>) :(
+                                      <img src={imageDB.uploadenable} style={{width:30}} onClick={AIResearch} />
+                                    )
+                                  }
+                              
+                                </div>
+                              </div>
+                              </Column>
+                    
+                        
+                            </Row>
+                            <FlexstartRow style={{height:40, paddingLeft:40, display:"flex", justifyContent:"flex-start", alignItems:"flex-start"}}
+                            >
+                              <img src ={imageDB.Up} style={{width:12, height:12}}/>
+                              <div style={{color:"#00B8A9",fontSize:14, fontWeight:400, paddingLeft:5 }}>메모저장을 클릭하면 메모를 별도로 저장할 수 있습니다.</div>
+                            </FlexstartRow>
+                          
+                          </ResultLayer>
+                        </>
+                      )
+                    }
+
+
+ 
                 
                 </Row>
 

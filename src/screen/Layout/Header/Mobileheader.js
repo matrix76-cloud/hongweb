@@ -100,28 +100,28 @@ useEffect(() => {
 
 
 
-      <div style={{paddingLeft:15, width:'50%', display:"flex"}}>
+      <div style={{paddingLeft:15, width:'50%', display:"flex",color:"#636363", fontSize:"14px",fontWeight:500}}>
       남양주시 다산동
       </div>
 
-      <div style={{display:"flex", flexDirection:"row", justifyContent:"space-between", marginRight:10, width:'20%'}}>
+      <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:10, width:'20%'}}>
 
 
-
+{/* 
         <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} >
           <Image source={imageDB.bell} containerStyle={{width:20}} />
           <Badge badgeContent={0} color="warning"  style={{paddingBottom:15}}></Badge>
-        </div>
+        </div> */}
         <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} onClick={()=>{}}>
         <IoChatbubbleEllipsesOutline size={22} />
           <Badge badgeContent={1} color="warning" style={{paddingBottom:15}} className="alertblink" ></Badge>
         </div>
       </div>
 
-      {registbutton == true && (registbtn == true ) && (
+      {/* {registbutton == true && (registbtn == true ) && (
           <div className="RegisterMobileShowButton" onClick={_handleRegister}>
             <GoPlus/> 등록</div>
-        )}
+        )} */}
 
     
     </Container>

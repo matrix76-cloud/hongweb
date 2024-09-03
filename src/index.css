@@ -59,7 +59,7 @@ body {
   letter-spacing: -0.32px;
   overflow-x: hidden !important;
   line-height: 1.3;
-  font-weight:700;
+
 }
 
 .container{
@@ -159,7 +159,7 @@ input {
   font-size: 1em;
   width: 100%;
   background-color: #edeff0;
-  padding: 10px 15px;
+  padding: 10px 5px;
   border: 3px solid #d7dbdf;
   border-right: none;
   border-radius: 0.35em 0 0 0.35em;

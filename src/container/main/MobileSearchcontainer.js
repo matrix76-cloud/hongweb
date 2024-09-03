@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
@@ -38,6 +38,8 @@ import { FaListCheck } from "react-icons/fa6";
 import ReactTyped from "react-typed";
 
 import { GrUploadOption } from "react-icons/gr";
+import LottieAnimation from "../../common/LottieAnimation";
+import TypingText from "../../common/TypingText";
 
 
 const formatter = buildFormatter(koreanStrings); 
@@ -105,9 +107,9 @@ const ResultLayer = styled.div`
   height:100%;
 `
 const ResultContent = {
-  width: "90%",
+  width: "80%",
   margin: "0px auto",
-  height: "700px",
+  height: "900px",
   padding: "80px 20px 20px 20px",
   fontSize: "16px",
   fontFamily: "Pretendard-Light",
@@ -119,12 +121,13 @@ const ResultContent = {
 }
 
 const InputContent = {
-  width:'90%',
+  width:'95%',
   margin:'5px auto',
-  border :'1px solid #FF7125',
+  border :'1px solid #dadada',
   borderRadius: '5px',
   backgroundColor :'#fff',
-  fontFamily: 'Pretendard-Light'
+  fontFamily: 'Pretendard-Light',
+  flex: '0 0 auto',
 }
 
 
@@ -200,6 +203,15 @@ const KeywordMain = styled.div`
   color :#131313;
 `
 
+const LoadingAnimationStyle={
+  zIndex: 11,
+  position: "absolute",
+  top: "40%",
+  left: "35%"
+}
+
+
+
 const MobileSearchcontainer = ({ search, search_id }) =>{
 
    console.log("TCL: MobileSearchcontainer -> SEARCH", search, search_id)
@@ -214,13 +226,32 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
   const [memoenable, setMemoenable] = useState(false);
 
   const [research, setResearch] = useState('');
-
+  const inputRef = useRef(null);
 
 
   const _handleMemo = () =>{
     setMemoenable(true);
     setRefresh((refresh) => refresh +1 );
   }
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (document.activeElement === inputRef.current) {
+          setTimeout(() => {
+              inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+        window.removeEventListener('resize', handleResize);
+    };
+
+  }, []);
+
 
 
   useEffect(() => {
@@ -247,11 +278,12 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
       const USER_ID= "01062149756";
 
       let searchitemsTmp= await ReadSearchByid({USER_ID});
-      console.log("TCL: FetchData -> searchitems", searchitemsTmp)
+      console.log("TCL: FetchData -> search_id,search ", search_id, search)
 
       setSearchitems(searchitemsTmp);
 
       if(search != '' && search != undefined){
+        setCurrentloading(true);
         const result = await model.generateContent(search);
         const response = result.response;
         const text = response.text();
@@ -269,10 +301,13 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
   
         setSearchitems(searchitemsTmp);
 
+        setCurrentloading(false);
+
       }else{
         if(search_id == '' || search_id == undefined ){
 
-          _handleDBSearch(searchitemsTmp[0].SEARCH,searchitemsTmp);
+          setCurrentloading(false);
+          // _handleDBSearch(searchitemsTmp[0].SEARCH,searchitemsTmp);
         }else{
           const FindIndex = searchitemsTmp.findIndex(x=>x.SEARCH_ID == search_id);
           let  AddComment = searchitemsTmp[FindIndex].CONTENT;
@@ -284,12 +319,13 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
             AddComment +=searchitemsTmp[FindIndex].USERCOMMENT;
           }
           setSearchresult(AddComment);
+          setCurrentloading(false);
 
           setRefresh((refresh) => refresh +1);
         }
 
       }
-      setCurrentloading(false);
+
     }
   
     FetchData();
@@ -331,7 +367,7 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
     console.log("TCL: FetchData -> searchitems", searchitemsTmp)
 
     setSearchitems(searchitemsTmp);
-    setResearch("");
+    //setResearch("");
 
     setCurrentloading(false);
     setRefresh((refresh) => refresh +1);
@@ -347,6 +383,7 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
    * 사용자가 죄측 리스트에서 검색 내용을 클릭햇을때 호출 되는 함수
    * ! 클릭하면서 SEARCH_ID, USERCOMMENT 를 저장해두자(나중에 USERCOMMENT에 내용을 추가 하기 위해)
    * ! 결과값을 USERCOMMENT 를 포함해서 표현
+   * ! TODO 우선 사용 하지 않기로 함 검색어를 누르지 않고 검색 할 경우 그냥 결과 화면이 아무것도 안나오게 함
    */
   const _handleDBSearch = (search, items) =>{
 
@@ -393,6 +430,19 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
 
     setRefresh((refresh) => refresh +1);
   }
+
+  const scrollToInput = () => {
+    console.log("TCL: scrollToInput -> ", )
+   // 요소를 화면 중앙에 위치시킴
+    inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // 추가적인 스크롤을 통해 요소를 화면 중앙보다 아래로 위치시킴
+    setTimeout(() => {
+        window.scrollBy(0, 550); // 스크롤을 250px 아래로 추가 이동
+    }, 300); // smooth 스크롤의 애니메이션 시간이 약간의 지연을 줌
+
+  }
+  
   return (
     <div>
 
@@ -405,49 +455,43 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
 
 
       {
-        currentloading == true && 
-        <img src={imageDB.sample30} style={{width:50, height:50,
-          zIndex:11,
-          position:"absolute", top:'40%', left:'37%'}} />
+        currentloading == true ? ( <LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loading}
+          width={"100px"} height={'100px'}
+          />) :(<Column style={{width:'95%', margin: '0 auto'}}>
+          <Popcontent>
+            <Row style={{height:"100%"}}>
+              <ResultLayer>
 
-      }
-      <Column style={{width:'100%'}}>
-        <Popcontent>
-          <Row style={{height:"100%"}}>
-            <ResultLayer>
-              <textarea style={ResultContent} value={searchresult} />
-              <div style={{height:48, width:'95%', margin:'0 auto',position: "absolute", left:"2.5%"}}>
-                <input type={'text'} style={InputContent} value={research}
-                  placeholder={'검색어로는 15자 이상 입력해주세요'}
-                  onKeyDown={handleKeyDown} 
-                  onChange={(e) => {
-                      setResearch(e.target.value);
-                      setRefresh((refresh) => refresh +1);
-                    }}/>
-                <div style={{position: "relative", top: '-42px',left:'88%'}}>
-                  {
-                    research.length < 15  ? ( <img src={imageDB.uploaddisable} style={{width:30}}/>) :(
-                      <img src={imageDB.uploadenable} style={{width:30}} onClick={AIResearch} />
-                    )
-                  }
-                
+                <div   style={{height:60, width:'95%', margin:'60px auto 10px', display:"flex"}}>
+                  <input type={'text'} style={InputContent} value={research}
+                    class="input"
+                    placeholder={'검색어로는 10자 이상 입력해주세요'}
+                    onKeyDown={handleKeyDown} 
+                    onChange={(e) => {
+                        setResearch(e.target.value);
+                        setRefresh((refresh) => refresh +1);
+                      }}/>
+                  <div style={{position: "relative", right:"30px", top:"17px"}}>
+                    {
+                      research.length < 10  ? ( <img src={imageDB.uploaddisable} style={{width:24}}/>) :(
+                        <img src={imageDB.uploadenable} style={{width:24}} onClick={AIResearch} />
+                      )
+                    }
+                  
+                  </div>
                 </div>
-              </div>
 
-{/* 
-              <div style={{height:44, display:"flex",margin:'10px 10px 20px',flexDirection:"row", justifyContent:"space-between", alignItems:"center"}}>
+                <TypingText ref={inputRef}  text={searchresult} style={ResultContent} speed={20} mobile={true} />
+  
+        
+              </ResultLayer>
+            
+            </Row>
+  
+          </Popcontent>
+          </Column>)
+      }
 
-                <div style={{color:"#00B8A9", border :"1px solid #00B8A9", padding:"5px 15px", marginRight:10, borderRadius:20, fontSize:12 }}>메모저장을 클릭하면 메모를 별도로 저장할 수 있습니다.</div>
-                <Button text={"메모저장"} onPress={_handleMemo}
-                containerStyle={{backgroundColor: "#FF7125", color :"#fff", border :"1px solid #ededed",borderRadius: "100px",
-                fontSize: 16,height:38,width: "104px", gap:4, margin:"unset"}}/>
-              </div> */}
-            </ResultLayer>
-          
-          </Row>
-
-        </Popcontent>
-      </Column>
     </div>
   );
 };

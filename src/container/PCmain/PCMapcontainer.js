@@ -787,7 +787,7 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
       {
         selectworkitemindex != -1 && <PopupWorkEx>
           <Requestdoc INFO ={item.WORK_INFO} TYPE ={item.WORKTYPE} />
-          <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "100px",justifyContent: "space-around" }}>
+          <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "120px",justifyContent: "space-around" }}>
               <Button text={"닫기"} onPress={_handleClose}
               containerStyle={{backgroundColor: "#fff",color :"#131313",border :"1px solid #C3C3C3",borderRadius: "4px",
               fontSize: 16,height:44, marginRight:10, width: "76px",}}/>   
@@ -802,7 +802,7 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
       {
         selectroomitemindex != -1 && <PopupWorkEx>
           <Requestdoc INFO ={item.ROOM_INFO} TYPE={'공간대여'} />
-          <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "100px",justifyContent: "space-around" }}>
+          <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "120px",justifyContent: "space-around" }}>
 
             <Button text={"닫기"} onPress={_handleClose}
             containerStyle={{backgroundColor: "#fff",color :"#131313",border :"1px solid #C3C3C3",borderRadius: "4px",

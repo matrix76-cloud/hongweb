@@ -8,9 +8,10 @@ import PCMaincontainer from "../../container/PCmain/PCMaincontainer";
 import PCMapcontainer from "../../container/PCmain/PCMapcontainer";
 import { UserContext } from "../../context/User";
 import MobilePrevLayout from "../../screen/Layout/Layout/MobilePrevLayout";
+import MobilePrevLayout2 from "../../screen/Layout/Layout/MobilePrevLayout2";
 
 import PCLayout from "../../screen/LayoutPC/Layout/PCLayout";
-import { PCMAINMENU } from "../../utility/screen";
+import { MOBILEMAINMENU, PCMAINMENU } from "../../utility/screen";
 
 const Container = styled.div`
 
@@ -47,9 +48,9 @@ const MobileMappage =() =>  {
  
   return (
 
-    <MobilePrevLayout>
+    <MobilePrevLayout2 name={'남양주시 다산동'} type={MOBILEMAINMENU.REGIONMENU}>
         <MobileMapcontainer  ID={location.state.ID} TYPE={location.state.TYPE}  />
-    </MobilePrevLayout>
+    </MobilePrevLayout2>
   );
 
 }

@@ -19,7 +19,7 @@ const MobileLayout = (props) => {
       <main>
         {props.children}
       </main>
-      <MobileFooter/>
+      <MobileFooter type={props.type}/>
     </div>
   );
 };

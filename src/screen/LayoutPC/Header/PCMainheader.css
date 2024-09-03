@@ -6,3 +6,36 @@ input::placeholder{
 
 
 
+.dropdown{
+  position : relative;
+  display : inline-block;
+  flex-direction: row;
+}
+
+
+.dropdown-content{
+  display: block;
+  border: none;
+  height: 150px;
+  position: absolute;
+  background-color: #1b1818;
+  width: 600px;
+  z-index: 1;
+  text-align: left;
+  color: #c0b6b6;
+  font-size: 14px;
+  flex-direction: row;
+  font-weight: 700;
+  padding: 10px;
+
+ 
+}
+
+
+.dropdown-nav{
+  display : flex;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}

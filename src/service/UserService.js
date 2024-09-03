@@ -1,6 +1,6 @@
 import { db, auth, storage, firebaseConfig, firebaseApp } from '../api/config';
 import { collection, getDocs, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPhoneNumber, signOut, updateProfile } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
@@ -190,131 +190,81 @@ export const get_userInfoForKakaoID = async ({ kakaoID }) => {
 };
 
 
+export const Create_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE}) =>{
 
-export const update_userdevice = async({USERID, DEVICEID}) =>{
+  let success = true;
 
+  try{
 
-    const userRef = collection(db, "USERS");
+     const userRef = doc(collection(db, "USERS"));
+     const id = userRef.id;
+     const newuser = {
+         USERS_ID : id,
+         DEVICEID : DEVICEID,
+         TOKEN : TOKEN,
+         LATITUDE : LATITUDE,
+         LONGITUDE : LONGITUDE,
+     
+     }
+     await setDoc(userRef, newuser);
+   
+    
 
-    let deviceid = "";
-    if(DEVICEID == ''){
-        deviceid ="";
-    }else{
-        deviceid = DEVICEID;
-    }
-    const rows = query(userRef, where("USER_SESSION",'==', USERID ));
-
-    try{
-        const querySnapshot =  await getDocs(rows);
-
-        querySnapshot.forEach(function (doc) {
-            updateDoc(doc.ref, {
-                DEVICEID  : deviceid,
-            });
-        });
-
-    }catch(e){
-         console.log("error", e.message);
-    }finally{
-        return;
-    }
-
-}
-export const update_userkakaoid = async ({ USERID, kakaoID }) => {
-  const userRef = collection(db, "USERS");
-
-  const rows = query(userRef, where("USER_SESSION", "==", USERID));
-
-  try {
-    const querySnapshot = await getDocs(rows);
-
-    querySnapshot.forEach(function (doc) {
-      updateDoc(doc.ref, {
-        kakaoID: kakaoID,
-      });
-    });
-  } catch (e) {
-    console.log("error", e.message);
-  } finally {
+  }catch(e){
+      console.log("auth ", e.message);
+      success =false;
+      return null;
+  }finally{
     return;
   }
-};
-
-
-export const get_userInfoForDevice = async({DEVICEID}) =>{
-
-
-    const userRef = collection(db, "USERS");
-    
-    const q = query(userRef, where("DEVICEID",'==', DEVICEID));
- 
-    let useritem = null;
-    try{
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            useritem =  doc.data();
-        });
-    
-        if(querySnapshot.size < 0){
-            return null;
-        }
-
-    }catch(e){
-
-    }finally{
-
-        return new Promise((resolve, resject)=>{
-            resolve(useritem);
-        }) 
-
-    }
-   
-
 }
-export const get_userInfoForPhone = async ({ USER_TEL }) => {
+export const Read_userdevice = async({DEVICEID}) =>{
+
   const userRef = collection(db, "USERS");
+  const q = query(userRef, where("DEVICEID",'==', DEVICEID ));
 
-  const q = query(userRef, where("USER_TEL", "==", USER_TEL));
+  let success = false;
+  let searchitems = [];
 
-  let useritem = null;
   try {
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      useritem = doc.data();
+      searchitems.push(doc.data());
     });
 
-    if (querySnapshot.size < 0) {
-      return null;
+    if (querySnapshot.size > 0) {
+      success = true;
     }
   } catch (e) {
+    console.log("error", e.message);
   } finally {
     return new Promise((resolve, resject) => {
-      resolve(useritem);
+      if (success) {
+        resolve(searchitems);
+      } else {
+        resolve(-1);
+      }
     });
   }
-};
 
+}
 
-export const reset_userdevice = async({USERID, DEVICEID}) =>{
+export const Update_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE}) =>{
 
-    console.log("update_userdevice", USERID, DEVICEID);
 
     const userRef = collection(db, "USERS");
 
-    let deviceid = "";
-    if(DEVICEID == ''){
-        deviceid ="";
-    }else{
-        deviceid = "";
-    }
-    const rows = query(userRef, where("USER_SESSION",'==', USERID ));
+    const rows = query(userRef, where("DEVICEID",'==', DEVICEID ));
 
     try{
         const querySnapshot =  await getDocs(rows);
 
         querySnapshot.forEach(function (doc) {
             updateDoc(doc.ref, {
-                DEVICEID  : "",
+                DEVICEID  : DEVICEID,
+                TOKEN  : TOKEN,
+                LATITUDE  : LATITUDE,
+                LONGITUDE  : LONGITUDE,
             });
         });
 
@@ -326,95 +276,24 @@ export const reset_userdevice = async({USERID, DEVICEID}) =>{
 
 }
 
-export const logout = async () =>{
-
-    // return await authService.signOut();
-
-    return new Promise((resolve, resject)=>{
-
-        const auth = getAuth();
-        signOut(auth).then(() => {
-             resolve(0);
-        }).catch((error) => {
-            // An error happened.
-             console.log(error);
-             resolve(-1);
-        });
-
-    }) 
-
-
-
-
-}
-
-export const update_userdistance = async({USERID, DISTANCE}) =>{
-
-   
-    const userRef = collection(db, "USERS");
-
-
-    const rows = query(userRef, where("USER_SESSION",'==', USERID ));
-
-    try{
-        const querySnapshot =  await getDocs(rows);
-
-        querySnapshot.forEach(function (doc) {
-            updateDoc(doc.ref, {
-                DISTANCE  : DISTANCE,
-            });
-        });
-
-    }catch(e){
-         console.log("error", e.message);
-    }finally{
-        return;
-    }
-
-}
-
-
-export const Update_userimg = async({USERID, img}) =>{
-
-
-  const userRef = collection(db, "USERS");
-
-
-  const rows = query(userRef, where("USER_SESSION",'==', USERID ));
-
-  try{
-      const querySnapshot =  await getDocs(rows);
-
-      querySnapshot.forEach(function (doc) {
-          updateDoc(doc.ref, {
-              USER_IMAGE  : img,
-          });
-      });
-
-  }catch(e){
-       console.log("error", e.message);
-  }finally{
-      return;
-  }
-
-}
-
-export const DuplicatePhone = async ({ USER_TEL }) => {
-  const reviewRef = collection(db, "USERS");
-  const q = query(reviewRef, where("USER_TEL", "==", USER_TEL));
-
-  let user = null;
-
+export const get_phonenumber = async ()=>{
   try {
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (doc) => {
-      user = doc.data();
-    });
-  } catch (e) {
-    console.log("review read error", e);
-  } finally {
-    return new Promise((resolve, resject) => {
-      resolve(user);
-    });
-  }
-};
+  
+     const recaptchaVerifier = auth.RecaptchaVerifier;
+     const appVerifier = recaptchaVerifier;
+
+      const phoneNumber = "+82 01062149756";
+
+
+      // const confirmation = await signInWithPhoneNumber(authService, "+82 01062149756",appVerifier);
+  
+      const confirmation = await signInWithPhoneNumber({auth, phoneNumber,appVerifier});
+
+      console.log("phone auth")
+    } catch (error) {
+      alert(error);
+
+      console.log("err", error);
+    }
+
+}

@@ -1,0 +1,15 @@
+
+.custom-table tbody tr td:first-child {
+    text-align: left;
+    background-color: #FAFAFA;
+    font-weight: 600;
+    min-width: 10px;
+    max-width: 10px;
+    width: 50px;
+    color :#000;
+
+
+}
+.custom-table tr td{
+    line-height: 2;
+}

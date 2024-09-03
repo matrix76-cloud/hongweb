@@ -1,0 +1,6 @@
+textarea::placeholder{
+    color : #788391;
+    font-size : 12px;
+    padding :5px 10px;
+  }
+

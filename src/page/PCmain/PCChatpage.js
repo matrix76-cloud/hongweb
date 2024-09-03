@@ -44,9 +44,9 @@ const PCChatpage =() =>  {
  
   return (
 
-    <PCChatLayout >
+    <PCLayout main={true} name={PCMAINMENU.CHATMENU}>
         <PCChatcontainer/>
-    </PCChatLayout>
+    </PCLayout>
   );
 
 }

@@ -1,17 +1,18 @@
-import React, { Fragment, useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import {Navigate, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
 
 import { DataContext } from "../../context/Data";
 
-import { Column, FlexstartColumn } from "../../common/Column";
+import "./MobileRegister.css"
+import { BetweenColumn, Column, FlexstartColumn } from "../../common/Column";
 import Button from "../../common/Button";
-import { Row } from "../../common/Row";
+import { AroundRow, BetweenRow, Row } from "../../common/Row";
 import Fade from "react-reveal/Fade";
 import { HOMECLEAN_REQUESTINFO, Requestbabycaremessages, Requestbusinesscleanmessages, Requestcarryloadmessages, Requestcleanmessages, Requestdoghospitalmessages, Requestdogwalkmessages, Requesterrandmessages, Requestfoodpreparemessages, Requestgohospitalmessages, Requestgooutschoolmessages, REQUESTINFO, Requestlessonmessages, Requestmovecleanmessages, Requestpatientcaremessages, Requestrecipetranmitmessages, Requestschooleventmessages, Requestshoppingmessages, WORKNAME, WORKPOLICY } from "../../utility/work";
 import { useSleep } from "../../utility/common";
-import { Seekimage } from "../../utility/imageData";
+import { imageDB, Seekimage } from "../../utility/imageData";
 import Text from "../../common/Text";
 
 import Calendar from "react-calendar";
@@ -27,20 +28,30 @@ import { Requestlargemessages, Requestmediummessages, Requestsmallmessages, ROOM
 import { CreateWork } from "../../service/WorkService";
 import { CreateRoom } from "../../service/RoomService";
 import ImageUploadComponent from "../../components/ImageUpload";
+import Label from "../../common/Label";
 
 
 
 const Container = styled.div`
-
-    margin: 0px auto;
-    background: #f9f9f9;
-   
-    justify-content: flex-start;
-    display : flex;
-    align-items:flex-start;
-    flex-direction:column;
-    height: 3500px;
+  background :#f3f3f3;
+  height:3600px;
+  display:flex;
+  flex-direction:column;
 `
+const ContentLayer = styled.div`
+  display: flex;
+  flex-direction : column;
+  width: 100%;
+  justify-content:center;
+  align-items:center;
+  margin : 0px auto;
+  font-size : 16px;
+  font-weight:400;
+  color :#131313;
+
+
+`
+
 const ResponseContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -58,14 +69,14 @@ const TitleLayer = styled.div`
   background: #fffefe;
   width: 100%;
   z-index: 5;
-  top: 30px;
-  border-top: 1px solid;
-  border-right: 1px solid;
+  top: 135px;
+  border-top: 1px solid #ededed;
+  border-right: 1px solid #ededed;
 `
 const Title = styled.div`
-  font-size: 25px;
+  font-size: 20px;
   line-height: 60px;
-  font-weight :700;
+  font-weight :600;
   margin-left:10px;
 
 `
@@ -99,53 +110,90 @@ const ItemLeftBox = styled.div`
   border-radius: 10px;
   padding: 20px;
   margin: 5px 10px 0px;
-  color: black;
+  color: #131313;
   display: flex;
   flex-direction: column;
   width: ${({width}) => width};
   font-size: 16px;
   text-align: left;
   min-width:220px;
+  font-weight:400;
+
 
 `;
 
 
 const SelectLayer = styled.div`
-  border: 1px solid #ededed;
-  width: 95px;
-  margin: 10px 3px;
-  background: ${({check}) => check == true ? ('#3a3737'):('#fff')};
-  color: ${({check}) => check == true ? ('#fff'):('#000')};
-  border-radius: 10px;
-  font-size:14px;
+  border: 1px solid #C3C3C3;
+  width: 48%;
+  margin: 5px 0px;
+  border: ${({check}) => check == true ? ('1px solid #F75100'):('1px solid #C3C3C3')};
+  color: #131313;
+  font-weight:600;
+  border-radius: 5px;
+  font-size:16px;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px;
-  padding: 0px 3px;
+  height: 44px;
 `;
 
 const ItemRightLayer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
   margin-top: 5px;
   margin-bottom: 5px;
 `;
 const ItemRightBox = styled.div`
-  background: #FF7125;
-  border-radius: 10px;
+  background: #FFF;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border : 1px solid #F75100;
   padding: 10px 16px;
   margin: 10px 10px 0px;
-  color: #fff;
+  color: #000;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: flex-end;
   font-size: 16px;
   text-align: left;
 `;
+
+const ProgressLayer = styled.div`
+  position: absolute;
+  background: rgb(19, 19, 19);
+  width: 220px;
+  border-radius: 5px;
+  padding: 6px 12px;
+  color: rgb(255, 255, 255);
+  top: 10px;
+  z-index: 5;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px; /* 화살표를 대화창 아래쪽에 위치시키기 위한 설정 */
+    left: 150px; /* 화살표를 대화창의 왼쪽에서 20px만큼 떨어뜨리기 */
+    border-width: 10px; /* 삼각형의 크기 */
+    border-style: solid;
+    border-color: rgb(19,19,19) transparent transparent transparent;
+  }
+
+`
+const ProgressLayerText = styled.div`
+
+  font-size:14px;
+  font-weight:700;
+
+`
 
 export const StyledCalendarWrapper = styled.div`
   width: 100%;
@@ -160,7 +208,6 @@ export const StyledCalendarWrapper = styled.div`
 export const StyledCalendar = styled(Calendar)`
 
 width: 100%;
-max-width: 300px;
 background: white;
 border: 1px solid #a0a096;
 line-height: 1.125em;
@@ -185,10 +232,10 @@ text-decoration: none; /* 밑줄 제거 */
 }
 
 .react-calendar__tile {
-  padding: 10px;
   background: none;
   font-size: 16px; /* 날짜 타일 글자 크기 */
   color: #4d4d4d;
+  padding: 5px 6.6667px;
 }
 
 .react-calendar__tile--now {
@@ -227,6 +274,7 @@ const ResultContent2 = {
   width: '180px',
   height: '100px',
   fontSize: '16px',
+  paddingLeft: 5,
   fontFamily: 'Pretendard-Regular',
   lineHeight: 2,
   outline:"none",
@@ -234,22 +282,27 @@ const ResultContent2 = {
   border:"none",
  
 }
-
+const CommentContent = {
+  width: '280px',
+  height: '128px',
+  fontSize: '16px',
+  fontFamily: 'Pretendard-Regular',
+  lineHeight: 2,
+  outline:"none",
+  resize :"none",
+  border:"1px solid #FF7125",
+}
 
 
 const { kakao } = window;
 
 const mapstyle = {
-  width:'350px',
-  height:'400px'
+  width:'300px',
+  height:'320px'
 };
 
 
 const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
-console.log("TCL: MobileRegistcontainer -> type", type)
-
-
-    
 
   const { dispatch, user } = useContext(UserContext);
   const { datadispatch, data } = useContext(DataContext);
@@ -317,6 +370,10 @@ console.log("TCL: MobileRegistcontainer -> type", type)
   const [address, setAddress] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+
+  const useCommentRef= useRef(null);
+  const useCompleteRef = useRef(null);
+
 
 
     /*
@@ -585,7 +642,7 @@ console.log("TCL: MobileRegistcontainer -> type", type)
     setRefresh((refresh) => refresh +1);
   }
 
-  const _handleCommentNext = (index)=>{
+  const _handleCommentNext = async(index)=>{
     let data = seekstepcheck(index);
 
 
@@ -598,6 +655,12 @@ console.log("TCL: MobileRegistcontainer -> type", type)
     messages[index+1].result = comment;
     messages[index+2].show =true;
     setRefresh((refresh) => refresh +1);
+
+    await useSleep(500);
+    useCompleteRef.current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   }
 
   /**
@@ -742,7 +805,7 @@ console.log("TCL: MobileRegistcontainer -> type", type)
   /**
    * 지역 선택
    */
-  const _handleRegionNext = (index) =>{
+  const _handleRegionNext = async(index) =>{
 
     let data = seekstepcheck(index);
 
@@ -759,7 +822,23 @@ console.log("TCL: MobileRegistcontainer -> type", type)
     console.log("TCL: _handleRegionNext -> address", address,messages)
     messages[index+2].show = true;
 
+   
+
     setRefresh((refresh) => refresh +1);
+    await useSleep(500);
+    if(type==ROOMSIZE.SMALL || type == ROOMSIZE.MEDIUM | type == ROOMSIZE.LARGE){
+      useCompleteRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    }else{
+      useCommentRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    }
+ 
+
   }
 
 
@@ -783,7 +862,7 @@ console.log("TCL: MobileRegistcontainer -> type", type)
       const work = await CreateRoom({USER_ID, ROOMTYPE, ROOM_INFO});
       alert("성공적으로 등록 되었습니다");
   
-      navigate("/PCroom");
+      navigate("/Mobileroom");
 
 
     }else{
@@ -796,7 +875,7 @@ console.log("TCL: MobileRegistcontainer -> type", type)
       const work = await CreateWork({USER_ID,WORKTYPE, WORK_INFO});
       alert("성공적으로 등록 되었습니다");
   
-      navigate("/PCmain");
+      navigate("/Mobilemain");
     }
 
 
@@ -903,32 +982,52 @@ console.log("TCL: MobileRegistcontainer -> type", type)
   return (
     <>
       <Container style={containerStyle}>
-          <TitleLayer>
+
+        <Row style={{background:"#fff", height:'120px', position:"fixed", zIndex:5, width:"100%", marginTop:50}}>
+
+          <AroundRow style={{width:"100%", paddingTop:40}}>
             <Row>
-              <img src={Seekimage(type)} style={{width:64}}/>
+              <img src={Seekimage(type)} style={{width:40}}/>
               <Title>{type}</Title>
             </Row>
 
- 
             <Row style={{alignItems:"unset"}}>
-              <progress class="progress" id="progress" value={stepdata *10} min="0" max="100" style={{width:300}}></progress>
-              <div style={{paddingLeft:10}}>
-                <div style={{display:"flex"}}>
-                  <Text containerStyle={{fontFamily:"Pretendard-Bold"}} value={ parseInt(stepdata / totalset *100) + '%'} size={18} color={'#FF4E19'} ></Text>
-                </div>
-              </div>   
-        
+                <progress class="progress" id="progress" value={stepdata *10} min="0" max="100" style={{width:120}}></progress>
+                <div style={{paddingLeft:10}}>
+                  <div style={{display:"flex"}}>
+                    <Text containerStyle={{fontFamily:"Pretendard-Bold"}} value={ parseInt(stepdata / totalset *100) + '%'} size={18} color={'#FF4E19'} ></Text>
+                  </div>
+                </div>   
             </Row>
-            <div style={{display:"flex"}}>
-              <div><Text value={stepstr} size={18} color={'#FF4E19'} ></Text></div>
-              </div>
-          </TitleLayer>
-    
+          </AroundRow>
+
+          <ProgressLayer>
+              <ProgressLayerText>
+              {
+                stepdata == 0 ? (
+                  <>
+                    <span style={{color:"#FF7125"}}>총{totalset}</span><span>단계를 설정 하면  일감이 등록됩니다</span>
+                  </>
+                ):(
+                  <>
+                    <span >총{totalset} 단계중</span><span style={{color:"#FF7125", fontWeight:700, marginLeft:5}}>{stepdata}단계</span><span>를 설정하였습니다</span>
+                  </>
+                )
+              }
+              </ProgressLayerText>
+           
+          </ProgressLayer>
+        
+
+        </Row>
+
+
+          <ContentLayer>
           {
             messages.map((data, index) => (
             <Fragment>
             {("initialize" == data.type && data.show == true) && (
-                <Itemlayer width={'100%'} style={{marginTop:40}}>      
+                <Itemlayer width={'100%'} style={{marginTop:180}}>      
                   <ItemLeftBox width={'100%'}>
                     <span>{data.info}</span>
                   </ItemLeftBox>       
@@ -936,35 +1035,39 @@ console.log("TCL: MobileRegistcontainer -> type", type)
             )}
             {/* 고객요구사항 선택 */}
             {("request" == data.type && data.show == true) && (
-                <Fade bottom className="fade-in-bottom" delay={800}>
-                  <Itemlayer width={'80%'}>
+                <div className="fade-in-bottom" style={{width:"100%"}}>
+                  <Itemlayer width={'70%'}>
                     <ItemLeftBox width={'70%'}>
                       <span>{data.info}</span>
                       {
                       data.selected == false ?
                       (
                         <>
-                          <Row top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                          <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
                           { data.selectitems.map((subdata)=>(
                             <SelectLayer className="button" check={subdata.selected} onClick={()=>{_handlecheck(index, subdata.key)}}>
                               <div>{subdata.request}</div>
+                              {
+                                subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"16px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check} style={{width:"16px", hieght:"16px"}}/></div>)
+                              }
+                              
                             </SelectLayer>
                           ))}
-                          </Row>
-                          <Button containerStyle={{border: 'none', fontSize:16}} onPress={()=>{_handleNext(index)}} height={'45px'} width={'95%'} radius={'5px'} bgcolor={'#f0f0f0'} color={'#222'} text={'다음'}/>
+                          </BetweenRow>
+                          <Button containerStyle={{border: 'none', fontSize:16}} onPress={()=>{_handleNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </>
                       ):(<span>{data.request}</span>)
                       }
                     </ItemLeftBox>  
                   </Itemlayer>
-                </Fade>
+                </div>
             )}
 
             {/* 날짜 선택 */} 
             {("requestdate" == data.type && data.show == true) && (
-              <Fade bottom delay={800}>
-                <Itemlayer width={'100%'}>
-                    <ItemLeftBox width={'80%'}>
+              <div className="fade-in-bottom" style={{width:"100%"}}>
+                <Itemlayer width={'70%'}>
+                    <ItemLeftBox width={'70%'}>
                       <span>{data.info}</span>
                       {
                         data.selected == false ?(<div style={{marginTop:15}}>
@@ -989,7 +1092,8 @@ console.log("TCL: MobileRegistcontainer -> type", type)
                                   dateFormat="yyyy년 MM월 dd일" // 한국어 형식으로 날짜 표시
                                 />
                             </StyledCalendarWrapper>
-                            <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'45px'} width={'95%'} radius={'5px'} bgcolor={'#f0f0f0'} color={'#222'} text={'다음'}/>
+
+                            <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                           </Fragment>     
                           ):(<Fragment>
 
@@ -998,22 +1102,20 @@ console.log("TCL: MobileRegistcontainer -> type", type)
                               callback={selectcallback}
                             />
                             {
-                              allweeks == true && <Row style={{flexWrap:"no-wrap"}}>
-                                <Button enable ={FindDay('일')} containerStyle={{ fontSize:16, marginTop:10,marginRight:5}} onPress={()=>{_handleWeekDate('일')}} height={'35px'} width={'30px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'일'}/>
-                                <Button enable ={FindDay('월')}  containerStyle={{fontSize:16, marginTop:10,marginRight:5}} onPress={()=>{_handleWeekDate('월')}} height={'35px'} width={'30px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'월'}/>
-                                <Button enable ={FindDay('화')} containerStyle={{ fontSize:16, marginTop:10,marginRight:5}} onPress={()=>{_handleWeekDate('화')}} height={'35px'} width={'30px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'화'}/>
-                                <Button enable ={FindDay('수')}  containerStyle={{fontSize:16, marginTop:10,marginRight:5}} onPress={()=>{_handleWeekDate('수')}} height={'35px'} width={'30px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'수'}/>
-                                <Button enable ={FindDay('목')}  containerStyle={{fontSize:16, marginTop:10,marginRight:5}} onPress={()=>{_handleWeekDate('목')}} height={'35px'} width={'30px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'목'}/>
-                                <Button enable ={FindDay('금')}  containerStyle={{fontSize:16, marginTop:10,marginRight:5}} onPress={()=>{_handleWeekDate('금')}} height={'35px'} width={'30px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'금'}/>
-                                <Button enable ={FindDay('토')}  containerStyle={{fontSize:16, marginTop:10,marginRight:5}} onPress={()=>{_handleWeekDate('토')}} height={'35px'} width={'30px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'토'}/>
+                              allweeks == true && <Row style={{flexWrap:"wrap", justifyContent:"flex-start", gap:"2px"}}>
+                                <Button enable ={FindDay('일')} containerStyle={{ fontSize:16}} onPress={()=>{_handleWeekDate('일')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'일'}/>
+                                <Button enable ={FindDay('월')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('월')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'월'}/>
+                                <Button enable ={FindDay('화')} containerStyle={{ fontSize:16}} onPress={()=>{_handleWeekDate('화')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'화'}/>
+                                <Button enable ={FindDay('수')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('수')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'수'}/>
+                                <Button enable ={FindDay('목')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('목')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'목'}/>
+                                <Button enable ={FindDay('금')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('금')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'금'}/>
+                                <Button enable ={FindDay('토')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('토')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'토'}/>
 
 
                               </Row>
                             }
-
-                            <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'45px'} width={'95%'} radius={'5px'} bgcolor={'#f0f0f0'} color={'#222'} text={'다음'}/>
-                          
-
+              
+                            <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                             </Fragment>)
                         }
                         
@@ -1022,69 +1124,69 @@ console.log("TCL: MobileRegistcontainer -> type", type)
                     </ItemLeftBox>       
                   </Itemlayer>
 
-              </Fade>      
+              </div>      
             )}
 
             {/* 지역 선택 */} 
             {("requestregion" == data.type && data.show == true) && (
-            <Fade bottom delay={800}>
+            <div className="fade-in-bottom" style={{width:"100%"}}>
                     <Itemlayer width={'100%'}>
-                    <ItemLeftBox style={{width:"350px", height:"500px"}}>
+                    <ItemLeftBox style={{width:"100%", height:"400px"}}>
                       <span>{data.info}</span>
                       <div style={{marginTop:35, height:300, position:"absolute",  top: '30px'}}>
                         <div id="map"  style={mapstyle}></div>
                         <Row>
-                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleRegionNext(index)}} height={'45px'} width={'95%'} radius={'5px'} bgcolor={'#f0f0f0'} color={'#222'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleRegionNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </Row>
                       </div>
                     </ItemLeftBox>  
                   </Itemlayer>  
-            </Fade>
+            </div>
             )}
 
             {/* 홍여사에게 요청할 내용 */} 
             {("requestcomment" == data.type && data.show == true) && (
-            <Fade bottom delay={800}>
+            <div className="fade-in-bottom" style={{width:"100%"}} ref={useCommentRef}>
                     <Itemlayer width={'100%'}>
-                    <ItemLeftBox style={{width:"350px", height:"200px"}}>
+                    <ItemLeftBox style={{width:"100%", height:"220px"}}>
                       <span>{data.info}</span>
                       <div style={{marginTop:35, height:200, position:"absolute",  top: '30px'}}>
-                        <textarea maxlength={25} style={ResultContent} value={comment}  onChange={(e) => {
-                          setComment(e.target.value);
-                        }}
+                        <textarea maxlength={25} style={CommentContent} value={comment}  onChange={(e) => {setComment(e.target.value);}}
+                        placeholder={'필수입력사항은 아닙니다. 20자 이내로 입력해주세요'}
                         />
                         <Row>
-                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleCommentNext(index)}} height={'45px'} width={'95%'} radius={'5px'} bgcolor={'#f0f0f0'} color={'#222'} text={'다음'}/>
+      
+                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleCommentNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </Row>
                       </div>
                     </ItemLeftBox>  
                   </Itemlayer>  
-            </Fade>
+            </div>
             )}
 
              {/* 공간 선택 */} 
             {("requestroom" == data.type && data.show == true) && (
-            <Fade bottom delay={800}>
+            <div className="fade-in-bottom" style={{width:"100%"}}>
                     <Itemlayer width={'100%'}>
-                    <ItemLeftBox style={{width:"350px", height:"500px"}}>
+                    <ItemLeftBox style={{width:"100%", height:"350px"}}>
                   
                       <span>{data.info}</span>
                       <Column>
                         <ImageUploadComponent callback={imageuploadcallback}/>
-                        <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, width:"100%"}} onPress={()=>{_handleRoomNext(index)}} height={'45px'} width={'95%'} radius={'5px'} bgcolor={'#f0f0f0'} color={'#222'} text={'다음'}/>
+                        <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleRoomNext(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                       </Column>
                     </ItemLeftBox>  
                   </Itemlayer>  
-            </Fade>
+            </div>
             )}
 
             {/* 요구사항 문서 확인 */} 
             {("requestcomplete" == data.type && data.show == true) && (
-                <Fade bottom delay={200}>
-                  <Itemlayer width={'410px'}>
+              <div className="fade-in-bottom" style={{width:"100%"}} ref={useCompleteRef}>
+                  <Itemlayer width={'100%'}>
                   <ItemLeftBox width={'100%'}>
                     <span style={{fontSize:16}}>{data.info}</span>
-                    <table style={{marginTop:20,borderLeft:"1px solid"}}>
+                    <table style={{marginTop:20}}>
              
                       <tbody>
                         {
@@ -1115,32 +1217,37 @@ console.log("TCL: MobileRegistcontainer -> type", type)
                         }
                       </tbody>
                     </table>
-                    <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'90%',justifyContent: "space-around" }}>
-                      <Button text={"다시작성하기"} onPress={_handleReset}
-                      containerStyle={{backgroundColor: "#8b8988", color :"#fff", border :"1px solid #ededed",borderRadius: "10px",
-                      fontSize: 16,height:45,margin: "10px 0px",width: "130px",}}/>
-                      <Button text={"요청하기"} onPress={()=>{_handleReqComplete(index)}}
-                      containerStyle={{backgroundColor: "#FF4E19",color :"#fff",border :"1px solid #ededed",borderRadius: "10px",
-                      fontSize: 16,height:45,margin: "10px 0px",width: "130px",}}/>   
+                    <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'100%',justifyContent: "space-between" }}>
+          
+                      <Button containerStyle={{border: '1px solid #C3C3C3', fontSize:16, marginTop:10, fontWeight:600}} onPress={_handleReset} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FFF'} color={'#131313'} text={'다시작성하기'}/>
+                      <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'요청하기'}/>
+
                     </div>
                   </ItemLeftBox>  
                   </Itemlayer>
-                </Fade>
+              </div>
             )}
 
             {/* 고객요구에 대한 확인*/}
             {("response" == data.type && data.show == true && data.responseshow == true ) &&(
-                <ResponseContainer>
-                  <Fade bottom delay={100}>
+           
+                  <div className="fade-in-bottom" style={{width:"100%"}}>
+                    <ResponseContainer>
                     <ItemRightLayer>         
-                        <ItemRightBox><span>{data.result}</span></ItemRightBox>
-                        <Button containerStyle={{fontSize:16, marginTop:10, marginRight:10, border:"none", padding:"10px 16px"}} onPress={()=>{_handleAdjust(index)}}  width={'50px'} radius={'5px'} bgcolor={'#f0f0f0'} color={'#222'} text={'수정'}/>
+                        <ItemRightBox><span>{data.result}</span>
+                        <img src={imageDB.enablecheck} style={{width:"16px", hieght:"16px", marginLeft:5}}/>
+                        </ItemRightBox>
+                        <Row onClick={()=>{_handleAdjust(index)}} style={{textDecoration:"underline", marginTop:10, marginRight:10}}> 수정</Row>
                    </ItemRightLayer>
-                  </Fade>
-                </ResponseContainer>
+                   </ResponseContainer>
+                  </div>
+        
             )}
             </Fragment>
           ))}
+          </ContentLayer>
+    
+     
       </Container>
 
 

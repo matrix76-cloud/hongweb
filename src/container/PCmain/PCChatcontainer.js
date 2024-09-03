@@ -21,6 +21,7 @@ import Chatgate from "../../components/Chatgate";
 const Container = styled.div`
     background-color : #f2f3f6;
     height:900px;
+    padding-top:105px;
 `
 const style = {
   display: "flex"

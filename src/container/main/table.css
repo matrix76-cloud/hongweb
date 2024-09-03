@@ -1,12 +1,17 @@
 td{
     font-size:16px;
-    border : 1px solid;
+    border :none;
+    border-bottom : 1px solid #F3F3F3;
+    font-weight: 400;
 }
-thead{
-    background-color: #ededed;
-}
+
 tr td:first-child {
-    text-align:center;
-    background-color: #ededed;
+    text-align:left;
+    background-color: #FAFAFA;
+    font-weight: 600;
+    min-width: 80px;
+}
+tr {
+    border : none;
 }
 

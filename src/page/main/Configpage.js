@@ -6,6 +6,7 @@ import Maincontainer from "../../container/main/Maincontainer";
 import Mapcontainer from "../../container/main/Mapcontainer";
 import { UserContext } from "../../context/User";
 import HomeLayout from "../../screen/Layout/Layout/HomeLayout";
+import { MOBILEMAINMENU } from "../../utility/screen";
 
 const Container = styled.div`
 
@@ -41,7 +42,7 @@ const Configpage =() =>  {
  
   return (
 
-    <HomeLayout bottom={true} header={true} type={'config'} name={'홍여사내정보'}>
+    <HomeLayout bottom={true} header={true} type={MOBILEMAINMENU.CONFIGMENU} name={'홍여사내정보'}>
         <Configcontainer/>
     </HomeLayout>
   );

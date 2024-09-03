@@ -1,0 +1,21 @@
+.custom-input::placeholder {
+
+  font-size: 14px;
+  font-style: unset;
+ 
+}
+.searchicon:hover{
+  margin-top:10px;
+}
+.SmallMap{
+  height: 55vh;
+}
+
+.BigMap{
+  height: 100vh;
+}
+
+.fixed-size {
+    width: 40px !important;
+    min-width: unset !important;
+}

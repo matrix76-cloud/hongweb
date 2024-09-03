@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/User";
 import { FiHome, FiUser, FiShare2,FiGrid } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
+import { MOBILEMAINMENU } from "../../../utility/screen";
 
 const FooterContent = styled.div`
   padding: 20px;
@@ -38,7 +39,7 @@ const MobileFooter = ({type}) => {
     navigation("/Mobilemap" ,{state :{WORK_ID :"", TYPE : ""}});
   }
   const _handleCommunity=()=>{
-    navigation("/room");
+    navigation("/Mobilecommunity");
   }
   const _handleConfig=()=>{
     navigation("/config");
@@ -51,28 +52,28 @@ const MobileFooter = ({type}) => {
         <div className="site-mobile-footer2">
             <div className="buttonview">
               <div className="button">
-                {type == "home" ? (
+                {type == MOBILEMAINMENU.HONGMENU ? (
                   <>
                     <div className="imageicon" onClick={_handleMain}>
-                    <FiHome size={25}/>
+                    <img src={imageDB.home_e} width={22}/>
                     </div>
                     <div className="buttonEnableText">홈</div>
                   </>
                 ) : (
                   <>
                     <div className="imageicon" onClick={_handleMain}>
-                    <FiHome size={25}/>
+                    <img src={imageDB.home_d} width={22}/>
                     </div>
                     <div className="buttonDisableText">홈</div>
                   </>
                 )}
               </div>
               <div className="button">
-                {type == "hong" ? (
+                {type == MOBILEMAINMENU.ROOMMENU ? (
                   <>
                     <div className="imageicon" onClick={_handleRoom}>
                
-                    <FiGrid size={25}/>
+                    <img src={imageDB.room_e} width={22}/>
                     </div>
                     <div className="buttonEnableText">공간대여</div>
                   </>
@@ -80,41 +81,41 @@ const MobileFooter = ({type}) => {
                   <>
                     <div className="imageicon" onClick={_handleRoom}>
            
-                    <FiGrid size={25}/>
+                    <img src={imageDB.room_d} width={22}/>
                     </div>
                     <div className="buttonDisableText">공간대여</div>
                   </>
                 )}
               </div>
   
-              <div className="upbutton" onClick={_handleMap}>
+              <div className="upbutton" >
                 <div
                   style={{
                     backgroundColor: "#FFF",
                     borderRadius: "100px",
-                    border: "2px solid rgb(242 240 240)",
-                    height: 50,
-                    width: 50,
+                    border: "1px solid rgb(242 240 240)",
+                    height: 42,
+                    width: 42,
                     display: "flex",
                     justifyContent: "center",
                     padding: 5,
                   }}
-                  className="spotlight-animation"
+              
                 >
 
 
                   <div
                     style={{
                       display: "flex",
-                      marginTop: -45,
+                      marginBottom: 10,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
-                    <div className="moving">
-                      <img
-                        src={imageDB.movegps}
-                        style={{ width: 30, height: 30 }}
+                    <div >
+                      <img onClick={_handleMap}
+                        src={imageDB.movegpsex}
+                        style={{ width: 28, height: 28 }}
                       />
                       
                   
@@ -136,18 +137,17 @@ const MobileFooter = ({type}) => {
               </div>
 
               <div className="button">
-                {type == "room" ? (
+                {type == MOBILEMAINMENU.COMMUNITYMENU ? (
                   <>
                     <div className="imageicon" onClick={_handleCommunity}>
-                    <FiUser size={25}/>
+                    <img src={imageDB.community_e} width={22}/>
                     </div>
                     <div className="buttonEnableText">커뮤니티</div>
                   </>
                 ) : (
                   <>
                     <div className="imageicon" onClick={_handleCommunity}>
-                    <FiUser size={25}/>
-
+                    <img src={imageDB.community_d} width={22}/>
                     </div>
                     <div className="buttonDisableText">커뮤니티</div>
                   </>
@@ -159,11 +159,11 @@ const MobileFooter = ({type}) => {
        
 
               <div className="button">
-                {type == "config" ? (
+                {type == MOBILEMAINMENU.CONFIGMENU ? (
                   <>
                     {" "}
                     <div className="imageicon" onClick={_handleConfig}>
-                    <IoSettingsOutline size={25}/>
+                    <img src={imageDB.myinfo_e} width={22}/>
                     </div>
                     <div className="buttonEnableText">내정보</div>
                   </>
@@ -171,7 +171,7 @@ const MobileFooter = ({type}) => {
                   <>
                     {" "}
                     <div className="imageicon" onClick={_handleConfig}>
-                    <IoSettingsOutline size={25}/>
+                    <img src={imageDB.myinfo_d} width={22}/>
                     </div>
                     <div className="buttonDisableText">내정보	</div>
                   </>

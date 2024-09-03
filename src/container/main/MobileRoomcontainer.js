@@ -1,4 +1,4 @@
-import React, { Component, useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { Component, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
@@ -24,70 +24,148 @@ import { GoNoEntry } from "react-icons/go";
 
 import "./MobileMaincontainer.css";
 import MobileStoreInfo from "../../components/MobileStoreInfo";
-import { ROOMSIZE } from "../../utility/room";
+import { ROOMPOLICY, ROOMSIZE } from "../../utility/room";
 import { ReadRoom } from "../../service/RoomService";
 import PCRoomItem from "../../components/PCRoomItem";
 import MobileRoomItem from "../../components/MobileRoomItem";
+import LottieAnimation from "../../common/LottieAnimation";
+import { useSleep } from "../../utility/common";
+import { FILTERNAME } from "../../utility/fitler";
+import SlickSliderComponent from "../../common/Swipe";
+
+import MobileServiceFilter from "../../modal/MobileServiceFilterPopup/MobileServiceFilter";
+import MobilePriceFilter from "../../modal/MobilePriceFilterPopup/MobilePriceFilter";
+import MobilePeriodFilter from "../../modal/MobilePeriodFilterPopup/MobilePeriodFilter";
+import MobileDistanceFilter from "../../modal/MobileDistanceFilterPopup/MobileDistanceFilter";
+import MobileProcessFilter from "../../modal/MobileProcessFilterPopup/MobileProcessFilter";
+import MobileRoomServiceFilter from "../../modal/MobileRoomServiceFilterPopup/MobileRoomServiceFilter";
 
 const Container = styled.div`
-  padding:50px 15px 0px 15px;
-  min-height:1500px;
+padding:50px 0px 0px 0px;
+width: 100%;
+margin : 0 auto;
+min-height:800px;
 `
-
+const SubContainer = styled.div`
+  margin: 0 auto;
+  background: #f9f9f9;
+  padding-top: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+`
 
 const style = {
   display: "flex"
 };
 
 
+// const Box = styled.div`
+//   background : #f9f9f9;
+//   align-items: center;
+//   display: flex;
+//   justify-content: center;
+//   flex-direction:column;
+//   width: 29%;
+//   background: #f9f9f9;
+//   margin-right: 10px;
+//   margin-bottom: 20px;
+//   border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
+//   border-radius: 15px;
+//   padding : 5px 0px;
+//   z-index:2;
+
+// `
+
 const Box = styled.div`
-  background : #f9f9f9;
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction:column;
-  width: 29%;
-  background: #f9f9f9;
-  margin-right: 10px;
-  margin-bottom: 20px;
-  border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
+  width: 20%;
   border-radius: 15px;
   padding : 5px 0px;
-  z-index:2;
 
+
+`
+const BoxImg = styled.div`
+  border-radius: 30px;
+  background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#fff') };
+  padding: 10px;
+  display :flex;
 `
 
 const FilterBox = styled.div`
-
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: #f6f6f6;
-  margin-right: 10px;
-  border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
-  border-radius: 5px;
-  padding: 0px 5px;
-  width: 27.5%;
+  background: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#fff') };
+  border:  ${({clickstatus}) => clickstatus == true ? (null) :('1px solid #C3C3C3') };
+  margin-top:10px;
+  margin-right: 3px;
+
+  border-radius: 4px;
+  padding: 0px 20px;
+  height:30px;
   flex: 0 0 auto; /* 아이템의 기본 크기 유지 */
-  z-index:2;
+
+`
+const FilterBoxText = styled.div`
+color: ${({clickstatus}) => clickstatus == true ? ('#FFF') :('#131313') };
+font-size:12px;
+margin-left:5px;
+font-weight:600;
 
 `
 
+
+const InputLine = styled.div`
+  width: 95%;
+  background: rgb(249, 249, 249);
+  margin: 0px auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+
+`
+
+
 const Inputstyle ={
 
-  background: '#f6f6f6',
-  width: '90%',
-  borderRadius:'5px',
+  background: '#FFF',
+  width: '75%',
+  borderRadius:'30px',
   fontSize: '16px',
-  padding: '8px 12px 12px 8px',
-  border : "none"
+  padding: '0px 20px 0px 20px',
+  height : '40px',
+  border : "2px solid #FF7125",
+  position :"absolute"
 
 }
 const Searchstyle={
   position: "absolute",
   left: '15px'
 }
+
+const StickyElementStyle ={
+  position: "sticky",
+  top: "50px",
+  height: '80px',
+  background: "white",
+  width: '100%', 
+  marginBottom: '10px',
+  zIndex :'10'
+}
+const SearchElementStyle ={
+
+  height: '80px',
+  background: "white",
+  width: '100%', 
+  marginBottom: '10px',
+}
+
 
 
 
@@ -105,8 +183,18 @@ const RoomItems =[
   {name : ROOMSIZE.MEDIUM, img:imageDB.roomsize2, img2:imageDB.roomsize2},
   {name : ROOMSIZE.LARGE, img:imageDB.roomsize3, img2:imageDB.roomsize3},
 
+]
+const FilterItems=[
+  {name : FILTERNAME.INIT, img:imageDB.house, img2:imageDB.house},
+  {name : FILTERNAME.SERVICE, img:imageDB.house, img2:imageDB.house},
+  {name :FILTERNAME.PRICE, img:imageDB.house, img2:imageDB.house},
+  {name :FILTERNAME.DISTNACE, img:imageDB.house, img2:imageDB.house},
+  {name :FILTERNAME.PROCESS, img:imageDB.house, img2:imageDB.house},
+]
 
-
+const BannerItems =[
+  imageDB.mobilebanner1,
+  imageDB.mobilebanner2,
 ]
 
 
@@ -131,13 +219,36 @@ const MobileRoomcontainer =({containerStyle}) =>  {
   const [popupstatus3, setPopupstatus3] = useState(false);
 
   const [roomitems, setRoomitems] = useState([]);
-  const [currentloading, setCurrentloading] = useState(false);
+  const [currentloading, setCurrentloading] = useState(true);
   const [menu, setMenu] = useState('');
 
   const [showNewDiv, setShowNewDiv] = useState(false);
+  const [width, setWidth] = useState(0);
 
 
   const [search, setSearch] = useState('');
+
+  const elementRef = useRef(null);
+
+  const [servicepopup, setServicepopup] = useState(false);
+  const [pricepopup, setPricepoupup] = useState(false);
+  const [periodpopup, setPeriodpopup] = useState(false);
+  const [distancepopup, setDistancepopup] = useState(false);
+  const [processpopup, setProcesspopup] = useState(false);
+
+  const [servicefilter, setServicefilter] = useState([]);
+  const [pricefilter, setPricefilter] = useState([]);
+  const [periodfilter, setPeriodfilter] = useState([]);
+  const [distancefilter, setDistancefilter] = useState([]);
+  const [processfilter, setProcessfilter] = useState([]);
+
+  const inputRef = useRef(null);
+  
+
+  useLayoutEffect(() => {
+    setWidth(elementRef.current.offsetWidth -10);
+    console.log("TCL: MobileRoomcontainer -> elementRef.current.offsetWidth", elementRef.current.offsetWidth)
+  }, []);
 
   useLayoutEffect(() => {
   }, []);
@@ -150,6 +261,17 @@ const MobileRoomcontainer =({containerStyle}) =>  {
   useEffect(()=>{
     setCurrentloading(currentloading);
     setShowNewDiv(showNewDiv);
+    setServicefilter(servicefilter);
+    setPricefilter(pricefilter);
+    setPeriodfilter(periodfilter);
+    setDistancefilter(distancefilter);
+    setProcessfilter(processfilter);
+
+    setServicepopup(servicepopup);
+    setPricepoupup(pricepopup);
+    setPeriodpopup(periodpopup);
+    setDistancepopup(distancepopup);
+    setProcesspopup(processpopup);
   },[refresh])
 
   /**
@@ -165,12 +287,13 @@ const MobileRoomcontainer =({containerStyle}) =>  {
 
       const roomitems = data.roomitems;
 
-      
       setRoomitems(roomitems);
 
       const serverroomitems = await ReadRoom();
       setRoomitems(serverroomitems);
-      console.log("TCL: FetchData -> serverroomitems", serverroomitems)
+
+      await useSleep(1000);
+      setCurrentloading(false);
 
 
 
@@ -181,15 +304,19 @@ const MobileRoomcontainer =({containerStyle}) =>  {
   useEffect(() => {
     const handleScroll = () => {
       const stickyElement = document.getElementById('sticky-element');
-      const stickyElementBottom = stickyElement.getBoundingClientRect().bottom;
+
+      if(stickyElement){
+        const stickyElementBottom = stickyElement.getBoundingClientRect().bottom;
 
 
-      // 특정 위치에서 새로운 div를 나타나게 함 (예: sticky 요소가 화면 상단에서 100px 떨어질 때)
-      if (stickyElementBottom < 150) {
-        setShowNewDiv(true);
-      } else {
-        setShowNewDiv(false);
+        // 특정 위치에서 새로운 div를 나타나게 함 (예: sticky 요소가 화면 상단에서 100px 떨어질 때)
+        if (stickyElementBottom < 150) {
+          setShowNewDiv(true);
+        } else {
+          setShowNewDiv(false);
+        }
       }
+ 
 
       setRefresh((refresh) => refresh +1);
     };
@@ -201,6 +328,17 @@ const MobileRoomcontainer =({containerStyle}) =>  {
     };
   }, []);
 
+  const scrollToInput = () => {
+    
+    console.log("TCL: scrollToInput -> ", )
+    // 요소를 화면 중앙에 위치시킴
+    inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // 추가적인 스크롤을 통해 요소를 화면 중앙보다 아래로 위치시킴
+    setTimeout(() => {
+        window.scrollBy(0, 50); // 스크롤을 50px 아래로 추가 이동
+    }, 300); // smooth 스크롤의 애니메이션 시간이 약간의 지연을 줌  
+  }
 
 
 
@@ -259,7 +397,7 @@ const MobileRoomcontainer =({containerStyle}) =>  {
     setRefresh((refresh) => refresh +1);
   }
 
-  const AiSearch = async(input) =>{
+  const AiSearchChange = async(input) =>{
     setSearch(input);
     setRefresh((refresh) => refresh +1);
   }
@@ -272,10 +410,111 @@ const MobileRoomcontainer =({containerStyle}) =>  {
 
   const _handleAI = async() =>{
 
+    navigate("/Mobilesearch" ,{state :{search :search}});
     setRefresh((refresh) => refresh +1);
 
   }
 
+  const _handlebasicmenuclick = async(checkmenu) =>{
+
+    console.log("TCL: _handlemenuclick -> checkmenu", checkmenu);
+
+
+    if(menu == checkmenu){
+      setMenu("");
+   
+    }else{
+      setMenu(checkmenu);
+   
+    }
+    setRefresh((refresh) => refresh +1);
+    let totalset = 0;
+
+    if(checkmenu == ROOMSIZE.SMALL){
+      totalset = ROOMPOLICY.SMALL;
+    }else if(checkmenu == ROOMSIZE.MEDIUM){
+      totalset = ROOMPOLICY.MEDIUM;
+    }else if(checkmenu == ROOMSIZE.LARGE){
+      totalset = ROOMPOLICY.LARGE;
+    }
+
+    navigate("/Mobileregist",{state :{WORKTYPE :checkmenu, WORKTOTAL : totalset}});
+
+  }
+
+  const _handlefiltermenuclick = async(checkmenu) =>{
+    if(checkmenu == FILTERNAME.INIT){   
+      setServicefilter([]);
+      setPricefilter([]);
+      setPeriodfilter([]);
+      setDistancefilter([]);
+      setProcessfilter([]);
+    }
+    else if(checkmenu == FILTERNAME.SERVICE){
+      setServicepopup(true);
+    }else if(checkmenu == FILTERNAME.PRICE){
+      setPricepoupup(true);
+    }else if(checkmenu == FILTERNAME.PERIOD){
+      setPeriodpopup(true);
+    }else if(checkmenu == FILTERNAME.DISTNACE){
+      setDistancepopup(true);
+    }else if(checkmenu == FILTERNAME.PROCESS){
+      setProcesspopup(true);
+    }
+   
+    setRefresh((refresh) => refresh +1);
+  
+  }
+  const MobileServiceFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setServicefilter(filterary);
+    }
+
+    setServicepopup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
+  const MobilePriceFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setPricefilter(filterary);
+    }
+
+    setPricepoupup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
+  const MobilePeriodFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setPeriodfilter(filterary);
+    }
+
+    setPeriodpopup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
+  const MobileDistanceFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setDistancefilter(filterary);
+    }
+
+    setDistancepopup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
+  const MobileProcessFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setProcessfilter(filterary);
+    }
+
+    setProcesspopup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
   function workfilterapply(menu, items){
 
     let itemsTmp = [];
@@ -296,74 +535,291 @@ const MobileRoomcontainer =({containerStyle}) =>  {
     return itemsTmp;
 
   }
+
+  function filterenablecheck(name){
+
+    if(name == FILTERNAME.SERVICE){
+
+      if(servicefilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if(name == FILTERNAME.PRICE){
+
+      if(pricefilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if(name == FILTERNAME.PERIOD){
+
+      if(periodfilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if(name == FILTERNAME.DISTNACE){
+
+      if(distancefilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if(name == FILTERNAME.PROCESS){
+
+      if(processfilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }
+    else{
+      return false;
+    }
+
+  }
+
+  function getfilters(name){
+
+    if(name == FILTERNAME.SERVICE){
+      if(servicefilter.length >0){
+        return "+" +servicefilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.PRICE){
+      if(pricefilter.length >0){
+        return "+" +pricefilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.PERIOD){
+      if(periodfilter.length >0){
+        return "+" +periodfilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.DISTNACE){
+      if(distancefilter.length >0){
+        return "+" +distancefilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.PROCESS){
+      if(processfilter.length >0){
+        return "+" +processfilter.length;
+      }else{
+        return "";
+      }
+    }else{
+      return "";
+    }
+
+  }
+
   return (
     <>
-    {
-      currentloading == true && <Loading type={LoadingType.CURRENTPOS} callback={_handlecurrentloadingcallback}/>
-    }
+
     {
 
+      <div ref={elementRef}>
       <Container style={containerStyle}>
+      {/* {
+          currentloading == true ?
+         ( <LottieAnimation containerStyle={{marginTop:"60%"}} animationData={imageDB.loadinglarge}
+          width={"100px"} height={'100px'}/>) :(      
+          <Column>
+            <Column style={{width:"90%", margin: "0 auto"}}>
+            <Label label={'공간대여 서비스'}/>
+            <Row style={{flexWrap:"wrap", width:"100%", justifyContent:"flex-start"}}>
+              {
+                RoomItems.map((data, index)=>(
+                  <Box onClick={()=>{_handlebasicmenuclick(data.name)}} clickstatus={menu == data.name}>
+                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:38, height:38}}/></BoxImg>
+                    <div style={{ fontSize:12, color:"#636363", fontWeight:300}}>{data.name}</div>
+                  </Box>
+                ))
+              }
+            
+            </Row>
+            <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
+            <Row  id="sticky-element"  style={SearchElementStyle}>
 
-      <Column>
-          <Label label={'공간대여 서비스'}/>
-          <Row style={{flexWrap:"wrap", width:"100%"}}>
+                <Column style={{width:"100%"}}>
+                <InputLine>
+                  <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요"
+                        value={search}
+                        ref ={inputRef}
+                        onFocus={scrollToInput}
+                        onClick={scrollToInput}
+                        onChange={(e) => {   
+                          AiSearchChange(e.target.value);
+                        }}
+                        onKeyDown={handleKeyDown} 
+                    />
+                  <div style={{position:"relative", left: '40%', top: '3px'}}>
+                    <img src={imageDB.redsearch} width={22} height={22} onClick={_handleAI} />
+                  </div>
+                </InputLine>
 
-            {
-              RoomItems.map((data, index)=>(
-                <Box onClick={()=>{}} clickstatus={menu == data.name}>
-                  <div><img src={data.img} style={{width:32, height:32}}/></div>
-                  <div style={{ fontSize:12}}>{data.name}</div>
-                </Box>
-              ))
-            }
-          
-          </Row>
-          <Row  id="sticky-element"  style={{width:"100%", position: "sticky",top: "50px",height: "70px", background:"#fff", zIndex:2}}>
+                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
+                    <img src={imageDB.infocircle} width={16} height={16} o/>
+                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
+                </FlexstartRow>
+                </Column>
+            </Row>
+            </Column>
 
-            <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요 예)짜장라면 끊이는 법"
-                  value={search}
-                  onChange={(e) => {   
-                    AiSearch(e.target.value);
-                  }}
-                  onKeyDown={handleKeyDown} 
-              />
-            <div>
-              <img src={imageDB.searchgif} width={24} height={24} onClick={_handleAI} />
-            </div>
-          </Row>
-
-          {showNewDiv && (
             <div className="new-div">
-            {
-              RoomItems.map((data, index)=>(
-                <FilterBox onClick={()=>{}} clickstatus={menu == data.name}>
-                  <div><img src={data.img2} style={{width:32, height:32}}/></div>
-                  <div style={{ fontSize:12, color:"#788391", marginLeft:5}}>{data.name}</div>
-                </FilterBox>
-              ))
-            }
+              {
+                FilterItems.map((data, index)=>(
+                  <>
+                  {
+                    index == 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                      <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
+                  </FilterBox>
+                  }
+                  {
+                    index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                    <FilterBoxText clickstatus={filterenablecheck(data.name)}>{data.name}
+                    {getfilters(data.name)}   
+                    </FilterBoxText>
+                  </FilterBox>
+                  }
+                  
+                  </>
+             
+                ))
+              }
             </div>
-          )}
-
-
-          <Label label={'님양주시 다산동에 등록된 전체공간'} sublabel={'12건'}/>
-
-          <FlexstartRow style={{flexWrap:"wrap"}}>
-          {
-              roomitems.map((item, index)=>(
-                <>
-                {
-                  index < 20 &&           
+            <SubContainer>
+  
+            <FlexstartRow style={{fontWeight:700, marginLeft:5,marginBottom:10}}>
+                <div style={{color:"#131313", fontSize:"18px"}}>{'등록된 전체공간'}
+                <span style={{color:"#F75100", marginLeft:3}}>{roomitems.length}</span> {'건'}</div>
+              </FlexstartRow>
+     
+            
+            <FlexstartRow style={{flexWrap:"wrap"}}>
+            {
+                roomitems.map((item, index)=>(
                   <MobileRoomItem key={index}  index={index} width={'100%'} 
                   roomdata={item} onPress={()=>{_handleSelectWork(item.ROOM_ID)}}/>
-                }
-                </>
-              ))
-            }
-          </FlexstartRow>
-      </Column>
+                ))
+              }
+            </FlexstartRow>
+            </SubContainer>
+          </Column>)
+
+      } */}
+ <Column>
+            <Column style={{width:"90%", margin: "0 auto"}}>
+            <Label label={'공간대여 서비스'}/>
+            <Row style={{flexWrap:"wrap", width:"100%", justifyContent:"flex-start"}}>
+              {
+                RoomItems.map((data, index)=>(
+                  <Box onClick={()=>{_handlebasicmenuclick(data.name)}} clickstatus={menu == data.name}>
+                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:38, height:38}}/></BoxImg>
+                    <div style={{ fontSize:12, color:"#636363", fontWeight:300}}>{data.name}</div>
+                  </Box>
+                ))
+              }
+            
+            </Row>
+            <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
+            <Row  id="sticky-element"  style={SearchElementStyle}>
+
+                <Column style={{width:"100%"}}>
+                <InputLine>
+                  <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요"
+                        value={search}
+                        ref ={inputRef}
+                        onFocus={scrollToInput}
+                        onClick={scrollToInput}
+                        onChange={(e) => {   
+                          AiSearchChange(e.target.value);
+                        }}
+                        onKeyDown={handleKeyDown} 
+                    />
+                  <div style={{position:"relative", left: '40%', top: '3px'}}>
+                    <img src={imageDB.redsearch} width={22} height={22} onClick={_handleAI} />
+                  </div>
+                </InputLine>
+
+                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
+                    <img src={imageDB.infocircle} width={16} height={16} o/>
+                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
+                </FlexstartRow>
+                </Column>
+            </Row>
+            </Column>
+
+            <div className="new-div">
+              {
+                FilterItems.map((data, index)=>(
+                  <>
+                  {
+                    index == 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                      <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
+                  </FilterBox>
+                  }
+                  {
+                    index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                    <FilterBoxText clickstatus={filterenablecheck(data.name)}>{data.name}
+                    {getfilters(data.name)}   
+                    </FilterBoxText>
+                  </FilterBox>
+                  }
+                  
+                  </>
+             
+                ))
+              }
+            </div>
+            <SubContainer>
+  
+            <FlexstartRow style={{fontWeight:700, marginLeft:5,marginBottom:10}}>
+                <div style={{color:"#131313", fontSize:"18px"}}>{'등록된 전체공간'}
+                <span style={{color:"#F75100", marginLeft:3}}>{roomitems.length}</span> {'건'}</div>
+              </FlexstartRow>
+     
+            
+            <FlexstartRow style={{flexWrap:"wrap"}}>
+            {
+                roomitems.map((item, index)=>(
+                  <MobileRoomItem key={index}  index={index} width={'100%'} 
+                  roomdata={item} onPress={()=>{_handleSelectWork(item.ROOM_ID)}}/>
+                ))
+              }
+            </FlexstartRow>
+            </SubContainer>
+          </Column>
+
       </Container>
+
+      {
+        servicepopup == true && <MobileRoomServiceFilter callback={MobileServiceFilterCallback} filterhistory={servicefilter}/>
+      }
+
+      {
+        pricepopup == true && <MobilePriceFilter callback={MobilePriceFilterCallback} filterhistory={pricefilter}/>
+      }
+
+      {
+        periodpopup == true && <MobilePeriodFilter callback={MobilePeriodFilterCallback} filterhistory={periodfilter}/>
+      }
+
+      {
+        distancepopup == true && <MobileDistanceFilter callback={MobileDistanceFilterCallback} filterhistory={distancefilter}/>
+      }
+      {
+        processpopup == true && <MobileProcessFilter callback={MobileProcessFilterCallback} filterhistory={processfilter}/>
+      }
+
+
+      </div>
+
     }
 
     <MobileStoreInfo height={200} />

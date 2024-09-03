@@ -1186,7 +1186,7 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
                   <Itemlayer width={'80%'}>
                   <ItemLeftBox width={'80%'}>
                     <span style={{fontSize:16}}>{data.info}</span>
-                    <table style={{marginTop:20,borderLeft:"1px solid"}}>
+                    <table style={{marginTop:20}}>
              
                       <tbody>
                         {

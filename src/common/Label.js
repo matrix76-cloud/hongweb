@@ -59,7 +59,10 @@ const Label =({containerStyle, label, sublabel}) =>  {
   return (
 
     <Container style={containerStyle}>
-        <div>{label}</div>
+        <div style={{fontSize:18, fontWeight:700, width:'120px'}}>{label}</div>
+
+        <div style={{fontSize:18, fontWeight:700, width:'65%', backgroundColor:"#000", height:1}}></div>
+
         <SubLabel>{sublabel}</SubLabel>
    
     </Container>

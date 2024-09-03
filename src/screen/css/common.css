@@ -351,6 +351,48 @@ th:first-child, td:first-child {
 
 
 
+.mapregionoverlay {position:relative;bottom:80px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;width: 60px;}
+.mapregionoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+.mapregionoverlay a {background:#FFF;display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:12px;overflow:hidden;}
+
+.mapregionoverlay .title {display:block;text-align:center;background:#FFF;font-size:10px;color:#131313;}
+.mapregionoverlay .titleclose {display:block;text-align:center;background:#A3A3A3;font-size:10px;color:#fff;}
+.mapregionoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+
+.maptourregionlay {position:relative;bottom:80px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;width: 60px;}
+.maptourregionlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+.maptourregionlay a {background:#FFF;display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:12px;overflow:hidden;}
+
+.maptourregionlay .title {display:block;text-align:center;background:#FFF;font-size:10px;color:#131313;}
+.maptourregionlay .titleclose {display:block;text-align:center;background:#A3A3A3;font-size:10px;color:#fff;}
+.maptourregionlay .price {display:block;text-align:center;background:#fff;font-size:10px;color:#131313;height:28px;display:flex;justify-content: center;align-items: center;}
+.maptourregionlay .priceclose {display:block;text-align:center;background:#fff;font-size:12px;color:#131313;height:25px;display:flex;justify-content: center;align-items: center;font-weight: 400;}
+.maptourregionlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+
+
+
+
+
+
+.mapcampingoverlay {position:relative;bottom:100px;border-bottom:2px solid #1504ff;float:left;}
+.mapcampingoverlay a {display:block;text-decoration:none;color:#000;text-align:center;font-size:12px;overflow:hidden;}
+
+.mapcampingoverlay .title {display:block;text-align:center;font-size:12px;color:#000; background-color: #fff;}
+.mapcampingoverlay .titleclose {display:block;text-align:center;background:#A3A3A3;font-size:12px;color:#fff;}
+
+.mapcampingoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;}
+
+
+.mapcountryoverlay {position:relative;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;width: 80px;bottom:80px;}
+.mapcountryoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
+.mapcountryoverlay a {background:#FFF;display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:12px;overflow:hidden;}
+
+.mapcountryoverlay .title {display:block;text-align:center;background:#FFF;font-size:10px;color:#131313;}
+.mapcountryoverlay .titleclose {display:block;text-align:center;background:#A3A3A3;font-size:10px;color:#fff;}
+.mapcountryoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+
+
+
 
 
 .customoverlay2 {position:relative;bottom:80px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;width: 90px;}
@@ -712,4 +754,16 @@ react-calendar, .react-calendar *, .react-calendar *:before, .react-calendar *:a
 
 .slick-dots li.slick-active button:before {
   color: #ff0000; /* Active dot color */
+}
+.slick-prev{
+  display: none;
+}
+.slick-next{
+  display: none;
+}
+
+.input::placeholder{
+  color : #131313;
+  font-size:16px;
+
 }

@@ -47,7 +47,7 @@ const MobileRoomppage =() =>  {
  
   return (
 
-    <MobileLayout registbtn ={true}  name={MOBILEMAINMENU.ROOMMENU} >
+    <MobileLayout registbtn ={true}  name={MOBILEMAINMENU.ROOMMENU} type={MOBILEMAINMENU.ROOMMENU} >
         <MobileRoomcontainer/>
     </MobileLayout>
   );

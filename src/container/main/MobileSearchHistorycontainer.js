@@ -96,7 +96,8 @@ const SearchContent={
   display: 'flex',
   flexDirection: 'column',
   fontFamily: 'Pretendard-SemiBold',
-  overflowY: "auto"
+  overflowY: "auto",
+  width:"100%"
 }
 
 const EmptyLine = styled.div`
@@ -209,24 +210,24 @@ const MobileSearchHistorycontainer = ({ containerStyle }) =>{
               {
                 searchitems.map((data)=>(
                   <div>
-                    <FlexstartColumn style={{ marginTop:"10px", padding:"24px"}}>
+                    <FlexstartColumn style={{ marginTop:"10px", padding:"5px 24px", width:"85%"}}>
                       <FlexstartRow >
-                      
-                      <SearchDBKeyword onClick={()=>{_handleDBSearch(data.SEARCH, searchitems)}}> 
-                        {data.SEARCH.slice(0, 50)}
-                        {data.SEARCH.length > 50 ? "..." : null}
-                      </SearchDBKeyword> 
-            
+                        <SearchDBKeyword onClick={()=>{_handleDBSearch(data.SEARCH, searchitems)}}> 
+                          {data.SEARCH.slice(0, 50)}
+                          {data.SEARCH.length > 50 ? "..." : null}
+                        </SearchDBKeyword> 
                       </FlexstartRow>
-
-                      <FlexEndRow style={{width:"100%", paddingTop:5, paddingBottom:10}}>
-                
-                      <ControlLayer>
-                        <TimeAgo date={getFullTime(data.CREATEDT)}formatter={formatter}/>
-                        <div  onClick={()=>{_handleMemoDelete(data.SEARCH_ID)}} style={{textDecoration:"underline", marginLeft:10, color:'#A16D6D'}}>삭제</div>
-                      </ControlLayer>
-                    
-                      </FlexEndRow>
+                      <Row style={{width:"100%", paddingTop:5, paddingBottom:10, justifyContent:"space-between"}}>                               
+                        <ControlLayer>
+                          {
+                            data.USERCOMMENT != undefined && <img src={imageDB.memo} style={{width:'16px', height:'16px', marginRight:5}}/>
+                          }
+                          <TimeAgo date={getFullTime(data.CREATEDT)}formatter={formatter} style={{fontWeight:400, fontSize:14, color :"#A3A3A3"}}/>
+                        </ControlLayer>
+                        <ControlLayer>
+                          <div  onClick={()=>{_handleMemoDelete(data.SEARCH_ID)}} style={{textDecoration:"underline", marginLeft:10, color:'#A16D6D', fontWeight:500}}>삭제</div>
+                        </ControlLayer>           
+                      </Row>
                     </FlexstartColumn>
                     <EmptyLine/>
                   </div>
@@ -234,8 +235,6 @@ const MobileSearchHistorycontainer = ({ containerStyle }) =>{
               }
             </div>
         </div>
-
-
       </Column>
     </div>
   );

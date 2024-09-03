@@ -82,3 +82,32 @@ export const ReadWork = async()=>{
     });
   }
 }
+
+export const ReadWorkByIndividually = async({WORK_ID})=>{
+  const workRef = collection(db, "WORK");
+
+  let workitem = {};
+  let success = false;
+  const q = query(workRef,where("WORK_ID", "==", WORK_ID));
+ 
+  try {
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      workitem = doc.data();
+    });
+
+    if (querySnapshot.size > 0) {
+      success = true;
+    }
+  } catch (e) {
+    console.log("error", e.message);
+  } finally {
+    return new Promise((resolve, resject) => {
+      if (success) {
+        resolve(workitem);
+      } else {
+        resolve(-1);
+      }
+    });
+  }
+}

@@ -25,8 +25,10 @@ import Loading from "../../../components/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import { ALLWORK, HOMECLEAN,BUSINESSCLEAN,
   MOVECLEAN,FOODPREPARE,ERRAND,GOOUTSCHOOL,BABYCARE,LESSON,PATIENTCARE,CARRYLOAD,
-  GOHOSPITAL,RECIPETRANSMIT,GOSCHOOLEVENT,SHOPPING,GODOGHOSPITAL,GODOGWALK,ALLROOM, SMALLROOM, MEDIUMROOM, LARGEROOM} from "../../../store/menu/MenuSlice"
+  GOHOSPITAL,RECIPETRANSMIT,GOSCHOOLEVENT,SHOPPING,GODOGHOSPITAL,GODOGWALK,ALLROOM, SMALLROOM, MEDIUMROOM, LARGEROOM, TOURREGION, TOURCOUNTRY, TOURFESTIVAL, TOURCITY, TOURPICTURE, PERFORMANCEEVENT, PERFORMANCECINEMA, MEDICALMEDICINE, MEDICALHOSPITAL, FOODHISTORY, FOODINFOMATION, CONVENIENCECAMPING} from "../../../store/menu/MenuSlice"
+import { CONVENIENCEMENU, FAMILYMENU, LIFEMENU, MEDICALMENU, PERFORMANCEMENU, TOURISTMENU, WEATHERMENU } from "../../../utility/life";
 
+import "./PCMainheader.css";
 
 
 
@@ -57,7 +59,7 @@ const OneHeaderMainMenu = styled.div`
   padding-left: 24px;
   color : #ff4e19;
   font-size:30px;
-  width:55%;
+  width:60%;
   align-items:center;
   justify-content: flex-start;
 `;
@@ -65,8 +67,8 @@ const OneHeaderOptionMenu = styled.div`
   display: flex;
   flex-direction:row;
   font-size:14px;
-  justify-content:space-between;
-  width:32%;
+  justify-content:space-around;
+  width:35%;
 `
 const OneHeaderLoginMenu = styled.div`
   display: flex;
@@ -197,6 +199,36 @@ const LoginBtn = styled.div`
   border-radius: 10px;
 `;
 
+const NavItemLayer = styled.div`
+
+  position: absolute;
+  left : ${({left}) => left};
+`
+const DropdownContent = styled.div`
+display: block;
+border: none;
+height: 110px;
+position: absolute;
+background-color: #fff;
+width: 100%;
+z-index: 1;
+text-align: left;
+color: #636363;
+font-size: 14px;
+flex-direction: row;
+font-weight: 700;
+padding: 15px;
+top: 120px;
+left: 10px;
+font-size: 14px;
+line-height: 2;
+border-bottom: 1px solid #ededed;
+
+`
+const MenuItem = styled.div`
+  color :${({clickstatus}) => clickstatus == true ? ('#FE4C26') : ('fff')}
+
+`
 
 
 
@@ -229,6 +261,41 @@ const RoomItems =[
 
 ]
 
+const LifeItems =[
+  LIFEMENU.TOUR,
+  LIFEMENU.PERFORMANCE,
+  LIFEMENU.MEDICAL,
+  LIFEMENU.FOOD,
+  LIFEMENU.CONVENIENCE,
+]
+const TouristItems=[
+  TOURISTMENU.TOURFESTIVAL,
+  TOURISTMENU.TOURREGION,
+  TOURISTMENU.TOURCOUNTRY,
+  TOURISTMENU.TOURPICTURE
+]
+const PerformanceItems=[
+  PERFORMANCEMENU.PERFORMANCEEVENT,
+  PERFORMANCEMENU.PERFORMANCECINEMA,
+
+]
+
+const FamilyItems =[
+  MEDICALMENU.FOODINFOMATION,
+]
+
+const ConvenienceItems= [
+  CONVENIENCEMENU.CONVENIENCECAMPING,
+
+]
+
+const MedicalItems= [
+  MEDICALMENU.MEDICALMEDICINE,
+  MEDICALMENU.MEDICALHOSPITAL,
+
+]
+
+
 
 const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
 
@@ -244,6 +311,8 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
   const [search, setSearch] = useState('');
   const [popupstatus, setPopupstatus] = useState(false);
 
+  const [lifemenu, setLifemenu] = useState(TOURISTMENU.TOURFESTIVAL);
+  const [popupmenu, setPopupmenu] = useState(false);
 
 
   useEffect(() => {
@@ -251,6 +320,8 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
     setCategorystatus(categorystatus);
     setSearch(search);
     setPopupstatus(popupstatus);
+    setLifemenu(lifemenu);
+    setPopupmenu(popupmenu);
 
   }, [refresh]);
 
@@ -313,6 +384,8 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
       navigation("/PCevent");
     }else if(status == PCMAINMENU.CHATMENU){
       navigation("/PCchat");
+    }else if(status == PCMAINMENU.LIVEINFORMATIONMENU){
+      navigation("/PClife");
     }
 
     setRefresh((refresh) => refresh +1);
@@ -348,10 +421,11 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
   }
 
   /**
-   *  카테고리 메뉴의 클릭상태를 표시 한다
+   *  카테고리 1차 메뉴의 클릭상태를 표시 한다
    */
   const _handleCategorystatus = (status) =>{
     console.log("TCL: _handleCategorystatus -> status", status);
+    setPopupmenu(true);
 
     if(status == WORKNAME.ALLWORK){
       reduxdispatch(ALLWORK());
@@ -402,69 +476,110 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
 
   }
 
+
+  const _handleLifeCategory = (lifemenu) =>{
+    console.log("TCL: _handleLifeCategory -> lifemenu", lifemenu);
+    setPopupmenu(false);
+
+    setLifemenu(lifemenu);
+
+    if(lifemenu == TOURISTMENU.TOURREGION){
+      reduxdispatch(TOURREGION());
+    }else if(lifemenu == TOURISTMENU.TOURFESTIVAL){
+      reduxdispatch(TOURFESTIVAL());
+    }else if(lifemenu == TOURISTMENU.TOURCOUNTRY){
+      reduxdispatch(TOURCOUNTRY());
+    }else if(lifemenu == TOURISTMENU.TOURPICTURE){
+      reduxdispatch(TOURPICTURE());
+    }else if(lifemenu == PERFORMANCEMENU.PERFORMANCEEVENT){
+      reduxdispatch(PERFORMANCEEVENT());
+    }else if(lifemenu == PERFORMANCEMENU.PERFORMANCECINEMA){
+      reduxdispatch(PERFORMANCECINEMA());
+    }else if(lifemenu == MEDICALMENU.MEDICALMEDICINE){
+      reduxdispatch(MEDICALMEDICINE());
+    }else if(lifemenu == MEDICALMENU.MEDICALHOSPITAL){
+      reduxdispatch(MEDICALHOSPITAL());
+    }else if(lifemenu == MEDICALMENU.FOODINFOMATION){
+      reduxdispatch(FOODINFOMATION());
+    }else if(lifemenu == CONVENIENCEMENU.CONVENIENCECAMPING){
+      reduxdispatch(CONVENIENCECAMPING());
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+
+
+
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       _handleAI();
     }
   };
 
+  const [isHovered, setIsHovered] = useState(false);
 
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
 /**
  * 마우스를 움직일때 사라지고 없어지고 한다
  * ! id 값 : oneheader, twohenader
  */
-  useEffect(() => {
-    const handleShowButton = () => {
-      if (window.scrollY > 10) {
+  // useEffect(() => {
+  //   const handleShowButton = () => {
+  //     if (window.scrollY > 10) {
 
-        let element = document.getElementById("oneheader");
+  //       let element = document.getElementById("oneheader");
 
-        if (element != null) {
-          document.getElementById("oneheader").style.display = "none";
-        }
+  //       if (element != null) {
+  //         document.getElementById("oneheader").style.display = "none";
+  //       }
 
-        element = document.getElementById("twoheader");
+  //       element = document.getElementById("twoheader");
 
-        if (element != null) {
-          document.getElementById("twosubheader").style.margin = "10px 0px";
-          document.getElementById("twoheader").style.marginTop = "0px";
-          document.getElementById("twoheader").style.width = "100%";
-          document.getElementById("twoheader").style.borderBottom =
-            "1px solid #ededed";
-        }
+  //       if (element != null) {
+  //         document.getElementById("twosubheader").style.margin = "10px 0px";
+  //         document.getElementById("twoheader").style.marginTop = "0px";
+  //         document.getElementById("twoheader").style.width = "100%";
+  //         document.getElementById("twoheader").style.borderBottom =
+  //           "1px solid #ededed";
+  //       }
 
-      } else {
-        let element = document.getElementById("oneheader");
-        if (element != null) {
-          document.getElementById("oneheader").style.display = "flex";
-        }
+  //     } else {
+  //       let element = document.getElementById("oneheader");
+  //       if (element != null) {
+  //         document.getElementById("oneheader").style.display = "flex";
+  //       }
 
-        element = document.getElementById("twoheader");
-        if (element != null) {
-          document.getElementById("twosubheader").style.margin = "0px 0px 10px 0px";
-          document.getElementById("twoheader").style.marginTop = "55px";
-          document.getElementById("twoheader").style.height = "115px";
-          document.getElementById("twoheader").style.border = "none";
-          document.getElementById("twoheader").style.width = "100%";
-        }
+  //       element = document.getElementById("twoheader");
+  //       if (element != null) {
+  //         document.getElementById("twosubheader").style.margin = "0px 0px 10px 0px";
+  //         document.getElementById("twoheader").style.marginTop = "55px";
+  //         document.getElementById("twoheader").style.height = "115px";
+  //         document.getElementById("twoheader").style.border = "none";
+  //         document.getElementById("twoheader").style.width = "100%";
+  //       }
 
-       }
+  //      }
 
-       if (window.scrollY > 10) {
-        setReigstbutton(true);
-      } else {
-        setReigstbutton(false);
-      }
+  //      if (window.scrollY > 10) {
+  //       setReigstbutton(true);
+  //     } else {
+  //       setReigstbutton(false);
+  //     }
 
-    };
+  //   };
 
-    window.addEventListener("scroll", handleShowButton);
+  //   window.addEventListener("scroll", handleShowButton);
 
-    return () => {
-      window.removeEventListener("scroll", handleShowButton);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleShowButton);
+  //   };
+  // }, []);
 
 
 
@@ -534,11 +649,11 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
           </OneHeaderMainMenu>
           <OneHeaderOptionMenu>
        
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row> 
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row>  */}
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.COMMUNITYMENU)}}><MainMenuText clickstatus={PCMAINMENU.COMMUNITYMENU == mainmenustatus}>{PCMAINMENU.COMMUNITYMENU}</MainMenuText></Row> 
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.CHATMENU)}}><MainMenuText clickstatus={PCMAINMENU.CHATMENU == mainmenustatus}>{PCMAINMENU.CHATMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.LIVEINFORMATIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.LIVEINFORMATIONMENU == mainmenustatus}>{PCMAINMENU.LIVEINFORMATIONMENU}</MainMenuText></Row> 
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row> 
 
           </OneHeaderOptionMenu>
@@ -551,7 +666,7 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
 
 
         {
-          (name == PCMAINMENU.HOMEMENU  || name == PCMAINMENU.ROOMMENU ) && <CategoryContainer>
+          (name == PCMAINMENU.HOMEMENU  || name == PCMAINMENU.ROOMMENU  ) && <CategoryContainer>
           <CategoryLine id="categoryheader">
 
             {
@@ -580,13 +695,98 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
               </BetweenRow>
               
             }
-       
-
           </CategoryLine>
           </CategoryContainer>
-        }
 
-        
+
+      }
+
+      {
+          ( name == PCMAINMENU.LIVEINFORMATIONMENU ) && <CategoryContainer>
+          <CategoryLine id="categoryheader">
+            {
+              name == PCMAINMENU.LIVEINFORMATIONMENU &&
+              <BetweenRow style={{width:'100%', margin:"0px auto"}}>
+                <FlexstartRow style={{width:'70%'}}>
+                {
+                  LifeItems.map((data, index)=>(
+                    <Categorymenu  callback={_handleCategorystatus} menu={data} 
+                      clickstatus={data == categorystatus}>
+                        <div class="dropdown" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                          <span>{data}</span>
+                    
+                       
+                        </div>
+                    
+                    </Categorymenu>                
+                  ))
+                }
+
+
+                </FlexstartRow>
+
+                <Row>
+
+                {
+                  (popupmenu == true ) &&  
+                  <DropdownContent>
+                      <div class="dropdown-nav">
+                      <div>
+                      {
+                        TouristItems.map((subdata)=>(
+                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                        ))
+                      }
+                      </div>
+                  
+                      <div style={{marginLeft:20}}>
+                      {
+                        PerformanceItems.map((subdata)=>(
+                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                        ))
+                      }
+                      </div>
+                            
+                      <div style={{marginLeft:30}}>
+                      {
+                        MedicalItems.map((subdata)=>(
+                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                        ))
+                      }
+                      </div>
+                      <div style={{marginLeft:35}}>
+                      {
+                        FamilyItems.map((subdata)=>(
+                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                        ))
+                      }
+                      </div>
+
+                            
+                  
+                      <div style={{marginLeft:30}}>
+                      {
+                        ConvenienceItems.map((subdata)=>(
+                          <div onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</div>
+                        ))
+                      }
+                      </div>
+                      </div>
+            
+                  </DropdownContent>
+                }
+                </Row>
+
+
+                {/* <Row style={{paddingRight:'50px', fontFamily:"Pretendard-SemiBold", fontSize:20}}>
+                █ {lifemenu}
+                </Row> */}
+              </BetweenRow>    
+            }
+          </CategoryLine>
+          </CategoryContainer>
+      }
+     
      
       </TwoContainer>
 

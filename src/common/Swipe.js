@@ -19,9 +19,10 @@ import { imageDB } from '../utility/imageData';
 import '../screen/css/common.css' 
 
 const Container = styled.div`
-
+  width: 93%;
+  margin :20px auto;
 `
-const SlickSliderComponent = () => {
+const SlickSliderComponent = ({width ,images}) => {
     const settings = {
       dots: true, // 슬라이더 하단에 점을 표시
       infinite: true, // 무한 루프 설정
@@ -35,19 +36,19 @@ const SlickSliderComponent = () => {
     };
   
     return (
-     <div style={{ width: '350px', position:"absolute", top:470}}>
+     <Container width={width}>
         <Slider {...settings}>
-            <div style={{height:"80px"}}>
-            <img src= {imageDB.mobilebanner1} style={{height:"80px", width:"100%"}}/>   
-            </div>
-            <div style={{height:"80px"}}>
-            <img src= {imageDB.mobilebanner2} style={{height:"80px", width:"100%"}}/>
-            </div>
-            <div style={{height:"80px"}}>
-            <img src= {imageDB.mobilebanner3} style={{height:"80px", width:"100%"}}/>
-            </div>
+          {
+            images.map((data)=>(
+              <div style={{height:"80px"}}>
+              <img src= {data} style={{height:"80px", width:"330px"}}/>   
+              </div>
+            ))
+          }
+       
+       
         </Slider>
-      </div>
+      </Container>
     );
   };
   

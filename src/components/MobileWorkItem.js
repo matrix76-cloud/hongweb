@@ -29,7 +29,7 @@ const Container = styled.div`
   justify-content:center;
   align-items:center;
   padding :20px;
-  font-weight: 700;
+
 
 
 `
@@ -51,8 +51,8 @@ const TagItem = styled.div`
 
 `
 const Tag = styled.div`
-  background: #FFE5E5;
-  color: #FF2121;
+  background: #FF7125;
+  color: #FFF;
   padding: 4px 8px;
   border-radius: 5px;
   width:81px;
@@ -217,7 +217,7 @@ const MobileWorkItem =({containerStyle, width, workdata, onPress, index, selecte
 
       <Column style={{height:"40%", background:"#fff",width:"100%"}}>
         <Row style={{height:"86px", background:"#fff",width:"100%"}}>
-          <FlexstartColumn style={{height:"100%",width:"66%"}}>
+          <FlexstartColumn style={{height:"100%",width:"70%"}}>
             {
               workdata.WORK_STATUS== 0 ? (<TagItem>
                   <Tag>진행중 거래</Tag></TagItem>):(<TagItem><DisableTag>마감된 거래</DisableTag></TagItem>)
@@ -230,7 +230,7 @@ const MobileWorkItem =({containerStyle, width, workdata, onPress, index, selecte
             </FlexstartColumn>
           </FlexstartColumn>
 
-          <BetweenRow style={{height:"100%", width:"34%"}}>
+          <BetweenRow style={{height:"100%", width:"30%"}}>
             <div style={{background:"#F9F9F9", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
             <img src={Seekimage(workdata.WORKTYPE)} style={{width:64}}/>
             </div>
@@ -238,7 +238,7 @@ const MobileWorkItem =({containerStyle, width, workdata, onPress, index, selecte
       
         </Row>
       </Column>
-      <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px", color:"#A3A3A3", fontSize:16}}>
+      <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px", color:"#A3A3A3", fontSize:14}}>
         {Comment().slice(0, 25)}
         {Comment().length > 25 ? "..." : null}
       </BetweenRow>
@@ -253,9 +253,9 @@ const MobileWorkItem =({containerStyle, width, workdata, onPress, index, selecte
         <div><TimeAgo date={getFullTime(workdata.CREATEDT)}formatter={formatter}/></div>
         </BetweenRow>
         <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px 0px"}}>
-          <Row><img src={imageDB.eyesolid} style={{width:16, height:16}}/>
-          <span style={{fontSize:18,paddingLeft:5}}></span>20</Row>
-          <Row><span style={{color :"#A3A3A3", paddingRight:10,fontSize:18}}>진행중인 건수</span><span style={{fontFamily:"Pretendard-Bold"}}>5건</span></Row> 
+          <Row><img src={imageDB.eyesolid} style={{width:16, height:12}}/>
+          <span style={{fontSize:14,paddingLeft:5}}></span>20</Row>
+          <Row><span style={{color :"#A3A3A3", paddingRight:10,fontSize:12}}>진행중인 건수</span><span style={{fontFamily:"Pretendard-Bold"}}>5건</span></Row> 
         </BetweenRow>
 
         <FlexstartRow style={{width:"100%", flexWrap:"wrap"}}>

@@ -9,7 +9,7 @@ import { ReadWork } from "../../service/WorkService";
 import { useSleep } from "../../utility/common";
 import { imageDB } from "../../utility/imageData";
 
-
+import { ReadCampingRegion, ReadHospitalRegion, ReadHospitalRegion1, ReadPerformanceCinema, ReadPerformanceEvent, ReadTourCountry, ReadTourFestival, ReadTourPicture, ReadTourRegion } from "../../service/LifeService";
 
 
 
@@ -152,9 +152,190 @@ const PCSplashcontainer =({containerStyle}) =>  {
       data.roomitems = roomitems;
 
       datadispatch(data);
-      StartProcess();
-
+  
+      FetchCommunityData();
     } 
+
+    async function FetchCommunityData(){
+      const tourpictureitem = await ReadTourPicture();
+      const dataToSavpicture = JSON.parse(tourpictureitem);
+      data.tourpictureitem = dataToSavpicture.response.body.items.item;
+      // setTourpictureitem(dataToSavpicture.response.body.items.item);
+
+      const tourregionitem = await ReadTourRegion();
+      const dataToSaveregion = JSON.parse(tourregionitem);
+      data.tourregionitem = dataToSaveregion.response.body.items;
+      // setTourregionitem(dataToSaveregion.response.body.items);
+      
+
+
+      const tourfestivalitem = await ReadTourFestival();
+      const dataToSavefestival = JSON.parse(tourfestivalitem);
+      // setTourfestivalitem(dataToSavefestival.response.body.items);
+      data.tourfestivalitem = dataToSavefestival.response.body.items;
+      const tourcountryitem = await ReadTourCountry();
+      const dataToSavecountry = JSON.parse(tourcountryitem);
+      // setTourCountryitem(dataToSavecountry.response.body.items);
+      data.tourcountryitem = dataToSavecountry.response.body.items;
+
+
+      let items = [];
+      const performanceeventitem = await ReadPerformanceEvent();
+
+      performanceeventitem.map((data, index)=>{
+       const dataToSave = JSON.parse(data.dateitem);
+     
+        if(dataToSave.response.body != undefined){
+          dataToSave.response.body.items.map((subdata)=>{
+            items.push(subdata);
+          })
+     
+        }
+      })
+      data.performanceeventitem = items;
+
+      const performancecinemaitem = await ReadPerformanceCinema();
+      const dataToSavecinema = JSON.parse(performancecinemaitem);
+      // setPerformancecinemaitem(dataToSavecinema.response.body.items);
+      data.performancecinemaitem = dataToSavecinema.response.body.items;
+
+
+
+      items = [];
+      const hospitalitem = await ReadHospitalRegion1();
+
+      hospitalitem.map((data, index)=>{
+
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(data.hospitalitem, "text/xml");
+    
+    
+        // 데이터 추출
+        const xmlitems = xmlDoc.getElementsByTagName("item");
+   
+  
+
+        for (let i = 0; i < xmlitems.length; i++) {
+          let XPos = "", YPos = "", hospUrl ="", telno ="";
+          const clCdNm = xmlitems[i].getElementsByTagName("clCdNm")[0].textContent; 
+          const drTotCnt = xmlitems[i].getElementsByTagName("drTotCnt")[0].textContent; 
+
+          const cmdcGdrCnt = xmlitems[i].getElementsByTagName("cmdcGdrCnt")[0].textContent; 
+          const cmdcIntnCnt = xmlitems[i].getElementsByTagName("cmdcIntnCnt")[0].textContent; 
+          const cmdcResdntCnt = xmlitems[i].getElementsByTagName("cmdcResdntCnt")[0].textContent; 
+          const cmdcSdrCnt = xmlitems[i].getElementsByTagName("cmdcSdrCnt")[0].textContent; 
+
+
+          const detyGdrCnt = xmlitems[i].getElementsByTagName("detyGdrCnt")[0].textContent; 
+          const detyIntnCnt = xmlitems[i].getElementsByTagName("detyIntnCnt")[0].textContent; 
+          const detyResdntCnt = xmlitems[i].getElementsByTagName("detyResdntCnt")[0].textContent; 
+          const detySdrCnt = xmlitems[i].getElementsByTagName("detySdrCnt")[0].textContent; 
+
+
+
+          const mdeptGdrCnt = xmlitems[i].getElementsByTagName("mdeptGdrCnt")[0].textContent; 
+          const mdeptIntnCnt = xmlitems[i].getElementsByTagName("mdeptIntnCnt")[0].textContent; 
+          const mdeptResdntCnt = xmlitems[i].getElementsByTagName("mdeptResdntCnt")[0].textContent; 
+          const mdeptSdrCnt = xmlitems[i].getElementsByTagName("mdeptSdrCnt")[0].textContent; 
+
+          const yadmNm = xmlitems[i].getElementsByTagName("yadmNm")[0].textContent;
+
+          const addr = xmlitems[i].getElementsByTagName("addr")[0].textContent;
+          if(xmlitems[i].getElementsByTagName("XPos")[0] != undefined){
+            XPos = xmlitems[i].getElementsByTagName("XPos")[0].textContent;
+            YPos = xmlitems[i].getElementsByTagName("YPos")[0].textContent;
+          }
+     
+          const ykiho = xmlitems[i].getElementsByTagName("ykiho")[0].textContent;
+  
+          if(xmlitems[i].getElementsByTagName("telno")[0] != undefined){
+            telno = xmlitems[i].getElementsByTagName("telno")[0].textContent;
+          }
+
+
+          if(xmlitems[i].getElementsByTagName("hospUrl")[0] != undefined){
+
+            hospUrl = xmlitems[i].getElementsByTagName("hospUrl")[0].textContent;
+          }
+
+
+          items.push({clCdNm,drTotCnt,
+            cmdcGdrCnt,cmdcIntnCnt,cmdcResdntCnt,cmdcSdrCnt,
+            detyGdrCnt,detyIntnCnt,detyResdntCnt,detySdrCnt,
+            mdeptGdrCnt,mdeptIntnCnt,mdeptResdntCnt,mdeptSdrCnt,
+            yadmNm,
+            addr,XPos, YPos,
+            ykiho,telno,hospUrl})
+        }
+
+      
+
+      })
+
+      data.hospitalregionitem = items;
+      // setHospitalregionitem(items);
+
+      // console.log("hospital items", items);
+
+
+
+
+      items = [];
+      const campingitem = await ReadCampingRegion();
+
+
+      campingitem.map((data, index)=>{
+
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(data.campingitem, "text/xml");
+    
+        // 데이터 추출
+        const xmlitems = xmlDoc.getElementsByTagName("item");
+   
+        
+        const data2 = [];
+
+        for (let i = 0; i < xmlitems.length; i++) {
+          const contentId = xmlitems[i].getElementsByTagName("contentId")[0].textContent; 
+          const facltNm = xmlitems[i].getElementsByTagName("facltNm")[0].textContent;
+          const lineIntro = xmlitems[i].getElementsByTagName("lineIntro")[0].textContent;
+          const intro = xmlitems[i].getElementsByTagName("intro")[0].textContent;
+          const facltDivNm = xmlitems[i].getElementsByTagName("facltDivNm")[0].textContent;
+          const induty = xmlitems[i].getElementsByTagName("induty")[0].textContent;
+          const addr1 = xmlitems[i].getElementsByTagName("addr1")[0].textContent;
+          const resveCl = xmlitems[i].getElementsByTagName("resveCl")[0].textContent;
+          const tooltipme = xmlitems[i].getElementsByTagName("tooltip")[0].textContent;
+
+          const caravInnerFclty = xmlitems[i].getElementsByTagName("caravInnerFclty")[0].textContent;
+          const brazierCl = xmlitems[i].getElementsByTagName("brazierCl")[0].textContent;
+          const sbrsCl = xmlitems[i].getElementsByTagName("sbrsCl")[0].textContent;
+          const sbrsEtc = xmlitems[i].getElementsByTagName("sbrsEtc")[0].textContent;
+          const posblFcltyCl = xmlitems[i].getElementsByTagName("posblFcltyCl")[0].textContent;
+          const animalCmgCl = xmlitems[i].getElementsByTagName("animalCmgCl")[0].textContent;
+          const firstImageUrl = xmlitems[i].getElementsByTagName("firstImageUrl")[0].textContent;
+
+          const mapX = xmlitems[i].getElementsByTagName("mapX")[0].textContent;
+          const mapY = xmlitems[i].getElementsByTagName("mapY")[0].textContent;
+          const tel = xmlitems[i].getElementsByTagName("tel")[0].textContent;
+          const homepage = xmlitems[i].getElementsByTagName("homepage")[0].textContent;
+
+          
+          items.push({contentId,facltNm,lineIntro,intro,facltDivNm,induty,addr1, resveCl, tooltipme,caravInnerFclty,brazierCl,sbrsCl, sbrsEtc,
+            posblFcltyCl,animalCmgCl,firstImageUrl,mapX,mapY,tel,homepage})
+        }
+
+      
+
+      })
+      // setCampingregionitem(items);
+
+      data.campingregionitem = items;
+
+      datadispatch(data);
+    
+      StartProcess();
+    }
+    
 
     FetchLocation();
 

@@ -52,7 +52,7 @@ const Box = styled.div`
   height: 80px;
   width: 22%;
   margin-right: 5px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 
 
 `
@@ -62,6 +62,13 @@ const BoxImg = styled.div`
   border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
   padding: 10px;
 `
+const BoxText = styled.div`
+  color: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#000') };
+  font-size:14px;
+  margin-top:10px;
+
+`
+
 
 
 const WorkItems=[
@@ -159,12 +166,12 @@ const MobileWorkregistercontainer =({containerStyle}) =>  {
 
         <Column style={{ backgroundColor:"#fff", height:"95%"}}>
           <TitleLayer><Title>홍여사에 요청할 일감 유형을 선택해 주세요</Title></TitleLayer>
-          <Row style={{flexWrap:"wrap", margin:"0px 10px"}}>
+          <Row style={{flexWrap:"wrap", margin:"5px 10px"}}>
             {
               WorkItems.map((data, index)=>(
                 <Box onClick={()=>{_handlemenuclick(data.name)}}>
                   <BoxImg  clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
-                  <div style={{ fontSize:12}}>{data.name}</div>
+                  <BoxText clickstatus={menu == data.name}>{data.name}</BoxText>
                 </Box>
               ))
             }

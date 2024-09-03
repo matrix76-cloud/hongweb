@@ -48,7 +48,7 @@ const MobileSearchpage =() =>  {
   
  
   return (
-    <MobilePrevLayout iconname = {'searchmenu'}>
+    <MobilePrevLayout iconname = {'searchmenu'} callback={'main'}>
         <MobileSearchcontainer search={location.state.search} search_id={location.state.search_id} />
     </MobilePrevLayout>
 

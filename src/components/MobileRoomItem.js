@@ -30,7 +30,7 @@ const RoomSmallType = styled.div`
   font-size: 14px;
   position: relative;
   top: 10px;
-  left:-110px;
+  left:-100px;
   background :#F5FFFE;
   color :#00B8A9;
   width:50px;
@@ -48,7 +48,7 @@ const RoomMediumType = styled.div`
   font-size: 14px;
   position: relative;
   top: 10px;
-  left:-110px;
+  left:-100px;
   background :#F5FBFF;
   color :#21A2FF;
   width:50px;
@@ -65,7 +65,7 @@ const RoomLargeType = styled.div`
   font-size: 14px;
   position: relative;
   top: 10px;
-  left:-110px;
+  left:-100px;
   background :#FFF5F5;
   color :#FF2121;
   width:50px;
@@ -184,31 +184,31 @@ const MobileRoomItem =({containerStyle, width, roomdata, onPress, index, selecte
         roomdata.ROOMTYPE == ROOMSIZE.LARGE && <RoomLargeType><span>{roomdata.ROOMTYPE}</span></RoomLargeType>
       }
 
-      <div style={{width:"100%"}}>
+      <div style={{width:"100%", margin: '0 auto'}}>
       <img src={getImage()} width={'100%'} height={224} style={{borderTopLeftRadius:10, borderTopRightRadius:10,marginTop:-35}}/>
       </div>
      <FlexstartColumn style={{width:"100%", position:'relative', marginTop:10}}>
       <InfoLayout>
-      <FlexstartColumn style={{width:"100%", padding: "0px 15px"}}>
-         <div style={{fontSize:14, color:"#A3A3A3", lineHeight:'18.2px', display:"flex", justifyContent:"center", alignItems:"center"}}>
+      <FlexstartColumn style={{width:"90%", padding: "0px 15px", fontSize:12}}>
+         <div style={{fontSize:12, color:"#A3A3A3", lineHeight:'18.2px', display:"flex", justifyContent:"center", alignItems:"center"}}>
           <img src ={imageDB.map} style={{width:14}}/><span style={{marginLeft:5}}>{Region()}</span></div>
        </FlexstartColumn>
 
-       <FlexstartColumn style={{width:"100%", padding: "0px 15px"}}>
-         <div style={{fontSize:14, color:"#A3A3A3", lineHeight:'18.2px', display:"flex", justifyContent:"center", alignItems:"center"}}>
+       <FlexstartColumn style={{width:"90%", padding: "0px 15px", fontSize:12}}>
+         <div style={{fontSize:12, color:"#A3A3A3", lineHeight:'18.2px', display:"flex", justifyContent:"center", alignItems:"center"}}>
          <img src ={imageDB.distance} style={{width:14}}/>
          <span style={{marginLeft:5}}>{Distance()}km</span></div>
        </FlexstartColumn>
 
-       <FlexstartColumn style={{width:"100%", padding: "0px 15px"}}>
-         <div style={{color:"#A3A3A3", fontSize:14, lineHeight:'18.2px'}}>짐을 수시로 찾을수 있는지 여부 : <span style={{color:"#131313", fontWeight:700}}>{Info()}</span></div>
+       <FlexstartColumn style={{width:"90%", padding: "0px 15px"}}>
+         <div style={{color:"#A3A3A3", fontSize:12, lineHeight:'18.2px'}}>짐을 수시로 찾을수 있는지 여부 : <span style={{color:"#131313", fontWeight:700}}>{Info()}</span></div>
        </FlexstartColumn>
       </InfoLayout>
 
 
-       {/* <PriceTable/> */}
 
-       <FlexstartRow style={{height:"52px",width:"100%", flexWrap:"wrap", padding: "0px 15px"}}>
+
+       <FlexstartRow style={{height:"52px",width:"95%", flexWrap:"wrap", padding: "0px 15px"}}>
          <KeywordBox> {Price()}으로 이용가능</KeywordBox>
          <KeywordBox> {UseRoom()}에서 보관</KeywordBox>
        </FlexstartRow>

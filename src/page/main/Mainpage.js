@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Maincontainer from "../../container/main/Maincontainer";
 import { UserContext } from "../../context/User";
 import HomeLayout from "../../screen/Layout/Layout/HomeLayout";
+import { MOBILEMAINMENU } from "../../utility/screen";
 
 const Container = styled.div`
 
@@ -39,7 +40,7 @@ const Mainpage =() =>  {
  
   return (
 
-    <HomeLayout bottom={true} header={true} type={'main'} name={'홍여사메인'}>
+    <HomeLayout bottom={true} header={true} type={MOBILEMAINMENU.HONGMENU} name={MOBILEMAINMENU.HONGMENU}>
         <Maincontainer/>
     </HomeLayout>
   );

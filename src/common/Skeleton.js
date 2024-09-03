@@ -33,6 +33,25 @@ const Skeleton =({containerStyle}) =>  {
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
 
+  useLayoutEffect(() => {
+  }, []);
+
+  useEffect(() => {
+      window.scrollTo(0, 0);
+      return () => {};
+  }, []);
+
+  useEffect(()=>{
+
+  }, [refresh])
+
+  useEffect(()=>{
+      async function FetchData(){
+       
+      }
+      FetchData();
+  }, [])
+  
 
  
   return (

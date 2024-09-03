@@ -44,6 +44,13 @@ import MobileRegistpage from "./page/main/MobileRegistpage";
 import MobileMappage from "./page/main/Mobilemappage";
 import MobileSearchpage from "./page/main/MobileSearchpage";
 import MobileSearchHistorypage from "./page/main/MobileSearchHistorypage";
+import MobileGatepage from "./page/main/MobileGatepage";
+
+import MobilePolicypage from "./page/main/MobilePolicypage";
+import MobilePhonepage from "./page/main/MobilePhonepage";
+import PCLifepage from "./page/PCmain/PCLifepage";
+import MobileCommunityppage from "./page/main/MobileCommunitypage";
+import MobileWorkpage from "./page/main/Mobileworkpage";
 
 
 
@@ -92,20 +99,21 @@ const App =() =>  {
           element={isMobile ?  (<MobileSplashpage />) :   (<PCSplashpage />)} 
         />
 
-
-      <Route path="/PCsplash" element={<PCSplashpage />} />
-      <Route path="/splash" element={<Mainpage />} />
-
-      <Route path="/PCmain" element={<PCMainpage />} />
+      <Route path="/Mobilegate" element={<MobileGatepage />} />
+      <Route path="/Mobilepolicy" element={<MobilePolicypage />} />
+      <Route path="/Mobilephone" element={<MobilePhonepage />} />
       <Route path="/Mobilemain" element={<MobileMainpage />} />
       <Route path="/Mobileroom" element={<MobileRoomppage />} />
+      <Route path="/Mobilecommunity" element={<MobileCommunityppage />} />
       <Route path="/Mobileworkregister" element={<MobileWorkregistserpage />} />
       <Route path="/Mobileroomregister" element={<MobileRoomregistserpage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
       <Route path="/Mobilemap" element={<MobileMappage />} />
+      <Route path="/Mobilwork" element={<MobileWorkpage />} />
       <Route path="/Mobilesearch" element={<MobileSearchpage />} />
       <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
 
+      <Route path="/PCmain" element={<PCMainpage />} />
       <Route path="/PCmap" element={<PCMappage />} />
       <Route path="/PCchat" element={<PCChatpage />} />
       <Route path="/PCcommunity" element={<PCCommunitypage />} />
@@ -117,6 +125,7 @@ const App =() =>  {
       <Route path="/PCprofile" element={<PCProfilepage />} />
       <Route path="/PCcenter" element={<PCCenterpage />} />
       <Route path="/PCevent" element={<PCEventpage />} />
+      <Route path="/PClife" element={<PCLifepage />} />
       <Route path="/PCeventdetail" element={<PCEventdetailpage />} />
       <Route path="/PCattendanceevent" element={<PCAttendanceEventpage />} />
       <Route path="/PCrulletevent" element={<PCRulletEventpage />} />

@@ -129,14 +129,14 @@
 .spotlight-animation {
 
 
-  background-color:#dafbec;
+  background-color:#FFF;
   animation: highlightColorChange 1s infinite;
 }
 
 @keyframes highlightColorChange {
   0% {
 
-      background-color : #dafbec;
+      background-color : #FFF;
   }
   50% {
    
@@ -145,5 +145,48 @@
   100% {
 
       background-color : #FFF;
+  }
+}
+
+.rotating-border {
+  width: 100px;
+  height: 100px;
+  border: 5px solid transparent; /* 투명 테두리 */
+  border-top: 5px solid #3498db; /* 테두리 윗부분 색상 */
+  border-radius: 50%; /* 동그라미 모양 */
+  animation: rotateBorder 2s linear infinite; /* 애니메이션 적용 */
+}
+
+/* 윤곽선이 움직이는 애니메이션 키프레임 */
+@keyframes rotateBorder {
+  0% {
+    transform: rotate(0deg); /* 시작 각도 */
+  }
+  100% {
+    transform: rotate(360deg); /* 끝 각도 */
+  }
+}
+
+.circle-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%; /* 동그라미 모양 */
+  background: conic-gradient(
+    from 0deg, 
+    #ffffff 0%, /* 하이라이트 시작 색상 */
+    #3498db 10%, /* 하이라이트 끝 색상 */
+    #3498db 90%, /* 배경 색상 */
+    #ffffff 100% /* 하이라이트 시작 색상으로 돌아오기 */
+  );
+  animation: highlightMove 2s linear infinite; /* 애니메이션 적용 */
+}
+
+/* 하이라이트 움직임 애니메이션 */
+@keyframes highlightMove {
+  0% {
+    transform: rotate(0deg); /* 시작 각도 */
+  }
+  100% {
+    transform: rotate(360deg); /* 끝 각도 */
   }
 }

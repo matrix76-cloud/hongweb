@@ -1,7 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { WORKNAME, WORKPOLICY } from "../../utility/work";
+import { WORKNAME } from "../../utility/work";
 import { ROOMSIZE } from "../../utility/room";
+import { CONVENIENCEMENU, MEDICALMENU, PERFORMANCEMENU, TOURISTMENU } from "../../utility/life";
 
 const menuSlice = createSlice({
     name :"menu",
@@ -69,6 +70,39 @@ const menuSlice = createSlice({
         },
         LARGEROOM : (state)=>{
             state.value  = ROOMSIZE.LARGE;
+        },
+        TOURREGION : (state) =>{
+            state.value = TOURISTMENU.TOURREGION;
+        },
+        TOURFESTIVAL : (state) =>{
+            state.value = TOURISTMENU.TOURFESTIVAL;
+        },
+        TOURCOUNTRY : (state) =>{
+            state.value = TOURISTMENU.TOURCOUNTRY;
+        },
+        TOURCITY : (state) =>{
+            state.value = TOURISTMENU.TOURCITY;
+        },
+        TOURPICTURE : (state) =>{
+            state.value = TOURISTMENU.TOURPICTURE;
+        },
+        PERFORMANCEEVENT : (state) =>{
+            state.value = PERFORMANCEMENU.PERFORMANCEEVENT;
+        },
+        PERFORMANCECINEMA : (state) =>{
+            state.value = PERFORMANCEMENU.PERFORMANCECINEMA;
+        },
+        MEDICALMEDICINE : (state) =>{
+            state.value = MEDICALMENU.MEDICALMEDICINE;
+        },
+        MEDICALHOSPITAL : (state) =>{
+            state.value = MEDICALMENU.MEDICALHOSPITAL;
+        },
+        FOODINFOMATION : (state) =>{
+            state.value = MEDICALMENU.FOODINFOMATION;
+        },
+        CONVENIENCECAMPING: (state) =>{
+            state.value = CONVENIENCEMENU.CONVENIENCECAMPING;
         }
     }
 }
@@ -76,5 +110,8 @@ const menuSlice = createSlice({
 const {actions, reducer} = menuSlice;
 export const {ALLWORK, HOMECLEAN,BUSINESSCLEAN,
     MOVECLEAN,FOODPREPARE,ERRAND,GOOUTSCHOOL,BABYCARE,LESSON,PATIENTCARE,CARRYLOAD,
-    GOHOSPITAL,RECIPETRANSMIT,GOSCHOOLEVENT,SHOPPING,GODOGHOSPITAL,GODOGWALK,ALLROOM, SMALLROOM, MEDIUMROOM, LARGEROOM} = actions;
+    GOHOSPITAL,RECIPETRANSMIT,GOSCHOOLEVENT,SHOPPING,GODOGHOSPITAL,GODOGWALK,ALLROOM, 
+    SMALLROOM, MEDIUMROOM, LARGEROOM,
+    TOURREGION,TOURFESTIVAL,TOURCOUNTRY,TOURCITY,TOURPICTURE,PERFORMANCEEVENT,PERFORMANCECINEMA,
+    MEDICALMEDICINE,MEDICALHOSPITAL, FOODHISTORY,FOODINFOMATION,CONVENIENCECAMPING} = actions;
 export default reducer;

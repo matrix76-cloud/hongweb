@@ -54,40 +54,15 @@ const Splashcontainer =({containerStyle}) =>  {
 
     } 
     FetchData();
+
+
+
   }, [])
 
 
 
 
-  /**
-   ** 실제로 react-native앱에서 받은 로직을 처리하는 Function
-   */
-  const listener = (event) => {
-    const { data, type } = JSON.parse(event.data);
-    if (type === LINKTYPE.DEVICEINFO) {
 
-
-    } else if (type === LINKTYPE.CURRENTPOS) {
-
-    } else if(type == LINKTYPE.TELEPHONE){
-
-    }
-  };
-
-  /**
-   ** 실제로 react-native앱 메시지 처리
-   */
-  useEffect(() => {
-    // setRegion(user.region1 + " " + user.region2);
-    if (window.ReactNativeWebView) {
-      /** android */
-      document.addEventListener("message", listener);
-      /** ios */
-      window.addEventListener("message", listener);
-    } else {
-      // 모바일이 아니라면 모바일 아님을 alert로 띄웁니다.
-    }
-  }, []);
 
 
   // sample code

@@ -1,0 +1,13 @@
+.hospitaltable tbody tr td:first-child {
+    text-align: left;
+    background-color: #FAFAFA;
+    font-weight: 600;
+    min-width: 50px;
+    width: 50px;
+    color :#000;
+}
+.hospitaltable  tbody {
+    display: block;
+    height: 700px; /* 원하는 높이 설정 */
+    overflow-y: auto;
+  }

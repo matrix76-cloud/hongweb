@@ -1,7 +1,10 @@
 import React, { Component, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
+import LottieAnimation from "../../common/LottieAnimation";
 import { UserContext } from "../../context/User";
+import { useSleep } from "../../utility/common";
+import { imageDB } from "../../utility/imageData";
 
 
 const Container = styled.div`
@@ -17,6 +20,8 @@ const Communitycontainer =({containerStyle}) =>  {
   const location = useLocation();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
+  const [currentloading, setCurrentloading] = useState(true);
+
 
   useLayoutEffect(() => {
   }, []);
@@ -28,18 +33,24 @@ const Communitycontainer =({containerStyle}) =>  {
 
   useEffect(()=>{
     async function FetchData(){
+      await useSleep(10000);
+      setCurrentloading(false);
     } 
     FetchData();
   }, [])
   useEffect(()=>{
-
+    setCurrentloading(currentloading);
   },[refresh])
 
  
   return (
 
     <Container style={containerStyle}>
-        <div>Community</div>
+    {
+        currentloading == true ?
+        ( <LottieAnimation containerStyle={{marginTop:"60%"}} animationData={imageDB.loadinglarge}
+          width={"100px"} height={'100px'}/>) :(<div style={{height:"500px", width:"100%", background:"#ff0000"}}></div>)
+    }
     </Container>
   );
 

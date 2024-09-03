@@ -155,8 +155,13 @@ const PcAiCommentpopup = ({ search_id,callback, top, left, height, width, basicc
   const _handleMemoSave = async() =>{
 
     const SEARCH_ID = search_id;
-    let USERCOMMENT = basiccomment;
-    USERCOMMENT +="\n";
+
+    let USERCOMMENT = "";
+    if(basiccomment != undefined && basiccomment != ''){
+      USERCOMMENT = basiccomment;
+      USERCOMMENT +="\n";
+    }
+  
     USERCOMMENT += comment;
     console.log("TCL: _handleMemoSave -> USERCOMMENT", USERCOMMENT)
     

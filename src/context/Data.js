@@ -5,7 +5,16 @@ const DataContext = createContext({
     communityitems :[],
     workitems :[],
     roomitems :[],
-    workmenu : ""
+    workmenu : "",
+    tourpictureitem :[],
+    tourregionitem:[],
+    tourfestivalitem :[],
+    tourcountryitem :[],
+    performanceeventitem : [],
+    performancecinemaitem:[],
+    hospitalregionitem : [],
+    campingregionitem :[]
+  
 
   },
   datadispatch: () => {},
@@ -19,13 +28,30 @@ const DataProvider = ({ children }) => {
     workitems,
     roomitems,
     workmenu,
+    tourpictureitem,
+    tourregionitem,
+    tourfestivalitem,
+    tourcountryitem,
+    performanceeventitem,
+    performancecinemaitem,
+    hospitalregionitem,
+    campingregionitem,
+
  
   }) => {
     setData({
       communityitems,
       workitems,
       roomitems,
-      workmenu
+      workmenu,
+      tourpictureitem,
+      tourregionitem,
+      tourfestivalitem,
+      tourcountryitem,
+      performanceeventitem,
+      performancecinemaitem,
+      hospitalregionitem,
+      campingregionitem,
     });
   };
 

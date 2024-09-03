@@ -1,4 +1,4 @@
-import React, { Component, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { Component, Fragment, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
@@ -15,7 +15,7 @@ import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import Loading from "../../components/Loading";
 import { FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
-import { WORKNAME } from "../../utility/work";
+import { WORKNAME, WORKPOLICY } from "../../utility/work";
 import { useSelector } from "react-redux";
 import { Column } from "../../common/Column";
 import MobileWorkItem from "../../components/MobileWorkItem";
@@ -27,10 +27,30 @@ import MobileStoreInfo from "../../components/MobileStoreInfo";
 import Swipe from "../../common/Swipe";
 import SlickSliderComponent from "../../common/Swipe";
 import { useSleep } from "../../utility/common";
+import { FILTERNAME } from "../../utility/fitler";
+
+import { FiTerminal } from "react-icons/fi";
+import MobileServiceFilter from "../../modal/MobileServiceFilterPopup/MobileServiceFilter";
+import MobilePriceFilter from "../../modal/MobilePriceFilterPopup/MobilePriceFilter";
+import MobilePeriodFilter from "../../modal/MobilePeriodFilterPopup/MobilePeriodFilter";
+import MobileDistanceFilter from "../../modal/MobileDistanceFilterPopup/MobileDistanceFilter";
+import MobileProcessFilter from "../../modal/MobileProcessFilterPopup/MobileProcessFilter";
+import ResultLabel from "../../common/ResultLabel";
 
 const Container = styled.div`
-  padding:50px 20px 0px 20px;
-  min-height:1500px;
+  padding:50px 0px 0px 0px;
+  width: 100%;
+  margin : 0 auto;
+  min-height:800px;
+
+`
+const SubContainer = styled.div`
+  margin: 0 auto;
+  background: #f9f9f9;
+  padding-top: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+
 `
 
 
@@ -44,33 +64,40 @@ const Box = styled.div`
   display: flex;
   justify-content: center;
   flex-direction:column;
-  width: 20%;
-  margin-right: 10px;
-
+  width: 25%;
   border-radius: 15px;
   padding : 5px 0px;
-  font-weight:700;
+
 
 `
 const BoxImg = styled.div`
   border-radius: 30px;
-  background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#f9f9f9') };
+  background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#fff') };
   padding: 10px;
+  display :flex;
 `
 
 const FilterBox = styled.div`
-
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#fff') };
-  margin-right: 10px;
-  border:1px solid #ededed;
-  border-radius: 5px;
-  padding: 5px 0px;
-  width: 80px;
+  background: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#fff') };
+  border:  ${({clickstatus}) => clickstatus == true ? (null) :('1px solid #C3C3C3') };
+  margin-top:10px;
+  margin-right: 3px;
+
+  border-radius: 4px;
+  padding: 0px 15px;
+  height:30px;
   flex: 0 0 auto; /* 아이템의 기본 크기 유지 */
+
+`
+const FilterBoxText = styled.div`
+color: ${({clickstatus}) => clickstatus == true ? ('#FFF') :('#131313') };
+font-size:12px;
+margin-left:5px;
+font-weight:600;
 
 `
 
@@ -82,12 +109,14 @@ const Bannerstyle={
 
 const Inputstyle ={
 
-  background: '#f6f6f6',
-  width: '90%',
-  borderRadius:'5px',
+  background: '#FFF',
+  width: '75%',
+  borderRadius:'30px',
   fontSize: '16px',
-  padding: '8px 20px 8px 20px',
-  border : "none"
+  padding: '0px 20px 0px 20px',
+  height : '40px',
+  border : "2px solid #FF7125",
+  position :"absolute"
 
 }
 const Searchstyle={
@@ -96,7 +125,7 @@ const Searchstyle={
 }
 
 const InputLine = styled.div`
-  width: 100%;
+  width: 95%;
   background: rgb(249, 249, 249);
   margin: 0px auto;
   display: flex;
@@ -105,13 +134,12 @@ const InputLine = styled.div`
   align-items: center;
 
 `
-const StickyElementStyle ={
-  position: "sticky",
-  top: "50px",
-  height: '60px',
+const SearchElementStyle ={
+
+  height: '80px',
   background: "white",
   width: '100%', 
-  marginTop:100
+  marginBottom: '10px',
 }
 
 
@@ -141,10 +169,21 @@ const WorkItems=[
   {name :WORKNAME.GODOGWALK, img:imageDB.dog, img2:imageDB.doggray},
 ]
 
+const FilterItems=[
+  {name : FILTERNAME.INIT, img:imageDB.house, img2:imageDB.house},
+  {name : FILTERNAME.SERVICE, img:imageDB.house, img2:imageDB.house},
+  {name :FILTERNAME.PRICE, img:imageDB.house, img2:imageDB.house},
+  {name :FILTERNAME.PERIOD, img:imageDB.house, img2:imageDB.house},
+  {name :FILTERNAME.DISTNACE, img:imageDB.house, img2:imageDB.house},
+  {name :FILTERNAME.PROCESS, img:imageDB.house, img2:imageDB.house},
+]
+
 const BannerItems =[
-  imageDB.mobilebanner1,
-  imageDB.mobilebanner2,
   imageDB.mobilebanner3,
+  imageDB.mobilebanner4,
+  imageDB.mobilebanner5,
+  imageDB.mobilebanner6,
+  imageDB.mobilebanner7,
 ]
 
 /**
@@ -163,25 +202,52 @@ const MobileMaincontainer =({containerStyle}) =>  {
   const location = useLocation();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
-  const [popupstatus1, setPopupstatus1] = useState(false);
-  const [popupstatus2, setPopupstatus2] = useState(false);
-  const [popupstatus3, setPopupstatus3] = useState(false);
-
+  // const [popupstatus1, setPopupstatus1] = useState(false);
+  // const [popupstatus2, setPopupstatus2] = useState(false);
+  // const [popupstatus3, setPopupstatus3] = useState(false);
+  // const [bannerimg, setBannerimg] = useState([]);
   const [workitems, setWorkitems] = useState([]);
   const [currentloading, setCurrentloading] = useState(false);
   const [menu, setMenu] = useState('');
 
-  const [showNewDiv, setShowNewDiv] = useState(false);
-  const [bannerimg, setBannerimg] = useState([]);
-
+  const [showNewDiv, setShowNewDiv] = useState(true);
 
   const [search, setSearch] = useState('');
-
   const recordRef = useRef(null);
+  const elementRef = useRef(null);
+  const [width, setWidth] = useState(0);
 
+  const [totalset, setTotalset] = useState(0);
+
+  const [servicepopup, setServicepopup] = useState(false);
+  const [pricepopup, setPricepoupup] = useState(false);
+  const [periodpopup, setPeriodpopup] = useState(false);
+  const [distancepopup, setDistancepopup] = useState(false);
+  const [processpopup, setProcesspopup] = useState(false);
+
+  const [servicefilter, setServicefilter] = useState([]);
+  const [pricefilter, setPricefilter] = useState([]);
+  const [periodfilter, setPeriodfilter] = useState([]);
+  const [distancefilter, setDistancefilter] = useState([]);
+  const [processfilter, setProcessfilter] = useState([]);
+
+  const inputRef = useRef(null);
 
   useLayoutEffect(() => {
+    setWidth(elementRef.current.offsetWidth -10);
+    console.log("TCL: MobileMaincontainer -> elementRef.current.offsetWidth", elementRef.current.offsetWidth)
   }, []);
+
+
+  useEffect(() => {
+    if (document.activeElement.tagName === 'INPUT') {
+      setTimeout(() => {
+          document.activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300); // 키보드가 완전히 나타날 때까지 대기
+    }
+
+  }, []);
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -192,6 +258,19 @@ const MobileMaincontainer =({containerStyle}) =>  {
     setCurrentloading(currentloading);
     setShowNewDiv(showNewDiv);
     setMenu(menu);
+    setTotalset(totalset);
+
+    setServicefilter(servicefilter);
+    setPricefilter(pricefilter);
+    setPeriodfilter(periodfilter);
+    setDistancefilter(distancefilter);
+    setProcessfilter(processfilter);
+
+    setServicepopup(servicepopup);
+    setPricepoupup(pricepopup);
+    setPeriodpopup(periodpopup);
+    setDistancepopup(distancepopup);
+    setProcesspopup(processpopup);
 
   },[refresh])
 
@@ -240,7 +319,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
          
             }else{
-              alert("허용 해야 합니다")
+      
             }
           });
    
@@ -251,80 +330,83 @@ const MobileMaincontainer =({containerStyle}) =>  {
       );
     };
 
-    async function FetchData(){
-      let time = moment(now).subtract(1, "days").unix();
-      const popupdate2 = window.localStorage.getItem("hongpopup2");
-      console.log("popupdata", popupdate2/1000, time);
-      if (popupdate2 /1000 < time) {
-        setPopupstatus2(true);
-        console.log("TCL: FetchData -> ",popupstatus2 );
-      }
+    // async function FetchData(){
+    //   let time = moment(now).subtract(1, "days").unix();
+    //   const popupdate2 = window.localStorage.getItem("hongpopup2");
+    //   console.log("popupdata", popupdate2/1000, time);
+    //   if (popupdate2 /1000 < time) {
+    //     setPopupstatus2(true);
+    //     console.log("TCL: FetchData -> ",popupstatus2 );
+    //   }
 
-      const popupdate3 = window.localStorage.getItem("hongpopup3");
-      console.log("popupdata", popupdate3/1000, time);
-      if (popupdate3 /1000 < time) {
-        setPopupstatus3(true);
-        console.log("TCL: FetchData -> ",popupstatus3 );
-      }
-      const workitems = data.workitems;
+    //   const popupdate3 = window.localStorage.getItem("hongpopup3");
+    //   console.log("popupdata", popupdate3/1000, time);
+    //   if (popupdate3 /1000 < time) {
+    //     setPopupstatus3(true);
+    //     console.log("TCL: FetchData -> ",popupstatus3 );
+    //   }
+    //   const workitems = data.workitems;
 
       
-      setWorkitems(workitems);
+    //   setWorkitems(workitems);
 
-      const serverworkitems = await ReadWork();
-      setWorkitems(serverworkitems);
+    //   const serverworkitems = await ReadWork();
+    //   setWorkitems(serverworkitems);
 
-      FetchLocation();
+    //   FetchLocation();
 
-    } 
-    FetchData();
+    // } 
+    // FetchData();
 
-    let banner2 = [];
-    banner2.push(imageDB.mobilebanner1);
-    banner2.push(imageDB.mobilebanner2);
-    banner2.push(imageDB.mobilebanner3);
-    setBannerimg(banner2);
+    // let banner2 = [];
+    // banner2.push(imageDB.mobilebanner1);
+    // banner2.push(imageDB.mobilebanner2);
+    // banner2.push(imageDB.mobilebanner3);
+    // setBannerimg(banner2);
 
 
   }, [])
-  useEffect(() => {
-    const handleScroll = () => {
-      const stickyElement = document.getElementById('sticky-element');
-      const stickyElementBottom = stickyElement.getBoundingClientRect().bottom;
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const stickyElement = document.getElementById('sticky-element');
+  //     const stickyElementBottom = stickyElement.getBoundingClientRect().bottom;
 
 
-      // 특정 위치에서 새로운 div를 나타나게 함 (예: sticky 요소가 화면 상단에서 100px 떨어질 때)
-      if (stickyElementBottom < 150) {
-        setShowNewDiv(true);
-      } else {
-        setShowNewDiv(false);
-      }
+  //     // 특정 위치에서 새로운 div를 나타나게 함 (예: sticky 요소가 화면 상단에서 100px 떨어질 때)
+  //     if (stickyElementBottom < 150) {
+  //       setShowNewDiv(true);
+  //     } else {
+  //       setShowNewDiv(true);
+  //     }
 
-      setRefresh((refresh) => refresh +1);
-    };
+  //     setRefresh((refresh) => refresh +1);
+  //   };
 
-    window.addEventListener('scroll', handleScroll);
+  //   window.addEventListener('scroll', handleScroll);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, []);
 
 
 
-  const popupcallback1 = async () => {
-    setPopupstatus1(!popupstatus1);
-  };
+  const scrollToInput = () => {
+    
+    console.log("TCL: scrollToInput -> ", )
+    // 요소를 화면 중앙에 위치시킴
+    inputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  const popupcallback2 = async () => {
-    setPopupstatus2(!popupstatus2);
-  };
+    // 추가적인 스크롤을 통해 요소를 화면 중앙보다 아래로 위치시킴
+    setTimeout(() => {
+        window.scrollBy(0, 50); // 스크롤을 50px 아래로 추가 이동
+    }, 300); // smooth 스크롤의 애니메이션 시간이 약간의 지연을 줌  
+  }
 
-  const popupcallback3 = async () => {
-    setPopupstatus3(!popupstatus3);
-  };
+
+
+
+
 
   /**
    * useSelector menu 가 변경됨을 감지 함에 따라 호출되는  Hook 함수
@@ -333,7 +415,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
   useEffect(()=>{
     async function FetchData(){
-      const serverworkitems = await ReadWork();
+      const serverworkitems = data.workitems;
       let items = FilterWorkitems(value, serverworkitems);
       setWorkitems(items);
     }
@@ -367,7 +449,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
    * @param 해당 work_id 와 타입을 보내주어야 한다
    */
   const _handleSelectWork = (WORK_ID) =>{
-  //  navigate("/PCmap" ,{state :{ID :WORK_ID, TYPE : FILTERITMETYPE.HONG}});
+   navigate("/Mobilwork" ,{state :{WORK_ID :WORK_ID, TYPE : FILTERITMETYPE.HONG}});
 
   }
   const positioncallback = () =>{
@@ -380,7 +462,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
     setRefresh((refresh) => refresh +1);
   }
 
-  const AiSearch = async(input) =>{
+  const AiSearchChange = async(input) =>{
     setSearch(input);
     setRefresh((refresh) => refresh +1);
   }
@@ -392,81 +474,254 @@ const MobileMaincontainer =({containerStyle}) =>  {
   };
 
   const _handleAI = async() =>{
-
-
     navigate("/Mobilesearch" ,{state :{search :search}});
     setRefresh((refresh) => refresh +1);
-
   }
 
   const _handlebasicmenuclick = async(checkmenu) =>{
 
-    let items = [];
-    const serverworkitems = data.workitems;
+    console.log("TCL: _handlemenuclick -> checkmenu", checkmenu);
     if(menu == checkmenu){
       setMenu("");
-      items = FilterWorkitems(WORKNAME.ALLWORK, serverworkitems);
+   
     }else{
       setMenu(checkmenu);
-      items = FilterWorkitems(checkmenu, serverworkitems);
     }
-    setWorkitems(items);
+
+    let totalset = 0;
+
+    if(checkmenu == WORKNAME.HOMECLEAN){
+      setTotalset(WORKPOLICY.HOMECLEAN);
+      totalset = WORKPOLICY.HOMECLEAN;
+    }else if(checkmenu == WORKNAME.BUSINESSCLEAN){
+      setTotalset(WORKPOLICY.BUSINESSCLEAN);
+      totalset = WORKPOLICY.BUSINESSCLEAN;
+    }else if(checkmenu == WORKNAME.MOVECLEAN){
+      setTotalset(WORKPOLICY.MOVECLEAN);
+      totalset = WORKPOLICY.MOVECLEAN;
+    }else if(checkmenu == WORKNAME.FOODPREPARE){
+      setTotalset(WORKPOLICY.FOODPREPARE);
+      totalset = WORKPOLICY.FOODPREPARE;
+    }else if(checkmenu == WORKNAME.GOOUTSCHOOL){
+      setTotalset(WORKPOLICY.GOOUTSCHOOL);
+      totalset = WORKPOLICY.GOOUTSCHOOL;
+    }else if(checkmenu == WORKNAME.BABYCARE){
+      setTotalset(WORKPOLICY.BABYCARE);
+      totalset = WORKPOLICY.BABYCARE;
+    }else if(checkmenu == WORKNAME.LESSON){
+      setTotalset(WORKPOLICY.LESSON);
+      totalset = WORKPOLICY.LESSON;
+    }else if(checkmenu == WORKNAME.PATIENTCARE){
+      setTotalset(WORKPOLICY.PATIENTCARE);
+      totalset = WORKPOLICY.PATIENTCARE;
+    }else if(checkmenu == WORKNAME.GOHOSPITAL){
+      setTotalset(WORKPOLICY.GOHOSPITAL);
+      totalset = WORKPOLICY.GOHOSPITAL;
+    }else if(checkmenu == WORKNAME.RECIPETRANSMIT){
+      setTotalset(WORKPOLICY.RECIPETRANSMIT);
+      totalset = WORKPOLICY.RECIPETRANSMIT;
+    }else if(checkmenu == WORKNAME.GOSCHOOLEVENT){
+      setTotalset(WORKPOLICY.GOSCHOOLEVENT);
+      totalset = WORKPOLICY.GOSCHOOLEVENT;
+    }else if(checkmenu == WORKNAME.GODOGHOSPITAL){
+      setTotalset(WORKPOLICY.GODOGHOSPITAL);
+      totalset = WORKPOLICY.GODOGHOSPITAL;
+    }else if(checkmenu == WORKNAME.GODOGWALK){
+      setTotalset(WORKPOLICY.GODOGWALK);
+      totalset = WORKPOLICY.GODOGWALK;
+    }else if(checkmenu == WORKNAME.CARRYLOAD){
+      setTotalset(WORKPOLICY.CARRYLOAD);
+      totalset = WORKPOLICY.CARRYLOAD;
+    }
     setRefresh((refresh) => refresh +1);
 
-    if(recordRef.current){
-    console.log("TCL: _handlebasicmenuclick -> recordRef.current", recordRef.current)
+    navigate("/Mobileregist",{state :{WORKTYPE :checkmenu, WORKTOTAL : totalset}});
+
+
+    // let items = [];
+    // const serverworkitems = data.workitems;
+    // if(menu == checkmenu){
+    //   setMenu("");
+    //   items = FilterWorkitems(WORKNAME.ALLWORK, serverworkitems);
+    // }else{
+    //   setMenu(checkmenu);
+    //   items = FilterWorkitems(checkmenu, serverworkitems);
+    // }
+    // setWorkitems(items);
+    // setRefresh((refresh) => refresh +1);
+
+    // if(recordRef.current){
+    // console.log("TCL: _handlebasicmenuclick -> recordRef.current", recordRef.current)
       
    
 
-      const elementPosition = recordRef.current.getBoundingClientRect().top;
-      const offsetPosition = elementPosition - 100; // 100px 오프셋을 추가
+    //   const elementPosition = recordRef.current.getBoundingClientRect().top;
+    //   const offsetPosition = elementPosition - 100; // 100px 오프셋을 추가
 
-      window.scrollBy({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+    //   window.scrollBy({
+    //     top: offsetPosition,
+    //     behavior: 'smooth'
+    //   });
 
-    }
+    // }
 
 
   }
 
-  const _handlemenuclick = async(checkmenu) =>{
+  const _handlefiltermenuclick = async(checkmenu) =>{
+    if(checkmenu == FILTERNAME.INIT){   
+      setServicefilter([]);
+      setPricefilter([]);
+      setPeriodfilter([]);
+      setDistancefilter([]);
+      setProcessfilter([]);
+    }
+    else if(checkmenu == FILTERNAME.SERVICE){
+      setServicepopup(true);
+    }else if(checkmenu == FILTERNAME.PRICE){
+      setPricepoupup(true);
+    }else if(checkmenu == FILTERNAME.PERIOD){
+      setPeriodpopup(true);
+    }else if(checkmenu == FILTERNAME.DISTNACE){
+      setDistancepopup(true);
+    }else if(checkmenu == FILTERNAME.PROCESS){
+      setProcesspopup(true);
+    }
+   
+    setRefresh((refresh) => refresh +1);
+  
+  }
+  const MobileServiceFilterCallback = (filterary)=>{
 
-    let items = [];
-    const serverworkitems = data.workitems;
-
-    if(menu == checkmenu){
-      setMenu("");
-      items = FilterWorkitems(WORKNAME.ALLWORK, serverworkitems);
-    }else{
-      setMenu(checkmenu);
-      items = FilterWorkitems(checkmenu, serverworkitems);
+    if(filterary.length != 0){
+      setServicefilter(filterary);
     }
 
-
-    setWorkitems(items);
+    setServicepopup(false);
     setRefresh((refresh) => refresh +1);
 
-    await useSleep(500);
+  }
+  const MobilePriceFilterCallback = (filterary)=>{
 
+    if(filterary.length != 0){
+      setPricefilter(filterary);
+    }
 
-    if(recordRef.current){
-      
-        const elementPosition = recordRef.current.getBoundingClientRect().top;
-        const offsetPosition = elementPosition - 100; // 100px 오프셋을 추가
+    setPricepoupup(false);
+    setRefresh((refresh) => refresh +1);
 
-        console.log("TCL: _handlemenuclick -> recordRef.current", recordRef.current,offsetPosition)
-  
-        window.scrollBy({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-  
+  }
+  const MobilePeriodFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setPeriodfilter(filterary);
+    }
+
+    setPeriodpopup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
+  const MobileDistanceFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setDistancefilter(filterary);
+    }
+
+    setDistancepopup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
+  const MobileProcessFilterCallback = (filterary)=>{
+
+    if(filterary.length != 0){
+      setProcessfilter(filterary);
+    }
+
+    setProcesspopup(false);
+    setRefresh((refresh) => refresh +1);
+
+  }
+  function filterenablecheck(name){
+
+    if(name == FILTERNAME.SERVICE){
+
+      if(servicefilter.length >0){
+        return true;
+      }else{
+        return false;
       }
+    }else if(name == FILTERNAME.PRICE){
+
+      if(pricefilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if(name == FILTERNAME.PERIOD){
+
+      if(periodfilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if(name == FILTERNAME.DISTNACE){
+
+      if(distancefilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }else if(name == FILTERNAME.PROCESS){
+
+      if(processfilter.length >0){
+        return true;
+      }else{
+        return false;
+      }
+    }
+    else{
+      return false;
+    }
+
   }
 
+  function getfilters(name){
 
+    if(name == FILTERNAME.SERVICE){
+      if(servicefilter.length >0){
+        return "+" +servicefilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.PRICE){
+      if(pricefilter.length >0){
+        return "+" +pricefilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.PERIOD){
+      if(periodfilter.length >0){
+        return "+" +periodfilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.DISTNACE){
+      if(distancefilter.length >0){
+        return "+" +distancefilter.length;
+      }else{
+        return "";
+      }
+    }else if(name == FILTERNAME.PROCESS){
+      if(processfilter.length >0){
+        return "+" +processfilter.length;
+      }else{
+        return "";
+      }
+    }else{
+      return "";
+    }
+
+  }
   function workfilterapply(menu, items){
 
     let itemsTmp = [];
@@ -487,83 +742,116 @@ const MobileMaincontainer =({containerStyle}) =>  {
     return itemsTmp;
 
   }
+
+
+
   return (
     <>
-    {
-      currentloading == true && <Loading type={LoadingType.CURRENTPOS} callback={_handlecurrentloadingcallback}/>
-    }
-    {
+      <div ref={elementRef}>
+      <Container  style={containerStyle}>
+        <Column >
+            <Column style={{width:"90%", margin: "0 auto"}}>
+            <Label label={'홍여사 서비스'}/>
+            <BetweenRow style={{flexWrap:"wrap", width:"100%"}}>
 
-      <Container style={containerStyle}>
+              {
+                WorkItems.map((data, index)=>(
+                  <Box onClick={()=>{_handlebasicmenuclick(data.name)}} >
+                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
+                    <div style={{ fontSize:12, color:"#636363", fontWeight:300}}>{data.name}</div>
+                  </Box>
+                ))
+              }
+            
+            </BetweenRow>
 
-      <Column>
-          <Label label={'홍여사 서비스'}/>
-          <BetweenRow style={{flexWrap:"wrap", width:"100%"}}>
+            <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
 
-            {
-              WorkItems.map((data, index)=>(
-                <Box onClick={()=>{_handlebasicmenuclick(data.name)}} >
-                  <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:38, height:38}}/></BoxImg>
-                  <div style={{ fontSize:12}}>{data.name}</div>
-                </Box>
-              ))
-            }
-          
-          </BetweenRow>
+            <Row  id="sticky-element"  style={SearchElementStyle}>
 
-          <SlickSliderComponent />
+                <Column style={{width:"100%"}}>
+                <InputLine>
+                  <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요"
+                        value={search}
+                        ref ={inputRef}
+                        onFocus={scrollToInput}
+                        onClick={scrollToInput}
+                        onChange={(e) => {   
+                          AiSearchChange(e.target.value);
+                        }}
+                        onKeyDown={handleKeyDown} 
+                    />
+                  <div style={{position:"relative", left: '40%', top: '3px'}}>
+                    <img src={imageDB.redsearch} width={22} height={22} onClick={_handleAI} />
+                  </div>
+                </InputLine>
 
-          <Row  id="sticky-element"  style={StickyElementStyle}>
-
-              <InputLine>
-                <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요 예)짜장라면 끊이는 법"
-                      value={search}
-                      onChange={(e) => {   
-                        AiSearch(e.target.value);
-                      }}
-                      onKeyDown={handleKeyDown} 
-                  />
-                <Row style={{paddingRight:5}}>
-                  <img src={imageDB.searchgif} width={18} height={18} onClick={_handleAI} />
-                </Row>
-
-              </InputLine>
-
-      
-          </Row>
-
-          {showNewDiv && (
+                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
+                    <img src={imageDB.infocircle} width={16} height={16} o/>
+                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
+                </FlexstartRow>
+                </Column>
+            </Row>
+            </Column> 
             <div className="new-div">
-            {
-              WorkItems.map((data, index)=>(
-                <FilterBox onClick={()=>{_handlemenuclick(data.name)}} clickstatus={menu == data.name}>
-                  <div><img src={data.img} style={{width:24, height:24}}/></div>
-                  <div style={{ fontSize:12, color:"#788391", marginLeft:5}}>{data.name}</div>
-                </FilterBox>
-              ))
-            }
+              {
+                FilterItems.map((data, index)=>(
+                  <>
+                  {
+                    index == 0 && <FilterBox style={{padding:"0px 10px"}} onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                      <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
+                  </FilterBox>
+                  }
+                  {
+                    index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                    <FilterBoxText clickstatus={filterenablecheck(data.name)}>{data.name}
+                    {getfilters(data.name)}   
+                    </FilterBoxText>
+                  </FilterBox>
+                  }
+                  
+                  </>
+             
+                ))
+              }
             </div>
-          )}
+            <SubContainer>
+            <div ref={recordRef} />
+         
 
-          <div ref={recordRef} />
-          <Label label={menu + '일감'} sublabel={workitems.length +'건'}   />
-
-          <FlexstartRow style={{flexWrap:"wrap"}}>
-          {
-              workitems.map((item, index)=>(
-                <>
-                {
-                  index < 20 &&           
+              <ResultLabel label={menu + '일감'} result = {workitems.length} unit={'건'}/>
+              <FlexstartRow style={{flexWrap:"wrap"}}>
+              {
+                workitems.map((item, index)=>(
                   <MobileWorkItem key={index}  index={index} width={'100%'} 
-                  workdata={item} onPress={()=>{_handleSelectWork(item.WORK_ID)}}/>
-                }
-                </>
-              ))
-            }
-          </FlexstartRow>
-      </Column>
+                  workdata={item} onPress={()=>{_handleSelectWork(item.WORK_ID)}}/>  
+                ))
+              }
+              </FlexstartRow>
+            </SubContainer>
+        </Column>
       </Container>
-    }
+
+      {
+        servicepopup == true && <MobileServiceFilter callback={MobileServiceFilterCallback} filterhistory={servicefilter}/>
+      }
+
+      {
+        pricepopup == true && <MobilePriceFilter callback={MobilePriceFilterCallback} filterhistory={pricefilter}/>
+      }
+
+      {
+        periodpopup == true && <MobilePeriodFilter callback={MobilePeriodFilterCallback} filterhistory={periodfilter}/>
+      }
+
+      {
+        distancepopup == true && <MobileDistanceFilter callback={MobileDistanceFilterCallback} filterhistory={distancefilter}/>
+      }
+      {
+        processpopup == true && <MobileProcessFilter callback={MobileProcessFilterCallback} filterhistory={processfilter}/>
+      }
+
+      </div>
 
     <MobileStoreInfo height={200} />
     </>

@@ -4,12 +4,12 @@ export const PCMAINMENU={
     HOMEMENU : "홍여사",
     ROOMMENU : "공간대여",
     REGIONMENU : "내주변",
-    COMMUNITYMENU : "커뮤니티",
     RANKINGMENU : "홍여사순위",
     CHATMENU : '채팅하기',
     ROOMGUIDE :"공간알아보기",
     EVENTMENU : "이벤트",
-    REGISTMENU :"등록"
+    REGISTMENU :"등록",
+    LIVEINFORMATIONMENU: "커뮤니티",
 }
 
 export const MOBILEMAINMENU={
@@ -20,7 +20,8 @@ export const MOBILEMAINMENU={
     RANKINGMENU : "홍여사순위",
     CHATMENU : '채팅하기',
     ROOMGUIDE :"공간알아보기",
-    EVENTMENU : "이벤트"
+    EVENTMENU : "이벤트",
+    CONFIGMENU : "내정보"
 }
 
 
@@ -129,6 +130,21 @@ export const FILTERITEMPERIOD ={
     SIX : "D+6일 까지",
 
 }
+
+export const FILTERITEMDISTANCE ={
+    ONE : "1km 내외",
+    TWO : "2km 내외",
+    THREE : "3km 내외",
+    FOUR : "4km 내외",
+    FIVE : "5km 내외",
+    SIX : "6km 내외",
+
+}
+export const FILTERITEMPROCESS ={
+    OPEN : "진행",
+    CLOSE : "마감",
+}
+
 
 export const  CHATIMAGETYPE = {
     HONGIMG : "홍여사관리",

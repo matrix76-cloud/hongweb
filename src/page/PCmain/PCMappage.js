@@ -45,7 +45,7 @@ const PCMappage =() =>  {
  
   return (
 
-    <PCLayout main={true} name={PCMAINMENU.REGIONMENU} registmapbtn ={true} height={100}>
+    <PCLayout main={true} name={PCMAINMENU.REGIONMENU} registmapbtn ={true} height={120}>
         <PCMapcontainer  ID={location.state.ID} TYPE={location.state.TYPE}  />
     </PCLayout>
   );

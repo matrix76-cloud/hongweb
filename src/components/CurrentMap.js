@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
+import { Row } from "../common/Row";
 import { UserContext } from "../context/User";
 
 
@@ -12,7 +13,21 @@ const style = {
   display: "flex"
 };
 
-const Skeleton =({containerStyle}) =>  {
+const mapstyle = {
+  position: "absolute",
+  overflow: "hidden",
+  top: '10%',
+  width:'100%',
+};
+
+/**
+/**
+ * 카카오맵을 연동 하기 위해서 kakao 변수를 선언 해둔다
+ */
+const { kakao } = window;
+
+
+const CurrentMap =({containerStyle}) =>  {
 
   const { dispatch, user } = useContext(UserContext);
   const location = useLocation();
@@ -41,10 +56,16 @@ const Skeleton =({containerStyle}) =>  {
 
     <Container style={containerStyle}>
    
+      <Row>
+        <div style={{display:"flex", width:'100%'}}>
+          <div id="map" className="Map" style={mapstyle}></div>
+        </div>  
+      </Row>
+
     </Container>
   );
 
 }
 
-export default Skeleton;
+export default CurrentMap;
 

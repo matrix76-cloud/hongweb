@@ -1,11 +1,13 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { imageDB } from "../../../utility/imageData";
 import { UserContext } from "../../../context/User";
 import { GrPrevious } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { CURRENTPAGE } from "../../../utility/router";
+import { IoEllipseSharp } from "react-icons/io5";
 
 const Container = styled.div``;
 
@@ -28,10 +30,19 @@ const MobilePrevheader = ({callback, registbtn, name, iconname}) => {
   const navigation = useNavigate();
   const { user, dispatch } = useContext(UserContext);
 
+  const location = useLocation();
+  console.log("TCL: MobilePrevheader -> location", location.pathname);
+
 
 
   const _handleprev = () =>{
-    navigation(-1);
+
+    if(location.pathname == CURRENTPAGE.MOBILESEARCH){
+      navigation('/mobilemain');
+    }else{
+      navigation(-1);
+    }
+   
   }
 
   const _handlehistory = () =>{

@@ -22,7 +22,7 @@ import { ROOMPOLICY, ROOMSIZE } from "../../utility/room";
 
 const Container = styled.div`
 
-    height:750px;
+
 
 
 `
@@ -45,19 +45,44 @@ const Title = styled.div`
   font-weight :700;
 
 `
+// const Box = styled.div`
+//   background : #f9f9f9;
+//   align-items: center;
+//   display: flex;
+//   justify-content: center;
+//   flex-direction:column;
+//   height: 80px;
+//   width: 22%;
+//   background: #f9f9f9;
+//   margin-right: 5px;
+//   margin-bottom: 20px;
+//   border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
+//   border-radius: 15px;
+
+// `
+
 const Box = styled.div`
-  background : #f9f9f9;
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction:column;
   height: 80px;
   width: 22%;
-  background: #f9f9f9;
   margin-right: 5px;
-  margin-bottom: 20px;
-  border: ${({clickstatus}) => clickstatus == true ? ('2px solid #ff0000') :('') };
-  border-radius: 15px;
+  margin-bottom: 40px;
+
+
+`
+const BoxImg = styled.div`
+  background: #f9f9f9;
+  border-radius: 100px;
+  border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
+  padding: 10px;
+`
+const BoxText = styled.div`
+  color: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#000') };
+  font-size:14px;
+  margin-top:10px;
 
 `
 
@@ -119,15 +144,15 @@ const MobileRoomregistercontainer =({containerStyle}) =>  {
     <>
       <Container style={containerStyle}>
 
-        <Column style={{ backgroundColor:"#fff", height:"95%"}}>
+        <Column style={{ backgroundColor:"#fff", height:"95%", paddingTop:70}}>
           <TitleLayer><Title>대여할 공간을 선택해 주세요</Title></TitleLayer>
           <Row style={{flexWrap:"wrap", margin:"0px 20px", justifyContent:"space-evenly", width:"100%"}}>
             {
               RoomItems.map((data, index)=>(
-                <Box onClick={()=>{_handlemenuclick(data.name)}} clickstatus={menu == data.name}>
-                  <div><img src={data.img} style={{width:48, height:48}}/></div>
-                  <div style={{ fontSize:14}}>{data.name}</div>
-                </Box>
+              <Box onClick={()=>{_handlemenuclick(data.name)}}>
+              <BoxImg  clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
+              <BoxText clickstatus={menu == data.name}>{data.name}</BoxText>
+              </Box>
               ))
             }
           
