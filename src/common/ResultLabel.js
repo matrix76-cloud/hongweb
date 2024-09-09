@@ -11,7 +11,7 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   font-weight:700;
-  margin-left:5px;
+  margin-left:15px;
   margin-bottom:10px;
   font-family : 'Pretendard-SemiBold';
 
@@ -57,7 +57,6 @@ const ResultLabel =({containerStyle, label, result, unit}) =>  {
     <Container style={containerStyle}>
         <div>{label}</div>
         <SubLabel>{result}</SubLabel><span>{unit}</span>
-   
     </Container>
   );
 

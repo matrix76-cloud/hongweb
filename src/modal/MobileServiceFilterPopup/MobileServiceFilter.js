@@ -180,6 +180,8 @@ export default function MobileServiceFilter({filterhistory, callback}) {
     const FindIndex = filterary.findIndex(x=> x == filtername);
     if(FindIndex == -1){
         filterary.push(filtername);
+    }else{
+      filterary.splice(FindIndex, 1);
     }
     setFilterary(filterary);
     console.log("TCL: _handleData -> filterary", filterary, filtername)

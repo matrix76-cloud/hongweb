@@ -270,7 +270,7 @@ const style = {
     position: 'absolute',
     top: '85%',
     left: '50%',
-    height:'200px',
+    height:'300px',
     transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
@@ -351,9 +351,11 @@ export const FILTERITEMMONEY ={
 }
 
 const WorkItems=[
+    {name :ROOMSIZE.SMALLER, img:imageDB.house, img2:imageDB.housegray},
     {name :ROOMSIZE.SMALL, img:imageDB.house, img2:imageDB.housegray},
-    {name :ROOMSIZE.MEDIUM, img:imageDB.business, img2:imageDB.businessgray},
-    {name :ROOMSIZE.LARGE, img:imageDB.move, img2:imageDB.movegray},
+    {name :ROOMSIZE.MEDIUM, img:imageDB.house, img2:imageDB.housegray},
+    {name :ROOMSIZE.LARGE, img:imageDB.business, img2:imageDB.businessgray},
+    {name :ROOMSIZE.EXLARGE, img:imageDB.move, img2:imageDB.movegray},
   ]
 export default function MobileRoomServiceFilter({filterhistory, callback}) {
   const [open, setOpen] = React.useState(true);
@@ -374,14 +376,17 @@ export default function MobileRoomServiceFilter({filterhistory, callback}) {
 
 
   const _handleData =(filtername)=>{
-
     const FindIndex = filterary.findIndex(x=> x == filtername);
     if(FindIndex == -1){
         filterary.push(filtername);
+    }else{
+      filterary.splice(FindIndex, 1);
     }
     setFilterary(filterary);
     console.log("TCL: _handleData -> filterary", filterary, filtername)
     setRefresh((refresh)=> refresh +1);
+
+
   }
 
   function filteraryexist(filtername){

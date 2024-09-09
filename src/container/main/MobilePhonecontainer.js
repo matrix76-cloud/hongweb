@@ -19,14 +19,16 @@ import "firebase/compat/firestore";
 import "firebase/compat/storage";
 import { signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../api/config";
-import { get_phonenumber } from "../../service/UserService";
-
+import { get_phonenumber, Read_userphone, Update_userdevice } from "../../service/UserService";
+import { useSleep } from "../../utility/common";
+import { v4 as uuidv4 } from 'uuid';
+import localforage from 'localforage';
 
 const Container = styled.div`
   display : flex;
   flex-direction: column;
   align-items:center;
-  width :90%;
+  width :95%;
   margin : 0 auto;
   background : #FFF;
   padding-top:70px;
@@ -85,6 +87,7 @@ const ReqButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 16px;
 
 `
 /**
@@ -221,8 +224,54 @@ const MobilePhonecontainer =({containerStyle}) =>  {
     setRefresh((refresh) => refresh +1);
   } 
 
-  const _handleStart = () =>{
-    navigate("/mobilemain");
+  /**
+   * TODO 인증번호가 틀리다면 처리예정
+   * 인증번호가 같다면 
+   * 1. 데이타 베이스에 들어가서 해당 전화번호를 뒤진다
+   * 2. 해당 전화번호가 있다면 해당 전화 번호에 스토리지 정보를 설정하고 로컬에도 값을 설정해준다
+   * 3. 해당 전화번호가 없다면 라이센스 페이지로 이동 한다
+   * 
+   */
+  const _handleCheck = async() =>{
+    const PHONE = phone;
+    const userdata = await Read_userphone({PHONE});
+    console.log("TCL: _handleCheck -> userdata", userdata)
+
+    user.phone = PHONE;
+    dispatch(user);
+
+    if(userdata == -1){
+      navigate("/mobilepolicy");
+    }else{
+      let uniqueId = uuidv4();
+   
+      localforage.setItem('uniqueId', uniqueId)
+      .then(function(value) {
+        console.log("TCL: listener -> setItem", value)
+
+      })
+      .catch(function(err) {
+        console.error('데이터 저장 실패:', err);
+      });
+
+
+      const DEVICEID = uniqueId;
+      const TOKEN = user.token;
+      const LATITUDE = user.latitude;
+      const LONGITUDE = user.longitude;
+      
+      const userupdate = await Update_userdevice({DEVICEID, TOKEN, LATITUDE, LONGITUDE,PHONE});
+      new Promise(resolve => setTimeout(resolve, 1000));
+      user.users_id = userdata.USERS_ID;
+      user.nickname = userdata.NICKNAME;
+      user.deviceid = DEVICEID;
+
+
+      dispatch(user);
+
+      navigate("/mobilemain");
+    }
+   
   }
 
   useEffect(() => {
@@ -265,80 +314,64 @@ const MobilePhonecontainer =({containerStyle}) =>  {
     <>
           <div id="recaptcha-container"></div>
           <Container style={containerStyle}>
+            <Column>
+              <Label>휴대폰 번호를 인증해주세요.</Label>
+              <SubText>홍여사는 휴대폰 번호로 가입해요. 번호는 안전하게 보관 되며 어디에도 공개 되지 않습니다</SubText>
+              <div style={{width:"85%", margin:"20px auto"}}>
+                <input  style={Inputstyle} type="number" placeholder="휴대폰 번호를 입력해주세요"
+                      value={phone}
+                      onChange={(e) => {
+                      console.log("TCL: MobilePhonecontainer -> e", e.target.value.length)
 
+                      if(e.target.value.length == 11){
+                        setReqcodebtnenable(true);
+                        setRefresh((refresh) => refresh +1);
+                      }
+                        
+                        setPhone(e.target.value);
+                      }}
+                  />
+              </div>
+              <ReqButton enable={reqcodebtnenable} onClick={_handleReqcode}>인증문자 받기 </ReqButton>
 
+            </Column>
+            {
+              authstart == true &&
+              <Fragment>
+                <Column style={{width:"85%", margin:"10 auto"}}>
+                  <input type="text"
+                      ref = {varifyCoderef}
+                      style={CodeInputstyle}
+                      placeholder ={"인증번호"}
+                      onFocus={scrollToInput}
+                      onClick={scrollToInput}
+                      value ={verifyCode}
+                      onChange = {e => {
+                          setVerifyCode(e.target.value);
 
+                          if(e.target.value.length == 4){
+                            setVerifycodebtnenable(true);
+                            setRefresh((refresh) => refresh +1);
+                          }else{
+                            setVerifycodebtnenable(false);
+                            setRefresh((refresh) => refresh +1);  
+                          }
 
-<Column>
-  <Label>휴대폰 번호를 인증해주세요.</Label>
-  <SubText>홍여사는 휴대폰 번호로 가입해요. 번호는 안전하게 보관 되며 어디에도 공개 되지 않습니다</SubText>
-  <div style={{width:"85%", margin:"20px auto"}}>
-    <input  style={Inputstyle} type="number" placeholder="휴대폰 번호를 입력해주세요"
-          value={phone}
-          onChange={(e) => {
-          console.log("TCL: MobilePhonecontainer -> e", e.target.value.length)
+                          setRefresh(refresh => refresh + 1);
+                      }}
+                    />            
+                </Column>
+                <Column style={{marginTop:10, fontFamily:"Pretendard-Light"}}>
+                  {minutes}:{seconds < 10 ? `0${seconds}` : seconds}후에 인증번호가 종료 됩니다
+                </Column>
 
-          if(e.target.value.length == 11){
-            setReqcodebtnenable(true);
-            setRefresh((refresh) => refresh +1);
-          }
-            
-            setPhone(e.target.value);
-          }}
-      />
-  </div>
-  <ReqButton enable={reqcodebtnenable} onClick={_handleReqcode}>인증문자 받기 </ReqButton>
-</Column>
+                <Column style={{width:"100%", marginTop:30}}>   
+                <ReqButton enable={verifycodebtnenable} onClick={_handleCheck}>인증번호 확인 </ReqButton>
+              </Column>   
 
-
-
-{
-  authstart == true &&
-  <Fragment>
-    <Column style={{width:"85%", margin:"10 auto"}}>
-      <input type="text"
-          ref = {varifyCoderef}
-          style={CodeInputstyle}
-          placeholder ={"인증번호"}
-          onFocus={scrollToInput}
-          onClick={scrollToInput}
-          value ={verifyCode}
-          onChange = {e => {
-              setVerifyCode(e.target.value);
-
-              if(e.target.value.length == 4){
-                setVerifycodebtnenable(true);
-                setRefresh((refresh) => refresh +1);
-              }else{
-                setVerifycodebtnenable(false);
-                setRefresh((refresh) => refresh +1);  
-              }
-
-              setRefresh(refresh => refresh + 1);
-          }}
-        />            
-    </Column>
-    <Column style={{marginTop:10, fontFamily:"Pretendard-Light"}}>
-      {minutes}:{seconds < 10 ? `0${seconds}` : seconds}후에 인증번호가 종료 됩니다
-    </Column>
-
-    <Column style={{width:"100%", marginTop:30}}>   
-     <ReqButton enable={verifycodebtnenable} onClick={_handleReqcode}>인증번호 확인 </ReqButton>
-   </Column>   
-
-  </Fragment>
-}
-
-
-{/* <Column style={{width:"100%"}}>
-
-  <Button containerStyle={{border: 'none', fontSize:16, margin: '0px auto 20px'}} onPress={_handleStart} height={'44px'} width={'85%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} 
-  text={'시작하기 '}/>
-</Column> */}
-
-
-
-</Container>
+              </Fragment>
+            }
+          </Container>
     </>
 
   );

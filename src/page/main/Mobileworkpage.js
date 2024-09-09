@@ -9,10 +9,11 @@ import PCMaincontainer from "../../container/PCmain/PCMaincontainer";
 import PCMapcontainer from "../../container/PCmain/PCMapcontainer";
 import { UserContext } from "../../context/User";
 import MobilePrevLayout from "../../screen/Layout/Layout/MobilePrevLayout";
-import MobilePrevLayout2 from "../../screen/Layout/Layout/MobilePrevLayout2";
+import MobilePrevLayout2 from "../../screen/Layout/Layout/MobileCommunityLayout";
 
 import PCLayout from "../../screen/LayoutPC/Layout/PCLayout";
 import { MOBILEMAINMENU, PCMAINMENU } from "../../utility/screen";
+import MobileWorkLayout from "../../screen/Layout/Layout/MobileWorkLayout";
 
 const Container = styled.div`
 
@@ -49,9 +50,9 @@ const MobileWorkpage =() =>  {
  
   return (
 
-    <MobilePrevLayout2 name={'일감정보'} type={MOBILEMAINMENU.REGIONMENU}>
+    <MobileWorkLayout image={location.state.WORKTYPE} name={location.state.WORKTYPE + '일감정보'} type={MOBILEMAINMENU.REGIONMENU}>
         <MobileWorkcontainer  WORK_ID={location.state.WORK_ID} TYPE={location.state.TYPE}  />
-    </MobilePrevLayout2>
+    </MobileWorkLayout>
   );
 
 }

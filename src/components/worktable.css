@@ -11,3 +11,7 @@
     height: 700px; /* 원하는 높이 설정 */
     overflow-y: auto;
   }
+
+  .hospitaltable tbody tr td{
+    width:100%;
+  }

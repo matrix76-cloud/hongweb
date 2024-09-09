@@ -50,24 +50,7 @@ const style = {
   position: "absolute",
 
 };
-const IconCloseView = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items:center;
-  margin-right:20px;
-`;
 
-
-
-const Poptilt = styled.div`
-  background-color: #FF7125;
-  height: 58px;
-  position: relative;
-  width :100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-`
 const Popcontent = styled.div`
     height:100%;
     width:100%;
@@ -75,31 +58,6 @@ const Popcontent = styled.div`
     font-family: 'Pretendard-Regular';
 `
 
-const PopMainLabel = styled.div`
-  font-size: 20px;
-  font-weight: 700;
-  padding-left: 24px;
-  line-height: 60px;
-  color :#fff;
-
-`
-
-const SearchLayer = styled.div`
-  width:309px; 
-  background:#fff;
-  height:100%;
-  padding : "24px 1px 24px 24px";
-  font-family: 'Pretendard-SemiBold',
-
-`
-const SearchContent={
-  padding: '24px',
-  display: 'flex',
-  flexDirection: 'column',
-  maxHeight: '480px',
-  fontFamily: 'Pretendard-SemiBold',
-  overflowY: "auto"
-}
 
 const ResultLayer = styled.div`
   width:100%;
@@ -112,12 +70,12 @@ const ResultContent = {
   height: "900px",
   padding: "80px 20px 20px 20px",
   fontSize: "16px",
-  fontFamily: "Pretendard-Light",
+  fontFamily: "Pretendard",
   lineHeight: 2,
   outline: "none",
   resize: "none",
   border: "none",
-  backgroundColor: "rgb(249, 249, 249)"
+  backgroundColor: "#fff"
 }
 
 const InputContent = {
@@ -132,81 +90,12 @@ const InputContent = {
 
 
 
-const SearchDBKeyword = styled.div`
- 
-  font-family: 'Pretendard-Regular';
-  display:flex;
-  flex-direction:row;
-  height:45px;
-  gap:6px;
-  font-weight:500;
-  font-size:18px;
-  line-height:23.4px;
 
-  &:hover{
-    text-decoration :underline;
-  } 
-`
-const ControlLayer = styled.div`
-  color: #A3A3A3;
-  font-family: 'Pretendard-Regular';
-  font-size: 14px;
-  display:flex;
-  flex-direction:row;
-  height:14px;
-  line-height:18.2px;
-`
-const MemoInfoblink = styled.div`
-    position: relative;
-    top: -100px;
-    color: #242323;
-    background-color: #f5f3f3;
-    border: 1px solid #ededed;
-    padding: 5px;
-    font-size: 12px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
-    border-radius: 20px;
-    animation-duration: .2s;
-    animation-name: point-move;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    min-width: 50px;
-    text-align: right;
-    width:22%;
-    animation: box-ani 1s linear infinite;
-    z-index: 5;
-    display:flex;
-    position: relative;
-    left: 550px;
-
-
-`
-const SaveButtonLayer = styled.div`
-  position: absolute;
-  bottom: 50px;
-  right: 10px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  margin-right: 20px;
-  margin-top:20px;
-`
-
-const KeywordMain = styled.div`
-  font-weight : 700;
-  font-size:20px;
-  line-height:26px;
-  color :#131313;
-`
 
 const LoadingAnimationStyle={
   zIndex: 11,
   position: "absolute",
-  top: "40%",
+  top: "35%",
   left: "35%"
 }
 

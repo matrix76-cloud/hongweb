@@ -39,6 +39,7 @@ import MobilePeriodFilter from "../../modal/MobilePeriodFilterPopup/MobilePeriod
 import MobileDistanceFilter from "../../modal/MobileDistanceFilterPopup/MobileDistanceFilter";
 import MobileProcessFilter from "../../modal/MobileProcessFilterPopup/MobileProcessFilter";
 import MobileRoomServiceFilter from "../../modal/MobileRoomServiceFilterPopup/MobileRoomServiceFilter";
+import Empty from "../../components/Empty";
 
 const Container = styled.div`
 padding:50px 0px 0px 0px;
@@ -49,7 +50,7 @@ min-height:800px;
 const SubContainer = styled.div`
   margin: 0 auto;
   background: #f9f9f9;
-  padding-top: 30px;
+  padding-top: 10px;
   padding-left: 15px;
   padding-right: 15px;
 `
@@ -105,7 +106,7 @@ const FilterBox = styled.div`
   margin-right: 3px;
 
   border-radius: 4px;
-  padding: 0px 20px;
+  padding: 0px 15px;
   height:30px;
   flex: 0 0 auto; /* 아이템의 기본 크기 유지 */
 
@@ -121,7 +122,6 @@ font-weight:600;
 
 const InputLine = styled.div`
   width: 95%;
-  background: rgb(249, 249, 249);
   margin: 0px auto;
   display: flex;
   flex-direction: row;
@@ -179,9 +179,13 @@ const { kakao } = window;
 
 const RoomItems =[
 
-  {name : ROOMSIZE.SMALL, img:imageDB.roomsize1, img2:imageDB.roomsize1},
-  {name : ROOMSIZE.MEDIUM, img:imageDB.roomsize2, img2:imageDB.roomsize2},
-  {name : ROOMSIZE.LARGE, img:imageDB.roomsize3, img2:imageDB.roomsize3},
+  {name : ROOMSIZE.SMALLER, img:imageDB.roomsize1, img2:imageDB.roomsize1},
+  {name : ROOMSIZE.SMALL, img:imageDB.roomsize2, img2:imageDB.roomsize2},
+  {name : ROOMSIZE.MEDIUM, img:imageDB.roomsize3, img2:imageDB.roomsize3},
+  {name : ROOMSIZE.LARGE, img:imageDB.roomsize4, img2:imageDB.roomsize4},
+  {name : ROOMSIZE.LARGER, img:imageDB.roomsize5, img2:imageDB.roomsize5},
+  {name : ROOMSIZE.EXLARGE, img:imageDB.roomsize5, img2:imageDB.roomsize5},
+
 
 ]
 const FilterItems=[
@@ -193,11 +197,17 @@ const FilterItems=[
 ]
 
 const BannerItems =[
-  imageDB.mobilebanner1,
-  imageDB.mobilebanner2,
+  imageDB.mobilebanner7,
+  imageDB.mobilebanner8,
+  imageDB.mobilebanner9,
 ]
 
-
+const LoadingAnimationStyle={
+  zIndex: 11,
+  position: "absolute",
+  top: "40%",
+  left: "35%"
+}
 /**
  * 메인 데이타페이지는 
  * ! currentloading이 false 상태 일때만 보여준다
@@ -219,7 +229,7 @@ const MobileRoomcontainer =({containerStyle}) =>  {
   const [popupstatus3, setPopupstatus3] = useState(false);
 
   const [roomitems, setRoomitems] = useState([]);
-  const [currentloading, setCurrentloading] = useState(true);
+  const [currentloading, setCurrentloading] = useState(false);
   const [menu, setMenu] = useState('');
 
   const [showNewDiv, setShowNewDiv] = useState(false);
@@ -282,25 +292,30 @@ const MobileRoomcontainer =({containerStyle}) =>  {
    */
   useEffect(()=>{
     const now = moment();
- 
+    // setCurrentloading(true);
     async function FetchData(){
 
       const roomitems = data.roomitems;
 
       setRoomitems(roomitems);
+      await useSleep(100);
 
-      const serverroomitems = await ReadRoom();
+      const latitude = user.latitude;
+      const longitude = user.longitude;
+
+      const serverroomitems = await ReadRoom({latitude, longitude});
       setRoomitems(serverroomitems);
 
-      await useSleep(1000);
-      setCurrentloading(false);
-
+   
+      // setCurrentloading(false);
 
 
     } 
     FetchData();
 
   }, [])
+
+
   useEffect(() => {
     const handleScroll = () => {
       const stickyElement = document.getElementById('sticky-element');
@@ -383,9 +398,10 @@ const MobileRoomcontainer =({containerStyle}) =>  {
    * 단위 일감에서 해당 일감을 클릭햇을때 내주변으로 이동 할수 있도록 한다
    * @param 해당 work_id 와 타입을 보내주어야 한다
    */
-  const _handleSelectWork = (ROOM_ID) =>{
+  const _handleSelectWork = (ROOM_ID, ROOMTYPE) =>{
+   console.log("TCL: _handleSelectWork -> item", ROOMTYPE, ROOM_ID);
    // navigate("/PCmap" ,{state :{ID :ROOM_ID, TYPE : FILTERITMETYPE.ROOM}});
-
+   navigate("/Mobileworkroom" ,{state :{ROOM_ID :ROOM_ID, TYPE : FILTERITMETYPE.ROOM, ROOMTYPE : ROOMTYPE }});
   }
   const positioncallback = () =>{
     setCurrentloading(true);
@@ -430,13 +446,9 @@ const MobileRoomcontainer =({containerStyle}) =>  {
     setRefresh((refresh) => refresh +1);
     let totalset = 0;
 
-    if(checkmenu == ROOMSIZE.SMALL){
-      totalset = ROOMPOLICY.SMALL;
-    }else if(checkmenu == ROOMSIZE.MEDIUM){
-      totalset = ROOMPOLICY.MEDIUM;
-    }else if(checkmenu == ROOMSIZE.LARGE){
-      totalset = ROOMPOLICY.LARGE;
-    }
+
+    totalset = ROOMPOLICY.SMALL;
+  
 
     navigate("/Mobileregist",{state :{WORKTYPE :checkmenu, WORKTOTAL : totalset}});
 
@@ -624,25 +636,24 @@ const MobileRoomcontainer =({containerStyle}) =>  {
     {
 
       <div ref={elementRef}>
-      <Container style={containerStyle}>
-      {/* {
-          currentloading == true ?
-         ( <LottieAnimation containerStyle={{marginTop:"60%"}} animationData={imageDB.loadinglarge}
-          width={"100px"} height={'100px'}/>) :(      
-          <Column>
-            <Column style={{width:"90%", margin: "0 auto"}}>
-            <Label label={'공간대여 서비스'}/>
+      {
+        currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
+        width={"100px"} height={'100px'}/>) :(<Container style={containerStyle}>
+            <Column>
+            <Column style={{width:"95%", margin: "0 auto"}}>
+            <Label label={'공간대여 서비스'} containerStyle={{paddingLeft:20}}/>
             <Row style={{flexWrap:"wrap", width:"100%", justifyContent:"flex-start"}}>
               {
                 RoomItems.map((data, index)=>(
                   <Box onClick={()=>{_handlebasicmenuclick(data.name)}} clickstatus={menu == data.name}>
-                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:38, height:38}}/></BoxImg>
+                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:45, height:45}}/></BoxImg>
                     <div style={{ fontSize:12, color:"#636363", fontWeight:300}}>{data.name}</div>
                   </Box>
                 ))
               }
             
             </Row>
+            </Column>
             <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
             <Row  id="sticky-element"  style={SearchElementStyle}>
 
@@ -663,20 +674,20 @@ const MobileRoomcontainer =({containerStyle}) =>  {
                   </div>
                 </InputLine>
 
-                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
+                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'10%'}}>
                     <img src={imageDB.infocircle} width={16} height={16} o/>
                     <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
                 </FlexstartRow>
                 </Column>
             </Row>
-            </Column>
+       
 
             <div className="new-div">
               {
                 FilterItems.map((data, index)=>(
                   <>
                   {
-                    index == 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                    index == 0 && <FilterBox style={{padding:"0px 10px"}}  onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
                       <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
                   </FilterBox>
                   }
@@ -693,110 +704,35 @@ const MobileRoomcontainer =({containerStyle}) =>  {
                 ))
               }
             </div>
-            <SubContainer>
-  
-            <FlexstartRow style={{fontWeight:700, marginLeft:5,marginBottom:10}}>
-                <div style={{color:"#131313", fontSize:"18px"}}>{'등록된 전체공간'}
-                <span style={{color:"#F75100", marginLeft:3}}>{roomitems.length}</span> {'건'}</div>
-              </FlexstartRow>
-     
-            
-            <FlexstartRow style={{flexWrap:"wrap"}}>
-            {
-                roomitems.map((item, index)=>(
-                  <MobileRoomItem key={index}  index={index} width={'100%'} 
-                  roomdata={item} onPress={()=>{_handleSelectWork(item.ROOM_ID)}}/>
-                ))
-              }
-            </FlexstartRow>
-            </SubContainer>
-          </Column>)
-
-      } */}
- <Column>
-            <Column style={{width:"90%", margin: "0 auto"}}>
-            <Label label={'공간대여 서비스'}/>
-            <Row style={{flexWrap:"wrap", width:"100%", justifyContent:"flex-start"}}>
+         
               {
-                RoomItems.map((data, index)=>(
-                  <Box onClick={()=>{_handlebasicmenuclick(data.name)}} clickstatus={menu == data.name}>
-                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:38, height:38}}/></BoxImg>
-                    <div style={{ fontSize:12, color:"#636363", fontWeight:300}}>{data.name}</div>
-                  </Box>
-                ))
-              }
-            
-            </Row>
-            <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
-            <Row  id="sticky-element"  style={SearchElementStyle}>
-
-                <Column style={{width:"100%"}}>
-                <InputLine>
-                  <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요"
-                        value={search}
-                        ref ={inputRef}
-                        onFocus={scrollToInput}
-                        onClick={scrollToInput}
-                        onChange={(e) => {   
-                          AiSearchChange(e.target.value);
-                        }}
-                        onKeyDown={handleKeyDown} 
-                    />
-                  <div style={{position:"relative", left: '40%', top: '3px'}}>
-                    <img src={imageDB.redsearch} width={22} height={22} onClick={_handleAI} />
-                  </div>
-                </InputLine>
-
-                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
-                    <img src={imageDB.infocircle} width={16} height={16} o/>
-                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
-                </FlexstartRow>
-                </Column>
-            </Row>
-            </Column>
-
-            <div className="new-div">
-              {
-                FilterItems.map((data, index)=>(
-                  <>
-                  {
-                    index == 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
-                      <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
-                  </FilterBox>
-                  }
-                  {
-                    index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
-                    <FilterBoxText clickstatus={filterenablecheck(data.name)}>{data.name}
-                    {getfilters(data.name)}   
-                    </FilterBoxText>
-                  </FilterBox>
-                  }
+                roomitems.length > 0 ? (
+                  <SubContainer>
+                  <FlexstartRow style={{fontWeight:700, marginLeft:5,marginBottom:10}}>
+                  <div style={{color:"#131313", fontSize:"18px"}}>{'등록된 전체공간'}
+                  <span style={{color:"#F75100", marginLeft:3}}>{roomitems.length}</span> {'건'}</div>
+                   </FlexstartRow>
                   
-                  </>
-             
-                ))
+                  <FlexstartRow style={{flexWrap:"wrap"}}>
+                  {
+                      roomitems.map((item, index)=>(
+                        <MobileRoomItem key={index}  index={index} width={'100%'} 
+                        roomdata={item} onPress={()=>{_handleSelectWork(item.ROOM_ID, item.ROOMTYPE)}}/>
+                      ))
+                    }
+                  </FlexstartRow>
+                  </SubContainer>
+                ) :(<Empty content={'등록된 공간대여가 없습니다'} height={300}/>)
+
               }
-            </div>
-            <SubContainer>
-  
-            <FlexstartRow style={{fontWeight:700, marginLeft:5,marginBottom:10}}>
-                <div style={{color:"#131313", fontSize:"18px"}}>{'등록된 전체공간'}
-                <span style={{color:"#F75100", marginLeft:3}}>{roomitems.length}</span> {'건'}</div>
-              </FlexstartRow>
-     
-            
-            <FlexstartRow style={{flexWrap:"wrap"}}>
-            {
-                roomitems.map((item, index)=>(
-                  <MobileRoomItem key={index}  index={index} width={'100%'} 
-                  roomdata={item} onPress={()=>{_handleSelectWork(item.ROOM_ID)}}/>
-                ))
-              }
-            </FlexstartRow>
-            </SubContainer>
+
+
+
           </Column>
+          <MobileStoreInfo height={200} />
 
-      </Container>
+        </Container>)
+      }
 
       {
         servicepopup == true && <MobileRoomServiceFilter callback={MobileServiceFilterCallback} filterhistory={servicefilter}/>
@@ -822,7 +758,7 @@ const MobileRoomcontainer =({containerStyle}) =>  {
 
     }
 
-    <MobileStoreInfo height={200} />
+
     </>
 
 

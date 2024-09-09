@@ -6,7 +6,7 @@ import { UserContext } from "../context/User";
 import { CommaFormatted } from "../utility/money";
 import { distanceFunc } from "../utility/region";
 import { CiHeart } from "react-icons/ci";
-import { imageDB, Seekimage } from "../utility/imageData";
+import { imageDB, Seekgrayimage, Seekimage } from "../utility/imageData";
 import { BetweenColumn, Column, FlexstartColumn } from "../common/Column";
 import { FiEye } from "react-icons/fi";
 import { getDateOrTime } from "../utility/date";
@@ -119,7 +119,6 @@ const MobileWorkItem =({containerStyle, width, workdata, onPress, index, selecte
 
   const _handleworkselect = ()=>{
     console.log("TCL: _handleworkselect -> y", index);
-    
     onPress(index);
 
   }
@@ -232,7 +231,9 @@ const MobileWorkItem =({containerStyle, width, workdata, onPress, index, selecte
 
           <BetweenRow style={{height:"100%", width:"30%"}}>
             <div style={{background:"#F9F9F9", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <img src={Seekimage(workdata.WORKTYPE)} style={{width:64}}/>
+            {workdata.WORK_STATUS== 0 ? 
+              (<img src={Seekimage(workdata.WORKTYPE)} style={{width:52}}/>) : (<img src={Seekgrayimage(workdata.WORKTYPE)} style={{width:52}}/>)
+            }
             </div>
           </BetweenRow>
       

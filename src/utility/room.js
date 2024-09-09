@@ -9,9 +9,12 @@ export const ROOMSIZEDISPALY={
 }
 export const ROOMSIZE={
     ALLROOM : '전체보기',
-    SMALL : 'Small',
-    MEDIUM : 'Medium',
-    LARGE : 'Large',
+    SMALLER : '0.25평',
+    SMALL : '0.5평',
+    MEDIUM : '1평',
+    LARGE : '1.5평',
+    LARGER : '2평',
+    EXLARGE : '3평',
 
 }
 
@@ -46,9 +49,12 @@ export const ROOM_INFO= {
 }
 
 export const ROOMPOLICY ={
-    SMALL: 9,
-    MEDIUM: 9,
-    LARGE : 9,
+    SMALLER : 8,
+    SMALL :  8,
+    MEDIUM : 8,
+    LARGE :  8,
+    LARGER :  8,
+    EXLARGE :  8,
 }
 
 
@@ -71,6 +77,133 @@ export const ROOMPOLICY ={
  * ! ⑥ result : 고객이 선택한 값을 설정한다
  * 
  */
+
+export const Requestroommessages =[
+
+  {
+   type:"initialize", 
+   show:true, 
+   index:0, 
+   info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
+   selected: false,
+   multiselect_enable: false,
+   selectitems :[
+     {selected : false, key:"",request:"", response:""}
+   ]
+  },
+
+  {
+    type:"requestdate", 
+    show:false, 
+    index:1,
+    info:"언제부터 장소를 대여하길 원하시나여?",
+    selected : false,
+  },
+  
+  {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.DATE,  result:""},
+  {
+    type:"request", 
+    show:false, 
+    index:3, 
+    info:"공간 대여 금액을 얼마로 하기를 원하시나여?",
+    selected : false,
+    multiselect_enable:false, 
+    selectitems:[
+
+      {selected : false, key:"월3만원", request:"월3만원", response:"월3만원"},
+      {selected : false, key:"월4만원", request:"월4만원", response:"월4만원"},
+      {selected : false, key:"월5만원", request:"월5만원", response:"월5만원"},
+      {selected : false, key:"월6만원", request:"월6만원", response:"월6만원"},
+      {selected : false, key:"월7만원", request:"월7만원", response:"월7만원"},
+      {selected : false, key:"월8만원", request:"월8만원", response:"월8만원"},
+    ]
+  },
+  {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.MONEY,  result:""},
+  {
+    type:"request", 
+    show:false, 
+    index:5, 
+    info:"공간을 대여할곳을 선택해주세요",
+    selected : false,
+    multiselect_enable:false, 
+    selectitems:[
+      {selected : false, key:"아파트", request:"아파트", response:"아파트"},
+      {selected : false, key:"빌라", request:"빌라", response:"빌라"},
+      {selected : false, key:"단독주택", request:"단독주택", response:"단독주택"},
+      {selected : false, key:"별도창고", request:"별도창고", response:"별도창고"},
+      {selected : false, key:"지식산업센타", request:"지식산업센타", response:"지식산업센타"},
+      {selected : false, key:"오피스텔", request:"오피스텔", response:"오피스텔"},]
+  },
+
+
+  {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.TARGET,  result:""},
+
+  {
+    type:"request", 
+    show:false, 
+    index:7, 
+    info:"공간을 대여할곳을 어디에 할것인가요?",
+    selected : false,
+    multiselect_enable:false, 
+    selectitems:[
+    {selected : false, key:"빈방", request:"빈방", response:"빈방"},
+    {selected : false, key:"거실", request:"거실", response:"거실"},
+    {selected : false, key:"테라스", request:"테라스", response:"테라스"},
+    {selected : false, key:"기타", request:"기타", response:"기타"},]},
+
+  {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGETAREA,  result:""},
+
+  {
+    type:"request", 
+    show:false, 
+    index:9, 
+    info:"짐을 수시로 찾을수 있나요?",
+    selected : false,
+    multiselect_enable:false, 
+    selectitems:[
+    {selected : false, key:"주1회가능", request:"주1회가능", response:"주1회가능"},
+    {selected : false, key:"주2회가능", request:"주2회가능", response:"주2회가능"},
+    {selected : false, key:"월1회가능", request:"월1회가능", response:"월1회가능"},
+    {selected : false, key:"언제든지가능", request:"언제든지", response:"언제든지"},]},
+
+  {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.ROOMCHECK,  result:""},
+
+
+  {
+    type:"request", 
+    show:false, 
+    index:11, 
+    info:"고객님의 성별은 무엇인가요?",
+    selected : false,
+    multiselect_enable:false, 
+    selectitems:[
+    {selected : false, key:"남성", request:"남성", response:"남성"},
+    {selected : false, key:"여성", request:"여성", response:"여성"},]},
+
+  {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+
+  {
+    type:"requestroom", 
+    show:false, 
+    index:13,
+    info:"짐 보관할 장소의 사진을 등록해주세요",
+    selected : false,
+  
+  },
+  {type:"response", responseshow : false,  show:false, index:14, requesttype:REQUESTINFO.ROOM, result:""},
+  {
+    type:"requestregion", 
+    show:false, 
+    index:15,
+    info:"짐을 보관할 지역을 지도에서 클릭해주세요",
+    selected : false,
+  
+  },
+  {type:"response", responseshow : false,  show:false, index:16, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+
+  {type:"requestcomplete", show: false, index:17, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+
+]
 export const Requestsmallmessages =[
 
     {

@@ -70,7 +70,7 @@ const LoadingStyle={
   justifyContent: "center",
   alignItems: "center",
   width: "100%",
-  top: "400px",
+  top: "300px",
   position:"absolute"
 }
 const MapbtnStyle={

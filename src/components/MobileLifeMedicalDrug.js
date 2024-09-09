@@ -13,6 +13,10 @@ import "./medicalinput.css";
 import axios from "axios";
 import LottieAnimation from "../common/LottieAnimation";
 import ResultLabel from "../common/ResultLabel";
+import Border from "../common/Border";
+import Empty from "./Empty";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp  } from "react-icons/io";
 
 
 const Container = styled.div`
@@ -82,10 +86,20 @@ const LoadingStyle={
   justifyContent: "center",
   alignItems: "center",
   width: "100%",
-  top: "400px",
+  top: "300px",
   position:"absolute"
 }
 
+const Label = styled.div`
+  font-size: 14px;
+  color : #131313;
+  font-weight: 500
+`
+const Content = styled.div`
+  font-size: 12px;
+  color : #636363;
+  line-height:2.5;
+`
 
 const MobileLifeMedicalDrug=({containerStyle}) =>  {
 
@@ -120,6 +134,7 @@ const MobileLifeMedicalDrug=({containerStyle}) =>  {
 
   useEffect(()=>{
     setSearch(search);
+    setResultitem(resultitem);
   }, [refresh])
 
   useEffect(()=>{
@@ -174,6 +189,17 @@ const MobileLifeMedicalDrug=({containerStyle}) =>  {
     .then((response) =>{
 
       if(response.data.body.items != undefined){
+
+        response.data.body.items.map((data)=>{
+          data.efcyQesitmopen = false;
+          data.useMethodQesitmopen = false;
+          data.atpnQesitmopen = false;
+          data.intrcQesitmopen = false;
+          data.seQesitmopen = false;
+          data.depositMethodQesitmopen = false;
+        
+        })
+
         setResultitem(response.data.body.items);
         console.log("TCL: _handleSubmit -> response.data", response.data)
         setRefresh((refresh) => refresh +1);
@@ -190,6 +216,67 @@ const MobileLifeMedicalDrug=({containerStyle}) =>  {
     
   }
 
+  const _handleView= (index)=>{
+    if(resultitem[index].OPEN ){
+      resultitem[index].OPEN = false;
+    }else{
+      resultitem[index].OPEN = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleefcyQesitmView= (index)=>{
+    if(resultitem[index].efcyQesitmopen ){
+      resultitem[index].efcyQesitmopen = false;
+    }else{
+      resultitem[index].efcyQesitmopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handleuseMethodQesitmView= (index)=>{
+    if(resultitem[index].useMethodQesitmopen ){
+      resultitem[index].useMethodQesitmopen = false;
+    }else{
+      resultitem[index].useMethodQesitmopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handleatpnQesitmView= (index)=>{
+    if(resultitem[index].atpnQesitmopen ){
+      resultitem[index].atpnQesitmopen = false;
+    }else{
+      resultitem[index].atpnQesitmopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleintrcQesitmView= (index)=>{
+    if(resultitem[index].intrcQesitmopen ){
+      resultitem[index].intrcQesitmopen = false;
+    }else{
+      resultitem[index].intrcQesitmopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handleseQesitmView= (index)=>{
+    if(resultitem[index].seQesitmopen ){
+      resultitem[index].seQesitmopen = false;
+    }else{
+      resultitem[index].seQesitmopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  
+  const _handledepositMethodQesitmView= (index)=>{
+    if(resultitem[index].depositMethodQesitmopen ){
+      resultitem[index].depositMethodQesitmopen = false;
+    }else{
+      resultitem[index].depositMethodQesitmopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  
+  
 
   return (
 
@@ -210,86 +297,152 @@ const MobileLifeMedicalDrug=({containerStyle}) =>  {
 
         </SearchLayer>
 
-        <FlexstartRow style={{width:"100%", marginBottom:10}}>
+        <FlexstartRow style={{width:"100%", marginBottom:10, background:"#fff"}}>
                     <img src={imageDB.infocircle} width={16} height={16} o/>
                     <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>알아보고자 약이름을 넣어주세요</span>                  
         </FlexstartRow>
 
       </Column>
 
-      {/* <SearchLayer>
-
-        
-        <input className="custom-input" type="text" style={Inputstyle}
-        onKeyDown={handleKeyDown} 
-        value={search} onChange={(e)=>{
-          setSearch(e.target.value);
-          setRefresh((refresh) => refresh +1);
-        
-        }}
-        placeholder="알아보고자 하는 약이름을 넣어주세여" />
-        <img className ="searchicon" src={imageDB.search} style={{width:20, height:20, position:"absolute", left:'82%'}} onClick={_handleSubmit}/>
-      </SearchLayer> */}
-
       <>
       {
           searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
-            width={"100px"} height={'100px'}/>)
+            width={"50px"} height={'50px'}/>)
           :( <Column style={{ margin:"0 auto", width:'100%'}}>
 
         <FlexstartRow style={{width:"100%", marginTop:20, marginBottom:10, borderBottom: "1px solid #000"}}>
-          <ResultLabel label={"'"+search +"'" +'검색 결과'} result = {resultitem.length} unit={'건'}/>
+          {
+            search != '' ? (<ResultLabel label={"'"+search +"'" +'검색 결과'} result = {resultitem.length} unit={'건'}/>)
+            :(<ResultLabel label={'검색 결과'} result = {resultitem.length} unit={'건'}/>)
+          }
+
         </FlexstartRow>
 
 
         {
-        resultitem.map((data)=>(
-        <Table class="custom-table" style={{marginBottom:20}}>
-        <tbody>
-        <tr>
-          <td style={{maxWidth:'30px'}}>이름</td>
-          <td>{data.itemName}</td>
-        </tr>
+          resultitem.map((data, index)=>(
 
-        <tr>
-          <td>제품이미지</td>
-          <td><img src={data.itemImage} style={{width:50, height:50}}/></td>
-        </tr>
-        <tr>
-          <td>제조사</td>
-          <td>{data.entpName}</td>
-        </tr>
-        <tr>
-          <td>효능</td>
-          <td>{data.efcyQesitm}</td>
-        </tr>
-        <tr>
-          <td>사용법</td>
-          <td>{data.useMethodQesitm}</td>
-        </tr>
-        <tr>
-          <td>사용전유의사항</td>
-          <td>{data.atpnWarnQesitm}</td>
-        </tr>
-        <tr>
-          <td>사용상주의사항</td>
-          <td>{data.atpnQesitm}</td>
-        </tr>
-        <tr>
-          <td>주의해야할 약/음식</td>
-          <td>{data.intrcQesitm}</td>
-        </tr>
-        <tr>
-          <td>부작용</td>
-          <td>{data.seQesitm}</td>
-        </tr>
-        <tr>
-          <td>보관방법</td>
-          <td>{data.depositMethodQesitm}</td>
-        </tr>
-        </tbody>
-        </Table>
-        ))
+          <div style={{width:"90%", margin:"0 auto"}}>
+            <Column style={{alignItems:"flex-start"}}>
+            <Row style={{width:"100%"}}>
+            <Column style={{width:'30%', alignItems:"flex-start"}}>
+              <img src={data.itemImage} style={{width:80, height:80, borderRadius:"10px"}}/>
+            </Column>
+    
+            <Column style={{width:'70%',alignItems:"flex-start"}}>
+              <div style={{color:"#131313", fontSize:'16px'}}>{data.itemName}</div>
+              <div style={{color:"#636363", fontSize:'12px', marginTop:10}}>{data.entpName}</div>
+            </Column>
+            </Row>
+            <Border/>
+            <Column onClick={()=>{_handleefcyQesitmView( index)}} style={{ alignItems:"flex-start"}}> 
+              <Row style={{justifyContent:"center", alignItems:"center"}}>
+                <Label>효능</Label>
+                <div style={{marginLeft:10, paddingTop:5}}>
+                    {
+                        data.efcyQesitmopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                    }
+                </div>
+              </Row>
+
+              {
+                data.efcyQesitmopen == true && <Content>{data.efcyQesitm}</Content>
+              }
+            
+            </Column>
+            <Border/>
+            <Column onClick={()=>{_handleuseMethodQesitmView( index)}} style={{ alignItems:"flex-start"}}> 
+              <Row style={{justifyContent:"center", alignItems:"center"}}>
+                <Label>사용법</Label>
+                <div style={{marginLeft:10, paddingTop:5}}>
+                    {
+                        data.useMethodQesitmopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                    }
+                </div>
+              </Row>
+
+              {
+                data.useMethodQesitmopen == true && <Content>{data.useMethodQesitm}</Content>
+              }
+            
+            </Column>
+            <Border/>
+            <Column onClick={()=>{_handleatpnQesitmView( index)}} style={{ alignItems:"flex-start"}}> 
+              <Row style={{justifyContent:"center", alignItems:"center"}}>
+                <Label>사용상 주의사항</Label>
+                <div style={{marginLeft:10, paddingTop:5}}>
+                    {
+                        data.atpnQesitmopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                    }
+                </div>
+              </Row>
+
+              {
+                data.atpnQesitmopen == true && <Content>{data.atpnQesitm}</Content>
+              }
+            
+            </Column>
+            <Border/>
+            <Column onClick={()=>{_handleintrcQesitmView( index)}} style={{ alignItems:"flex-start"}}> 
+              <Row style={{justifyContent:"center", alignItems:"center"}}>
+                <Label>주의해야할 약 음식</Label>
+                <div style={{marginLeft:10, paddingTop:5}}>
+                    {
+                        data.intrcQesitmopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                    }
+                </div>
+              </Row>
+
+              {
+                data.intrcQesitmopen == true && <Content>{data.intrcQesitm}</Content>
+              }
+            
+            </Column>
+            <Border/>
+            <Column onClick={()=>{_handleseQesitmView( index)}} style={{ alignItems:"flex-start"}}> 
+              <Row style={{justifyContent:"center", alignItems:"center"}}>
+                <Label>부작용</Label>
+                <div style={{marginLeft:10, paddingTop:5}}>
+                    {
+                        data.seQesitmopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                    }
+                </div>
+              </Row>
+
+              {
+                data.seQesitmopen == true && <Content>{data.seQesitm}</Content>
+              }
+            
+            </Column>
+            <Border/>
+   
+
+            <Column onClick={()=>{_handledepositMethodQesitmView( index)}} style={{ alignItems:"flex-start"}}> 
+              <Row style={{justifyContent:"center", alignItems:"center"}}>
+                <Label>보관 방법</Label>
+                <div style={{marginLeft:10, paddingTop:5}}>
+                    {
+                        data.depositMethodQesitmopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                    }
+                </div>
+              </Row>
+
+              {
+                data.depositMethodQesitmopen == true && <Content>{data.depositMethodQesitm}</Content>
+              }
+            
+            </Column>
+            <Border bgcolor={'#000'} containerStyle={{margin:"20px 0px"}}/>
+            </Column>
+  
+          </div>
+
+          ))
+        }
+        {
+          resultitem.length == 0 && <Empty content = "검색에 맞는 약이 존재 하지 않습니다"
+          containerStyle={{marginTop:"150px"}}
+          />
         }
    
 

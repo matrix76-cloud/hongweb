@@ -15,8 +15,7 @@ export const imageDB = {
   user: require("../assets/imageset/user.png"),
   pcslpash: require("../assets/imageset/PCSplash.png"),
   mobileslpash: require("../assets/imageset/MobileSplash.png"),
-
-
+  Empty : require("../assets/imageset/Empty.png"),
   tour: require("../assets/imageset/tour.png"),
   tourcountry: require("../assets/imageset/tourcountry.png"),
   medical: require("../assets/imageset/medical.png"),
@@ -25,7 +24,7 @@ export const imageDB = {
   board: require("../assets/imageset/board.png"),
   performance: require("../assets/imageset/performance.png"),
   expand: require("../assets/imageset/expand.png"),
-
+  success: require("../assets/imageset/success.png"),
   dot : require("../assets/imageset/dot.png"),
 
   person : require("../assets/imageset/person.png"),
@@ -39,9 +38,12 @@ export const imageDB = {
   mobilebanner5 :require("../assets/imageset/mobilebanner5.png"),
   mobilebanner6 :require("../assets/imageset/mobilebanner6.png"),
   mobilebanner7 :require("../assets/imageset/mobilebanner7.png"),
+  mobilebanner8 :require("../assets/imageset/mobilebanner8.png"),
+  mobilebanner9 :require("../assets/imageset/mobilebanner9.png"),
   movegps :require("../assets/imageset/movegps.png"),
   movegpsex :require("../assets/imageset/movegps.gif"),
-  check:require("../assets/imageset/check.png"),
+  check_d:require("../assets/imageset/check_d.png"),
+  check_e:require("../assets/imageset/check_e.png"),
   enablecheck:require("../assets/imageset/enablecheck.png"),
   filter:require("../assets/imageset/filter.png"),
   reset:require("../assets/imageset/reset.png"),
@@ -55,7 +57,8 @@ export const imageDB = {
   loadinglarge :require("../assets/imageset/loadinglarge.json"),
   pinmove :require("../assets/imageset/pin_h.json"),
   gps :require("../assets/imageset/movegps.png"),
-
+  selection_d :require("../assets/imageset/selection_d.png"),
+  selection_e :require("../assets/imageset/selection_e.png"),
   roomsample1: require("../assets/imageset/roomsample1.png"),
   roomsample2: require("../assets/imageset/roomsample2.png"),
   roomsample3: require("../assets/imageset/roomsample3.png"),
@@ -207,6 +210,7 @@ export const imageDB = {
   rulletpin : require("../assets/imageset/rulletpin.png"),
   rulletsuccess : require("../assets/imageset/rulletsuccess.gif"),
   map : require("../assets/imageset/map.png"),
+  mappin : require("../assets/imageset/map-pin.png"),
   distance : require("../assets/imageset/distance.png"),
 
   home_e :require("../assets/imageset/home_e.png"),
@@ -258,12 +262,66 @@ export const Seekimage = (category) =>{
     return imageDB.dog;
   }else if(category == WORKNAME.LESSON){
     return imageDB.lesson;
-  }else if(category == ROOMSIZE.SMALL){
+  }else if(category == ROOMSIZE.SMALLER){
     return imageDB.roomsize1;
-  }else if(category == ROOMSIZE.MEDIUM){
+  }else if(category == ROOMSIZE.SMALL){
     return imageDB.roomsize2;
-  }else if(category == ROOMSIZE.LARGE){
+  }else if(category == ROOMSIZE.MEDIUM){
     return imageDB.roomsize3;
+  }else if(category == ROOMSIZE.LARGE){
+    return imageDB.roomsize4;
+  }else if(category == ROOMSIZE.EXLARGE){
+    return imageDB.roomsize5;
+  }
+}
+export const Seekgrayimage = (category) =>{
+  if(category == WORKNAME.ALLWORK){
+    return imageDB.pclogo;
+  }
+  if(category == WORKNAME.HOMECLEAN){
+    return imageDB.housegray;
+  }else if(category == WORKNAME.BUSINESSCLEAN){
+    return imageDB.businessgray;
+  }else if(category == WORKNAME.MOVECLEAN){
+    return imageDB.movegray;
+  }else if(category == WORKNAME.FOODPREPARE){
+    return imageDB.cookgray;
+  }else if(category == WORKNAME.GOOUTSCHOOL){
+    return imageDB.gooutschoolgray;
+  }else if(category == WORKNAME.BABYCARE){
+    return imageDB.babycaregray;
+  }else if(category == WORKNAME.ERRAND){
+    return imageDB.helpgray;
+  }else if(category == WORKNAME.PATIENTCARE){
+    return imageDB.patientcaregray;
+  }else if(category == WORKNAME.CARRYLOAD){
+    return imageDB.carrygray;
+  }else if(category == WORKNAME.GOHOSPITAL){
+    return imageDB.hospitalgray;
+  }else if(category == WORKNAME.RECIPETRANSMIT){
+    return imageDB.recipegray;
+  }else if(category == WORKNAME.GOSCHOOLEVENT){
+    return imageDB.schooleventgray;
+  }else if(category == WORKNAME.SHOPPING){
+    return imageDB.shoppinggray;
+  }else if(category == WORKNAME.GODOGHOSPITAL){
+    return imageDB.doghospitalgray;
+  }else if(category == WORKNAME.GODOGWALK){
+    return imageDB.doggray;
+  }else if(category == WORKNAME.LESSON){
+    return imageDB.lessongray;
+  }else if(category == ROOMSIZE.SMALLER){
+    return imageDB.roomsize1;
+  }else if(category == ROOMSIZE.SMALL){
+    return imageDB.roomsize2;
+  }else if(category == ROOMSIZE.MEDIUM){
+    return imageDB.roomsize3;
+  }else if(category == ROOMSIZE.LARGE){
+    return imageDB.roomsize4;
+  }else if(category == ROOMSIZE.LARGER){
+    return imageDB.roomsize5;
+  }else if(category == ROOMSIZE.EXLARGE){
+    return imageDB.roomsize6;
   }
 }
 

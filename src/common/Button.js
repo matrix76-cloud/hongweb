@@ -29,7 +29,7 @@ const Button =({containerStyle, text, height,width, radius, bgcolor, color, onPr
     <Container 
     onClick={onPress} enable={enable}
     style={containerStyle} height={height} width={width} radius={radius} bgcolor={bgcolor} color={color}>
-        <div onClick={onPress}>{text}</div>
+        <div>{text}</div>
     </Container>
   );
 

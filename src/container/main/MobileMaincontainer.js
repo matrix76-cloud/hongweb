@@ -10,7 +10,7 @@ import StoreInfo from "../../components/StoreInfo";
 import { DataContext } from "../../context/Data";
 
 
-import { ReadWork } from "../../service/WorkService";
+import { DeleteWorkByUSER_ID, ReadWork } from "../../service/WorkService";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import Loading from "../../components/Loading";
 import { FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
@@ -36,20 +36,26 @@ import MobilePeriodFilter from "../../modal/MobilePeriodFilterPopup/MobilePeriod
 import MobileDistanceFilter from "../../modal/MobileDistanceFilterPopup/MobileDistanceFilter";
 import MobileProcessFilter from "../../modal/MobileProcessFilterPopup/MobileProcessFilter";
 import ResultLabel from "../../common/ResultLabel";
+import LottieAnimation from "../../common/LottieAnimation";
+import Empty from "../../components/Empty";
+import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
 
 const Container = styled.div`
   padding:50px 0px 0px 0px;
   width: 100%;
   margin : 0 auto;
   min-height:800px;
+  scrollbar-width: none; // 스크롤바 안보이게 하기
 
 `
 const SubContainer = styled.div`
   margin: 0 auto;
-  background: #f9f9f9;
+  background: #f3f3f3;
   padding-top: 30px;
   padding-left: 15px;
   padding-right: 15px;
+
+
 
 `
 
@@ -66,7 +72,6 @@ const Box = styled.div`
   flex-direction:column;
   width: 25%;
   border-radius: 15px;
-  padding : 5px 0px;
 
 
 `
@@ -84,9 +89,8 @@ const FilterBox = styled.div`
   flex-direction: row;
   background: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#fff') };
   border:  ${({clickstatus}) => clickstatus == true ? (null) :('1px solid #C3C3C3') };
-  margin-top:10px;
-  margin-right: 3px;
 
+  margin-right: 3px;
   border-radius: 4px;
   padding: 0px 15px;
   height:30px;
@@ -142,6 +146,14 @@ const SearchElementStyle ={
   marginBottom: '10px',
 }
 
+const LoadingAnimationStyle={
+  zIndex: 11,
+  position: "absolute",
+  top: "40%",
+  left: "35%"
+}
+
+
 
 /**
 /**
@@ -179,11 +191,12 @@ const FilterItems=[
 ]
 
 const BannerItems =[
+  imageDB.mobilebanner1,
+  imageDB.mobilebanner2,
   imageDB.mobilebanner3,
   imageDB.mobilebanner4,
   imageDB.mobilebanner5,
   imageDB.mobilebanner6,
-  imageDB.mobilebanner7,
 ]
 
 /**
@@ -198,15 +211,21 @@ const MobileMaincontainer =({containerStyle}) =>  {
   const {value} = useSelector((state)=> state.menu);
 
   const { dispatch, user } = useContext(UserContext);
+
+  
+  console.log("TCL: MobileMaincontainer -> user", user)
+
+  
   const { datadispatch, data } = useContext(DataContext);
   const location = useLocation();
   const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(1);
+
   // const [popupstatus1, setPopupstatus1] = useState(false);
   // const [popupstatus2, setPopupstatus2] = useState(false);
   // const [popupstatus3, setPopupstatus3] = useState(false);
   // const [bannerimg, setBannerimg] = useState([]);
   const [workitems, setWorkitems] = useState([]);
+  const [displayitems, setDisplayitems] = useState([]);
   const [currentloading, setCurrentloading] = useState(false);
   const [menu, setMenu] = useState('');
 
@@ -230,6 +249,9 @@ const MobileMaincontainer =({containerStyle}) =>  {
   const [periodfilter, setPeriodfilter] = useState([]);
   const [distancefilter, setDistancefilter] = useState([]);
   const [processfilter, setProcessfilter] = useState([]);
+
+  const [refresh, setRefresh] = useState(1);
+  const [init, setInit] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -259,6 +281,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
     setShowNewDiv(showNewDiv);
     setMenu(menu);
     setTotalset(totalset);
+    setDisplayitems(displayitems);
 
     setServicefilter(servicefilter);
     setPricefilter(pricefilter);
@@ -271,6 +294,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
     setPeriodpopup(periodpopup);
     setDistancepopup(distancepopup);
     setProcesspopup(processpopup);
+    setInit(init);
 
   },[refresh])
 
@@ -414,14 +438,55 @@ const MobileMaincontainer =({containerStyle}) =>  {
    */
 
   useEffect(()=>{
+
+   
+    setRefresh((refresh) => refresh +1);
     async function FetchData(){
-      const serverworkitems = data.workitems;
-      let items = FilterWorkitems(value, serverworkitems);
-      setWorkitems(items);
+      let serverworkitems = data.workitems;
+
+      if(serverworkitems.length == 0){
+        const latitude = user.latitude;
+        const longitude = user.longitude;
+        serverworkitems = await ReadWork({latitude, longitude});
+      }
+
+      setWorkitems(serverworkitems);
+      setDisplayitems(serverworkitems);
+
     }
     FetchData();
     setRefresh((refresh) => refresh +1);
+  },[])
+
+
+  useLayoutEffect(()=>{
+    setInit(true);
+    async function FetchData(){
+      let serverworkitems = data.workitems;
+      await useSleep(1000);
+      if(serverworkitems.length == 0){
+      
+        const latitude = user.latitude;
+        const longitude = user.longitude;
+               console.log("TCL: FetchData -> longitude", longitude)
+        console.log("TCL: FetchData -> latitude", latitude)
+        serverworkitems = await ReadWork({latitude, longitude});
+ 
+
+        console.log("TCL: MobileMaincontainer -> [value]",value,serverworkitems)
+        
+      }
+
+
+      setWorkitems(serverworkitems);
+      setDisplayitems(serverworkitems);
+      setRefresh((refresh) => refresh +1);
+      setInit(false);
+    }
+    FetchData();
+  
   },[value])
+
 
 
   /**
@@ -448,8 +513,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
    * 단위 일감에서 해당 일감을 클릭햇을때 내주변으로 이동 할수 있도록 한다
    * @param 해당 work_id 와 타입을 보내주어야 한다
    */
-  const _handleSelectWork = (WORK_ID) =>{
-   navigate("/Mobilwork" ,{state :{WORK_ID :WORK_ID, TYPE : FILTERITMETYPE.HONG}});
+  const _handleSelectWork = (WORK_ID, WORKTYPE) =>{
+   navigate("/Mobilework" ,{state :{WORK_ID :WORK_ID, TYPE : FILTERITMETYPE.HONG, WORKTYPE :WORKTYPE }});
 
   }
   const positioncallback = () =>{
@@ -532,6 +597,12 @@ const MobileMaincontainer =({containerStyle}) =>  {
     }else if(checkmenu == WORKNAME.CARRYLOAD){
       setTotalset(WORKPOLICY.CARRYLOAD);
       totalset = WORKPOLICY.CARRYLOAD;
+    }else if(checkmenu == WORKNAME.ERRAND){
+      setTotalset(WORKPOLICY.ERRAND);
+      totalset = WORKPOLICY.ERRAND;
+    }else if(checkmenu == WORKNAME.SHOPPING){
+      setTotalset(WORKPOLICY.SHOPPING);
+      totalset = WORKPOLICY.SHOPPING;
     }
     setRefresh((refresh) => refresh +1);
 
@@ -570,11 +641,26 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
   const _handlefiltermenuclick = async(checkmenu) =>{
     if(checkmenu == FILTERNAME.INIT){   
+
+      const USER_ID ="IPxcQht8oijTN3sUBjhR"
+      DeleteWorkByUSER_ID({USER_ID});
+
+      setInit(true);
+      setRefresh((refresh) => refresh +1);
+      new Promise(resolve => setTimeout(resolve, 5000));
+
+ 
       setServicefilter([]);
       setPricefilter([]);
       setPeriodfilter([]);
       setDistancefilter([]);
       setProcessfilter([]);
+
+      setDisplayitems(workitems);
+
+      setInit(false);
+      setRefresh((refresh) => refresh +1);
+
     }
     else if(checkmenu == FILTERNAME.SERVICE){
       setServicepopup(true);
@@ -592,12 +678,17 @@ const MobileMaincontainer =({containerStyle}) =>  {
   
   }
   const MobileServiceFilterCallback = (filterary)=>{
+  console.log("TCL: MobileServiceFilterCallback -> MobileServiceFilterCallback", workitems)
 
     if(filterary.length != 0){
       setServicefilter(filterary);
     }
 
     setServicepopup(false);
+
+    const displayitems = workfilterapply(workitems);
+    setDisplayitems(displayitems);
+
     setRefresh((refresh) => refresh +1);
 
   }
@@ -722,115 +813,148 @@ const MobileMaincontainer =({containerStyle}) =>  {
     }
 
   }
-  function workfilterapply(menu, items){
-
+  function workfilterapply(items){
     let itemsTmp = [];
 
-    if(items == -1){
+    if(items.length == 0){
       return itemsTmp;
     }
 
-    if(menu == WORKNAME.ALLWORK || menu ==''){
-      return items;
-    }
+
+
+    console.log("TCL: workservicefilterapply -> servicefilter", servicefilter)
+
+    let itemsservicefilter = [];
     items.map((data)=>{
-      if(data.WORKTYPE == menu){
-        itemsTmp.push(data);
+      if(servicefilter.includes(data.WORKTYPE)){
+        itemsservicefilter.push(data);
+        console.log("TCL: workservicefilterapply -> data", data)
       }
     })
 
-    return itemsTmp;
+    if(servicefilter.length == 0){
+      itemsservicefilter = items;
+    }
+
+    let itemspricefilter = [];
+    itemsservicefilter.map((data)=>{
+      if(pricefilter.includes(data.WORK_INFO[2].result)){
+        itemspricefilter.push(data);
+        console.log("TCL: workservicefilterapply -> data", data)
+      }
+    })
+
+    if(pricefilter.length == 0){
+      itemspricefilter = itemsservicefilter;
+    }
+
+    return itemspricefilter;
 
   }
+
+  
 
 
 
   return (
     <>
       <div ref={elementRef}>
-      <Container  style={containerStyle}>
-        <Column >
-            <Column style={{width:"90%", margin: "0 auto"}}>
-            <Label label={'홍여사 서비스'}/>
-            <BetweenRow style={{flexWrap:"wrap", width:"100%"}}>
+    
 
-              {
-                WorkItems.map((data, index)=>(
-                  <Box onClick={()=>{_handlebasicmenuclick(data.name)}} >
-                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
-                    <div style={{ fontSize:12, color:"#636363", fontWeight:300}}>{data.name}</div>
-                  </Box>
-                ))
-              }
-            
-            </BetweenRow>
-
-            <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
-
-            <Row  id="sticky-element"  style={SearchElementStyle}>
-
-                <Column style={{width:"100%"}}>
-                <InputLine>
-                  <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요"
-                        value={search}
-                        ref ={inputRef}
-                        onFocus={scrollToInput}
-                        onClick={scrollToInput}
-                        onChange={(e) => {   
-                          AiSearchChange(e.target.value);
-                        }}
-                        onKeyDown={handleKeyDown} 
-                    />
-                  <div style={{position:"relative", left: '40%', top: '3px'}}>
-                    <img src={imageDB.redsearch} width={22} height={22} onClick={_handleAI} />
-                  </div>
-                </InputLine>
-
-                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
-                    <img src={imageDB.infocircle} width={16} height={16} o/>
-                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
-                </FlexstartRow>
-                </Column>
-            </Row>
-            </Column> 
-            <div className="new-div">
-              {
-                FilterItems.map((data, index)=>(
-                  <>
-                  {
-                    index == 0 && <FilterBox style={{padding:"0px 10px"}} onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
-                      <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
-                  </FilterBox>
-                  }
-                  {
-                    index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
-                    <FilterBoxText clickstatus={filterenablecheck(data.name)}>{data.name}
-                    {getfilters(data.name)}   
-                    </FilterBoxText>
-                  </FilterBox>
-                  }
-                  
-                  </>
-             
-                ))
-              }
-            </div>
-            <SubContainer>
-            <div ref={recordRef} />
+      {
+        init == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
+        width={"100px"} height={'100px'}/>) :(  <Container  style={containerStyle} >
+          <Column >
+              <Column style={{width:"95%", margin: "0 auto"}}>
+              <Label label={'홍여사 서비스'} containerStyle={{paddingLeft:25}}/>
+              <BetweenRow style={{flexWrap:"wrap", width:"100%"}}>
+  
+                {
+                  WorkItems.map((data, index)=>(
+                    <Box onClick={()=>{_handlebasicmenuclick(data.name)}} >
+                      <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
+                      <div style={{ fontSize:12, color:"#131313", fontWeight:500}}>{data.name}</div>
+                    </Box>
+                  ))
+                }
+              
+              </BetweenRow>
+  
+              <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
+  
+              <Row  id="sticky-element"  style={SearchElementStyle}>
+  
+                  <Column style={{width:"100%"}}>
+                  <InputLine>
+                    <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요"
+                          value={search}
+                          ref ={inputRef}
+                          onFocus={scrollToInput}
+                          onClick={scrollToInput}
+                          onChange={(e) => {   
+                            AiSearchChange(e.target.value);
+                          }}
+                          onKeyDown={handleKeyDown} 
+                      />
+                    <div style={{position:"relative", left: '40%', top: '3px'}}>
+                      <img src={imageDB.redsearch} width={22} height={22} onClick={_handleAI} />
+                    </div>
+                  </InputLine>
+  
+                  <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
+                      <img src={imageDB.infocircle} width={16} height={16} o/>
+                      <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
+                  </FlexstartRow>
+                  </Column>
+              </Row>
+              </Column> 
+              <div className="new-div">
+                {
+                  FilterItems.map((data, index)=>(
+                    <>
+                    {
+                      index == 0 && <FilterBox style={{padding:"0px 10px"}} onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                        <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
+                    </FilterBox>
+                    }
+                    {
+                      index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                      <FilterBoxText clickstatus={filterenablecheck(data.name)}>{data.name}
+                      {getfilters(data.name)}   
+                      </FilterBoxText>
+                    </FilterBox>
+                    }
+                    
+                    </>
+               
+                  ))
+                }
+              </div>
          
-
-              <ResultLabel label={menu + '일감'} result = {workitems.length} unit={'건'}/>
-              <FlexstartRow style={{flexWrap:"wrap"}}>
-              {
-                workitems.map((item, index)=>(
-                  <MobileWorkItem key={index}  index={index} width={'100%'} 
-                  workdata={item} onPress={()=>{_handleSelectWork(item.WORK_ID)}}/>  
-                ))
-              }
-              </FlexstartRow>
-            </SubContainer>
-        </Column>
-      </Container>
+                {
+                  displayitems.length > 0  ?
+                 (<SubContainer>
+                  <div ref={recordRef}>
+           
+  
+                  <ResultLabel label={menu + '일감'} result = {displayitems.length} unit={'건'}/>
+                  <FlexstartRow style={{flexWrap:"wrap"}}>
+                  {
+                    displayitems.map((item, index)=>(
+                      <MobileWorkItem key={index}  index={index} width={'100%'} 
+                      workdata={item} onPress={()=>{_handleSelectWork(item.WORK_ID, item.WORKTYPE)}}/>  
+                    ))
+                  }
+                  </FlexstartRow>
+                  </div>
+                  </SubContainer>) :(<Empty content={'등록된 일감이 없습니다'} height={300}/>)
+                }
+     
+            
+          </Column>
+          <MobileStoreInfo height={200} />
+        </Container>)
+      }
 
       {
         servicepopup == true && <MobileServiceFilter callback={MobileServiceFilterCallback} filterhistory={servicefilter}/>
@@ -853,7 +977,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
       </div>
 
-    <MobileStoreInfo height={200} />
+
     </>
 
 

@@ -356,6 +356,7 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
 
 
   const [messages, setMessages] = useState(msgs);
+  console.log("TCL: PCRegistcontainer -> msgs", msgs)
 
   const [stepdata, setStepdata] = useState(0);
   const [stepstr, setStepstr] = useState('');
@@ -1048,7 +1049,7 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
                             <SelectLayer className="button" check={subdata.selected} onClick={()=>{_handlecheck(index, subdata.key)}}>
                               <div>{subdata.request}</div>
                               {
-                                subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"16px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check} style={{width:"16px", hieght:"16px"}}/></div>)
+                                subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"16px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"16px"}}/></div>)
                               }
                               
                             </SelectLayer>

@@ -35,7 +35,8 @@ const style = {
 };
 
 const  SearchLayer = styled.div`
-width: 100%;
+width: 90%;
+margin : 0 auto;
 display: flex;
 flex-direction: row;
 justify-content: center;
@@ -270,56 +271,52 @@ const MoblileLifePerformanceCinema =({containerStyle}) =>  {
           searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
             width={"50px"} height={'50px'} />)
           :(
-            <Column style={{marginTop:10,width:"95%",margin:"0 auto"}}>
+            <Column style={{marginTop:10,width:"100%",margin:"0 auto", paddingTop:"50px"}}>
+              <Column style ={{width:"100%", backgroundColor:"#fff", position:"fixed", top:"50px"}}>
 
+                <SearchLayer>
+                  <input className="custom-input" type="text" style={Inputstyle}
+                  onKeyDown={handleKeyDown} 
+                  value={search} onChange={(e)=>{
+                    setSearch(e.target.value);
+                    setRefresh((refresh) => refresh +1);
+                  
+                  }}
+                  placeholder="시설물 이름, 지역 입력" />
+                  <img className ="searchicon" src={imageDB.redsearch} style={{width:20, height:20, position:"absolute", left:'88%'}} onClick={_handleSubmit}/>
+                </SearchLayer>
 
-        <SearchLayer>
-          <input className="custom-input" type="text" style={Inputstyle}
-          onKeyDown={handleKeyDown} 
-          value={search} onChange={(e)=>{
-            setSearch(e.target.value);
-            setRefresh((refresh) => refresh +1);
-          
-          }}
-          placeholder="시설물 이름, 지역 입력" />
-          <img className ="searchicon" src={imageDB.redsearch} style={{width:20, height:20, position:"absolute", left:'88%'}} onClick={_handleSubmit}/>
-        </SearchLayer>
+                <FlexstartRow style={{width:"90%", margin : '10 auto', marginBottom:10}}>
+                            <img src={imageDB.infocircle} width={16} height={16} o/>
+                            <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>알아보고자 하는 시설물 이름이나 지역이름을 넣어주세요</span>                  
+                </FlexstartRow>
+              </Column>
+              <FlexstartRow style={{width:"100%", marginTop:50, marginBottom:10, borderBottom: "1px solid #000"}}>
+                      <ResultLabel label={'총'} result = {displayitems.length} unit={'개소'}/>
+              </FlexstartRow>
+              <div style={{overflowY:"hidden",width:"90%",margin:"0 auto"}}>
+              {
+                displayitems.map((data, index)=>(
+                    <BoxItem>
+              
 
-        <FlexstartRow style={{width:"100%", marginBottom:10, marginLeft:'5%'}}>
-                    <img src={imageDB.infocircle} width={16} height={16} o/>
-                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>알아보고자 하는 시설물 이름이나 지역이름을 넣어주세요</span>                  
-        </FlexstartRow>
+                      <Item style={{color:"#131313", fontWeight:500,fontFamily: "Pretendard-SemiBold"}}>{data.openFcltyNm}</Item>
 
-
-        <FlexstartRow style={{width:"100%", marginTop:20, marginBottom:10, borderBottom: "1px solid #000"}}>
-                <ResultLabel label={'총'} result = {displayitems.length} unit={'개소'}/>
-        </FlexstartRow>
-
-
-
-        {
-          displayitems.map((data, index)=>(
-              <BoxItem>
-        
-
-                <Item style={{color:"#131313", fontWeight:500,fontFamily: "Pretendard-SemiBold"}}>{data.openFcltyNm}</Item>
-
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>주관</Taglabel><TagData>{data.openLcNm}</TagData></Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>시설물타입</Taglabel><TagData>{data.openFcltyType}</TagData></Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>휴무일</Taglabel><TagData>{data.rstde}</TagData></Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>주중사용시간</Taglabel><TagData>{data.weekdayOperOpenHhmm} ~ {data.weekdayOperColseHhmm}</TagData></Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>유료사용유무</Taglabel><TagData>{data.pchrgUseYn}</TagData></Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>사용료</Taglabel><TagData>{data.rntfee}</TagData>
-                </Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>수용가능인원수</Taglabel><TagData>{data.aceptncPosblCo}</TagData></Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>전화번호</Taglabel><TagData>{data.phoneNumber}</TagData></Item>
-                <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>가시는길</Taglabel><TagData>{data.rdnmadr}</TagData></Item>
-                <Item><div style={MapbtnStyle} onClick={()=>{_handleMapview(data.latitude,data.longitude, data.openFcltyNm)}}>지도로보기</div></Item>
-              </BoxItem>
-          ))
-        }
-    
-    
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>주관</Taglabel><TagData>{data.openLcNm}</TagData></Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>시설물타입</Taglabel><TagData>{data.openFcltyType}</TagData></Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>휴무일</Taglabel><TagData>{data.rstde}</TagData></Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>주중사용시간</Taglabel><TagData>{data.weekdayOperOpenHhmm} ~ {data.weekdayOperColseHhmm}</TagData></Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>유료사용유무</Taglabel><TagData>{data.pchrgUseYn}</TagData></Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>사용료</Taglabel><TagData>{data.rntfee}</TagData>
+                      </Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>수용가능인원수</Taglabel><TagData>{data.aceptncPosblCo}</TagData></Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>전화번호</Taglabel><TagData>{data.phoneNumber}</TagData></Item>
+                      <Item><Taglabel><img src={imageDB.dot} style={{width:'3px',marginRight:3}}/>가시는길</Taglabel><TagData>{data.rdnmadr}</TagData></Item>
+                      <Item><div style={MapbtnStyle} onClick={()=>{_handleMapview(data.latitude,data.longitude, data.openFcltyNm)}}>지도로보기</div></Item>
+                    </BoxItem>
+                ))
+              }
+              </div>
             </Column>)
         }
        

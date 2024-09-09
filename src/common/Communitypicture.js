@@ -8,17 +8,17 @@ import { UserContext } from "../context/User";
 
 
 const Container = styled.div`
-position: absolute;
-color: #fff;
-font-size: 20px;
-display: flex;
-justify-content: center;
-align-items: flex-start;
-padding-top: 10px;
-background: #0000007d;
-font-weight: 600;
-height: 35px; 
-width: 80px;
+  position: absolute;
+  color: #fff;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 10px;
+  background: #0000007d;
+  font-weight: 600;
+  height: 35px; 
+  width: 80px;
 `
 const style = {
   display: "flex"

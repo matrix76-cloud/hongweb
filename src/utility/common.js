@@ -2,6 +2,37 @@
 import moment from 'moment';
 import axios from "axios";
 
+const isWeb = typeof window !== 'undefined'; // 웹 환경 확인
+
+
+export const getPlatform = () => {
+	if (isWeb) {
+		const userAgent = navigator.userAgent;
+		if (/iPad|iPhone|iPod/.test(userAgent)) {
+			return 'ios';
+		}
+		if (/Android/.test(userAgent)) {
+			return 'android';
+		}
+		return 'web';
+	}
+	return 'native'; // 네이티브 환경으로 간주
+};
+
+
+export  const isReactNativeWebView = ()=>{
+	return typeof window.ReactNativeWebView !== 'undefined';
+}
+
+
+export  const isValidJSON = (jsonString) => {
+    try {
+      JSON.parse(jsonString);
+      return true; // 파싱 성공
+    } catch (error) {
+      return false; // 파싱 실패
+    }
+ }
 
 export const serverUrl = () =>{
 	return "http://13.125.229.243:3000/"
@@ -90,6 +121,7 @@ export const fn_telShare =(phone) =>
 
 	return  "tel:"+phone;
 }
+
 
 
 

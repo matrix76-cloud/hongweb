@@ -38,7 +38,7 @@ const mapstyle = {
 const PopupWorkEx = styled.div`
   height: 800px;
   position: absolute;
-  top:0px;
+  top:50px;
   width: 100%;
   background: #fff;
   z-index: 5;
@@ -47,7 +47,6 @@ const PopupWorkEx = styled.div`
 
 const TableLayout = styled.div`
   overflow-y: scroll;
-  max-height: 100vh;
   scroll-behavior: auto;
   display: flex;
   flex-direction: column;
@@ -60,7 +59,7 @@ const LoadingStyle={
   justifyContent: "center",
   alignItems: "center",
   width: "100%",
-  top: "400px",
+  top: "300px",
   position:"absolute"
 }
   
@@ -70,7 +69,7 @@ const MapExbtn = styled.div`
   left: 88%;
   z-index: 3;
   background: #f9f9f9;
-  width: 30px;
+  width: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -177,7 +176,7 @@ const MobileLifeTourCountry =({containerStyle}) =>  {
     function ListmapDraw(datas){
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
-            center: new kakao.maps.LatLng(37.625660993622, 127.14833958893), // 지도의 중심좌표
+            center: new kakao.maps.LatLng(user.latitude, user.longitude), // 지도의 중심좌표
             level: BasicLevel // 지도의 확대 레벨
     };
 
@@ -358,9 +357,12 @@ const MobileLifeTourCountry =({containerStyle}) =>  {
    
             </TableLayout>
 
-            <Button text={"닫기"} onPress={_handleClose}
-              containerStyle={{backgroundColor: "#FF7125",color :"#fff",borderRadius: "4px",padding:"5px",
-              fontSize: 16,height:44, margin:"20px auto 160px", width: "90%", height:"40px"}}/> 
+            <div onClick={_handleClose}
+            style={{backgroundColor: "#FF7125",color :"#fff",borderRadius: "4px",padding:"5px",
+            display:"flex",justifyContent:"center",alignItems:"center",
+            fontSize: 18,height:44, margin:"20px auto 160px", width: "90%", height:"40px"}}>
+              닫기
+            </div> 
        
           </div>
         </PopupWorkEx>
@@ -371,12 +373,7 @@ const MobileLifeTourCountry =({containerStyle}) =>  {
         width={"50px"} height={'50px'} />
       }
       <div style={{position:"absolute", width:"100%"}}>
-        <div id="map" className="SmallMap" style={mapstyle}></div>
-        {
-            currentloading == false &&  <MapExbtn onClick={()=>{_handleExmap()}}>
-            <img src={imageDB.expand} style={{width:30}}/>
-          </MapExbtn>
-        } 
+        <div id="map" className="Map" style={mapstyle}></div>
       </div>
    
     </Container>

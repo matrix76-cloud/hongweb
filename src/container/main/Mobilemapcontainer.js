@@ -3,7 +3,7 @@ import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
 import moment from "moment";
-import { imageDB, Seekimage } from "../../utility/imageData";
+import { imageDB, Seekgrayimage, Seekimage } from "../../utility/imageData";
 import { BetweenRow, FlexEndRow, FlexstartRow, Row } from "../../common/Row";
 import { ReadWork } from "../../service/WorkService";
 import { CommaFormatted } from "../../utility/money";
@@ -26,6 +26,8 @@ import { FILTERITMETYPE, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
 import { ReadRoom } from "../../service/RoomService";
 import PCRoomMapItem from "../../components/PCRoomMapItem";
+import { ROOMSIZE } from "../../utility/room";
+import LottieAnimation from "../../common/LottieAnimation";
 
 const Container = styled.div`
     max-height:1000px;
@@ -78,14 +80,13 @@ const GuideButtonStyle={
 const ButtonLayer = styled.div`
   position: absolute;
   bottom: 20px;
-  width: 100%;
+  width: 90%;
   z-index: 2;
   right: 3px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content:flex-start;
-  left:20px;
 `
 
 const MapBox = styled.div`
@@ -114,6 +115,12 @@ const MapBoxSpan = styled.div`
   font-size:9px;
   color: ${({enable})=> enable == true ? ("#fff") : ("#131313")};
 `
+const LoadingAnimationStyle={
+  zIndex: 11,
+  position: "absolute",
+  top: "40%",
+  left: "35%"
+}
 
 
 /**
@@ -148,6 +155,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
 
   const [items, setItems] = useState([]);
+  const [displayitems, setDisplayitems] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(true);
@@ -166,6 +174,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   const [circle, setCircle] = useState(null);
 
   const [menuary, setMenuary]= useState([]);
+  const [currentloading, setCurrentloading] = useState(true);
 
 
   const itemRefs = useRef([]);
@@ -195,6 +204,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     setCurMap(curmap);
     setCircle(circle);
     setMenuary(menuary);
+    setCurrentloading(currentloading);
     
   },[refresh])
 
@@ -224,6 +234,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
    return FindIndex;
   }
 
+
   function findRoomIndex(room_id, items){
     console.log("TCL: findRooImndex -> workitems", items)
 
@@ -239,45 +250,6 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     return CommaFormatted(price);
   }
 
-/**
- * 전체 기능 과 부분 기능을 체크 하자
- * 전체 기능을 체크 하면 부분 체크가 해제된다
- * 부분 기능을 체크 하면 부분 체크가 해제된다
- * 모든 기능은 menuary 로 설정 된다
- */
-  const _handleMenu = (menuname)=>{
-
-
-    let menuaryTmp = [];
-    const FindIndex = menuary.findIndex(x=> x == menuname);
-
-    if(menuname == WORKNAME.ALLWORK){
-      console.log("TCL: _handleMenu -> menuname", menuname, FindIndex, menuary);
-
-      if(FindIndex == -1){
-        menuaryTmp.push(menuname);
-        setMenuary(menuaryTmp);
-      }else{
-        setMenuary(menuaryTmp);
-      }
-  
-    }else{
-      if(FindIndex == -1){
-        
-        const allworkFindIndex = menuary.findIndex(x=> x == WORKNAME.ALLWORK);
-        if(allworkFindIndex != -1){
-          menuary.splice(allworkFindIndex, 1);
-        }
-        menuary.push(menuname);
-      }else{
-        menuary.splice(FindIndex, 1);
-      }
-      setMenuary(menuary);
-    }
-
-
-    setRefresh((refresh) => refresh +1);
-  }
 
 
 
@@ -307,94 +279,6 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     setRefresh((refresh) => refresh +1);
   }
   
-  /**
-   * ! 콜백 함수 이다 중요
-   * PCWORK ITEM을 선택 했을때 올라오는 callback 함수 index 값을 가져온다
-   * index 값을 가지고 selectworkitemindex 에 세팅해주면 border를 그려준다
-   * 기존에 그려 놨던 circle을 지우자
-   * TODO 지도에 customoverlay를 선택하고  css를 바꾸는 부분은 나중에 할수도 있고 안할수도 있기 때문에 그냥 주석 처리
-   * 영역을 그린다고 하면 반경 300미터 를 그려주고 확대레벨은 DetailLever(미리정의)단계로 해준다
-   * 그인덱스에 해당하는 지점으로 중앙을 위치 시키자
-   */
-  const _handleSelectWork =(index) =>{
- 
-    
-     _handleWorkFromList(items[index].WORK_ID, items);
-
-
-     const FindIndex = items[index].WORK_INFO.findIndex(x=>x.requesttype =='지역');
-
-     let latitude = items[index].WORK_INFO[FindIndex].latitude;
-     let longitude =  items[index].WORK_INFO[FindIndex].longitude;
-
-
-    curmap.setCenter(new kakao.maps.LatLng(latitude, longitude));
-    curmap.setLevel(DetailLevel);
-
-    
-
-    setRefresh((refresh) => refresh +1);
-
-  }
-  const _handleSelectWork2 = async(index, items, map) =>{
- 
-  
-    const FindIndex = items[index].WORK_INFO.findIndex(x=>x.requesttype =='지역');
-
-    let latitude = items[index].WORK_INFO[FindIndex].latitude;
-    console.log("TCL: PCMapcontainer -> latitude", latitude)
-    let longitude =  items[index].WORK_INFO[FindIndex].longitude;
-    console.log("TCL: PCMapcontainer -> longitude", longitude)
-
-    await useSleep(1000);
-
-    map.setCenter(new kakao.maps.LatLng(latitude, longitude));
-    map.setLevel(DetailLevel);
-
-    _handleWorkFromList(items[index].WORK_ID, items);
-
-
-
-  }
-
-
-  const _handleSelectRoom =(index) =>{
- 
-    
-    _handleRoomFromList(items[index].ROOM_ID, items);
-
-
-    const FindIndex = items[index].ROOM_INFO.findIndex(x=>x.requesttype =='지역');
-
-    let latitude = items[index].ROOM_INFO[FindIndex].latitude;
-    let longitude =  items[index].ROOM_INFO[FindIndex].longitude;
-
-   curmap.setCenter(new kakao.maps.LatLng(latitude, longitude));
-   curmap.setLevel(DetailLevel);
-
-   setRefresh((refresh) => refresh +1);
-
-  }
-  const _handleSelectRoom2 =(index, items, map) =>{
- 
-    
-  _handleRoomFromList(items[index].ROOM_ID, items);
-
-
-  const FindIndex = items[index].ROOM_INFO.findIndex(x=>x.requesttype =='지역');
-
-  let latitude = items[index].ROOM_INFO[FindIndex].latitude;
-  let longitude =  items[index].ROOM_INFO[FindIndex].longitude;
-
-  map.setCenter(new kakao.maps.LatLng(latitude, longitude));
-  map.setLevel(DetailLevel);
-
- setRefresh((refresh) => refresh +1);
-
-  }
-  /**
-   * 
-   */
 
 
   /**
@@ -409,49 +293,19 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
     
     let FindIndex = findWorkIndex(id, items);
-
-    console.log("TCL: _handleControlFromMap -> selectworkitemindex", FindIndex);
-
-
-    if(FindIndex != -1){
-      setSelectworkitemindex(FindIndex);
-      setRefresh((refresh) => refresh+1);
-      setSelectroomitemindex(-1);
-      setItem(items[FindIndex]);
-    }else{
+    if(FindIndex == -1){
       FindIndex = findRoomIndex(id, items);
-      if(FindIndex != -1){
-        setSelectroomitemindex(FindIndex);
-        setRefresh((refresh) => refresh+1);
-        setSelectworkitemindex(-1);
-        setItem(items[FindIndex]);
-      }
     }
-    scrollToItem(FindIndex);
-    setRefresh((refresh) => refresh+1);
+
+    if(items[FindIndex].TYPE == FILTERITMETYPE.HONG){
+      navigate("/Mobilework" ,{state :{WORK_ID :items[FindIndex].WORK_ID, TYPE : FILTERITMETYPE.HONG, WORKTYPE :items[FindIndex].WORKTYPE }});
+    }else if(items[FindIndex].TYPE == FILTERITMETYPE.ROOM){
+      navigate("/Mobileworkroom" ,{state :{ROOM_ID :items[FindIndex].ROOM_ID, TYPE : FILTERITMETYPE.ROOM, ROOMTYPE : items[FindIndex].ROOMTYPE }});
+    }
+
   }
 
-/**
- * 
- */
-  const scrollToItem = (index) => {
-    
-    console.log("TCL: scrollToItem -> ", itemRefs.current);
-    if (itemRefs.current[index]) {
-      itemRefs.current[index].scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      });
-      // // scrollIntoView 후에 약간의 지연을 두고 window.scrollBy로 위치 조정
-      // setTimeout(() => {
-      //   window.scrollBy({
-      //     top: -100, // 위쪽으로 100px 이동 (원하는 만큼 조정 가능)
-      //     behavior: 'smooth',
-      //   });
-      // }, 1000); // scrollIntoView가 끝난 후 동작하도록 적절한 딜레이 설정 (ms 단위)
-    }
-  };
-  
+
 
 
     /**
@@ -499,6 +353,89 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     const level = curmap.getLevel();
     curmap.setLevel(level -1);
   }
+
+  /**
+ * 전체 기능 과 부분 기능을 체크 하자
+ * 전체 기능을 체크 하면 부분 체크가 해제된다
+ * 부분 기능을 체크 하면 부분 체크가 해제된다
+ * 모든 기능은 menuary 로 설정 된다
+ */
+  const _handleMenu = (menuname)=>{
+
+
+    let menuaryTmp = [];
+    const FindIndex = menuary.findIndex(x=> x == menuname);
+    let filteritems = [];
+
+    if(menuname == WORKNAME.ALLWORK){
+      console.log("TCL: _handleMenu -> menuname", menuname, FindIndex, menuary);
+      if(FindIndex == -1){
+        menuaryTmp.push(menuname);
+
+        setMenuary(menuaryTmp);
+      }else{
+        setMenuary(menuaryTmp);
+      }
+      filteritems = items;
+
+    }else{
+      if(FindIndex == -1){
+      
+        const allworkFindIndex = menuary.findIndex(x=> x == WORKNAME.ALLWORK);
+        if(allworkFindIndex != -1){
+          menuary.splice(allworkFindIndex, 1);
+        }
+
+        menuary.push(menuname);
+
+        if(menuname == FILTERITMETYPE.ROOM){
+          menuary.push(ROOMSIZE.SMALLER);
+          menuary.push(ROOMSIZE.SMALL);
+          menuary.push(ROOMSIZE.MEDIUM);
+          menuary.push(ROOMSIZE.LARGE);
+          menuary.push(ROOMSIZE.EXLARGE);
+          console.log("TCL: _handleMenu -> menuary", menuary)
+        }
+
+      }else{
+        menuary.splice(FindIndex, 1);
+
+        if(menuname == FILTERITMETYPE.ROOM){
+
+          let FindIndex = menuary.findIndex(x=>x == ROOMSIZE.SMALLER);
+          menuary.splice(FindIndex,1);
+          FindIndex = menuary.findIndex(x=>x == ROOMSIZE.SMALL);
+          menuary.splice(FindIndex,1);
+          FindIndex = menuary.findIndex(x=>x == ROOMSIZE.MEDIUM);
+          menuary.splice(FindIndex,1);
+          FindIndex = menuary.findIndex(x=>x == ROOMSIZE.LARGE);
+          menuary.splice(FindIndex,1);
+          FindIndex = menuary.findIndex(x=>x == ROOMSIZE.EXLARGE);
+          menuary.splice(FindIndex,1);
+
+        }
+      }
+      setMenuary(menuary);
+
+      items.map((data, index)=>{
+        if(menuary.includes(data.WORKTYPE)){
+          filteritems.push(data);
+        }
+        if(menuary.includes(data.ROOMTYPE)){
+          filteritems.push(data);
+        }
+      })
+
+    }
+    setRefresh((refresh) => refresh +1);
+    console.log("TCL: _handleMenu -> menuary", menuary);
+
+    ListmapDraw(filteritems);
+
+  
+  }
+
+
   /**
    * 지도와 리스트 를 그리도록 한다
    * ! 지도객체가 먼저 만들어졌는지 확인이 필요
@@ -514,7 +451,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
    * 리스트에서 위치 이동을 위해 refs 배열에 값을 세팅해준다
    * ! 하이라이트 표시 는 css로 적용
    */
-  function ListmapDraw(datas, ID){
+  function ListmapDraw(datas){
 
     setLoading(true);
     setRefresh((refresh) =>refresh +1);
@@ -529,7 +466,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
     const geocoder = new window.kakao.maps.services.Geocoder();
 
-    geocoder.addressSearch("경기 남양주시 지금동", (result, status) => {
+    geocoder.addressSearch(user.address_name, (result, status) => {
         if (status === window.kakao.maps.services.Status.OK) {
             const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
 
@@ -637,7 +574,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
           content.innerHTML =
           '  <a style="background:#A3A3A3">' +
           '    <div>' +
-          '    <img src="'+ Seekimage(overlayData.OVERLAYTYPE) +'"style="width:24px;"/>' +
+          '    <img src="'+ Seekgrayimage(overlayData.OVERLAYTYPE) +'"style="width:24px;"/>' +
           '    </div>' +
           '    <div class="titleclose">'+overlayData.OVERLAYTYPE +'(마감)</div>' +
           '    <div class="priceclose">'+overlayData.PRICE +'</div>' +
@@ -722,28 +659,32 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
     setCurMap(map);
     setRefresh((refresh) => refresh +1);
-    if(ID != "" && TYPE == PCMAINMENU.HOMEMENU){
-      //  _handleWorkFromList(ID, items);
-        const FindIndex = findWorkIndex(ID, datas);
-        console.log("TCL: ListmapDraw -> FindIndex", FindIndex,datas)
-        _handleSelectWork2(FindIndex, datas, map);
-    }
-    if(ID != "" && TYPE == PCMAINMENU.ROOMMENU){
-      const FindIndex = findRoomIndex(ID, datas);
-        console.log("TCL: ListmapDraw -> FindIndex", FindIndex,datas)
-        _handleSelectRoom2(FindIndex, datas, map);
-    }
+    // if(ID != "" && TYPE == PCMAINMENU.HOMEMENU){
+  
+    //     const FindIndex = findWorkIndex(ID, datas);
+    //     console.log("TCL: ListmapDraw -> FindIndex", FindIndex,datas)
+    //     _handleSelectWork2(FindIndex, datas, map);
+    // }
+    // if(ID != "" && TYPE == PCMAINMENU.ROOMMENU){
+    //   const FindIndex = findRoomIndex(ID, datas);
+    //     console.log("TCL: ListmapDraw -> FindIndex", FindIndex,datas)
+    //     _handleSelectRoom2(FindIndex, datas, map);
+    // }
 
    
   }
 
 
   useEffect(()=>{
+    setCurrentloading(true);
     async function FetchData(){
 
-      const workdatas = await ReadWork();
+      const latitude =user.latitude;
+      const longitude = user.longitude;
 
-      const roomdatas = await ReadRoom();
+      const workdatas = await ReadWork({latitude, longitude});
+
+      const roomdatas = await ReadRoom({latitude, longitude});
 
       let items = [];
 
@@ -758,24 +699,13 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
       })
       console.log("TCL: FetchData -> items", items);
       setItems(items);
+      setDisplayitems(items);
 
-      ListmapDraw(items, ID);
+      ListmapDraw(items);
 
-      //scroll 하기 위해 itemRef 가 다 만들어져야 하기 때문에 itemRef가 다만들어질때 까지 기다려준다
-      await useSleep(1000);
+      setCurrentloading(false);
 
-      if(ID != "" && TYPE == PCMAINMENU.HOMEMENU){
-        //  _handleWorkFromList(ID, items);
-          const FindIndex = findWorkIndex(ID, items);
-          scrollToItem(FindIndex);
-      }
-      if(ID != "" && TYPE == PCMAINMENU.ROOMMENU){
-        const FindIndex = findRoomIndex(ID, items);
-        scrollToItem(FindIndex);
-      }
-
-
-     
+      setRefresh((refresh) => refresh +1);
 
 
     } 
@@ -790,6 +720,8 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   const positioncallback =()=>{}
 
   return (
+    <>
+ 
     <Container style={containerStyle}>
       <Row>
         <div style={{display:"flex", width:'100%'}}>
@@ -797,118 +729,121 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
         </div>  
       </Row>
 
+      {
+   currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
+    width={"100px"} height={'100px'}/>) :(       <ButtonLayer>
 
-      <ButtonLayer>
+      <MapBox style={{height:35}}
+      enable ={filteraryexist(WORKNAME.ALLWORK) } onClick={()=>{_handleMenu(WORKNAME.ALLWORK)}}>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.ALLWORK) } >{WORKNAME.ALLWORK}</MapBoxSpan>
+      </MapBox>
 
-        <MapBox style={{height:35}}
-        enable ={filteraryexist(WORKNAME.ALLWORK) } onClick={()=>{_handleMenu(WORKNAME.ALLWORK)}}>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.ALLWORK) } >{WORKNAME.ALLWORK}</MapBoxSpan>
-        </MapBox>
-
-        <MapBox  enable ={filteraryexist(WORKNAME.HOMECLEAN) } onClick={()=>{_handleMenu(WORKNAME.HOMECLEAN)}}>
-        <img src={filteraryexist(WORKNAME.HOMECLEAN) == true ? imageDB.housesmall:imageDB.housegraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.HOMECLEAN) }>{WORKNAME.HOMECLEAN}</MapBoxSpan>
-        </MapBox>
-
-
-        <MapBox  enable ={filteraryexist(WORKNAME.BUSINESSCLEAN) } onClick={()=>{_handleMenu(WORKNAME.BUSINESSCLEAN)}}>
-        <img src={filteraryexist(WORKNAME.BUSINESSCLEAN) == true ? imageDB.businesssmall:imageDB.businessgraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.BUSINESSCLEAN) }>{WORKNAME.BUSINESSCLEAN}</MapBoxSpan>
-        </MapBox>
-
-        <MapBox  enable ={filteraryexist(WORKNAME.MOVECLEAN) } onClick={()=>{_handleMenu(WORKNAME.MOVECLEAN)}}>
-        <img src={filteraryexist(WORKNAME.MOVECLEAN) == true ? imageDB.movesmall:imageDB.movegraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.MOVECLEAN) }>{WORKNAME.MOVECLEAN}</MapBoxSpan>
-        </MapBox>
+      <MapBox  enable ={filteraryexist(WORKNAME.HOMECLEAN) } onClick={()=>{_handleMenu(WORKNAME.HOMECLEAN)}}>
+      <img src={filteraryexist(WORKNAME.HOMECLEAN) == true ? imageDB.housesmall:imageDB.housegraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.HOMECLEAN) }>{WORKNAME.HOMECLEAN}</MapBoxSpan>
+      </MapBox>
 
 
-        <MapBox  enable ={filteraryexist(WORKNAME.FOODPREPARE) } onClick={()=>{_handleMenu(WORKNAME.FOODPREPARE)}}>
-        <img src={filteraryexist(WORKNAME.FOODPREPARE) == true ? imageDB.cooksmall:imageDB.cookgraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.FOODPREPARE) }>{WORKNAME.FOODPREPARE}</MapBoxSpan>
-        </MapBox>
+      <MapBox  enable ={filteraryexist(WORKNAME.BUSINESSCLEAN) } onClick={()=>{_handleMenu(WORKNAME.BUSINESSCLEAN)}}>
+      <img src={filteraryexist(WORKNAME.BUSINESSCLEAN) == true ? imageDB.businesssmall:imageDB.businessgraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.BUSINESSCLEAN) }>{WORKNAME.BUSINESSCLEAN}</MapBoxSpan>
+      </MapBox>
+
+      <MapBox  enable ={filteraryexist(WORKNAME.MOVECLEAN) } onClick={()=>{_handleMenu(WORKNAME.MOVECLEAN)}}>
+      <img src={filteraryexist(WORKNAME.MOVECLEAN) == true ? imageDB.movesmall:imageDB.movegraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.MOVECLEAN) }>{WORKNAME.MOVECLEAN}</MapBoxSpan>
+      </MapBox>
 
 
-     
-        <MapBox  enable ={filteraryexist(WORKNAME.ERRAND) } onClick={()=>{_handleMenu(WORKNAME.ERRAND)}}>
-        <img src={filteraryexist(WORKNAME.ERRAND) == true ? imageDB.helpsmall:imageDB.helpgraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.ERRAND) }>{WORKNAME.ERRAND}</MapBoxSpan>
-        </MapBox>
+      <MapBox  enable ={filteraryexist(WORKNAME.FOODPREPARE) } onClick={()=>{_handleMenu(WORKNAME.FOODPREPARE)}}>
+      <img src={filteraryexist(WORKNAME.FOODPREPARE) == true ? imageDB.cooksmall:imageDB.cookgraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.FOODPREPARE) }>{WORKNAME.FOODPREPARE}</MapBoxSpan>
+      </MapBox>
 
 
-
-        <MapBox  enable ={filteraryexist(WORKNAME.GOOUTSCHOOL) } onClick={()=>{_handleMenu(WORKNAME.GOOUTSCHOOL)}}>
-        <img src={filteraryexist(WORKNAME.GOOUTSCHOOL) == true ? imageDB.gooutschoolsmall:imageDB.gooutschoolgraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.GOOUTSCHOOL) }>{WORKNAME.GOOUTSCHOOL}</MapBoxSpan>
-        </MapBox>
-
-        <MapBox  enable ={filteraryexist(WORKNAME.BABYCARE) } onClick={()=>{_handleMenu(WORKNAME.BABYCARE)}}>
-        <img src={filteraryexist(WORKNAME.BABYCARE) == true ? imageDB.babycaresmall:imageDB.babycaregraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.BABYCARE) }>{WORKNAME.BABYCARE}</MapBoxSpan>
-        </MapBox>
-
-
-        <MapBox  enable ={filteraryexist(WORKNAME.LESSON) } onClick={()=>{_handleMenu(WORKNAME.LESSON)}}>
-        <img src={filteraryexist(WORKNAME.LESSON) == true ? imageDB.lessonsmall:imageDB.lessongraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.LESSON) }>{WORKNAME.LESSON}</MapBoxSpan>
-        </MapBox>
-
-
-        <MapBox  enable ={filteraryexist(WORKNAME.PATIENTCARE) } onClick={()=>{_handleMenu(WORKNAME.PATIENTCARE)}}>
-        <img src={filteraryexist(WORKNAME.PATIENTCARE) == true ? imageDB.patientcaresmall:imageDB.patientcaregraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.PATIENTCARE) }>{WORKNAME.PATIENTCARE}</MapBoxSpan>
-        </MapBox>
-
-        <MapBox  enable ={filteraryexist(WORKNAME.CARRYLOAD) } onClick={()=>{_handleMenu(WORKNAME.CARRYLOAD)}}>
-        <img src={filteraryexist(WORKNAME.CARRYLOAD) == true ? imageDB.carrysmall:imageDB.carrygraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.CARRYLOAD) }>{WORKNAME.CARRYLOAD}</MapBoxSpan>
-        </MapBox>
-        
-
-
-        <MapBox  enable ={filteraryexist(WORKNAME.GOHOSPITAL) } onClick={()=>{_handleMenu(WORKNAME.GOHOSPITAL)}}>
-        <img src={filteraryexist(WORKNAME.GOHOSPITAL) == true ? imageDB.hospitalsmall:imageDB.hospitalgraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.GOHOSPITAL) }>{WORKNAME.GOHOSPITAL}</MapBoxSpan>
-        </MapBox>
-
-
-        <MapBox  enable ={filteraryexist(WORKNAME.RECIPETRANSMIT) } onClick={()=>{_handleMenu(WORKNAME.RECIPETRANSMIT)}}>
-        <img src={filteraryexist(WORKNAME.RECIPETRANSMIT) == true ? imageDB.recipesmall:imageDB.recipegraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.RECIPETRANSMIT) }>{WORKNAME.RECIPETRANSMIT}</MapBoxSpan>
-        </MapBox>
+   
+      <MapBox  enable ={filteraryexist(WORKNAME.ERRAND) } onClick={()=>{_handleMenu(WORKNAME.ERRAND)}}>
+      <img src={filteraryexist(WORKNAME.ERRAND) == true ? imageDB.helpsmall:imageDB.helpgraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.ERRAND) }>{WORKNAME.ERRAND}</MapBoxSpan>
+      </MapBox>
 
 
 
-        <MapBox  enable ={filteraryexist(WORKNAME.GOSCHOOLEVENT) } onClick={()=>{_handleMenu(WORKNAME.GOSCHOOLEVENT)}}>
-        <img src={filteraryexist(WORKNAME.GOSCHOOLEVENT) == true ? imageDB.schooleventsmall:imageDB.schooleventgraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.GOSCHOOLEVENT) }>{WORKNAME.GOSCHOOLEVENT}</MapBoxSpan>
-        </MapBox>
+      <MapBox  enable ={filteraryexist(WORKNAME.GOOUTSCHOOL) } onClick={()=>{_handleMenu(WORKNAME.GOOUTSCHOOL)}}>
+      <img src={filteraryexist(WORKNAME.GOOUTSCHOOL) == true ? imageDB.gooutschoolsmall:imageDB.gooutschoolgraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.GOOUTSCHOOL) }>{WORKNAME.GOOUTSCHOOL}</MapBoxSpan>
+      </MapBox>
 
-        <MapBox  enable ={filteraryexist(WORKNAME.SHOPPING) } onClick={()=>{_handleMenu(WORKNAME.SHOPPING)}}>
-        <img src={filteraryexist(WORKNAME.SHOPPING) == true ? imageDB.shoppingsmall:imageDB.shoppinggraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.SHOPPING) }>{WORKNAME.SHOPPING}</MapBoxSpan>
-        </MapBox>
-
-
-        <MapBox  enable ={filteraryexist(WORKNAME.GODOGHOSPITAL) } onClick={()=>{_handleMenu(WORKNAME.GODOGHOSPITAL)}}>
-        <img src={filteraryexist(WORKNAME.GODOGHOSPITAL) == true ? imageDB.doghospitalsmall:imageDB.doghospitalgraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.GODOGHOSPITAL) }>{WORKNAME.GODOGHOSPITAL}</MapBoxSpan>
-        </MapBox>
-
-  
-
-        <MapBox  enable ={filteraryexist(WORKNAME.GODOGWALK) } onClick={()=>{_handleMenu(WORKNAME.GODOGWALK)}}>
-        <img src={filteraryexist(WORKNAME.GODOGWALK) == true ? imageDB.dogsmall:imageDB.doggraysmall}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.GODOGWALK) }>{WORKNAME.GODOGWALK}</MapBoxSpan>
-        </MapBox>
+      <MapBox  enable ={filteraryexist(WORKNAME.BABYCARE) } onClick={()=>{_handleMenu(WORKNAME.BABYCARE)}}>
+      <img src={filteraryexist(WORKNAME.BABYCARE) == true ? imageDB.babycaresmall:imageDB.babycaregraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.BABYCARE) }>{WORKNAME.BABYCARE}</MapBoxSpan>
+      </MapBox>
 
 
-        <MapBox  enable ={filteraryexist(WORKNAME.ROOM) } onClick={()=>{_handleMenu(WORKNAME.ROOM)}}>
-        <img src={filteraryexist(WORKNAME.ROOM) == true ? imageDB.roomsize1:imageDB.roomsize1}  style={{width:"18px"}}/>
-        <MapBoxSpan enable ={filteraryexist(WORKNAME.ROOM) }>{WORKNAME.ROOM}</MapBoxSpan>
-        </MapBox>
+      <MapBox  enable ={filteraryexist(WORKNAME.LESSON) } onClick={()=>{_handleMenu(WORKNAME.LESSON)}}>
+      <img src={filteraryexist(WORKNAME.LESSON) == true ? imageDB.lessonsmall:imageDB.lessongraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.LESSON) }>{WORKNAME.LESSON}</MapBoxSpan>
+      </MapBox>
 
 
-      </ButtonLayer>
+      <MapBox  enable ={filteraryexist(WORKNAME.PATIENTCARE) } onClick={()=>{_handleMenu(WORKNAME.PATIENTCARE)}}>
+      <img src={filteraryexist(WORKNAME.PATIENTCARE) == true ? imageDB.patientcaresmall:imageDB.patientcaregraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.PATIENTCARE) }>{WORKNAME.PATIENTCARE}</MapBoxSpan>
+      </MapBox>
+
+      <MapBox  enable ={filteraryexist(WORKNAME.CARRYLOAD) } onClick={()=>{_handleMenu(WORKNAME.CARRYLOAD)}}>
+      <img src={filteraryexist(WORKNAME.CARRYLOAD) == true ? imageDB.carrysmall:imageDB.carrygraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.CARRYLOAD) }>{WORKNAME.CARRYLOAD}</MapBoxSpan>
+      </MapBox>
+      
+
+
+      <MapBox  enable ={filteraryexist(WORKNAME.GOHOSPITAL) } onClick={()=>{_handleMenu(WORKNAME.GOHOSPITAL)}}>
+      <img src={filteraryexist(WORKNAME.GOHOSPITAL) == true ? imageDB.hospitalsmall:imageDB.hospitalgraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.GOHOSPITAL) }>{WORKNAME.GOHOSPITAL}</MapBoxSpan>
+      </MapBox>
+
+
+      <MapBox  enable ={filteraryexist(WORKNAME.RECIPETRANSMIT) } onClick={()=>{_handleMenu(WORKNAME.RECIPETRANSMIT)}}>
+      <img src={filteraryexist(WORKNAME.RECIPETRANSMIT) == true ? imageDB.recipesmall:imageDB.recipegraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.RECIPETRANSMIT) }>{WORKNAME.RECIPETRANSMIT}</MapBoxSpan>
+      </MapBox>
+
+
+
+      <MapBox  enable ={filteraryexist(WORKNAME.GOSCHOOLEVENT) } onClick={()=>{_handleMenu(WORKNAME.GOSCHOOLEVENT)}}>
+      <img src={filteraryexist(WORKNAME.GOSCHOOLEVENT) == true ? imageDB.schooleventsmall:imageDB.schooleventgraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.GOSCHOOLEVENT) }>{WORKNAME.GOSCHOOLEVENT}</MapBoxSpan>
+      </MapBox>
+
+      <MapBox  enable ={filteraryexist(WORKNAME.SHOPPING) } onClick={()=>{_handleMenu(WORKNAME.SHOPPING)}}>
+      <img src={filteraryexist(WORKNAME.SHOPPING) == true ? imageDB.shoppingsmall:imageDB.shoppinggraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.SHOPPING) }>{WORKNAME.SHOPPING}</MapBoxSpan>
+      </MapBox>
+
+
+      <MapBox  enable ={filteraryexist(WORKNAME.GODOGHOSPITAL) } onClick={()=>{_handleMenu(WORKNAME.GODOGHOSPITAL)}}>
+      <img src={filteraryexist(WORKNAME.GODOGHOSPITAL) == true ? imageDB.doghospitalsmall:imageDB.doghospitalgraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.GODOGHOSPITAL) }>{WORKNAME.GODOGHOSPITAL}</MapBoxSpan>
+      </MapBox>
+
+
+
+      <MapBox  enable ={filteraryexist(WORKNAME.GODOGWALK) } onClick={()=>{_handleMenu(WORKNAME.GODOGWALK)}}>
+      <img src={filteraryexist(WORKNAME.GODOGWALK) == true ? imageDB.dogsmall:imageDB.doggraysmall}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.GODOGWALK) }>{WORKNAME.GODOGWALK}</MapBoxSpan>
+      </MapBox>
+
+
+      <MapBox  enable ={filteraryexist(WORKNAME.ROOM) } onClick={()=>{_handleMenu(WORKNAME.ROOM)}}>
+      <img src={filteraryexist(WORKNAME.ROOM) == true ? imageDB.roomsize1:imageDB.roomsize1}  style={{width:"18px"}}/>
+      <MapBoxSpan enable ={filteraryexist(WORKNAME.ROOM) }>{WORKNAME.ROOM}</MapBoxSpan>
+      </MapBox>
+
+
+    </ButtonLayer>  )
+    }
+
 
       <div style={GuideLeftStyle}>
             <MapBoxControl onClick={_handleMapExpand}>+</MapBoxControl>
@@ -918,6 +853,10 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
 
     </Container>
+    </>
+  
+
+
   );
 
 }

@@ -5,18 +5,23 @@ import LottieAnimation from "../../common/LottieAnimation";
 import { DataContext } from "../../context/Data";
 import { UserContext } from "../../context/User";
 import { ReadCommunitySummary } from "../../service/CommunityService";
-import { ReadRoom } from "../../service/RoomService";
-import { ReadWork } from "../../service/WorkService";
-import { useSleep } from "../../utility/common";
+import { DefaultReadRoom, ReadAllRoom, ReadRoom } from "../../service/RoomService";
+import { DefaultReadWork, ReadAllWork, ReadWork } from "../../service/WorkService";
+import { getPlatform, isValidJSON, useSleep } from "../../utility/common";
 import { imageDB } from "../../utility/imageData";
 import { ReadCampingRegion, ReadHospitalRegion, ReadHospitalRegion1, ReadPerformanceCinema, ReadPerformanceEvent, ReadTourCountry, ReadTourFestival, ReadTourPicture, ReadTourRegion } from "../../service/LifeService";
 import { LINKTYPE, MOVE } from "../../utility/link";
-import { Create_userdevice, Read_userdevice, update_userdevice } from "../../service/UserService";
+import { Create_userdevice, Read_userdevice, Update_tokendevice, update_userdevice } from "../../service/UserService";
 
 import { v4 as uuidv4 } from 'uuid';
 
+import localforage from 'localforage';
+import Axios from "axios";
+import randomLocation from 'random-location'
+import { setStorage } from "../../utility/data";
+import { distanceFunc } from "../../utility/region";
 
-const isWeb = typeof window !== 'undefined'; // 웹 환경 확인
+
 
 const Container = styled.div`
   height: 100%;
@@ -25,8 +30,6 @@ const Container = styled.div`
   alignItems:center;
   width :100%;
   background : #FFF;
-
-
 `
 const style = {
   display: "flex"
@@ -41,12 +44,6 @@ const style = {
 const { kakao } = window;
 
 const MobileSplashcontainer =({containerStyle}) =>  {
-
-/** PC 웹 초기 구동시에 데이타를 로딩 하는 component
- * ① 상점정보를 불러온다
- * ② 상점정보를 불러오는 동안 로딩화면을 보여준다
- */
-
   const { dispatch, user } = useContext(UserContext);
   const { datadispatch, data} = useContext(DataContext);
   const navigate = useNavigate();
@@ -60,6 +57,7 @@ const MobileSplashcontainer =({containerStyle}) =>  {
   const [height, setHeight] = useState(0);
 
   const elementRef = useRef(null);
+
   useLayoutEffect(() => {
     setHeight(elementRef.current.offsetHeight -10);
     console.log("TCL: MobileMaincontainer -> elementRef.current.offsetWidth", elementRef.current.offsetHeight)
@@ -72,295 +70,275 @@ const MobileSplashcontainer =({containerStyle}) =>  {
   }, []);
 
 
-  useEffect(()=>{
-    setSwitchscreen(switchscreen);
-
-    setWebview(true);
-
-  },[refresh])
+  // useEffect(()=>{
+  //   setSwitchscreen(switchscreen);
+  //   setWebview(true);
+  // },[refresh])
 
 
-    /**
-   ** 실제로 react-native앱에서 받은 로직을 처리하는 Function
+   /**
+   * 실제로 react-native앱에서 받은 로직을 처리하는 Function
+   * ! react-native에서 제일 중요한 부분은 token 값을 받는다
+   * ! 이 token 값은 푸시알람을 위해서 필요하다 
+   * ! 이 token 값은 usercontext에 저장 해두며 다음 세가지 케이스에 서버에 저장된다
+   * ! 1) 저장된 DEVICEID 가 있고 서버도 동일한 DEVICEID가 존재 할때 서버에 TOKEN을 업데이트 한다 : Splash => Main
+   * ! 2) 저장된 DEVICEID 가 있지만 서버에 동일한 DEVICEID가 없을때 : Splash => Gate => Phone => Main
+   * ! 3) 저장된 DEVICEID 가 없을때: Splash => Gate => Phone => Policy => Main
    */
-   const listener = async (event) => {
+  //  const listener = async (event) => {
+  //   if(getPlatform() === 'web'){
+  //     return;
+  //   }
+  //   if(!isValidJSON(event.data))
+  //     return;
+  //   }
+  //   const { appdata, type } = JSON.parse(event.data);
+  //   if (type === LINKTYPE.START) {
+  //     user.token = appdata.token;
+  //     dispatch(user);
+  //   }
+  // };
 
-  
-    if(!isValidJSON(event.data)){
+  // useEffect(() => {
+  //   document.addEventListener("message", listener);
+  //   /** ios */
+  //   window.addEventListener("message", listener);
 
-      return;
-    }
-    const { data, type } = JSON.parse(event.data);
-  
-    if (type === LINKTYPE.START) {
-      const TOKEN = data.token;
-      const LATITUDE = data.latitude;
-      const LONGITUDE = data.longitude;
-
-      let uniqueId = localStorage.getItem('uniqueId');
- 
-      if (!uniqueId) {
-        uniqueId = uuidv4();
-        localStorage.setItem('uniqueId', uniqueId);
-      
-      }
- 
-      const DEVICEID = uniqueId;
-
-      let movetype = 0;
-
-      const ReadUser = await Read_userdevice({DEVICEID});
-
-      if(ReadUser  == -1){
-        await Create_userdevice({DEVICEID, TOKEN, LATITUDE, LONGITUDE})
-        movetype = MOVE.REGISTER;
-        MobileStartProcess(movetype, LATITUDE, LONGITUDE);
-      }else{
-        movetype = MOVE.MAIN;
-        MobileStartProcess(movetype, LATITUDE, LONGITUDE);
-      }
-
-    
-
-      setRefresh((refresh) => refresh +1);
-
-    } else if (type === LINKTYPE.CURRENTPOS) {
-
-    } else if(type == LINKTYPE.TELEPHONE){
-
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("message", listener);
-    /** ios */
-    window.addEventListener("message", listener);
-
-  }, []);
+  // }, []);
 
 
   /**
-   * 홍여사 웹페이지 초기 구동시에 필요한 데이타를 로딩해서 dataContext에 담아둔다
-   * ! 중요
-   * ! 함수 호출순서 FetchLocation => FetchData => StartProcess
-   * ! FetchLocation 함수
-   * ① 지역을 찾았을때 지역 이름을 dataContext 에 설정 해준다
-   * ② 지역을 찾았을때 지역 위치을 dataContext 에 설정 해준다
-   * TODO 지역을 찾지 못했을때 지역 범위를 설정 해야 한다는 도움말 주소지로 이동 시
-   * TODO RoomItems 값을 임의로 설정해주자
- 
-   * ! FetchData 함수
-   * ① 처음 게시판에 들어 갔을때 데이타 로드가 너무 느릴수 있기 때문에 미리 로딩한다 서비스 : ReadCommunitySummary
-   * ② 등록된 일감정보를 미리 로딩한다 서비스 : ReadWork
-   * 
    * ! StartProcess 함수
    * ① 메인함수로 이동한다
    */
   useEffect(()=>{
-
-
-    if (getPlatform() === 'web') {
-        StartProcess();
-    }
-
-
+    // StartProcess();
   }, [])
 
-  const getPlatform = () => {
-    if (isWeb) {
-        const userAgent = navigator.userAgent;
-        if (/iPad|iPhone|iPod/.test(userAgent)) {
-            return 'ios';
-        }
-        if (/Android/.test(userAgent)) {
-            return 'android';
-        }
-        return 'web';
-    }
-    return 'native'; // 네이티브 환경으로 간주
-};
+  // const StartProcess2 = async()=>{
+
+  //   const readroomitems = await ReadAllRoom();
+
+  //   let bExist =false;
+  //   readroomitems.map((data)=>{
+  //     let ROOM_INFONEW = data.ROOM_INFO;
+  //     const FindIndex = ROOM_INFONEW.findIndex(x=>x.requesttype == '지역');
+  //     const distance = distanceFunc(ROOM_INFONEW[FindIndex].latitude , ROOM_INFONEW[FindIndex].longitude,user.latitude,user.longitude );
+
+  //     if(distance < 10){
+  //       bExist = true;
+  //     }
+  //   })
+
+  //   if(!bExist){
+  //     // function에 호출하자
+  //     const latitude = user.latitude;
+  //     const longitude = user.longitude;
+  //     const defaultreadroomitems = await DefaultReadRoom({latitude, longitude});
+  //     console.log("TCL: MobileSplashcontainer -> defaultreadroomitems", defaultreadroomitems)
+
+  //     const jsonPayload = {
+  //       roomitems: defaultreadroomitems,
+     
+  //     };
+  //     console.log("TCL: StartProcess -> defaultreadworkitems", defaultreadroomitems);
+  
+  //     Axios.post('https://asia-northeast1-help-bbcb5.cloudfunctions.net/api/newroom',  jsonPayload, {
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       }
+  //     })
+  //     .then(async(response) =>{
+  //       console.log("TCL: StartProcess -> post url", );
+
+  //       StartProcess3();
+  //     })
+  //     .catch((error) => {
+  
+  //     })
+
+  //   }else{
+     
+  //     StartProcess3();             
+    
+  //   }
+
+  // }
+  // const StartProcess3 = async()=>{
+  //   //Function 호출
+  //   const latitude = user.latitude;
+  //   const longitude = user.longitude;
+  //   const workitems = await ReadWork({latitude, longitude});
+  //   console.log("TCL: MobileSplashcontainer -> workitems", workitems)
+  //   const roomitems = await ReadRoom({latitude, longitude});
+
+  //   data.workitems = workitems;
+  //   data.roomitems = roomitems;
+  //   datadispatch(data);
+
+  //   let uniqueId = "";
+  //   localforage.getItem('uniqueId')
+  //   .then(async function(value) {
+  //     console.log("TCL: listener -> GetItem", value)
+
+  //     uniqueId = value;
+
+    
+  //     if (uniqueId == '') {
+  //       navigate("/Mobilegate");
+  //     }else{
+  
+  //       const DEVICEID = uniqueId;
+  //       const userdata = await Read_userdevice({DEVICEID});
+  //       console.log("TCL: StartProcess -> user", userdata)
+    
+  //       if(userdata == -1){
+  //         navigate("/Mobilegate");
+  //       }else{
+  //         console.log("TCL: FetchLocation -> data", data)
+  //         setRefresh((refresh) => refresh +1);
+  //         user.deviceid = uniqueId;
+  //         user.phone = userdata.PHONE;
+  //         user.nickname = userdata.NICKNAME;
+  //         user.users_id = userdata.USERS_ID;
 
 
-  function isReactNativeWebView() {
-    return typeof window.ReactNativeWebView !== 'undefined';
-  }
+  //         dispatch(user);
 
+  //         setStorage(uniqueId, user.latitude, user.longitude, user.address_name, user.users_id);
+  
+  //         const DEVICEID = user.deviceid;
+  //         const TOKEN = user.token;
+  //         const userupdate = await Update_tokendevice({DEVICEID, TOKEN});
 
-  function isValidJSON(jsonString) {
-    try {
-      JSON.parse(jsonString);
-      return true; // 파싱 성공
-    } catch (error) {
-      return false; // 파싱 실패
-    }
-  }
-  async function StartProcess(move){
+  //         navigate("/Mobilemain");
+  //       }
+  
+  //     }
 
-    FetchLocation(move);
+  //   })
+  //   .catch(function(err) {
+  //   console.log("TCL: StartProcess -> storage fail ",);
 
+  
+  //   navigate("/Mobilegate");
 
-  } 
+  //   });
 
-  async function MobileStartProcess(move, latitude, longitude){
+  
+  // }
+  /**
+   * 모바일 웹에서 시작 
+   * 현재 위치를 계산 하여 구한다음 1. 현재 위치로 주소 값을 구하여 userContext에 값을 설정 한다
+   * TODO 2. 현재 위치에서 해당 하는 정보 값에 대한 세팅 값을 먼저 설정하기 위해 Function을 호출한다. 
+   * 3. 일감 정보와 공간 대여정보를 세팅 해주고
+   * 4. 이미 로그인 되어 있는지 확인 해야 한다. 
+   * 5. 로그인 상태를 확인 하기 위해 스토리지값에서 값을 뺀다
+   * 6. 스토리지에 값이 있으면 스토리지로 해당 데이타 베이스에 값을 가져 와서 세팅 해준다
+   * 7. 데이타 베이스에 값이 없으면 /Mobilegate로 이동한다
+   * 8. 데이타 베이스에 값이 있으면 /Mobilemain으로 이동한다
+   * ! 8번 이라면 최종적으로 UserContext 값에 설정
+   * 6-1.스토리지에 값이 없으면 시작화면으로 이동한다 /Mobilegate
+  */
+  // const StartProcess =() =>{
+  //   console.log("TCL: StartProcess")
+  //   navigator.geolocation.getCurrentPosition(
+  //     (pos) => {
+  //       const { latitude, longitude } = pos.coords;
+  //       setLocation({ latitude, longitude });
+  //       console.log("TCL: StartProcess -> latitude", latitude)
+  //       console.log("TCL: StartProcess -> longitude", longitude)
+  //       // Geocoder를 사용하여 좌표를 주소로 변환
+  //       const geocoder = new kakao.maps.services.Geocoder();
+  //       geocoder.coord2Address(longitude, latitude, async (result, status) => {
+  //         if (status === kakao.maps.services.Status.OK) {
+  //           const address = result[0].address;
 
-    FetchMobileLocation(move, latitude, longitude);
-
-    const communityitems = await ReadCommunitySummary();
-    const workitems = await ReadWork();
-    const roomitems = await ReadRoom();
-
-    data.communityitems = communityitems;
-    data.workitems = workitems;
-    data.roomitems = roomitems;
-
-    datadispatch(data);
-
-
-    setRefresh((refresh) => refresh +1);
-    await useSleep(1000);
-    if(move == MOVE.REGISTER){
-      navigate("/Mobilegate");
-    }else if(move == MOVE.MAIN){
-      navigate("/Mobilemain");
-    }
-  } 
-
-  async function FetchLocation(move){
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setLocation({ latitude, longitude });
-        // Geocoder를 사용하여 좌표를 주소로 변환
-        const geocoder = new kakao.maps.services.Geocoder();
-        geocoder.coord2Address(longitude, latitude, async (result, status) => {
-          if (status === kakao.maps.services.Status.OK) {
-            const address = result[0].address;
-
-            console.log("TCL: FetchLocation -> ", address);
+  //           console.log("TCL: FetchLocation -> ", address);
           
-            user.address_name = address.address_name;
-            user.region_1depth_name = address.region_1depth_name;
-            user.region_2depth_name = address.region_2depth_name;
-            user.region_3depth_name = address.region_3depth_name;
-            user.main_address_no = address.main_address_no;
+  //           user.address_name = address.address_name;
+  //           user.region_1depth_name = address.region_1depth_name;
+  //           user.region_2depth_name = address.region_2depth_name;
+  //           user.region_3depth_name = address.region_3depth_name;
+  //           user.main_address_no = address.main_address_no;
+  //           user.latitude  = latitude;
+  //           user.longitude = longitude;
+           
+  //           dispatch(user);
+  //           console.log("TCL: FetchLocation -> ", user );
 
-            geocoder.addressSearch(address.address_name, (result, status) => {
-              if (status === window.kakao.maps.services.Status.OK) {
-                  const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+  //           // 5km 내외에 현재 위치에 존재 하는 데이타가 있습니까?
 
-                  user.latitude = result[0].y;
-                  user.longitude = result[0].x;
-                  dispatch(user);
-         
-              }
-            });
+  //           const readworkitems = await ReadAllWork();
 
-            dispatch(user);
-            console.log("TCL: FetchLocation -> ", user );
-    
+  //           let bExist =false;
+  //           readworkitems.map((data)=>{
 
-            const communityitems = await ReadCommunitySummary();
-            const workitems = await ReadWork();
-            const roomitems = await ReadRoom();
-        
-            data.communityitems = communityitems;
-            data.workitems = workitems;
-            data.roomitems = roomitems;
-        
-            datadispatch(data);
-            console.log("TCL: FetchLocation -> data", data)
-        
-            setRefresh((refresh) => refresh +1);
-            navigate("/Mobilemain");
-            
-       
-          }else{
+  //             let WORK_INFONEW = data.WORK_INFO;
 
-            alert(status);
-          }
-        });
- 
-      },
-      (err) => {
-        console.error(err);
-        alert(err);
-      }
-    );
-  };
+  //             const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
 
-  async function FetchMobileLocation(move, LATITUDE, LONGITUDE){
-    const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.coord2Address(LONGITUDE, LATITUDE, (result, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        const address = result[0].address;
-
-        console.log("TCL: FetchMobileLocation -> ", address);
+  //             const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,latitude,longitude );
       
-        user.address_name = address.address_name;
-        user.region_1depth_name = address.region_1depth_name;
-        user.region_2depth_name = address.region_2depth_name;
-        user.region_3depth_name = address.region_3depth_name;
-        user.main_address_no = address.main_address_no;
+        
+  //             if(distance < 5){
+  //               bExist = true;
+  //             }
+  //           })
 
-        geocoder.addressSearch(address.address_name, (result, status) => {
-          if (status === window.kakao.maps.services.Status.OK) {
-              const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+  //           if(!bExist){
+  //             // function에 호출하자
+  //             const defaultreadworkitems = await DefaultReadWork({latitude, longitude});
 
-              user.latitude = result[0].y;
-              user.longitude = result[0].x;
-              dispatch(user);
-    
-          }
-        });
+  //             const jsonPayload = {
+  //               workitems: defaultreadworkitems,
+             
+  //             };
+  //             console.log("TCL: StartProcess -> defaultreadworkitems", defaultreadworkitems);
+          
+  //             Axios.post('https://asia-northeast1-help-bbcb5.cloudfunctions.net/api/newwork',  jsonPayload, {
+  //               headers: {
+  //                 "Content-Type": "application/json"
+  //               }
+  //             })
+  //             .then(async(response) =>{
+  //               console.log("TCL: StartProcess -> post url", );
 
-        dispatch(user);
-        console.log("TCL: FetchLocation -> ", user );
+  //               StartProcess2();
+  //             })
+  //             .catch((error) => {
+          
+  //             })
 
-
-   
-      }else{
-
-      }
-    });
-  };
-
-  async function FetchData(move){
-    console.log("TCL: FetchData -> move", move);
+  //           }else{
+             
+  //             StartProcess2();             
+            
+  //           }
+  //         }else{
+  //          alert(status);
+  //         }
+  //       });
  
+  //     },
+  //     (err) => {
+  //       console.error(err);
+  //       alert(err);
+  //     }
+  //   );
 
-    const latitude = "37.630013553801";
-    const longitude = "127.15545777991";
-    const communityitems = await ReadCommunitySummary();
-    const workitems = await ReadWork();
-    const roomitems = await ReadRoom();
 
-    data.communityitems = communityitems;
-    data.workitems = workitems;
-    data.roomitems = roomitems;
+  // } 
 
- 
-    StartProcess(move);
 
-  } 
-
- 
   return (
-
     <div ref={elementRef}>
-
-    <Container style={containerStyle} height={height}>
-
-        <LottieAnimation containerStyle={{marginTop:"65%"}} animationData={imageDB.loadinglarge}
-          width={"150px"} height={'150px'}
-        />
-
-    </Container>
-
+      <Container style={containerStyle} height={height}>
+          <LottieAnimation containerStyle={{marginTop:"65%"}} animationData={imageDB.loadinglarge}
+            width={"150px"} height={'150px'}/>
+      </Container>
     </div>
-
   );
-
 }
-
 export default MobileSplashcontainer;
 

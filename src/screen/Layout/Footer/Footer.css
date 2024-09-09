@@ -14,7 +14,7 @@
 }
 
 .site-mobile-footer2{
-  height: 50px;
+  height: 70px;
   background: #fff;
   width: 100%;
   bottom: 0%;
@@ -22,6 +22,8 @@
   bottom:0px;
   z-index: 5;
   border : 1px solid #f0f0f0;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
 }
 
 .site-mobile-footer2 .buttonview{
@@ -188,5 +190,32 @@
   }
   100% {
     transform: rotate(360deg); /* 끝 각도 */
+  }
+}
+
+.border-footeranimation {
+
+  border: 2px solid #FF2121;
+  background-color: #fff;
+  animation: borderColorChange 2s infinite;
+}
+
+@keyframes borderColorChange {
+  0% {
+      border: #FF2121;
+      background-color: #FF2121;
+  }
+  25% {
+    border:  #FF2121;
+  }
+  50% {
+      border:  #f10e0eb3;
+  }
+  75% {
+    border:  #EDEDED;
+  }
+  100% {
+
+      border: #FFF;
   }
 }

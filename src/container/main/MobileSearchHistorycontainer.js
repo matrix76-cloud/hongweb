@@ -120,7 +120,6 @@ const SearchDBKeyword = styled.div`
   font-family: 'Pretendard-Regular';
   display:flex;
   flex-direction:row;
-  height:45px;
   gap:6px;
   font-weight:500;
   font-size:16px;

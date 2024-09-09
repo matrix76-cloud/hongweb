@@ -40,8 +40,8 @@ const SlickSliderComponent = ({width ,images}) => {
         <Slider {...settings}>
           {
             images.map((data)=>(
-              <div style={{height:"80px"}}>
-              <img src= {data} style={{height:"80px", width:"330px"}}/>   
+              <div style={{height:"100px"}}>
+              <img src= {data} style={{height:"100px", width:"330px"}}/>   
               </div>
             ))
           }

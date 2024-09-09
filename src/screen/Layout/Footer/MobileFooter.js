@@ -94,12 +94,14 @@ const MobileFooter = ({type}) => {
                     backgroundColor: "#FFF",
                     borderRadius: "100px",
                     border: "1px solid rgb(242 240 240)",
-                    height: 42,
-                    width: 42,
+                    height: 60,
+                    width: 60,
                     display: "flex",
                     justifyContent: "center",
                     padding: 5,
                   }}
+
+            
               
                 >
 
@@ -115,7 +117,7 @@ const MobileFooter = ({type}) => {
                     <div >
                       <img onClick={_handleMap}
                         src={imageDB.movegpsex}
-                        style={{ width: 28, height: 28 }}
+                        style={{ width: 42, height: 42 }}
                       />
                       
                   
@@ -126,9 +128,9 @@ const MobileFooter = ({type}) => {
                     style={{
                       fontSize: 10,
                       color: "#9b9b9b",
-                      paddingTop: 5,
+                      paddingTop: 3,
                       position: "absolute",
-                      top: 10,
+                      top: 15,
                     }}
                   >
                     내주변

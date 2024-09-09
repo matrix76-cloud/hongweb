@@ -33,7 +33,7 @@ import PCWorkregistpage from "./page/PCmain/PCRegistpage";
 import PCRegistpage from "./page/PCmain/PCRegistpage";
 
 
-import {Provider as MyProvider} from 'react-redux';
+import {Provider as MyProvider, useDispatch} from 'react-redux';
 import PCChatpage from "./page/PCmain/PCChatpage";
 import MobileSplashpage from "./page/main/MobileSplashpage";
 import MobileMainpage from "./page/main/MobileMainpage";
@@ -51,13 +51,22 @@ import MobilePhonepage from "./page/main/MobilePhonepage";
 import PCLifepage from "./page/PCmain/PCLifepage";
 import MobileCommunityppage from "./page/main/MobileCommunitypage";
 import MobileWorkpage from "./page/main/Mobileworkpage";
+import MobileChatpage from "./page/main/MobileChatpage";
+import MobileContentpage from "./page/main/MobileContentpage";
 
+import localforage from 'localforage';
+import MobileCommunityContentpage from "./page/main/MobileCommunityContentpage";
+import MobileRoomWorkpage from "./page/main/MobileRoomworkpage";
+import { ALLWORK } from "./store/menu/MenuSlice";
+import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
 
 
 
 const App =() =>  {
 
-  const { dispatch, user } = useContext(UserContext);
+  const reduxdispatch = useDispatch();
+
+  const { user, dispatch } = useContext(UserContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
@@ -82,11 +91,54 @@ const App =() =>  {
 
   },[refresh])
 
-  // useEffect(() => {
-  //   if (isMobile) {
-  //     window.location.href = "/PCsplash"; // 외부 URL로 이동
-  //   } 
-  // }, [isMobile]);
+  useEffect(() => {
+
+    localforage.getItem('address_name')
+    .then(function(value) {
+      console.log("TCL: listener -> GetItem address_name", value)
+      user.address_name = value;
+      dispatch(user);
+      reduxdispatch(ALLWORK());
+      
+    })
+    .catch(function(err) {
+
+    });
+
+    localforage.getItem('users_id')
+    .then(function(value) {
+      console.log("TCL: listener -> GetItem users_id", value)
+      user.users_id = value;
+      dispatch(user);
+    })
+    .catch(function(err) {
+
+    });
+
+
+    localforage.getItem('latitude')
+    .then(function(value) {
+      console.log("TCL: listener -> GetItem latitude", value)
+      user.latitude = value;
+      dispatch(user);
+    })
+    .catch(function(err) {
+
+    });
+
+    localforage.getItem('longitude')
+    .then(function(value) {
+      console.log("TCL: listener -> GetItem longitude", value)
+      user.longitude = value;
+      dispatch(user);
+
+    })
+    .catch(function(err) {
+
+    });
+
+
+  }, []);
 
 
 
@@ -105,13 +157,18 @@ const App =() =>  {
       <Route path="/Mobilemain" element={<MobileMainpage />} />
       <Route path="/Mobileroom" element={<MobileRoomppage />} />
       <Route path="/Mobilecommunity" element={<MobileCommunityppage />} />
+      <Route path="/Mobilecommunitycontent" element={<MobileCommunityContentpage />} />
       <Route path="/Mobileworkregister" element={<MobileWorkregistserpage />} />
       <Route path="/Mobileroomregister" element={<MobileRoomregistserpage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
       <Route path="/Mobilemap" element={<MobileMappage />} />
-      <Route path="/Mobilwork" element={<MobileWorkpage />} />
+      <Route path="/Mobilework" element={<MobileWorkpage />} />
+      <Route path="/Mobileworkroom" element={<MobileRoomWorkpage />} />
+      <Route path="/Mobilechat" element={<MobileChatpage />} />
+      <Route path="/Mobilecontent" element={<MobileContentpage />} />
       <Route path="/Mobilesearch" element={<MobileSearchpage />} />
       <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
+      <Route path="/Mobilemapreconfig" element={<MobileMapReconfigpage />} />
 
       <Route path="/PCmain" element={<PCMainpage />} />
       <Route path="/PCmap" element={<PCMappage />} />

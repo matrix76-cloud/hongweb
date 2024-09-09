@@ -23,7 +23,7 @@ import { DAYOPTION, OPTIONTYPE, PCDAYMENU } from "../../utility/screen";
 import SelectItem from "../../components/SelectItem";
 import { MdDataUsage, MdTurnedInNot } from "react-icons/md";
 import "./table.css";
-import { Requestlargemessages, Requestmediummessages, Requestsmallmessages, ROOMSIZE } from "../../utility/room";
+import { Requestlargemessages, Requestmediummessages, Requestroommessages, Requestsmallmessages, ROOMSIZE } from "../../utility/room";
 
 import { CreateWork } from "../../service/WorkService";
 import { CreateRoom } from "../../service/RoomService";
@@ -34,7 +34,7 @@ import Label from "../../common/Label";
 
 const Container = styled.div`
   background :#f3f3f3;
-  height:3600px;
+  height:3000px;
   display:flex;
   flex-direction:column;
 `
@@ -114,9 +114,9 @@ const ItemLeftBox = styled.div`
   display: flex;
   flex-direction: column;
   width: ${({width}) => width};
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
-  min-width:220px;
+  min-width:200px;
   font-weight:400;
 
 
@@ -131,12 +131,12 @@ const SelectLayer = styled.div`
   color: #131313;
   font-weight:600;
   border-radius: 5px;
-  font-size:16px;
+  font-size:12px;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 44px;
+  height: 34px;
 `;
 
 const ItemRightLayer = styled.div`
@@ -160,7 +160,7 @@ const ItemRightBox = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
 `;
 
@@ -172,6 +172,7 @@ const ProgressLayer = styled.div`
   padding: 6px 12px;
   color: rgb(255, 255, 255);
   top: 10px;
+  left :${({progress}) => progress}px;
   z-index: 5;
   height: 30px;
   display: flex;
@@ -211,7 +212,7 @@ width: 100%;
 background: white;
 border: 1px solid #a0a096;
 line-height: 1.125em;
-font-size: 18px; /* 글자 크기 */
+font-size: 14px; /* 글자 크기 */
 text-decoration: none; /* 밑줄 제거 */
 
 .react-calendar__navigation button {
@@ -222,10 +223,8 @@ text-decoration: none; /* 밑줄 제거 */
   margin-top: 8px;
 }
 
-
-
 .react-calendar__month-view__weekdays__weekday {
-  font-size: 18px; /* 요일 이름 글자 크기 */
+  font-size: 14px; /* 요일 이름 글자 크기 */
   color: #6b6b6b;
   font-weight:500;
   text-decoration: none; /* 밑줄 제거 */
@@ -233,13 +232,13 @@ text-decoration: none; /* 밑줄 제거 */
 
 .react-calendar__tile {
   background: none;
-  font-size: 16px; /* 날짜 타일 글자 크기 */
+  font-size: 14px; /* 날짜 타일 글자 크기 */
   color: #4d4d4d;
   padding: 5px 6.6667px;
 }
 
 .react-calendar__tile--now {
-  font-size: 20px;
+  font-size: 16px;
   font-weight:800;
   color : #0000ff;
  }
@@ -248,13 +247,13 @@ text-decoration: none; /* 밑줄 제거 */
  }
 
 .react-calendar__tile--active {
-  background: #76baff;
+  background: #1087ff;
   color: white;
-  border-radius : 100%;
+  border-radius : 20px;
 }
 
 .react-calendar__tile--hover {
-  background: #76baff;
+  background: #1087ff;
 }
 `;
 
@@ -272,9 +271,8 @@ const ResultContent = {
 }
 const ResultContent2 = {
   width: '180px',
-  height: '100px',
-  fontSize: '16px',
-  paddingLeft: 5,
+  height: '60px',
+  fontSize: '14px',
   fontFamily: 'Pretendard-Regular',
   lineHeight: 2,
   outline:"none",
@@ -283,21 +281,33 @@ const ResultContent2 = {
  
 }
 const CommentContent = {
-  width: '280px',
-  height: '128px',
-  fontSize: '16px',
+  width: '260px',
+  height: '88px',
+  fontSize: '14px',
   fontFamily: 'Pretendard-Regular',
   lineHeight: 2,
   outline:"none",
   resize :"none",
-  border:"1px solid #FF7125",
+  border:"1px solid #E3E3E3",
 }
+const DayBtn = styled.div`
+  height: 34px;
+  width: 58px;
+  border-radius: 5px;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: ${({enable}) => enable == true ? ('1px solid #F75100') : ('1px solid #C3C3C3')};
+  color: #131313;
+
+`
 
 
 const { kakao } = window;
 
 const mapstyle = {
-  width:'300px',
+  width:'270px',
   height:'320px'
 };
 
@@ -325,6 +335,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     msgs = Requestfoodpreparemessages;
   }else if(type ==WORKNAME.ERRAND){
     msgs = Requesterrandmessages;
+  }else if(type ==WORKNAME.CARRYLOAD){
+    msgs = Requestcarryloadmessages;
   }else if(type ==WORKNAME.GOOUTSCHOOL){
     msgs = Requestgooutschoolmessages;
   }else if(type ==WORKNAME.BABYCARE){
@@ -345,15 +357,14 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     msgs = Requestdoghospitalmessages;
   }else if(type == WORKNAME.GODOGWALK){ 
     msgs = Requestdogwalkmessages;
-  }else if(type == ROOMSIZE.SMALL){ 
-    msgs = Requestsmallmessages;
-  }else if(type == ROOMSIZE.MEDIUM){ 
-    msgs = Requestmediummessages;
-  }else if(type == ROOMSIZE.LARGE){ 
-    msgs = Requestlargemessages;
+  }else if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
+    || type == ROOMSIZE.MEDIUM
+    || type == ROOMSIZE.LARGE
+    || type == ROOMSIZE.EXLARGE){ 
+    msgs = Requestroommessages;
   }
 
-
+  console.log("TCL: MobileRegistcontainer -> msgs", msgs)
 
   const [messages, setMessages] = useState(msgs);
 
@@ -414,17 +425,17 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
         msgs = Requestdoghospitalmessages;
       }else if(type == WORKNAME.GODOGWALK){ 
         msgs = Requestdogwalkmessages;
-      }else if(type == ROOMSIZE.SMALL){ 
-        msgs = Requestsmallmessages;
-      }else if(type == ROOMSIZE.MEDIUM){ 
-        msgs = Requestmediummessages;
-      }else if(type == ROOMSIZE.LARGE){ 
-        msgs = Requestlargemessages;
+      }else if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
+        || type == ROOMSIZE.MEDIUM
+        || type == ROOMSIZE.LARGE
+        || type == ROOMSIZE.EXLARGE){ 
+        msgs = Requestroommessages;
       }
 
       msgs.map((data, index)=>{
         if(data.type == 'request' 
         || data.type =='requestroom' 
+        || data.type =='requestcomment' 
         || data.type =='requestdate' 
         || data.type =='requestregion' 
         || data.type =='requestcomplete'){
@@ -446,6 +457,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
       let str = totalset + "단계만 설정 하시면 등록이 완료됩니다";
       setStepstr(str);
+      setStepdata(0);
    
       await useSleep(1500);
       msgs[1].show = true;
@@ -497,7 +509,11 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
       await useSleep(1500);
 
-      if(type == ROOMSIZE.SMALL || type == ROOMSIZE.MEDIUM || type == ROOMSIZE.LARGE){
+      if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
+        || type == ROOMSIZE.MEDIUM
+        || type == ROOMSIZE.LARGE
+        || type == ROOMSIZE.EXLARGE
+        ){
         messages[1].show = false
         messages[2].show = false;
         messages[2].result='1회만'
@@ -578,20 +594,27 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
         var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
         mapOption = { 
               center: new kakao.maps.LatLng(user.latitude, user.longitude), // 지도의 중심좌표
-              level: 4, // 지도의 확대 레벨
+              level: 5, // 지도의 확대 레벨
               zoomable: false, // 확대/축소 비활성화
         };
     
         var map = new kakao.maps.Map(mapContainer, mapOption);
 
-        // 지도를 클릭한 위치에 표출할 마커입니다
-        var marker = new kakao.maps.Marker({ 
-          // 지도 중심좌표에 마커를 생성합니다 
-          position: map.getCenter()
-        }); 
-        // 지도에 마커를 표시합니다
-        marker.setMap(map);
+        var imageSrc = imageDB.movegps; // 마커 이미지의 URL
+        var imageSize = new kakao.maps.Size(64, 69); // 마커 이미지의 크기
+        var imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커의 좌표에 일치시킬 이미지 안의 좌표
+    
+        // 마커 이미지를 생성합니다
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+        const markerPosition = new window.kakao.maps.LatLng(user.latitude, user.longitude);
 
+        const marker = new window.kakao.maps.Marker({
+          position: markerPosition,
+          image: markerImage // 마커 이미지 설정
+        });
+    
+        // 마커를 지도 위에 표시
+        marker.setMap(map);
         const geocoder = new kakao.maps.services.Geocoder();
         // 좌표로 주소를 검색
         geocoder.coord2Address(user.longitude, user.latitude, (result, status) => {
@@ -635,7 +658,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     }
 
     window.scrollTo({
-      top: window.scrollY + 200, // 스크롤할 Y 위치
+      top: window.scrollY + 150, // 스크롤할 Y 위치
       behavior: 'smooth', // 부드럽게 스크롤
     });
 
@@ -646,9 +669,11 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     let data = seekstepcheck(index);
 
 
-    let str = totalset +"단계중 "+data+"단계를 설정하였습니다";
-    setStepdata(data);
+
+    let str = totalset + "단계 모두 설정 완료하였습니다";
     setStepstr(str);
+    setStepdata(totalset);
+
 
     messages[index].selected = true;
     messages[index+1].show = true;
@@ -700,13 +725,23 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     
         var map = new kakao.maps.Map(mapContainer, mapOption);
 
-        // 지도를 클릭한 위치에 표출할 마커입니다
-        var marker = new kakao.maps.Marker({ 
-          // 지도 중심좌표에 마커를 생성합니다 
-          position: map.getCenter() 
-        }); 
-        // 지도에 마커를 표시합니다
+  
+        var imageSrc = imageDB.movegps; // 마커 이미지의 URL
+        var imageSize = new kakao.maps.Size(64, 69); // 마커 이미지의 크기
+        var imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커의 좌표에 일치시킬 이미지 안의 좌표
+    
+        // 마커 이미지를 생성합니다
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+        const markerPosition = new window.kakao.maps.LatLng(user.latitude, user.longitude);
+
+        const marker = new window.kakao.maps.Marker({
+          position: markerPosition,
+          image: markerImage // 마커 이미지 설정
+        });
+    
+        // 마커를 지도 위에 표시
         marker.setMap(map);
+
 
         const geocoder = new kakao.maps.services.Geocoder();
         // 좌표로 주소를 검색
@@ -763,6 +798,54 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
    */
   const _handleDateNext = (index) =>{
 
+    if(allweeks  == true){
+      if(dayitems.length ==0){
+        return;
+      }
+    }
+
+    let data = seekstepcheck(index);
+
+    let str = totalset +"단계중 "+data+"단계를 설정하였습니다";
+    setStepdata(data);
+    setStepstr(str);
+
+  
+    messages[index].selected = true;
+    messages[index+1].show = true;
+
+    // 기간값을 넣어주자
+    // ①②③④
+    // ① 일정 시점을 선택 했다고 하면 date 가 있는거다
+    if(selectdate != ''){
+      messages[index+1].result = selectdate;
+    }else{
+        // ② 매일을 선택 했다고 하면 
+        if(allweeks  == false){
+          messages[index+1].result = '매일';
+        }else{
+          // ③ 매일을 선택 했다고 하면 
+          let str = "매주";
+          dayitems.map((day, index)=>{
+            str += day;
+            str += '요일';
+            str += ' ';
+          })
+
+          messages[index+1].result = str;
+        }
+    }
+
+    messages[index+2].show =true;
+
+    setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleCalendarDateNext = (index)=>{
+
+    if(selectdate == ''){
+      return;
+    }
 
     let data = seekstepcheck(index);
 
@@ -826,7 +909,11 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     setRefresh((refresh) => refresh +1);
     await useSleep(500);
-    if(type==ROOMSIZE.SMALL || type == ROOMSIZE.MEDIUM | type == ROOMSIZE.LARGE){
+    if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
+      || type == ROOMSIZE.MEDIUM
+      || type == ROOMSIZE.LARGE
+      || type == ROOMSIZE.EXLARGE
+      ){
       useCompleteRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
@@ -853,13 +940,17 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     });
 
-    if(type =="Small" || type =="Medium" || type == "Large"){
+    if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
+      || type == ROOMSIZE.MEDIUM
+      || type == ROOMSIZE.LARGE
+      || type == ROOMSIZE.EXLARGE
+      ){
 
-      const USER_ID="01062149756";
+      const USERS_ID= user.users_id;
       const ROOM_INFO = workinfo;
       const ROOMTYPE = type;
 
-      const work = await CreateRoom({USER_ID, ROOMTYPE, ROOM_INFO});
+      const work = await CreateRoom({USERS_ID, ROOMTYPE, ROOM_INFO});
       alert("성공적으로 등록 되었습니다");
   
       navigate("/Mobileroom");
@@ -867,12 +958,12 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     }else{
 
-      const USER_ID="01062149756";
+      const USERS_ID= user.users_id;
       const WORK_INFO = workinfo;
       const WORKTYPE = type;
   
   
-      const work = await CreateWork({USER_ID,WORKTYPE, WORK_INFO});
+      const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO});
       alert("성공적으로 등록 되었습니다");
   
       navigate("/Mobilemain");
@@ -1001,12 +1092,12 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             </Row>
           </AroundRow>
 
-          <ProgressLayer>
+          <ProgressLayer progress={parseInt(stepdata / totalset *100 + 20)}>
               <ProgressLayerText>
               {
                 stepdata == 0 ? (
                   <>
-                    <span style={{color:"#FF7125"}}>총{totalset}</span><span>단계를 설정 하면  일감이 등록됩니다</span>
+                    <span style={{color:"#FF7125"}}>총{totalset}</span><span>단계를 설정 하면  등록이 완료됩니다</span>
                   </>
                 ):(
                   <>
@@ -1045,16 +1136,16 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                         <>
                           <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
                           { data.selectitems.map((subdata)=>(
-                            <SelectLayer className="button" check={subdata.selected} onClick={()=>{_handlecheck(index, subdata.key)}}>
+                            <SelectLayer  check={subdata.selected} onClick={()=>{_handlecheck(index, subdata.key)}}>
                               <div>{subdata.request}</div>
                               {
-                                subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"16px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check} style={{width:"16px", hieght:"16px"}}/></div>)
+                                subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
                               }
                               
                             </SelectLayer>
                           ))}
                           </BetweenRow>
-                          <Button containerStyle={{border: 'none', fontSize:16}} onPress={()=>{_handleNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </>
                       ):(<span>{data.request}</span>)
                       }
@@ -1093,7 +1184,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                                 />
                             </StyledCalendarWrapper>
 
-                            <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                            <Button containerStyle={{border: 'none', fontSize:14, marginTop:10}} onPress={()=>{_handleCalendarDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                           </Fragment>     
                           ):(<Fragment>
 
@@ -1102,20 +1193,59 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                               callback={selectcallback}
                             />
                             {
-                              allweeks == true && <Row style={{flexWrap:"wrap", justifyContent:"flex-start", gap:"2px"}}>
-                                <Button enable ={FindDay('일')} containerStyle={{ fontSize:16}} onPress={()=>{_handleWeekDate('일')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'일'}/>
-                                <Button enable ={FindDay('월')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('월')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'월'}/>
-                                <Button enable ={FindDay('화')} containerStyle={{ fontSize:16}} onPress={()=>{_handleWeekDate('화')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'화'}/>
-                                <Button enable ={FindDay('수')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('수')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'수'}/>
-                                <Button enable ={FindDay('목')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('목')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'목'}/>
-                                <Button enable ={FindDay('금')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('금')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'금'}/>
-                                <Button enable ={FindDay('토')}  containerStyle={{fontSize:16}} onPress={()=>{_handleWeekDate('토')}} height={'44px'} width={'68px'} radius={'5px'} bgcolor={'#fff'} color={'#222'} text={'토'}/>
+                              allweeks == true && <Row style={{flexWrap:"wrap", justifyContent:"flex-start", gap:"10px", marginTop:"5px"}}>
+                                
+           
 
+                                <DayBtn onClick={()=>{_handleWeekDate('일')}} enable ={FindDay('일')} >
+                                  일
+                                  {
+                                    FindDay('일') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                                  }
+                                </DayBtn>
+                                <DayBtn onClick={()=>{_handleWeekDate('월')}} enable ={FindDay('월')}>
+                                  월
+                                  {
+                                    FindDay('월') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                                  }
+                                </DayBtn>
+                                <DayBtn onClick={()=>{_handleWeekDate('화')}}  enable ={FindDay('화')} >
+                                  화
+                                  {
+                                    FindDay('화') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                                  }
+                                </DayBtn>     
+                                <DayBtn onClick={()=>{_handleWeekDate('수')}}  enable ={FindDay('수')} >
+                                  수
+                                  {
+                                    FindDay('수') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                                  }
+                                </DayBtn>  
+                                <DayBtn onClick={()=>{_handleWeekDate('목')}}  enable ={FindDay('목')} >
+                                  목
+                                  {
+                                    FindDay('목') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                                  }
+                                </DayBtn>  
+                                <DayBtn onClick={()=>{_handleWeekDate('금')}}  enable ={FindDay('금')} >
+                                  금
+                                  {
+                                    FindDay('금') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                                  }
+                                </DayBtn>  
+                                <DayBtn onClick={()=>{_handleWeekDate('토')}}  enable ={FindDay('토')} >
+                                  토
+                                  {
+                                    FindDay('토') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                                  }         
+                                  
+                                </DayBtn>
+                    
 
                               </Row>
                             }
               
-                            <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                            <Button containerStyle={{border: 'none', fontSize:14, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                             </Fragment>)
                         }
                         
@@ -1130,13 +1260,13 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 지역 선택 */} 
             {("requestregion" == data.type && data.show == true) && (
             <div className="fade-in-bottom" style={{width:"100%"}}>
-                    <Itemlayer width={'100%'}>
-                    <ItemLeftBox style={{width:"100%", height:"400px"}}>
+                    <Itemlayer width={'90%'}>
+                    <ItemLeftBox style={{width:"90%", height:"400px"}}>
                       <span>{data.info}</span>
                       <div style={{marginTop:35, height:300, position:"absolute",  top: '30px'}}>
                         <div id="map"  style={mapstyle}></div>
                         <Row>
-                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleRegionNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleRegionNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </Row>
                       </div>
                     </ItemLeftBox>  
@@ -1147,16 +1277,16 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 홍여사에게 요청할 내용 */} 
             {("requestcomment" == data.type && data.show == true) && (
             <div className="fade-in-bottom" style={{width:"100%"}} ref={useCommentRef}>
-                    <Itemlayer width={'100%'}>
-                    <ItemLeftBox style={{width:"100%", height:"220px"}}>
+                    <Itemlayer width={'90%'}>
+                    <ItemLeftBox style={{width:"100%", height:"180px"}}>
                       <span>{data.info}</span>
                       <div style={{marginTop:35, height:200, position:"absolute",  top: '30px'}}>
-                        <textarea maxlength={25} style={CommentContent} value={comment}  onChange={(e) => {setComment(e.target.value);}}
-                        placeholder={'필수입력사항은 아닙니다. 20자 이내로 입력해주세요'}
+                        <textarea maxlength={40} style={CommentContent} value={comment}  onChange={(e) => {setComment(e.target.value);}}
+                        placeholder={'필수입력사항아님. 40자 이내로 입력'}
                         />
                         <Row>
       
-                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleCommentNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleCommentNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </Row>
                       </div>
                     </ItemLeftBox>  
@@ -1173,7 +1303,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                       <span>{data.info}</span>
                       <Column>
                         <ImageUploadComponent callback={imageuploadcallback}/>
-                        <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleRoomNext(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                        <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleRoomNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                       </Column>
                     </ItemLeftBox>  
                   </Itemlayer>  
@@ -1185,8 +1315,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
               <div className="fade-in-bottom" style={{width:"100%"}} ref={useCompleteRef}>
                   <Itemlayer width={'100%'}>
                   <ItemLeftBox width={'100%'}>
-                    <span style={{fontSize:16}}>{data.info}</span>
-                    <table style={{marginTop:20}}>
+                    <span style={{fontSize:14}}>{data.info}</span>
+                    <table className="workregist-table" style={{marginTop:20}}>
              
                       <tbody>
                         {

@@ -24,7 +24,7 @@ const ImageLayout = styled.div`
     display: flex;
     justify-content: center;
     align-items:center;
-    border :1px solid #ededed;
+   
 `
 const ImageLayout2 = styled.div`
     background: #fff;
@@ -34,7 +34,7 @@ const ImageLayout2 = styled.div`
     display: flex;
     justify-content: center;
     align-items:center;
-    border :1px solid #ededed;
+
 `
 
 
@@ -62,17 +62,19 @@ const ProfileImage =({containerStyle,imagetype, source,read}) =>  {
   return (
 
     <Container style={containerStyle}>
-        {
+        {/* {
             imagetype  == CHATIMAGETYPE.HONGIMG &&<ImageLayout className={read == true ?(null):("border-animation")}>
-            <img src={source} style={{width:24, height:24}}/>
+            <img src={source} style={{width:48, height:48}}/>
             </ImageLayout>
         }
         {
             imagetype  == CHATIMAGETYPE.USERIMG &&<ImageLayout className={read == true ?(null):("border-animation")}>
-            <img src={source} style={{width:34, height:34}}/>
+            <img src={source} style={{width:48, height:48}}/>
             </ImageLayout>
-        }
-    
+        } */}
+            <ImageLayout>
+            <img src={source} style={{width:48, height:48}}/>
+            </ImageLayout>
    
     </Container>
   );

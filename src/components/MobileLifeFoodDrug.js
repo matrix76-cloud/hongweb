@@ -13,7 +13,10 @@ import "./medicalinput.css";
 import axios from "axios";
 import LottieAnimation from "../common/LottieAnimation";
 import ResultLabel from "../common/ResultLabel";
-
+import Border from "../common/Border";
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp  } from "react-icons/io";
+import Empty from "./Empty";
 
 const Container = styled.div`
   margin : 0 auto;
@@ -83,6 +86,18 @@ const LoadingStyle={
   top: "400px",
   position:"absolute"
 }
+
+const Label = styled.div`
+  font-size: 14px;
+  color : #131313;
+  font-weight: 500
+`
+const Content = styled.div`
+  font-size: 12px;
+  color : #636363;
+  line-height:2.5;
+`
+
 
 
 const MobileLifeFoodDrug=({containerStyle}) =>  {
@@ -168,6 +183,17 @@ const MobileLifeFoodDrug=({containerStyle}) =>  {
     .then((response) =>{
 
       if(response.data.body.items != undefined){
+
+        response.data.body.items.map((data)=>{
+          data.item.REGIST_DTopen = false;
+          data.item.DISTB_PDopen  = false;
+          data.item.SUNGSANGopen  = false;
+          data.item.SRV_USEopen  = false;
+          data.item.PRSRV_PDopen  = false;
+          data.item.INTAKE_HINT1open  = false;
+          data.item.MAIN_FNCTNopen  = false;
+        })
+
         setResultitem(response.data.body.items);
         console.log("TCL: _handleSubmit -> response.data", response.data)
         setRefresh((refresh) => refresh +1);
@@ -182,6 +208,67 @@ const MobileLifeFoodDrug=({containerStyle}) =>  {
       console.error('Error:', error)
     });
   }
+
+  const _handleREGIST_DTopenView = (index)=>{
+    if(resultitem[index].item.REGIST_DTopen ){
+      resultitem[index].item.REGIST_DTopen = false;
+    }else{
+      resultitem[index].item.REGIST_DTopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleDISTB_PDopenView = (index)=>{
+    if(resultitem[index].item.DISTB_PDopen ){
+      resultitem[index].item.DISTB_PDopen = false;
+    }else{
+      resultitem[index].item.DISTB_PDopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleSUNGSANGopenView= (index)=>{
+    if(resultitem[index].item.SUNGSANGopen ){
+      resultitem[index].item.SUNGSANGopen = false;
+    }else{
+      resultitem[index].item.SUNGSANGopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handleSRV_USEopenView= (index)=>{
+    if(resultitem[index].item.SRV_USEopen ){
+      resultitem[index].item.SRV_USEopen = false;
+    }else{
+      resultitem[index].item.SRV_USEopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handlePRSRV_PDopenView= (index)=>{
+    if(resultitem[index].item.PRSRV_PDopen ){
+      resultitem[index].item.PRSRV_PDopen = false;
+    }else{
+      resultitem[index].item.PRSRV_PDopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  
+  const _handleINTAKE_HINT1openView= (index)=>{
+    if(resultitem[index].item.INTAKE_HINT1open ){
+      resultitem[index].item.INTAKE_HINT1open = false;
+    }else{
+      resultitem[index].item.INTAKE_HINT1open = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handleMAIN_FNCTNopenView= (index)=>{
+    if(resultitem[index].item.MAIN_FNCTNopen ){
+      resultitem[index].item.MAIN_FNCTNopen = false;
+    }else{
+      resultitem[index].item.MAIN_FNCTNopen = true;
+    }
+    setRefresh((refresh) => refresh +1);
+  }
+  
 
 
   return (
@@ -202,7 +289,7 @@ const MobileLifeFoodDrug=({containerStyle}) =>  {
 
         </SearchLayer>
 
-        <FlexstartRow style={{width:"100%", marginBottom:10}}>
+        <FlexstartRow style={{width:"100%", marginBottom:10, background:"#fff"}}>
                     <img src={imageDB.infocircle} width={16} height={16} o/>
                     <span style={{fontSize:"12px", color :"#636363", marginLeft:5,background:"#fff"}}>알아보고자 건강식품이름을 넣어주세요</span>                  
         </FlexstartRow>
@@ -220,7 +307,7 @@ const MobileLifeFoodDrug=({containerStyle}) =>  {
         <FlexstartRow style={{width:"100%", marginTop:20, marginBottom:10, borderBottom: "1px solid #000"}}>
           <ResultLabel label={"'"+search +"'" +'검색 결과'} result = {resultitem.length} unit={'건'}/>
         </FlexstartRow> 
-          {
+          {/* {
             resultitem.map((data)=>(
               <Table class="custom-table" style={{marginBottom:20}}>
               <tbody>
@@ -265,8 +352,148 @@ const MobileLifeFoodDrug=({containerStyle}) =>  {
               </tbody>
             </Table>
             ))
+          } */}
+
+          {
+            resultitem.map((data, index)=>(
+
+            <div style={{width:"90%", margin:"0 auto"}}>
+              <Column style={{alignItems:"flex-start"}}>
+              <Row style={{width:"100%"}}>
+              <Column style={{width:'100%',alignItems:"flex-start"}}>
+                <div style={{color:"#131313", fontSize:'16px'}}>{data.item.PRDUCT}</div>
+                <div style={{color:"#636363", fontSize:'12px', marginTop:10}}>{data.item.ENTRPS}</div>
+              </Column>
+              </Row>
+              <Border/>
+              <Column onClick={()=>{_handleREGIST_DTopenView( index)}} style={{ alignItems:"flex-start"}}> 
+                <Row style={{justifyContent:"center", alignItems:"center"}}>
+                  <Label>등록일</Label>
+                  <div style={{marginLeft:10, paddingTop:5}}>
+                      {
+                          data.item.REGIST_DTopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                      }
+                  </div>
+                </Row>
+
+                {
+                  data.item.REGIST_DTopen == true && <Content>{data.item.REGIST_DT}</Content>
+                }
+              
+              </Column>
+              <Border/>
+              <Column onClick={()=>{_handleDISTB_PDopenView( index)}} style={{ alignItems:"flex-start"}}> 
+                <Row style={{justifyContent:"center", alignItems:"center"}}>
+                  <Label>유효기간</Label>
+                  <div style={{marginLeft:10, paddingTop:5}}>
+                      {
+                          data.item.DISTB_PDopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                      }
+                  </div>
+                </Row>
+
+                {
+                  data.item.DISTB_PDopen == true && <Content>{data.item.DISTB_PD}</Content>
+                }
+              
+              </Column>
+              <Border/>
+              <Column onClick={()=>{_handleSUNGSANGopenView( index)}} style={{ alignItems:"flex-start"}}> 
+                <Row style={{justifyContent:"center", alignItems:"center"}}>
+                  <Label>특징</Label>
+                  <div style={{marginLeft:10, paddingTop:5}}>
+                      {
+                          data.item.SUNGSANGopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                      }
+                  </div>
+                </Row>
+
+                {
+                  data.item.SUNGSANGopen == true && <Content>{data.item.SUNGSANG}</Content>
+                }
+              
+              </Column>
+              <Border/>
+              <Column onClick={()=>{_handleSRV_USEopenView( index)}} style={{ alignItems:"flex-start"}}> 
+                <Row style={{justifyContent:"center", alignItems:"center"}}>
+                  <Label>사용법</Label>
+                  <div style={{marginLeft:10, paddingTop:5}}>
+                      {
+                          data.item.SRV_USEopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                      }
+                  </div>
+                </Row>
+
+                {
+                  data.item.SRV_USEopen == true && <Content>{data.item.SRV_USE}</Content>
+                }
+              
+              </Column>
+              <Border/>
+              <Column onClick={()=>{_handlePRSRV_PDopenView( index)}} style={{ alignItems:"flex-start"}}> 
+                <Row style={{justifyContent:"center", alignItems:"center"}}>
+                  <Label>보관방법</Label>
+                  <div style={{marginLeft:10, paddingTop:5}}>
+                      {
+                          data.item.PRSRV_PDopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                      }
+                  </div>
+                </Row>
+
+                {
+                  data.item.PRSRV_PDopen == true && <Content>{data.item.PRSRV_PD}</Content>
+                }
+              
+              </Column>
+              <Border/>
+              <Column onClick={()=>{_handleMAIN_FNCTNopenView( index)}} style={{ alignItems:"flex-start"}}> 
+                <Row style={{justifyContent:"center", alignItems:"center"}}>
+                  <Label>기능</Label>
+                  <div style={{marginLeft:10, paddingTop:5}}>
+                      {
+                          data.item.MAIN_FNCTNopen == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                      }
+                  </div>
+                </Row>
+
+                {
+                  data.item.MAIN_FNCTNopen == true && <Content>{data.item.MAIN_FNCTN}</Content>
+                }
+              
+              </Column>
+              <Border/>
+    
+              
+              <Column onClick={()=>{_handleINTAKE_HINT1openView( index)}} style={{ alignItems:"flex-start"}}> 
+                <Row style={{justifyContent:"center", alignItems:"center"}}>
+                  <Label>부작용</Label>
+                  <div style={{marginLeft:10, paddingTop:5}}>
+                      {
+                          data.item.INTAKE_HINT1open == false ? (<div><IoIosArrowDown/></div>):(<div><IoIosArrowUp /></div>)
+                      }
+                  </div>
+                </Row>
+
+                {
+                  data.item.INTAKE_HINT1open == true && <Content>{data.item.INTAKE_HINT1}</Content>
+                }
+              
+              </Column>
+              <Border bgcolor={'#000'} containerStyle={{margin:"20px 0px"}}/>
+              </Column>
+    
+            </div>
+
+            ))
           }
-          </Column>)
+          {
+            resultitem.length == 0 && <Empty content = "검색에 맞는 건강식품이 존재 하지 않습니다"
+            containerStyle={{marginTop:"150px"}}
+            />
+          }
+          </Column>
+          
+        )
       }
       </>
 

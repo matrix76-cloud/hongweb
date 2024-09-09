@@ -2,8 +2,6 @@ import React, { useState, createContext } from "react";
 
 const UserContext = createContext({
   user: {
-    email: "",
-    uid: "",
     deviceid: "",
     nickname: "",
     latitude: "",
@@ -13,6 +11,9 @@ const UserContext = createContext({
     region_1depth_name :"",
     region_2depth_name :"",
     region_3depth_name : "",
+    token :"",
+    phone :"",
+    users_id : "",
 
 
   },
@@ -23,8 +24,6 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState({});
 
   const dispatch = ({
-    email,
-    uid,
     deviceid,
     nickname,
     latitude,
@@ -34,11 +33,12 @@ const UserProvider = ({ children }) => {
     region_1depth_name,
     region_2depth_name,
     region_3depth_name,
+    token,
+    phone,
+    users_id,
  
   }) => {
     setUser({
-      email,
-      uid,
       deviceid,
       nickname,
       latitude,
@@ -48,6 +48,9 @@ const UserProvider = ({ children }) => {
       region_1depth_name,
       region_2depth_name,
       region_3depth_name,
+      token,
+      phone,
+      users_id,
     });
   };
 

@@ -38,7 +38,7 @@ const mapstyle = {
 const PopupWorkEx = styled.div`
 height: 800px;
 position: absolute;
-top:0px;
+top:50px;
 width: 100%;
 background: #fff;
 z-index: 5;
@@ -60,7 +60,7 @@ const LoadingStyle={
   justifyContent: "center",
   alignItems: "center",
   width: "100%",
-  top: "400px",
+  top: "300px",
   position:"absolute"
 }
 const MapExbtn = styled.div`
@@ -69,7 +69,7 @@ const MapExbtn = styled.div`
   left: 88%;
   z-index: 3;
   background: #f9f9f9;
-  width: 30px;
+  width: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -446,12 +446,8 @@ const MobileLifeCampingRegion =({containerStyle}) =>  {
       }
 
       <div style={{position:"absolute", width:"100%"}}>
-        <div id="map" className="SmallMap" style={mapstyle}></div>
-        {
-          currentloading == false &&  <MapExbtn onClick={()=>{_handleExmap()}}>
-          <img src={imageDB.expand} style={{width:30}}/>
-        </MapExbtn>
-        } 
+        <div id="map" className="Map" style={mapstyle}></div>
+    
       </div>
 
     </Container>

@@ -187,7 +187,7 @@ const PCRoomItem =({containerStyle, width, roomdata, onPress, index, selected}) 
       }
 
       <div style={{width:"100%"}}>
-      <img src={getImage()} width={'100%'} height={224} style={{borderTopLeftRadius:10, borderTopRightRadius:10,marginTop:-35}}/>
+      <img src={getImage()} width={'100%'} height={224} style={{borderTopLeftRadius:10, borderTopRightRadius:10}}/>
       </div>
      <FlexstartColumn style={{width:"100%", position:'relative', marginTop:10}}>
       <InfoLayout>

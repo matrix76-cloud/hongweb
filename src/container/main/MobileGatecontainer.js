@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import Button from "../../common/Button";
+import ButtonEx from "../../common/ButtonEx";
 import { Column } from "../../common/Column";
 import { Row } from "../../common/Row";
 import { DataContext } from "../../context/Data";
@@ -75,9 +76,9 @@ const MobileGatecontainer =({containerStyle}) =>  {
   },[refresh])
 
   /**
-   * 
+   * 전화 번호 인증 화면 으로 갈것인지 결정
   
-   */
+  */
   useEffect(()=>{
 
 
@@ -96,11 +97,10 @@ const MobileGatecontainer =({containerStyle}) =>  {
   }, [])
 
 
-  const _handleLogin = () =>{
-    navigate("/Mobilepolicy");
+  const _handlePhone = () =>{
+    navigate("/Mobilephone");
   }
 
- 
   return (
 
     <Container style={containerStyle}>
@@ -119,7 +119,9 @@ const MobileGatecontainer =({containerStyle}) =>  {
       </Column>
 
       <Column style={{height:'30%', justifyContent:"center"}}>
-      <Button containerStyle={{border: 'none', fontSize:16, margin: '0 auto'}} onPress={_handleLogin} height={'44px'} width={'85%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'시작하기'}/>
+
+
+      <ButtonEx text={'시작하기'} width={'85%'}  onPress={_handlePhone} bgcolor={'#FF7125'} color={'#fff'} />
       </Column>
     </Container>
   );

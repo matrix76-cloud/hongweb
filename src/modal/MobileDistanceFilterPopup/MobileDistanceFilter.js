@@ -60,7 +60,7 @@ const style = {
   position: 'absolute',
   top: '85%',
   left: '50%',
-  height:'260px',
+  height:'300px',
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
@@ -76,27 +76,29 @@ const MainData = styled.div`
   flex-direction: row;
   background-color: #fff;
   flex-wrap: wrap;
-  width: 80%;
+  width: 85%;
   margin: 0 auto;
+  justify-content:center;
 `
 
 const MainDataItem = styled.div`
-  padding :10px;
-  justify-content : center;
-  align-items : center;
-  border-radius :5px;
+padding :10px 15px;
+justify-content : center;
+align-items : center;
+border-radius :5px;
 
 
-  background: ${({check}) => check == true ? ('#FF7125') :('#fff') };
-  border:  ${({check}) => check == true ? (null) :('1px solid #C3C3C3') };
+background: ${({check}) => check == true ? ('#fff') :('#fff') };
+border:  ${({check}) => check == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
 
-  margin-left :5px;
-  margin-bottom: 10px;
+margin-left :10px;
+margin-bottom: 10px;
+display:flex;
 `
 const MainDataItemText = styled.span`
-  font-size :13px;
-  font-family : ${({theme}) =>theme.REGULAR};
-  color: ${({check}) => check == 1 ? ('#FFF') :('#131313') };
+font-size :13px;
+font-family : ${({theme}) =>theme.REGULAR};
+color: ${({check}) => check == 1 ? ('#131313') :('#131313') };
 
 `
 const ApplyItem = styled.div`
@@ -223,14 +225,22 @@ export default function MobileDistanceFilter({filterhistory, callback}) {
 
             <MainData>
                 {WorkItems.map((data)=>(
-                    <MainDataItem check={filteraryexist(data.name)} onClick={()=>{_handleData(data.name)}}><MainDataItemText  check={filteraryexist(data.name)}>{data.name}</MainDataItemText></MainDataItem>
+                    <MainDataItem check={filteraryexist(data.name)} onClick={()=>{_handleData(data.name)}}>
+                      <MainDataItemText  check={filteraryexist(data.name)}>{data.name}</MainDataItemText>
+                      {
+                        filteraryexist(data.name) == false ? (<img src={imageDB.check_d} style={{width:16, paddingLeft:5}}/>):(
+                          <img src={imageDB.check_e} style={{width:16, paddingLeft:5}}/>
+                        )
+                      }
+                      
+                    </MainDataItem>
                 ))}
             </MainData>
   
 
 
             <ApplyItem >
-                <div style={{dispaly:"flex", alignItems:"center", justifyContent:"center", width:"70%"}}>   
+                <div style={{dispaly:"flex", alignItems:"center", justifyContent:"center", width:"70%", marginTop:10}}>   
                     <FilterApplyButton onClick ={_handlefilterapply}><FilterApplyButtonText>적용하기</FilterApplyButtonText></FilterApplyButton>
                 </div>
             </ApplyItem>

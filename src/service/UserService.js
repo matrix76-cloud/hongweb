@@ -1,5 +1,5 @@
 import { db, auth, storage, firebaseConfig, firebaseApp } from '../api/config';
-import { collection, getDocs, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy, arrayUnion } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPhoneNumber, signOut, updateProfile } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -88,10 +88,6 @@ export const login = async({email, password}) =>{
         })
     }
    
-
-    // const USERID = user.uid;
-    // const DEVICEID = uniqueId;
-    // const update = await update_userdevice(USERID, DEVICEID);
  
 }
 
@@ -124,11 +120,11 @@ export const get_userInfoForusername = async ({ USER_NICKNAME }) => {
   }
 };
 
-export const get_userInfoForUID = async({USER_ID}) =>{
+export const get_userInfoForUID = async({USERS_ID}) =>{
  
     const userRef = collection(db, "USERS");
     
-    const q = query(userRef, where("USER_SESSION",'==', USER_ID));
+    const q = query(userRef, where("USERS_ID",'==', USERS_ID));
  
     let useritem = null;
 
@@ -190,20 +186,24 @@ export const get_userInfoForKakaoID = async ({ kakaoID }) => {
 };
 
 
-export const Create_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE}) =>{
+export const Create_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE, PHONE, NICKNAME}) =>{
 
   let success = true;
 
+  let users_id = "";
   try{
 
      const userRef = doc(collection(db, "USERS"));
      const id = userRef.id;
+     users_id =id;
      const newuser = {
          USERS_ID : id,
          DEVICEID : DEVICEID,
          TOKEN : TOKEN,
          LATITUDE : LATITUDE,
          LONGITUDE : LONGITUDE,
+         PHONE : PHONE,
+         NICKNAME : NICKNAME,
      
      }
      await setDoc(userRef, newuser);
@@ -215,13 +215,44 @@ export const Create_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE}) =
       success =false;
       return null;
   }finally{
-    return;
+    return users_id;
   }
 }
+
 export const Read_userdevice = async({DEVICEID}) =>{
 
   const userRef = collection(db, "USERS");
   const q = query(userRef, where("DEVICEID",'==', DEVICEID ));
+
+  let success = false;
+  let searchitems = [];
+
+  try {
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      searchitems.push(doc.data());
+    });
+
+    if (querySnapshot.size > 0) {
+      success = true;
+    }
+  } catch (e) {
+    console.log("error", e.message);
+  } finally {
+    return new Promise((resolve, resject) => {
+      if (success) {
+        resolve(searchitems[0]);
+      } else {
+        resolve(-1);
+      }
+    });
+  }
+
+}
+export const Read_userphone = async({PHONE}) =>{
+
+  const userRef = collection(db, "USERS");
+  const q = query(userRef, where("PHONE",'==', PHONE ));
 
   let success = false;
   let searchitems = [];
@@ -249,17 +280,21 @@ export const Read_userdevice = async({DEVICEID}) =>{
 
 }
 
-export const Update_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE}) =>{
+export const Update_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE, PHONE}) =>{
+console.log("TCL: Update_userdevice -> Update_userdevice", DEVICEID, TOKEN, LATITUDE, LONGITUDE)
 
 
     const userRef = collection(db, "USERS");
 
-    const rows = query(userRef, where("DEVICEID",'==', DEVICEID ));
+    const rows = query(userRef, where("PHONE",'==', PHONE ));
 
+    let docid = "";
     try{
         const querySnapshot =  await getDocs(rows);
 
         querySnapshot.forEach(function (doc) {
+
+            docid = doc.id;
             updateDoc(doc.ref, {
                 DEVICEID  : DEVICEID,
                 TOKEN  : TOKEN,
@@ -271,11 +306,69 @@ export const Update_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE}) =
     }catch(e){
          console.log("error", e.message);
     }finally{
-        return;
+        return docid;
     }
 
 }
 
+export const Update_tokendevice = async({DEVICEID, TOKEN}) =>{
+  console.log("TCL: Update_userdevice -> Update_userdevice", DEVICEID, TOKEN)
+  
+  
+      const userRef = collection(db, "USERS");
+  
+      const rows = query(userRef, where("DEVICEID",'==', DEVICEID ));
+  
+      let docid = "";
+      try{
+          const querySnapshot =  await getDocs(rows);
+  
+          querySnapshot.forEach(function (doc) {
+  
+              docid = doc.id;
+              updateDoc(doc.ref, {
+                  TOKEN  : TOKEN,
+            
+              });
+          });
+  
+      }catch(e){
+           console.log("error", e.message);
+      }finally{
+          return docid;
+      }
+  
+}
+  
+export const Update_addrsbyusersid = async({ADDR, USERS_ID}) =>{
+  console.log("TCL:  -> Update_addrsbyusersid", USERS_ID)
+  
+  
+      const userRef = collection(db, "USERS");
+  
+      const rows = query(userRef, where("USERS_ID",'==', USERS_ID ));
+  
+      let docid = "";
+      try{
+          const querySnapshot =  await getDocs(rows);
+  
+          querySnapshot.forEach(function (doc) {
+  
+              docid = doc.id;
+              updateDoc(doc.ref, {
+      
+                ADDRESS: arrayUnion(ADDR) // 배열 필드에 값 추가
+            
+              });
+          });
+  
+      }catch(e){
+           console.log("error", e.message);
+      }finally{
+          return docid;
+      }
+  
+}
 export const get_phonenumber = async ()=>{
   try {
   

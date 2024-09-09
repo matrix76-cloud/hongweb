@@ -12,7 +12,10 @@ import UseLaw from "../../components/UseLaw";
 import { DataContext } from "../../context/Data";
 import { UserContext } from "../../context/User";
 import { imageDB } from "../../utility/imageData";
-
+import { v4 as uuidv4 } from 'uuid';
+import { Create_userdevice, Update_userdevice } from "../../service/UserService";
+import { useSleep } from "../../utility/common";
+import localforage from 'localforage';
 
 
 
@@ -98,8 +101,42 @@ const MobilePolicycontainer =({containerStyle}) =>  {
   }, [])
 
 
-  const _handlePhone = () =>{
-    navigate("/Mobilephone")
+  /**
+   * USER를 생성하고 userContext 값에 최종적으로 설정된다
+   * ! 최종적으로 userContext 값 설정
+   * 
+   */
+  const _handleMain = async() =>{
+    console.log("TCL: _handleMain -> _handleMain")
+    
+    let uniqueId = uuidv4();
+   
+    localforage.setItem('uniqueId', uniqueId)
+    .then(function(value) {
+      console.log("TCL: listener -> setItem", value)
+
+    })
+    .catch(function(err) {
+      console.error('데이터 저장 실패:', err);
+    });
+
+
+    const DEVICEID = uniqueId;
+    const TOKEN = user.token;
+    const LATITUDE = user.latitude;
+    const LONGITUDE = user.longitude;
+    const PHONE = user.phone;
+    const NICKNAME = '멍청한 놈'
+    const userupdate = await Create_userdevice({DEVICEID, TOKEN, LATITUDE, LONGITUDE,PHONE,NICKNAME});
+    await useSleep(1000);
+
+    user.users_id =userupdate;
+    user.deviceid = DEVICEID;
+    user.nickname = NICKNAME;
+    dispatch(user);
+
+
+    navigate("/Mobilemain");
   }
 
  
@@ -113,7 +150,7 @@ const MobilePolicycontainer =({containerStyle}) =>  {
 
       <Column style={{width:"100%"}}>
         <SubText>이용약관, 개인정보 처리지침, 위치 서비스 이용약관에 대해</SubText>
-        <Button containerStyle={{border: 'none', fontSize:16, margin: '0px auto 20px'}} onPress={_handlePhone} height={'44px'} width={'85%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} 
+        <Button containerStyle={{border: 'none', fontSize:16, margin: '0px auto 20px'}} onPress={_handleMain} height={'44px'} width={'85%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} 
         text={'모두 동의합니다 '}/>
       </Column>
 

@@ -5,7 +5,7 @@ export const USERSTATUS = {
 
 export const WORKSTATUS ={
 	OPEN : 0,
-	CLOSE :1,
+	CLOSE : 1,
 }
 export const ROOMSTATUS ={
 	OPEN : 0,

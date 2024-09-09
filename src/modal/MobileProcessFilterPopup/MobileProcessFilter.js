@@ -277,7 +277,7 @@ const style = {
   position: 'absolute',
   top: '85%',
   left: '50%',
-  height:'260px',
+  height:'200px',
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
@@ -443,7 +443,7 @@ export default function MobileProcessFilter({filterhistory, callback}) {
 
 
             <ApplyItem >
-                <div style={{dispaly:"flex", alignItems:"center", justifyContent:"center", width:"70%"}}>   
+                <div style={{dispaly:"flex", alignItems:"center", justifyContent:"center", width:"70%", marginTop:10}}>   
                     <FilterApplyButton onClick ={_handlefilterapply}><FilterApplyButtonText>적용하기</FilterApplyButtonText></FilterApplyButton>
                 </div>
             </ApplyItem>

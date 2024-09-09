@@ -13,8 +13,10 @@ const Container = styled.div`
   width: 100%;
   padding-left: 10px;
   height: 50px;
-  font-family: 'Pretendard-SemiBold';
-  font-size: 18px;
+  font-family: 'Pretendard-Regular';
+  font-size: 16px;
+  background : #F9F9F9;
+  color :#131313;
 `
 
 const SubLabel= styled.div`
@@ -59,9 +61,9 @@ const Label =({containerStyle, label, sublabel}) =>  {
   return (
 
     <Container style={containerStyle}>
-        <div style={{fontSize:18, fontWeight:700, width:'120px'}}>{label}</div>
+        <div style={{fontSize:16, width:'120px', fontWeight:600}}>{label}</div>
 
-        <div style={{fontSize:18, fontWeight:700, width:'65%', backgroundColor:"#000", height:1}}></div>
+       
 
         <SubLabel>{sublabel}</SubLabel>
    

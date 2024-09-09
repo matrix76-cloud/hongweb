@@ -17,6 +17,7 @@ import { DataContext } from "../context/Data";
 import MobileMapPopup from "../modal/MobileMapPopup/MobileMapPopup";
 import { ReadTourFestival } from "../service/LifeService";
 import ResultLabel from "../common/ResultLabel";
+import { autoBatchEnhancer } from "@reduxjs/toolkit";
 
 
 const Container = styled.div`
@@ -26,9 +27,9 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items:flex-start;
-  height: 1500px;
   scrollbar-width: none;
   overflow : auto;
+
 `
 const style = {
   display: "flex"
@@ -53,7 +54,8 @@ const Inputstyle ={
 
 
 const  SearchLayer = styled.div`
-  width: 100%;
+  width: 90%;
+  margin : 0 auto;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -84,7 +86,7 @@ const LoadingStyle={
   justifyContent: "center",
   alignItems: "center",
   width: "100%",
-  top: "400px",
+  top: "300px",
   position:"absolute"
 }
 const MapbtnStyle={
@@ -277,32 +279,35 @@ const MobileLifeTourFestival =({containerStyle}) =>  {
           searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
             width={"50px"} height={'50px'} />)
           :(
-            <Column style={{marginTop:10,width:"95%",margin:"0 auto"}}>
-              <SearchLayer>
-                <input className="custom-input" type="text" style={Inputstyle}
-                onKeyDown={handleKeyDown} 
-                value={search} onChange={(e)=>{
-                  setSearch(e.target.value);
-                  setRefresh((refresh) => refresh +1);
-                
-                }}
-                placeholder="지역축제 이름, 지역 입력" />
-                <img className ="searchicon" src={imageDB.redsearch} style={{width:20, height:20, position:"absolute", left:'88%'}} onClick={_handleSubmit}/>
+            <Column style={{marginTop:10,width:"100%",margin:"0 auto", paddingTop:"50px"}}>
+              <Column style ={{width:"100%", backgroundColor:"#fff", position:"fixed", top:"50px"}}>
+                <SearchLayer>
+                  <input className="custom-input" type="text" style={Inputstyle}
+                  onKeyDown={handleKeyDown} 
+                  value={search} onChange={(e)=>{
+                    setSearch(e.target.value);
+                    setRefresh((refresh) => refresh +1);
+                  
+                  }}
+                  placeholder="지역축제 이름, 지역 입력" />
+                  <img className ="searchicon" src={imageDB.redsearch} style={{width:20, height:20, position:"absolute", left:'88%'}} onClick={_handleSubmit}/>
 
-              </SearchLayer>
+                </SearchLayer>
 
-              <FlexstartRow style={{width:"100%", marginBottom:10}}>
-                    <img src={imageDB.infocircle} width={16} height={16} o/>
-                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>알아보고자 하는 축제 이름이나 지역이름을 넣어주세요</span>                  
-              </FlexstartRow>
+                <FlexstartRow style={{width:"90%", margin : '10 auto', background:"#fff", paddingBottom:10}}>
+                      <img src={imageDB.infocircle} width={16} height={16} o/>
+                      <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>알아보고자 하는 축제 이름이나 지역이름을 넣어주세요</span>                  
+                </FlexstartRow>
+              </Column>
+         
         
 
-              <FlexstartRow style={{width:"100%", marginTop:20, marginBottom:10, borderBottom: "1px solid #000"}}>
+              <FlexstartRow style={{width:"100%", marginTop:50, marginBottom:10, borderBottom: "1px solid #000"}}>
                 <ResultLabel label={'총'} result = {displayitems.length} unit={'건'}/>
               </FlexstartRow>
 
 
-              <div style={{overflowY:"hidden"}}>
+              <div style={{overflowY:"hidden",width:"90%",margin:"0 auto"}}>
               {
                 displayitems.map((data, index)=>(
                     <BoxItem>

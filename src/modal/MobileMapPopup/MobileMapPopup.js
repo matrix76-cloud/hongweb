@@ -173,28 +173,45 @@ const MobileMapPopup = ({ search,callback, top, left, height, width, name,ykiho,
     // marker.setMap(map);
 
 
-    var content = document.createElement('div');
-    content.className = 'maptourregionlay';
+    // var content = document.createElement('div');
+    // content.className = 'maptourregionlay';
 
-    content.innerHTML =
-    '  <a>' +
-    '    <div>' +
-    '    <img src="'+ markerimg+'"style="width:32px;"/>' +
-    '    </div>' +
-    '    <div class="title">'+name +'</div>' +
-    '  </a>' +
-    '</div>';
+    // content.innerHTML =
+    // '  <a>' +
+    // '    <div>' +
+    // '    <img src="'+ markerimg+'"style="width:32px;"/>' +
+    // '    </div>' +
+    // '    <div class="title">'+name +'</div>' +
+    // '  </a>' +
+    // '</div>';
 
-    // Custom Overlay 생성
-    var customOverlay = new kakao.maps.CustomOverlay({
-        position: Position,
-        content: content,
-        clickable: true // 클릭 가능하도록 설정
+    // // Custom Overlay 생성
+    // var customOverlay = new kakao.maps.CustomOverlay({
+    //     position: Position,
+    //     content: content,
+    //     clickable: true // 클릭 가능하도록 설정
+    // });
+
+
+    // // Custom Overlay 지도에 추가
+    // customOverlay.setMap(map);
+
+    var imageSrc = imageDB.movegps; // 마커 이미지의 URL
+    var imageSize = new kakao.maps.Size(64, 69); // 마커 이미지의 크기
+    var imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커의 좌표에 일치시킬 이미지 안의 좌표
+
+    // 마커 이미지를 생성합니다
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+
+    const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
+    const marker = new window.kakao.maps.Marker({
+      position: markerPosition,
+      image: markerImage // 마커 이미지 설정
     });
 
-
-    // Custom Overlay 지도에 추가
-    customOverlay.setMap(map);
+    // 마커를 지도 위에 표시
+    marker.setMap(map);
 
 
   

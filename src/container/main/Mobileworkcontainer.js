@@ -15,6 +15,7 @@ import { setRef } from "@mui/material";
 import { REQUESTINFO } from "../../utility/work";
 import { Column } from "../../common/Column";
 import MobileWorkReport from "../../components/MobileWorkReport";
+import LottieAnimation from "../../common/LottieAnimation";
 
 
 const Container = styled.div`
@@ -23,6 +24,12 @@ const Container = styled.div`
   
 `
 
+const LoadingAnimationStyle={
+  zIndex: 11,
+  position: "absolute",
+  top: "40%",
+  left: "35%"
+}
 
 
 
@@ -44,8 +51,9 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
   const location = useLocation();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
+  const [worktype, setWorktype] = useState('');
 
   useLayoutEffect(() => {
   }, []);
@@ -59,6 +67,7 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
   useEffect(()=>{
     setLoading(loading);
     setMessages(messages);
+    setWorktype(worktype);
  
   },[refresh])
 
@@ -69,6 +78,8 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
       console.log("TCL: FetchData -> workitem", workitem)
 
       setMessages(workitem.WORK_INFO);
+      setWorktype(workitem.WORKTYPE);
+      setLoading(false);
       setRefresh((refresh) => refresh +1);
 
       console.log("TCL: FetchData -> workitem", workitem);      
@@ -78,15 +89,17 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
 
 
   return (
+
+    
     <Container style={containerStyle}>
-      <Column>
-
-
-        <div style={{marginTop: 70, color :'#131313', fontSize:16, width:'90%', marginLeft:5}}>고객님이 작성하신 요구 사항은 다음과 같습니다</div>
-
-        <MobileWorkReport messages={messages} WORK_ID = {WORK_ID}/>
-
-      </Column>
+    {
+      loading == true ? ( <LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
+        width={"100px"} height={'100px'}
+        />) :( <Column>
+          <div style={{marginTop: 70, color :'#131313', fontSize:16, width:'90%', marginLeft:5}}>고객님이 작성하신 요구 사항은 다음과 같습니다</div>
+          <MobileWorkReport messages={messages} WORK_ID = {WORK_ID} WORKTYPE={worktype}/>
+        </Column>)
+    } 
     </Container>
   );
 

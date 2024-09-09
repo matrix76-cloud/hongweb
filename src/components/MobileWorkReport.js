@@ -4,7 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import Button from "../common/Button";
 import { UserContext } from "../context/User";
-import { imageDB } from "../utility/imageData";
+import MobileMapPopup from "../modal/MobileMapPopup/MobileMapPopup";
+import MobileWorkMapPopup from "../modal/MobileMapPopup/MobileWorkMapPopup";
+import { imageDB, Seekimage } from "../utility/imageData";
 import { REQUESTINFO } from "../utility/work";
 
 
@@ -30,7 +32,7 @@ const ResultContent = {
 
 
 
-const MobileWorkReport =({containerStyle, messages, WORK_ID}) =>  {
+const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE}) =>  {
 
 /** 제목 정리
  ** 설명
@@ -45,6 +47,12 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID}) =>  {
   const location = useLocation();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
+  const [popupstatus, setPopupstatus] = useState(false);
+
+  const [latitude, setLatitude] = useState('');
+  const [longitudie, setLongitude] = useState('');
+  const [worktype, setWorktype] = useState(WORKTYPE);
+
 
   useLayoutEffect(() => {
   }, []);
@@ -55,7 +63,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID}) =>  {
   }, []);
 
   useEffect(()=>{
-
+    setPopupstatus(popupstatus);
   }, [refresh])
 
   useEffect(()=>{
@@ -71,12 +79,33 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID}) =>  {
 
   }
 
+  const popupcallback = async () => {
+    setPopupstatus(!popupstatus);
+    setRefresh((refresh) => refresh +1);
+  };
+
+  const _handleMapview= (lat, long, worktype)=>{
+
+    setPopupstatus(true);
+    setLatitude(lat);
+    setLongitude(long);
+    setWorktype(worktype);
+    setRefresh((refresh) => refresh +1);
+
+  }
+
  
   return (
 
     <Container style={containerStyle}>
 
-        <table class="workreport-table" style={{  margin: '5px auto', borderTop: "1px solid #434343"}}>
+      {
+        popupstatus == true && <MobileWorkMapPopup callback={popupcallback} latitude={latitude} longitude={longitudie}
+        top={'30%'}  left={'10%'} height={'280px'} width={'280px'} name={worktype} markerimg={Seekimage(worktype)}
+        />
+      }
+
+        <table class="workreport-table" style={{  margin: '10px auto', borderTop: "1px solid #434343"}}>
              
              <tbody>
                {
@@ -97,7 +126,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID}) =>  {
 
                     {
                       data.requesttype == REQUESTINFO.CUSTOMERREGION &&
-                      <div><img src={imageDB.map} style={{width:20}}/> </div>
+                      <div  onClick={()=>{_handleMapview(data.latitude,data.longitude, messages.WORKTYPE)}}><img src={imageDB.map} style={{width:20}}/> </div>
                     }
                     </div>
                    </td>
@@ -109,10 +138,10 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID}) =>  {
              </tbody>
         </table>
 
-        <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'100%',justifyContent: "space-between" }}>
+        <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'100%',justifyContent: "center" }}>
           
-          <Button containerStyle={{border: '1px solid #C3C3C3', fontSize:16, marginTop:10, fontWeight:600}} onPress={_handleReset} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FFF'} color={'#131313'} text={'다시작성하기'}/>
-          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'요청하기'}/>
+          {/* <Button containerStyle={{border: '1px solid #C3C3C3', fontSize:16, marginTop:10, fontWeight:600}} onPress={_handleReset} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FFF'} color={'#131313'} text={'다시작성하기'}/> */}
+          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'44px'} width={'90%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'요청하기'}/>
 
         </div>
 

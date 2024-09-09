@@ -26,7 +26,7 @@ const Container = styled.div`
 const LabelItem = styled.div`
   font-weight: 400;
   line-height: 1.5;
-  font-size: 16px;
+  font-size: 14px;
   text-decoration-line: none;
   color: rgb(120, 131, 145);
 `;
@@ -43,7 +43,7 @@ const SelectBox = (props) => {
     return (
       <select
         style={{
-          fontSize: 16,
+          fontSize: 14,
           outline: 0,
           outline: 0,
           padding: 10,

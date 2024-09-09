@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useLayoutEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -9,7 +9,11 @@ import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import Image from "../../../common/Image";
 import { GoPlus } from "react-icons/go";
 import { MOBILEMAINMENU } from "../../../utility/screen";
-
+import { HeaderAddress, KeywordAddress } from "../../../utility/region";
+import { FaChevronRight } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
+import { useSleep } from "../../../utility/common";
+import localforage from 'localforage';
 const Container = styled.div``;
 
 const LogoText = styled.div`
@@ -28,29 +32,53 @@ const LogoText = styled.div`
 
 
 const Mobileheader = ({callback, registbtn, name}) => {
+
+  const {value} = useSelector((state)=> state.menu);
   const navigation = useNavigate();
   const { user, dispatch } = useContext(UserContext);
   const [refresh, setRefresh] = useState(1);
   const [registbutton, setReigstbutton] = useState(false);
+  const [address_name, setAddress_name] = useState(user.address_name);
 
   useEffect(() => {
-
+    setAddress_name(address_name);
     setReigstbutton(registbutton);
   }, [refresh]);
 
 
+  useLayoutEffect(()=>{
+    console.log("TCL: Mobileheader -> [value]", [value],user)
+
+    localforage.getItem('address_name')
+    .then(function(value) {
+      console.log("TCL: listener -> GetItem address_name", value)
+      setAddress_name(value);
+    })
+    .catch(function(err) {
+
+    });
+
+  
+    setRefresh((refresh) => refresh +1);
+  },[value])
+
+  useLayoutEffect(()=>{
+    console.log("TCL: Mobileheader -> [value]", [value],user)
+    setAddress_name(user.address_name);
+    setRefresh((refresh) => refresh +1);
+  },[useDispatch])
 
 
-/**
- * 둥록이 헤더쪽에 있기 때문에 일감 등록과 공간 등록을 구분할수 있어여 한다
- * 파라미터에서 들어온 name 을 가지고 등록유형을 구분하자
- */
-  const _handleRegister = () =>{
-    if(name == MOBILEMAINMENU.HOMEMENU){
-      navigation("/Mobileworkregister");
-    }else if(name == MOBILEMAINMENU.ROOMMENU){
-      navigation("/Mobileroomregister");
-    }
+
+
+  const _handlemapreconfig = () =>{
+
+    navigation("/Mobilemapreconfig");   
+
+  }
+
+  const _handleChat = () =>{
+    navigation("/Mobilechat");   
   }
 
 /**
@@ -83,45 +111,41 @@ useEffect(() => {
         position: "fixed",
         background: "#fff",
         width: "100%",
-        height: "60px",
+        height: "50px",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
+        justifyContent: "space-between",
+        fontFamily :"Pretendard-SemiBold"
   
       }}
     >
 
-      <div style={{paddingLeft:15, width:'30%', display:"flex", paddingBottom:10}}>
+      {/* <div style={{paddingLeft:15, width:'30%', display:"flex", paddingBottom:10}}>
         <img src={imageDB.pclogo} width={114} height={30} />
+      </div> */}
+
+
+
+      <div style={{paddingLeft:15, width:'80%', display:"flex",color:"#131313", fontSize:"16px",
+      display:"flex", justifyContent:"flex-start", alignItems:"center",
+      fontWeight:400}}>
+        <img src={imageDB.mappin} style={{width:20, height:20}} onClick={_handlemapreconfig}/>
+        <div style={{marginLeft:10, marginRight:10}}>{KeywordAddress(address_name)}</div>
+        <FaChevronRight onClick={_handlemapreconfig}/>
       </div>
 
+      <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:20, width:'10%'}}>
 
 
-      <div style={{paddingLeft:15, width:'50%', display:"flex",color:"#636363", fontSize:"14px",fontWeight:500}}>
-      남양주시 다산동
-      </div>
-
-      <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:10, width:'20%'}}>
-
-
-{/* 
-        <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} >
-          <Image source={imageDB.bell} containerStyle={{width:20}} />
-          <Badge badgeContent={0} color="warning"  style={{paddingBottom:15}}></Badge>
-        </div> */}
-        <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} onClick={()=>{}}>
+        <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} onClick={_handleChat}>
         <IoChatbubbleEllipsesOutline size={22} />
-          <Badge badgeContent={1} color="warning" style={{paddingBottom:15}} className="alertblink" ></Badge>
+          <Badge badgeContent={4} color="warning" style={{paddingBottom:15}} className="alertblink" ></Badge>
         </div>
       </div>
 
-      {/* {registbutton == true && (registbtn == true ) && (
-          <div className="RegisterMobileShowButton" onClick={_handleRegister}>
-            <GoPlus/> 등록</div>
-        )} */}
 
     
     </Container>
