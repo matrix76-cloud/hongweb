@@ -8,7 +8,7 @@ import { CiHeart } from "react-icons/ci";
 import { Column, FlexstartColumn } from "../common/Column";
 import PriceTable from "./PriceTable";
 import { distanceFunc } from "../utility/region";
-import { REQUESTINFO } from "../utility/work";
+import { REQUESTINFO } from "../utility/work_";
 import { imageDB, Seekimage } from "../utility/imageData";
 import { ROOMSIZE } from "../utility/room";
 
@@ -101,6 +101,15 @@ const style = {
   display: "flex"
 };
 
+const ImageLayer = styled.div`
+  width: 100%;
+  margin: 0px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+`
+
 const MobileRoomItem =({containerStyle, width, roomdata, onPress, index, selected}) =>  {
 console.log("TCL: MobileRoomItem -> roomdata", roomdata)
 
@@ -185,9 +194,14 @@ console.log("TCL: MobileRoomItem -> roomdata", roomdata)
         roomdata.ROOMTYPE == ROOMSIZE.LARGE && <RoomLargeType><span>{roomdata.ROOMTYPE}</span></RoomLargeType>
       } */}
 
-      <div style={{width:"100%", margin: '0 auto'}}>
-      <img src={getImage()} width={'100%'} height={224} style={{borderTopLeftRadius:10, borderTopRightRadius:10}}/>
-      </div>
+      <ImageLayer>
+      {
+        getImage() == '' ? (<img src={Seekimage(roomdata.ROOMTYPE)} style={{width:60, height:60, margin:'30px 0px'}}/>)
+        :(<img src={getImage()} width={'100%'} height={224} style={{borderTopLeftRadius:10, borderTopRightRadius:10}}/>)
+
+      }
+      </ImageLayer>
+
      <FlexstartColumn style={{width:"100%", position:'relative', marginTop:10}}>
       <Row style={{width:"100%"}}>
         <Column style={{width:"70%"}}>
@@ -211,7 +225,10 @@ console.log("TCL: MobileRoomItem -> roomdata", roomdata)
         <Column style={{width:"30%"}}>
             <div style={{background:"#F9F9F9", height:80, width:80, borderRadius:80,flexDirection:"column",
             display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <img src={Seekimage(roomdata.ROOMTYPE)} style={{width:42}}/>
+              {
+                getImage() == '' ? (<div style={{fontSize:10}}>등록된 사진 없음</div>) :(   <img src={Seekimage(roomdata.ROOMTYPE)} style={{width:42}}/>)
+              }
+         
             <div style={{fontSize:12}}>{roomdata.ROOMTYPE}</div>
             </div>
         </Column>

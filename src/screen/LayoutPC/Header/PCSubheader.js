@@ -313,7 +313,7 @@ const PCSubheader = ({callback, name, registmapbtn}) => {
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
             {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.COMMUNITYMENU)}}><MainMenuText clickstatus={PCMAINMENU.COMMUNITYMENU == mainmenustatus}>{PCMAINMENU.COMMUNITYMENU}</MainMenuText></Row>  */}
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.CHATMENU)}}><MainMenuText clickstatus={PCMAINMENU.CHATMENU == mainmenustatus}>{PCMAINMENU.CHATMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.LIVEINFORMATIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.LIVEINFORMATIONMENU == mainmenustatus}>{PCMAINMENU.LIVEINFORMATIONMENU}</MainMenuText></Row> 
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.LIVEINFORMATIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.LIVEINFORMATIONMENU == mainmenustatus}>{PCMAINMENU.LIVEINFORMATIONMENU}</MainMenuText></Row>  */}
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row> 
 
         

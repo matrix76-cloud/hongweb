@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { Column } from "../common/Column";
 import { UserContext } from "../context/User";
-import { REQUESTINFO } from "../utility/work";
+import { REQUESTINFO } from "../utility/work_";
 
 
 

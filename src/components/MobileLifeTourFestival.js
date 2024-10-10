@@ -18,6 +18,7 @@ import MobileMapPopup from "../modal/MobileMapPopup/MobileMapPopup";
 import { ReadTourFestival } from "../service/LifeService";
 import ResultLabel from "../common/ResultLabel";
 import { autoBatchEnhancer } from "@reduxjs/toolkit";
+import { LoadingCommunityStyle } from "../screen/css/common";
 
 
 const Container = styled.div`
@@ -276,7 +277,7 @@ const MobileLifeTourFestival =({containerStyle}) =>  {
 
 
         {
-          searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
+          searching == true ? (<LottieAnimation containerStyle={LoadingCommunityStyle}  animationData={imageDB.loading}
             width={"50px"} height={'50px'} />)
           :(
             <Column style={{marginTop:10,width:"100%",margin:"0 auto", paddingTop:"50px"}}>

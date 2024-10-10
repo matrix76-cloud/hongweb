@@ -82,11 +82,10 @@ export const EVENTTYPE={
 
 
 export const EventItems = [
-    {img : imageDB.sample20,img2 : imageDB.sample25, eventtype:EVENTTYPE.ATTENDANCE, desc : "매일매일 출석체크", date: "2024.08.01 ~ 2024.8.31"},
+    {img : imageDB.sample20,img2 : imageDB.sample25, eventtype:EVENTTYPE.ATTENDANCE, desc : "매일매일 출석체크", date: "2024.08.01 ~ 종료시까지"},
     {img : imageDB.sample21,img2 : imageDB.sample26, eventtype:EVENTTYPE.RULLET, desc : "무조건 당첨! 얼리버드 타임쿠폰 룰렛", date: "2024.08.01 ~ 종료시까지"},
     {img : imageDB.sample22,img2 : imageDB.sample27, eventtype:EVENTTYPE.NEWCUSTOMER, desc : "신규고객님을 위한 특별혜택", date: "2024.08.01 ~ 종료시까지"},
-    {img : imageDB.sample23,img2 : imageDB.sample28, eventtype:EVENTTYPE.HONGLADYREGIST, desc : "홍여사 가입혜택", date: "2024.08.01 ~ 2024.09.01"},
-    {img : imageDB.sample24,img2 : imageDB.sample29, eventtype:EVENTTYPE.HOTSUMMER, desc : "2024 핫썸머 이벤트", date: "2024.08.01 ~ 2024.09.31"},
+
 ]
 
 export const LoadingType = [
@@ -153,4 +152,45 @@ export const  CHATIMAGETYPE = {
     USERIMG : "사용자이미지",
 
 }
+
+export const INCLUDEDISTANCE = "5";
+export const CHECKDISTANCE = "5";
+
+export const PROFILEIMAGE ="https://firebasestorage.googleapis.com/v0/b/help-bbcb5.appspot.com/o/images%2Fperson.png?alt=media&token=0413209a-88c0-4893-b0f4-1f0bb94fb992";
   
+
+export const CHATCONTENTTYPE ={
+    ENTER :"입장",
+    EXIT : "퇴장",
+    TEXT : "대화",
+    IMAGE :"이미지",
+    FILE : "파일"
+}
+
+
+export const CONTACTTYPE ={
+    OWNER :"의뢰자서명완료",
+    SUPPROTER : "홍여사서명완료",
+    PAY : "결재완료",
+    COMPLETE :"작업완료",
+    ESCROCOMPLETE: "정산완료"
+}
+
+export const CHATSELECTFILTER ={
+	ALL : "전체",
+    OWNER : "내가 의뢰한",
+    SUPPORT : "나한테 지원한",
+    UNREAD : "안 읽은 채팅방"
+}
+
+export const CONFIGMOVE = {
+    PROFILECONFIG: "프로필",
+    PROFILENAME: "프로필이름변경",
+    PROFILEBADGE: "활동뱃지",
+    WORKERINFO: "홍여사등록",
+    WORKERAUTH: "신분증인증",
+    EVENTVIEW: "이벤트보기",
+    LAWPOLICY:"이용약관",
+    LAWPRIVACY :"개인정보 처리지침",
+    LAWGPS :"위치정보기반 수집동의 규정"
+}

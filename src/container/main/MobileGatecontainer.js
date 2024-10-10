@@ -9,7 +9,7 @@ import { Row } from "../../common/Row";
 import { DataContext } from "../../context/Data";
 import { UserContext } from "../../context/User";
 import { imageDB } from "../../utility/imageData";
-
+import Fade from "react-reveal/Fade";
 
 
 
@@ -30,15 +30,16 @@ const style = {
 };
 
 const MainLogoText = styled.div`
-  font-family: 'Pretendard-SemiBold';
+  font-family: 'JalnanGothic';
   font-size: 22px;
   color :#131313;
 `
 
 const SubText = styled.div`
-  font-family: 'Pretendard-Light';
+  font-family: 'Pretendard-SemiBold';
   font-size: 18px;
   color :#131313;
+  margin-top:10px;
 `
 
 /**
@@ -114,14 +115,19 @@ const MobileGatecontainer =({containerStyle}) =>  {
 
 
       <Column style={{height:'20%',justifyContent: 'flex-start'}}>
-        <SubText>일잘하는 동네 일꾼</SubText>
-        <SubText>홍여사를 만나서 집안일 도움 받으세요!</SubText>
+         <Fade bottom delay={500}>
+        <SubText style={{marginTop:20}}>일잘하는 동네 일꾼</SubText>
+        </Fade>
+        <Fade left delay={1500}>
+        <SubText style={{marginTop:20}}>홍여사를 만나고 집안일 도움 받으세요!</SubText>
+        </Fade>
       </Column>
 
       <Column style={{height:'30%', justifyContent:"center"}}>
 
 
-      <ButtonEx text={'시작하기'} width={'85%'}  onPress={_handlePhone} bgcolor={'#FF7125'} color={'#fff'} />
+      <ButtonEx text={'시작하기'} width={'85'}  
+      onPress={_handlePhone} bgcolor={'#FF7125'} color={'#fff'} />
       </Column>
     </Container>
   );

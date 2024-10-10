@@ -575,7 +575,7 @@ th:first-child, td:first-child {
 }
 
 .canvasStyle {
-  width: 320px;
+  width: 280px;
   height: 180px;
 }
 
@@ -767,3 +767,111 @@ react-calendar, .react-calendar *, .react-calendar *:before, .react-calendar *:a
   font-size:16px;
 
 }
+
+.payment-popup {
+  width: 100%;
+  height: 100vh; /* 화면 전체 높이 */
+  border: none;  /* 테두리 제거 */
+  max-width: 500px; /* 최대 너비 설정 */
+  max-height: 90vh; /* 최대 높이 설정 */
+}
+
+/* 팝업을 중앙에 위치시키기 위한 부모 컨테이너 스타일 */
+.popup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  z-index: 1000; /* 팝업의 z-index를 높게 설정 */
+}
+
+
+.max-w-540 {
+  max-width: 360px;
+  }
+  
+
+
+
+.btn {
+  padding: 11px 22px;
+  border: none;
+  border-radius:  8px;
+  
+  background-color: #f2f4f6;
+  color: #4e5968;
+  font-weight: 600;
+  font-size: 16px !important;
+  cursor: pointer;
+  width: 80%;
+  margin: 0 auto;
+  margin-left: 10%;
+  }
+  
+  .btn.primary {
+  background-color: #3282f6;
+  color: #f9fcff;
+  }
+  
+  .p-button {
+    font-size:12px !important;
+  }
+
+  .payment-widget-cache-8lmaif {
+    font-size:12px !important;
+  }
+
+
+  .hide-scrollbar {
+    overflow-y: scroll; /* Y축 스크롤은 허용 */
+    scrollbar-width: none; /* Firefox용 - 스크롤바 숨기기 */
+    background: transparent; /* 스크롤바 배경 투명화 */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera용 - 스크롤바 숨기기 */
+    width:0px;
+    scrollbar-width: none; /* Firefox용 - 스크롤바 숨기기 */
+    background: transparent; /* 스크롤바 배경 투명화 */
+  }
+
+  input::-webkit-input-placeholder {
+    color : #C3C3C3;
+    font-size:18px !important;
+
+  
+  }
+  input::placeholder {
+    color : #C3C3C3;
+    font-size:18px !important;
+
+  
+  }
+
+  #jumin-input::placeholder{
+    font-size:12px !important;
+    padding:unset;
+  }
+
+  .profile-progress-bar {
+    width: 100%;
+    height: 8px;  /* 높이 설정 */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  .profile-progress-bar::-webkit-progress-bar {
+    background-color: #f3f3f3; /* 백그라운드 색상 */
+    border-radius: 20px;       /* 테두리 모서리 둥글게 */
+  }
+  
+  .profile-progress-bar::-webkit-progress-value {
+    background-color: #FF4E19; /* 진행바 색상 */
+    border-radius: 20px;       /* 진행바 모서리 둥글게 */
+  }
+

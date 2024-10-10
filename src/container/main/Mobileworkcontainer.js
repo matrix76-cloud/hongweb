@@ -54,6 +54,7 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
   const [worktype, setWorktype] = useState('');
+  const [workstatus, setWorkstatus] = useState('');
 
   useLayoutEffect(() => {
   }, []);
@@ -68,6 +69,7 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
     setLoading(loading);
     setMessages(messages);
     setWorktype(worktype);
+    setWorkstatus(workstatus);
  
   },[refresh])
 
@@ -79,6 +81,7 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
 
       setMessages(workitem.WORK_INFO);
       setWorktype(workitem.WORKTYPE);
+      setWorkstatus(workitem.WORK_STATUS);
       setLoading(false);
       setRefresh((refresh) => refresh +1);
 
@@ -97,7 +100,7 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
         width={"100px"} height={'100px'}
         />) :( <Column>
           <div style={{marginTop: 70, color :'#131313', fontSize:16, width:'90%', marginLeft:5}}>고객님이 작성하신 요구 사항은 다음과 같습니다</div>
-          <MobileWorkReport messages={messages} WORK_ID = {WORK_ID} WORKTYPE={worktype}/>
+          <MobileWorkReport messages={messages} WORK_ID = {WORK_ID} WORKTYPE={worktype} WORK_STATUS={workstatus}/>
         </Column>)
     } 
     </Container>

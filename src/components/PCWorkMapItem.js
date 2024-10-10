@@ -15,7 +15,7 @@ import TimeAgo from 'react-timeago';
 import koreanStrings from "react-timeago/lib/language-strings/ko";
 import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
 import { getFullTime, WriteTimeCurrentTimeDiff } from "../utility/date";
-import { REQUESTINFO, WORKNAME } from "../utility/work";
+import { REQUESTINFO, WORKNAME } from "../utility/work_";
 import Button from "../common/Button";
 
 const formatter = buildFormatter(koreanStrings); 

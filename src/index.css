@@ -1,5 +1,16 @@
 
 @font-face {
+  font-family: "JalnanGothic";
+  font-weight: normal;
+  src: url("./fonts/JalnanGothicTTF.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Jalnan2";
+  font-weight: normal;
+  src: url("./fonts/Jalnan2TTF.ttf") format("truetype");
+}
+
+@font-face {
   font-family: "Pretendard-Light";
   font-weight: normal;
   src: url("./fonts/Pretendard-Light.woff") format("truetype");
@@ -54,7 +65,7 @@
 body {
   text-align: left;
   color: #3f4850;
-  font-family: "Pretendard-Regular","Pretendard-Light","Pretendard-Black","Pretendard-Bold","Pretendard-SemiBold","SF-Pro-Text-Regular","SF-Pro-Text-Semibold","free3of9", Helvetica, Arial, sans-serif;
+  font-family: "Pretendard-Regular","Pretendard-Light","Pretendard-Black","Pretendard-Bold","Pretendard-SemiBold","SF-Pro-Text-Regular","SF-Pro-Text-Semibold","free3of9", Helvetica, Arial, sans-serif,"Jalnan2";
   margin :unset;
   letter-spacing: -0.32px;
   overflow-x: hidden !important;

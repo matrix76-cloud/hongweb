@@ -6,6 +6,7 @@ import { COMMUNITYSTATUS, WORKSTATUS } from '../utility/status';
 import { useSleep } from '../utility/common';
 import randomLocation from 'random-location'
 import { distanceFunc } from '../utility/region';
+import Axios from 'axios';
 
 const authService = getAuth(firebaseApp);
 
@@ -72,7 +73,34 @@ export const CreateRoom = async({USERS_ID,ROOMTYPE,ROOM_INFO}) =>{
     }
 }
 
-export const ReadRoom = async({latitude, longitude})=>{
+export const CreateRoomInfo = async({USERS_ID,ROOMTYPE,ROOM_INFO}) =>{
+
+  let success = true;
+  const ROOMREF = doc(collection(db, "ROOMINFO"));
+  const id = ROOMREF.id;
+
+  try{
+     const newdata = {
+         ROOM_ID : id,
+         ROOMTYPE : ROOMTYPE,
+         ROOM_INFO : ROOM_INFO,
+         ROOM_STATUS : WORKSTATUS.OPEN,
+         CREATEDT : Date.now(),
+     }
+     await setDoc(ROOMREF, newdata);
+  
+  }catch(e){
+    console.log("TCL: CreateRoom -> error ",e.message )
+     
+      alert( e.message);
+      success =false;
+      return -1;
+  }finally{
+    return id;
+  }
+}
+
+export const ReadRoom = async({latitude, longitude, checkdistance =5})=>{
   const roomRef = collection(db, "ROOM");
 
   let roomitems = [];
@@ -90,7 +118,7 @@ export const ReadRoom = async({latitude, longitude})=>{
       const distance = distanceFunc(ROOM_INFONEW[FindIndex].latitude , ROOM_INFONEW[FindIndex].longitude,latitude,longitude );
       
 
-      if(distance < 5){
+      if(distance < checkdistance){
         roomitems.push(doc.data());
       }
     });
@@ -141,76 +169,139 @@ export const ReadAllRoom = async()=>{
   }
 }
 
-export const DefaultReadRoom = async({latitude, longitude})=>{
-  const roomRef = collection(db, "ROOM");
+export const DefaultReadRoom = async({currentlatitude, currentlongitude})=>{
+console.log("TCL: DefaultReadRoom -> currentlongitude", currentlongitude)
+console.log("TCL: DefaultReadRoom -> currentlatitude", currentlatitude)
 
-  let roomitems = [];
-  let success = false;
-  const q = query(roomRef,where("USERS_ID", "==", "01062149756"));
+  return new Promise(async (resolve, resject) => {
+    const roomRef = collection(db, "ROOMINFO");
 
-  try {
-    const querySnapshot = await getDocs(q);
-
-    let icount = 0;
-    querySnapshot.forEach((doc) => {
-    console.log("TCL: DefaultReadRoom -> ",doc.data() )
-
-      let item ={
-        CREATEDT :"",
-        ROOMTYPE : "",
-        ROOM_INFO : [],
-        ROOM_STATUS :""
-      }
- 
-      item.ROOMTYPE = doc.data().ROOMTYPE;
-
-      let ROOM_INFONEW = doc.data().ROOM_INFO;
-
-      const FindIndex = ROOM_INFONEW.findIndex(x=>x.requesttype == '지역');
-      const P = {
-        latitude: latitude,
-        longitude: longitude
-      }
-
-      const R = 2000 // meters
-      const randomPoint = randomLocation.randomCirclePoint(P, R);
-
-      const geocoder = new kakao.maps.services.Geocoder();
-
-      geocoder.coord2Address(randomPoint.longitude, randomPoint.latitude, async (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-          const address = result[0].address.address_name;
-      
-          ROOM_INFONEW[FindIndex].result = address;
-          ROOM_INFONEW[FindIndex].latitude = randomPoint.latitude;
-          ROOM_INFONEW[FindIndex].longitude = randomPoint.longitude;
-          item.ROOM_INFO = ROOM_INFONEW;
-          item.ROOM_STATUS = doc.data().ROOM_STATUS;
-          icount++;
-          roomitems.push(item);
-          if(querySnapshot.size == icount){
-            success = true;
-          }
+    let roomitems = [];
+    let success = false;
+    const q = query(roomRef);
   
+    try {
+      const querySnapshot = await getDocs(q);
+  
+      let icount = 0;
+      querySnapshot.forEach((doc) => {
+      console.log("TCL: DefaultReadRoom -> ", querySnapshot.size )
+  
+        let item ={
+          CREATEDT :"",
+          ROOMTYPE : "",
+          ROOM_INFO : [],
+          ROOM_STATUS :""
         }
-      });
-    });
-
-
-  } catch (e) {
-    console.log("error", e.message);
-  } finally {
-
-    await useSleep(3000);
-
-    return new Promise(async (resolve, resject) => {
-
    
+        item.ROOMTYPE = doc.data().ROOMTYPE;
+  
+        let ROOM_INFONEW = doc.data().ROOM_INFO;
+  
+        const FindIndex = ROOM_INFONEW.findIndex(x=>x.requesttype == '지역');
+        const P = {
+          latitude: currentlatitude,
+          longitude: currentlongitude
+        }
+  
+        const R = 5000 // meters
+        const randomPoint = randomLocation.randomCirclePoint(P, R);
+  
+        const geocoder = new kakao.maps.services.Geocoder();
+  
+        geocoder.coord2Address(randomPoint.longitude, randomPoint.latitude, async (result, status) => {
+          if (status === kakao.maps.services.Status.OK) {
+            const address = result[0].address.address_name;
+        
+            ROOM_INFONEW[FindIndex].result = address;
+            ROOM_INFONEW[FindIndex].latitude = randomPoint.latitude;
+            ROOM_INFONEW[FindIndex].longitude = randomPoint.longitude;
+            item.ROOM_INFO = ROOM_INFONEW;
+            item.ROOM_STATUS = doc.data().ROOM_STATUS;
+            icount++;
+            roomitems.push(item);
+            if(querySnapshot.size == icount){
+              console.log("TCL: DefaultReadRoom -> icount", icount ,querySnapshot.size)
+              success = true;
+
+              resolve(roomitems);
+            }
+    
+          }
+        });
+      });
+  
+  
+    } catch (e) {
+      console.log("error", e.message);
+    } finally {
+   
+    }
+
+  });
+}
+
+export const findRoomAndFunctionCallFromCurrentPosition = async({currentlatitude, currentlongitude, checkdistance}) =>{
+
+  let success = false;
+  try{
+
+    const readroomitems = await ReadAllRoom();
+
+    let bExist =false;
+
+    if(readroomitems != -1){
+      readroomitems.map((data)=>{
+        let ROOM_INFONEW = data.ROOM_INFO;
+        const FindIndex = ROOM_INFONEW.findIndex(x=>x.requesttype == '지역');
+        const distance = distanceFunc(ROOM_INFONEW[FindIndex].latitude , ROOM_INFONEW[FindIndex].longitude,currentlatitude,currentlongitude );
+  
+        if(distance < checkdistance){
+          bExist = true;
+        }
+      })
+    }
+
+
+    if(!bExist){
+      // function에 호출하자
+
+      const defaultreadroomitems = await DefaultReadRoom({currentlatitude, currentlongitude});
+      console.log("TCL: MobileSplashcontainer -> defaultreadroomitems", defaultreadroomitems)
+
+      const jsonPayload = {
+        roomitems: defaultreadroomitems,
+     
+      };
+      console.log("TCL: StartProcess -> defaultreadworkitems", defaultreadroomitems);
+  
+      Axios.post('https://asia-northeast1-help-bbcb5.cloudfunctions.net/api/newroom',  jsonPayload, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(async(response) =>{
+        console.log("TCL: ROOM -> post url", );
+
+        success = true;
+      })
+      .catch((error) => {
+        success = false;
+      })
+    }
+
+  }catch(e){
+
+
+  }finally{
+    return new Promise((resolve, resject) => {
       if (success) {
-        resolve(roomitems);
+        resolve(0);
       } else {
         resolve(-1);
       }
     });
   }
+
+
 }

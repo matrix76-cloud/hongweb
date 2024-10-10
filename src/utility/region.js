@@ -10,6 +10,14 @@ export const KeywordAddress =(address)=>{
 	return addr[0] + ' '+ addr[1] + ' ' + addr[2];
 }
 
+export const ChatAddress =(address)=>{
+
+	let addr = [];
+	addr = address.split(" ");
+
+	return addr[2];
+}
+
 
 export const HeaderAddress =(address)=>{
 
@@ -18,6 +26,15 @@ export const HeaderAddress =(address)=>{
 
 	return addr[1] + ' ' + addr[2];
 }
+
+export const CountryAddress =(address)=>{
+
+	let addr = [];
+	addr = address.split(" ");
+
+	return  addr[2];
+}
+
 
 export const SearchAddress = async(x, y) =>{    
 	let addr ='https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x='+x+'&y='+y;

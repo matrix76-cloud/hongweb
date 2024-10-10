@@ -7,7 +7,7 @@ import { imageDB, Seekimage } from "../../utility/imageData";
 import PCWorkItem from "../../components/PCWorkItem";
 import { AroundRow, BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import { Column, FlexstartColumn } from "../../common/Column";
-import { EventItems, EVENTTYPE, FILTERITMETYPE, LoadingType, PCCOMMNUNITYMENU, PCMAINMENU } from "../../utility/screen";
+import { EventItems, EVENTTYPE, FILTERITMETYPE, INCLUDEDISTANCE, LoadingType, PCCOMMNUNITYMENU, PCMAINMENU } from "../../utility/screen";
 import Communitymenu from "../../common/Communitymenu";
 import CommunityItem from "../../components/CommunityItem";
 import Empty from "../../components/Empty";
@@ -166,8 +166,8 @@ const PCRoomcontainer =({containerStyle}) =>  {
 
       setRoomitems(roomitems);
 
-      const serverroomitems = await ReadRoom();
-      setRoomitems(serverroomitems);
+      // const serverroomitems = await ReadRoom();
+      // setRoomitems(serverroomitems);
 
       FetchLocation();
 
@@ -184,7 +184,13 @@ const PCRoomcontainer =({containerStyle}) =>  {
 
     useEffect(()=>{
       async function FetchData(){
-        const serverroomitems = await ReadRoom();
+
+        const latitude = user.latitude;
+        const longitude = user.longitude;
+        const checkdistance = INCLUDEDISTANCE;
+
+        const serverroomitems = await ReadRoom({latitude, longitude,checkdistance});
+
         let items = FilterRoomitems(value, serverroomitems);
         setRoomitems(items);
       }

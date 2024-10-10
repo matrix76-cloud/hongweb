@@ -13,7 +13,7 @@ import { DataContext } from "../../context/Data";
 import { ReadWork } from "../../service/WorkService";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import Loading from "../../components/Loading";
-import { FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
+import { FILTERITMETYPE, INCLUDEDISTANCE, LoadingType, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
 import { WORKNAME } from "../../utility/work";
 import { useSelector } from "react-redux";
@@ -150,8 +150,7 @@ const PCMaincontainer =({containerStyle}) =>  {
       
       setWorkitems(workitems);
 
-      const serverworkitems = await ReadWork();
-      setWorkitems(serverworkitems);
+
 
       FetchLocation();
 
@@ -180,7 +179,16 @@ const PCMaincontainer =({containerStyle}) =>  {
 
   useEffect(()=>{
     async function FetchData(){
-      const serverworkitems = await ReadWork();
+
+
+      const latitude = user.latitude;
+      const longitude = user.longitude;
+      const checkdistance = INCLUDEDISTANCE;
+
+      const serverworkitems = await ReadWork({latitude, longitude,checkdistance});
+
+
+    
       let items = FilterWorkitems(value, serverworkitems);
       setWorkitems(items);
     }

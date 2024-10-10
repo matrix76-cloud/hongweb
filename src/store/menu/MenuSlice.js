@@ -1,12 +1,12 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { WORKNAME } from "../../utility/work";
+import { REFRESH, REFRESHTYPE, RESETTYPE, WORKNAME } from "../../utility/work";
 import { ROOMSIZE } from "../../utility/room";
 import { CONVENIENCEMENU, MEDICALMENU, PERFORMANCEMENU, TOURISTMENU } from "../../utility/life";
 
 const menuSlice = createSlice({
     name :"menu",
-    initialState :{value : WORKNAME.ALLWORK},
+    initialState :{value : ""},
     reducers :{
         ALLWORK : (state)=>{
             state.value  = WORKNAME.ALLWORK;
@@ -103,6 +103,12 @@ const menuSlice = createSlice({
         },
         CONVENIENCECAMPING: (state) =>{
             state.value = CONVENIENCEMENU.CONVENIENCECAMPING;
+        },
+        ALLREFRESH: (state) =>{
+            state.value = REFRESHTYPE;
+        },
+        RESET: (state) =>{
+            state.value = RESETTYPE;
         }
     }
 }
@@ -113,5 +119,5 @@ export const {ALLWORK, HOMECLEAN,BUSINESSCLEAN,
     GOHOSPITAL,RECIPETRANSMIT,GOSCHOOLEVENT,SHOPPING,GODOGHOSPITAL,GODOGWALK,ALLROOM, 
     SMALLROOM, MEDIUMROOM, LARGEROOM,
     TOURREGION,TOURFESTIVAL,TOURCOUNTRY,TOURCITY,TOURPICTURE,PERFORMANCEEVENT,PERFORMANCECINEMA,
-    MEDICALMEDICINE,MEDICALHOSPITAL, FOODHISTORY,FOODINFOMATION,CONVENIENCECAMPING} = actions;
+    MEDICALMEDICINE,MEDICALHOSPITAL, FOODHISTORY,FOODINFOMATION,CONVENIENCECAMPING,ALLREFRESH, RESET} = actions;
 export default reducer;

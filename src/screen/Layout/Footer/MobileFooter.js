@@ -42,7 +42,7 @@ const MobileFooter = ({type}) => {
     navigation("/Mobilecommunity");
   }
   const _handleConfig=()=>{
-    navigation("/config");
+    navigation("/Mobileconfig");
   }
 
 
@@ -92,9 +92,7 @@ const MobileFooter = ({type}) => {
                 <div
                   style={{
                     backgroundColor: "#FFF",
-                    borderRadius: "100px",
-                    border: "1px solid rgb(242 240 240)",
-                    height: 60,
+                    height: 50,
                     width: 60,
                     display: "flex",
                     justifyContent: "center",
@@ -109,7 +107,8 @@ const MobileFooter = ({type}) => {
                   <div
                     style={{
                       display: "flex",
-                      marginBottom: 10,
+                      paddingTop: "5px",
+                      paddingBottom: "10px",
                       justifyContent: "center",
                       alignItems: "center",
                     }}
@@ -130,7 +129,7 @@ const MobileFooter = ({type}) => {
                       color: "#9b9b9b",
                       paddingTop: 3,
                       position: "absolute",
-                      top: 15,
+                      top: 40,
                     }}
                   >
                     내주변

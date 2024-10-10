@@ -20,4 +20,14 @@ tr {
 
     font-size: 14px;
    
-  }
+}
+.workcontact-table tr td:first-child {
+    text-align:left;
+    background-color: #FAFAFA;
+    font-weight: 600;
+    min-width: 60px;
+    max-width: 60px;
+}
+.workcontact-table tr td{
+    padding: 3px;
+}

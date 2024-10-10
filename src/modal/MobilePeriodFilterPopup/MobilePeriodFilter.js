@@ -303,24 +303,43 @@ const MainData = styled.div`
   justify-content:center;
 `
 
+// const MainDataItem = styled.div`
+// padding :10px 15px;
+// justify-content : center;
+// align-items : center;
+// border-radius :5px;
+
+
+// background: ${({check}) => check == true ? ('#fff') :('#fff') };
+// border:  ${({check}) => check == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
+
+// margin-left :10px;
+// margin-bottom: 10px;
+// display:flex;
+// `
+// const MainDataItemText = styled.span`
+// font-size :13px;
+// font-family : ${({theme}) =>theme.REGULAR};
+// color: ${({check}) => check == 1 ? ('#131313') :('#131313') };
+
+// `
+
 const MainDataItem = styled.div`
-padding :10px 15px;
-justify-content : center;
-align-items : center;
-border-radius :5px;
-
-
-background: ${({check}) => check == true ? ('#fff') :('#fff') };
-border:  ${({check}) => check == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
-
-margin-left :10px;
-margin-bottom: 10px;
-display:flex;
+    padding: 5px 10px;
+    justify-content: space-evenly;
+    align-items: center;
+    display: flex;
+    border-radius: 5px;
+    width: 40%;
+    background-color: #fff;
+    margin-left: 10px;
+    margin-bottom: 10px;
 `
 const MainDataItemText = styled.span`
-font-size :13px;
-font-family : ${({theme}) =>theme.REGULAR};
-color: ${({check}) => check == 1 ? ('#131313') :('#131313') };
+  font-size :16px;
+  font-weight:500;
+  font-family : ${({theme}) =>theme.REGULAR};
+  color :  ${({check}) => check == 1 ? "#FF4E19" : "#000" };  
 
 `
 const ApplyItem = styled.div`

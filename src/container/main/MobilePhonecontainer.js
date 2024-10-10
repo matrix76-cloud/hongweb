@@ -19,10 +19,16 @@ import "firebase/compat/firestore";
 import "firebase/compat/storage";
 import { signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "../../api/config";
-import { get_phonenumber, Read_userphone, Update_userdevice } from "../../service/UserService";
-import { useSleep } from "../../utility/common";
+import { get_phonenumber, readuserbyphone, Read_userphone, Update_userdevice, Update_usertoken } from "../../service/UserService";
+import { sleep, useSleep } from "../../utility/common";
 import { v4 as uuidv4 } from 'uuid';
 import localforage from 'localforage';
+import Axios from "axios";
+import MobileWarningPopup from "../../modal/MobileWarningPopup/MobileWarningPopup";
+import { LoadingSearchAnimationStyle } from "../../screen/css/common";
+import LottieAnimation from "../../common/LottieAnimation";
+
+import "../../screen/css/common.css"
 
 const Container = styled.div`
   display : flex;
@@ -44,7 +50,6 @@ const Label = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 22px;
 
-
 `
 const style = {
   display: "flex"
@@ -55,7 +60,8 @@ const style = {
 const SubText = styled.div`
   padding-left: 18px;
   margin-top: 10px;
-  font-family: 'Pretendard-Light';
+  font-family: 'Pretendard';
+  line-height:1.8;
 `
 const Inputstyle ={
   border: '1px solid #C3C3C3',
@@ -79,7 +85,7 @@ const CodeInputstyle ={
 }
 const ReqButton = styled.div`
   height: 44px;
-  width: 85%;
+  width: 90%;
   margin : 0 auto;
   border-radius: 4px;
   background: ${({enable}) => enable == true ? ('#FF7125') :('#dbdada')};
@@ -87,7 +93,8 @@ const ReqButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-family:"Pretendard-SemiBold";
+  font-size: 18px;
 
 `
 /**
@@ -110,7 +117,7 @@ const MobilePhonecontainer =({containerStyle}) =>  {
   const [reqcode, setReqcode] = useState('');
   const [reqcodebtnenable, setReqcodebtnenable] = useState(false);
 
-  const [minutes, setMinutes] = useState(2);
+  const [minutes, setMinutes] = useState(1);
   const [seconds, setSeconds] = useState(0);
   const [authstart, setAuthstart] = useState(false);
   const [verifyCode, setVerifyCode] = useState('');
@@ -122,6 +129,9 @@ const MobilePhonecontainer =({containerStyle}) =>  {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [confirmationResult, setConfirmationResult] = useState(null);
+
+  const [registfail, setRegistfail] = useState(false);
+  const [requestloading, setRequestloading] = useState(false);
 
 
   useLayoutEffect(() => {
@@ -138,6 +148,8 @@ const MobilePhonecontainer =({containerStyle}) =>  {
     setVerifycodebtnenable(verifycodebtnenable);
     setReqcode(reqcode);
     setAuthstart(authstart);
+    setRegistfail(registfail);
+    setRequestloading(requestloading);
   },[refresh])
 
   /**
@@ -153,6 +165,10 @@ const MobilePhonecontainer =({containerStyle}) =>  {
     if(!reqcodebtnenable){
       return;
     }
+
+    setRequestloading(true);
+    setRefresh((refresh) => refresh +1);
+
     const getRandom1 = (min, max) =>
     Math.floor(Math.random() * (max - min) + min);
     console.log(getRandom1(1, 10));
@@ -167,60 +183,35 @@ const MobilePhonecontainer =({containerStyle}) =>  {
     console.log(getRandom4(1, 10));
     let code = String(getRandom1(1, 10)) +String(getRandom2(1, 10)) + String(getRandom3(1, 10)) + String(getRandom4(1, 10));
 
+
+    const jsonPayload = {
+      receivenum: phone,
+      authcode : code
+    };
+
+
+    Axios.post('https://asia-northeast1-help-bbcb5.cloudfunctions.net/api/smssend',  jsonPayload, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then((response) =>{
+    })
+    .catch((error) => console.error('Error:', error));
+
+    
+
+    await sleep(1000);
+
+    setRequestloading(false);
+    setRefresh((refresh) => refresh +1);
+
+
     setReqcode(code);
     setAuthstart(true);
 
 
-    const setupRecaptcha = () => {
-      // Ensure recaptcha-container element exists
-      if (document.getElementById('recaptcha-container')) {
-          const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-              size: 'invisible', // Use 'invisible' if you don't want reCAPTCHA to be visible
-              callback: (response) => {
-                  console.log('reCAPTCHA solved');
-              },
-              'expired-callback': () => {
-                  console.log('reCAPTCHA expired');
-              }
-          });
-
-          recaptchaVerifier.render().then(async (widgetId) => {
-              window.recaptchaVerifier = recaptchaVerifier;
-              console.log("TCL: setupRecaptcha -> recaptchaVerifier", recaptchaVerifier);
-
-              try {
-                const appVerifier = window.recaptchaVerifier;
-                console.log("TCL: _handleReqcode -> appVerifier", appVerifier)
-                if (!appVerifier) {
-                    console.error('RecaptchaVerifier is not initialized');
-                    return;
-                }
-                const result = await auth.signInWithPhoneNumber("+821062149756", appVerifier);
-                setConfirmationResult(result);
-                console.log('Verification code sent');
-              } catch (error) {
-                console.error('Error sending verification code:', error);
-              }
-
-
-
-
-          }).catch((error) => {
-              console.error('Error rendering reCAPTCHA:', error);
-          });
-      } else {
-          console.error('recaptcha-container element not found');
-      }
-    };
-
-    setupRecaptcha();
-
-
-
-
-
-
-    console.log("TCL: StartProcess -> code", code)
+    // console.log("TCL: StartProcess -> code", code)
     setRefresh((refresh) => refresh +1);
   } 
 
@@ -233,9 +224,18 @@ const MobilePhonecontainer =({containerStyle}) =>  {
    * 
    */
   const _handleCheck = async() =>{
+
+
+    if(reqcode != verificationCode ){
+      setRegistfail(true);
+      setRefresh((refresh) => refresh +1);
+      return;
+    }
+
     const PHONE = phone;
-    const userdata = await Read_userphone({PHONE});
-    console.log("TCL: _handleCheck -> userdata", userdata)
+    const userdata = await readuserbyphone({PHONE});
+
+    // console.log("TCL: _handleCheck -> userdata", userdata)
 
     user.phone = PHONE;
     dispatch(user);
@@ -243,33 +243,40 @@ const MobilePhonecontainer =({containerStyle}) =>  {
     if(userdata == -1){
       navigate("/mobilepolicy");
     }else{
-      let uniqueId = uuidv4();
+      
    
-      localforage.setItem('uniqueId', uniqueId)
-      .then(function(value) {
-        console.log("TCL: listener -> setItem", value)
+      const DEVICEID = userdata.USERINFO.deviceid;
+      const TOKEN = user.token;
+      const LATITUDE = user.latitude;
+      const LONGITUDE = user.longitude;
 
+      if(TOKEN != ''){
+        const usertoken = await Update_usertoken({DEVICEID, TOKEN });
+      }
+
+      // new Promise(resolve => setTimeout(resolve, 1000));
+
+      await sleep(1000);
+      user.users_id = userdata.USERS_ID;
+      user.nickname = userdata.USERINFO.nickname;
+      user.deviceid = DEVICEID;
+      user.userimg = userdata.USERINFO.userimg
+
+      dispatch(user);
+
+    
+
+
+      localforage.setItem('userconfig', user)
+      .then(function(value) {
+        navigate("/mobilemain");
       })
       .catch(function(err) {
         console.error('데이터 저장 실패:', err);
       });
 
 
-      const DEVICEID = uniqueId;
-      const TOKEN = user.token;
-      const LATITUDE = user.latitude;
-      const LONGITUDE = user.longitude;
-      
-      const userupdate = await Update_userdevice({DEVICEID, TOKEN, LATITUDE, LONGITUDE,PHONE});
-      new Promise(resolve => setTimeout(resolve, 1000));
-      user.users_id = userdata.USERS_ID;
-      user.nickname = userdata.NICKNAME;
-      user.deviceid = DEVICEID;
 
-
-      dispatch(user);
-
-      navigate("/mobilemain");
     }
    
   }
@@ -284,6 +291,9 @@ const MobilePhonecontainer =({containerStyle}) =>  {
         if (parseInt(seconds) === 0) {
         if (parseInt(minutes) === 0) {
             clearInterval(countdown);
+
+            setReqcode("");
+            setRefresh((refresh) => refresh +1);
         } else {
             setMinutes(parseInt(minutes) - 1);
             setSeconds(59);
@@ -298,7 +308,7 @@ const MobilePhonecontainer =({containerStyle}) =>  {
  
   const scrollToInput = () => {
     
-    console.log("TCL: scrollToInput -> ", )
+    // console.log("TCL: scrollToInput -> ", )
     // 요소를 화면 중앙에 위치시킴
     varifyCoderef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -308,20 +318,54 @@ const MobilePhonecontainer =({containerStyle}) =>  {
     }, 300); // smooth 스크롤의 애니메이션 시간이 약간의 지연을 줌  
   }
 
+  const handleKeyDown = (event)=>{
+    if (event.key === 'Enter') {
+      _handleCheck();  // Enter 키가 눌렸을 때 클릭 효과를 트리거합니다.
+    }
+  }
+
+  const handlePhoneKeyDown = (event)=>{
+    if (event.key === 'Enter') {
+      if(reqcodebtnenable){
+        _handleReqcode();  // Enter 키가 눌렸을 때 클릭 효과를 트리거합니다.
+      }
+  
+    }
+  }
+
+  const registfailcallback = () =>{
+    setRegistfail(false);
+    setRefresh((refresh) => refresh +1);
+  }
 
   return (
 
     <>
-          <div id="recaptcha-container"></div>
+   
           <Container style={containerStyle}>
+
+           {
+              registfail == true && <MobileWarningPopup callback={registfailcallback} content ={'잘못된 인증코드 입니다. 다시 시도해주세요'} />
+           }
+
+          {
+              requestloading == true && 
+              <LottieAnimation containerStyle={LoadingSearchAnimationStyle} animationData={imageDB.loading}
+                width={"50px"} height={'50px'}
+              />
+
+          }
+
+
             <Column>
               <Label>휴대폰 번호를 인증해주세요.</Label>
               <SubText>홍여사는 휴대폰 번호로 가입해요. 번호는 안전하게 보관 되며 어디에도 공개 되지 않습니다</SubText>
-              <div style={{width:"85%", margin:"20px auto"}}>
+              <div style={{width:"90%", margin:"20px auto"}}>
                 <input  style={Inputstyle} type="number" placeholder="휴대폰 번호를 입력해주세요"
                       value={phone}
+                      onKeyDown={handlePhoneKeyDown} // Enter 키를 감지하는 이벤트
                       onChange={(e) => {
-                      console.log("TCL: MobilePhonecontainer -> e", e.target.value.length)
+                      // console.log("TCL: MobilePhonecontainer -> e", e.target.value.length)
 
                       if(e.target.value.length == 11){
                         setReqcodebtnenable(true);
@@ -338,17 +382,18 @@ const MobilePhonecontainer =({containerStyle}) =>  {
             {
               authstart == true &&
               <Fragment>
-                <Column style={{width:"85%", margin:"10 auto"}}>
-                  <input type="text"
+                <Column style={{width:"90%", margin:"10 auto"}}>
+                  <input type="number"
                       ref = {varifyCoderef}
                       style={CodeInputstyle}
                       placeholder ={"인증번호"}
                       onFocus={scrollToInput}
                       onClick={scrollToInput}
-                      value ={verifyCode}
+                      value ={verificationCode}
+                      onKeyDown={handleKeyDown} // Enter 키를 감지하는 이벤트
                       onChange = {e => {
-                          setVerifyCode(e.target.value);
-
+                  
+                          setVerificationCode(e.target.value);
                           if(e.target.value.length == 4){
                             setVerifycodebtnenable(true);
                             setRefresh((refresh) => refresh +1);

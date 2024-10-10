@@ -8,7 +8,7 @@ import { CiHeart } from "react-icons/ci";
 import { Column, FlexstartColumn } from "../common/Column";
 import PriceTable from "./PriceTable";
 import { distanceFunc } from "../utility/region";
-import { REQUESTINFO } from "../utility/work";
+import { REQUESTINFO } from "../utility/work_";
 import { imageDB } from "../utility/imageData";
 import { ROOMSIZE } from "../utility/room";
 

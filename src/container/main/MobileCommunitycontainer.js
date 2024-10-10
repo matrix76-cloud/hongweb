@@ -42,7 +42,6 @@ import MobileLifeFamily from "../../components/MobileLifeFamily";
 import MobileLifeConvenience from "../../components/MobileLifeConvenience";
 
 const Container = styled.div`
-  padding:50px 15px 0px 15px;
   height: calc(-50px + 100vh);
 `
 
@@ -75,8 +74,8 @@ const Box = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  width:${({clickstatus}) => clickstatus == true ? ('30%') :('30%')};
-  height : 100px;
+  width:${({clickstatus}) => clickstatus == true ? ('21.5%') :('21.5%')};
+  height : 70px;
   margin-right: 2px;
   z-index: 2;
   overflow-x: auto;
@@ -85,8 +84,7 @@ const Box = styled.div`
   margin-bottom: 10px;
   border: 1px solid #f0f0f0;
   border-radius: 10px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.3s ease;
+
 
 `
 
@@ -97,18 +95,18 @@ const Guide = styled.div`
   font-family: Pretendard-SemiBold;
   width: 100%;
   align-items: center;
-  padding-left: 5%;
+  padding-left: 5px;
   padding-top: 20px;
   padding-bottom: 10px;
   font-size:18px;
 
 `
-
+  // {name : TOURISTMENU.TOURPICTURE ,img :imageDB.tour},
 const CommunityItems =[
   {name : TOURISTMENU.TOURREGION ,img :imageDB.tour},
   {name : TOURISTMENU.TOURFESTIVAL ,img :imageDB.tour},
   {name : TOURISTMENU.TOURCOUNTRY ,img :imageDB.tourcountry},
-  {name : TOURISTMENU.TOURPICTURE ,img :imageDB.tour},
+
 
   {name : PERFORMANCEMENU.PERFORMANCEEVENT, img : imageDB.performance},
   {name : PERFORMANCEMENU.PERFORMANCECINEMA, img : imageDB.performance},
@@ -201,28 +199,25 @@ const MobileCommunitycontainer =({containerStyle}) =>  {
     {
 
       <Container style={containerStyle}>
-    
-
+  
         <Column style={{ position: "sticky",top: "50px"}}>
-            <Label label={'커뮤니티 서비스'}/>
+            <Label label={'커뮤니티 서비스'} />
+            <div style={{padding:'0px 15px'}}>
+              <Guide>
+                <div>편안한 <span style={{color:"#f75100"}}>라이프생활</span>을 위한 생활 팁</div>
+              </Guide>      
+              <FlexMenu>
+                {
+                  CommunityItems.map((data, index)=>(
+                    <Box onClick={()=>{_handlemenu(data.name)}} clickstatus={menu == data.name} >
+                      <img src={data.img} width={34}/>
+                      <div style={{ marginTop:10, fontSize:11}}>{data.name}</div>
+                    </Box>
+                  ))
+                }
+              </FlexMenu>
+            </div>
 
-            <Guide >
-              <div>편안한 <span style={{color:"#f75100"}}>라이프생활</span>을 위한 생활 팁</div>
-            </Guide>
-        
-            <FlexMenu>
-              {
-                CommunityItems.map((data, index)=>(
-                  <Box onClick={()=>{_handlemenu(data.name)}} clickstatus={menu == data.name}
-                  className="shadow-box"
-                  >
-                    <img src={data.img} width={44}/>
-                    <div style={{ marginTop:10}}>{data.name}</div>
-                  </Box>
-                ))
-              }
-            
-            </FlexMenu>
 
 
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "78320292657",
+    "project_id": "help-bbcb5",
+    "storage_bucket": "help-bbcb5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78320292657:android:826e4854c5866b21da9610",
+        "android_client_info": {
+          "package_name": "com.hongapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB32-zUGAM222zCj7bHJkdAITadp29rtmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

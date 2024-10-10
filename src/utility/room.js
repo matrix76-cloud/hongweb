@@ -1,4 +1,4 @@
-import { REQUESTINFO } from "./work"
+import { REQUESTINFO } from "./work_"
 
 export const ROOMSIZEDISPALY={
     ALLROOM : '전체보기',
@@ -9,12 +9,14 @@ export const ROOMSIZEDISPALY={
 }
 export const ROOMSIZE={
     ALLROOM : '전체보기',
-    SMALLER : '0.25평',
-    SMALL : '0.5평',
-    MEDIUM : '1평',
-    LARGE : '1.5평',
-    LARGER : '2평',
-    EXLARGE : '3평',
+    ONESIZE : '0.25평',
+    TWOSIZE : '0.5평',
+    THREESIZE : '0.75평',
+    FOURSIZE : '1평',
+    FIVESIZE : '1.25평',
+    SIXSIZE : '1.5평',
+    SEVENSIZE: '1.75평',
+    EIGHTSIZE:'2평'
 
 }
 

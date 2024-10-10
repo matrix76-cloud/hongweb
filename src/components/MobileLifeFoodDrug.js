@@ -17,6 +17,7 @@ import Border from "../common/Border";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp  } from "react-icons/io";
 import Empty from "./Empty";
+import { LoadingCommunityStyle } from "../screen/css/common";
 
 const Container = styled.div`
   margin : 0 auto;
@@ -300,8 +301,8 @@ const MobileLifeFoodDrug=({containerStyle}) =>  {
 
       <>
       {
-          searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
-            width={"100px"} height={'100px'}/>)
+          searching == true ? (<LottieAnimation containerStyle={LoadingCommunityStyle} animationData={imageDB.loading}
+            width={"50px"} height={'50px'}/>)
           :( <Column style={{ margin:"0 auto", width:'100%'}}>
 
         <FlexstartRow style={{width:"100%", marginTop:20, marginBottom:10, borderBottom: "1px solid #000"}}>

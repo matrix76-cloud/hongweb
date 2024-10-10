@@ -14,6 +14,8 @@ import { FaChevronRight } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useSleep } from "../../../utility/common";
 import localforage from 'localforage';
+import MobileSuccessPopup from "../../../modal/MobileSuccessPopup/MobileSuccessPopup";
+import MobileGpsPopup from "../../../modal/MobileGpsPopup/MobileGpsPopup";
 const Container = styled.div``;
 
 const LogoText = styled.div`
@@ -40,19 +42,20 @@ const Mobileheader = ({callback, registbtn, name}) => {
   const [registbutton, setReigstbutton] = useState(false);
   const [address_name, setAddress_name] = useState(user.address_name);
 
+  const [gpspopup, setGpspopup] = useState(false);
+
   useEffect(() => {
     setAddress_name(address_name);
     setReigstbutton(registbutton);
+    setGpspopup(gpspopup);
   }, [refresh]);
 
 
   useLayoutEffect(()=>{
-    console.log("TCL: Mobileheader -> [value]", [value],user)
-
-    localforage.getItem('address_name')
+    localforage.getItem('userconfig')
     .then(function(value) {
-      console.log("TCL: listener -> GetItem address_name", value)
-      setAddress_name(value);
+      console.log("TCL: listener -> GetItem value", value.address_name)
+      setAddress_name(value.address_name);
     })
     .catch(function(err) {
 
@@ -72,14 +75,28 @@ const Mobileheader = ({callback, registbtn, name}) => {
 
 
   const _handlemapreconfig = () =>{
-
     navigation("/Mobilemapreconfig");   
 
+  }
+
+  const  _handlemapgps = () =>{
+    setGpspopup(true);
+    setRefresh((refresh) => refresh +1);
+  }
+  const gpspopupcallback = () =>{
+    setGpspopup(false);
+    setRefresh((refresh) => refresh +1); 
   }
 
   const _handleChat = () =>{
     navigation("/Mobilechat");   
   }
+
+  const _handleAI = async() =>{
+    navigation("/Mobilesearch" ,{state :{search :""}});
+    setRefresh((refresh) => refresh +1);
+  }
+
 
 /**
  * 마우스를 움직일때 사라지고 없어지고 한다
@@ -123,28 +140,31 @@ useEffect(() => {
       }}
     >
 
-      {/* <div style={{paddingLeft:15, width:'30%', display:"flex", paddingBottom:10}}>
-        <img src={imageDB.pclogo} width={114} height={30} />
-      </div> */}
 
+     
 
+        <div style={{marginLeft:15, display:"flex",color:"#131313", fontSize:"16px",
+        display:"flex", justifyContent:"flex-start", alignItems:"center",fontFamily:"Pretendard-SemiBold",
+        fontWeight:400}}>
+          <img src={imageDB.honglogo} style={{width:60, height:23}}/>
+          <img src={imageDB.mappin} style={{width:20, height:20, marginLeft:5}} onClick={_handlemapgps}/>
+          <div style={{ marginRight:10}}>{KeywordAddress(address_name)}</div>
+          <FaChevronRight onClick={_handlemapreconfig}/>
 
-      <div style={{paddingLeft:15, width:'80%', display:"flex",color:"#131313", fontSize:"16px",
-      display:"flex", justifyContent:"flex-start", alignItems:"center",
-      fontWeight:400}}>
-        <img src={imageDB.mappin} style={{width:20, height:20}} onClick={_handlemapreconfig}/>
-        <div style={{marginLeft:10, marginRight:10}}>{KeywordAddress(address_name)}</div>
-        <FaChevronRight onClick={_handlemapreconfig}/>
-      </div>
+          {
+            gpspopup == true && <MobileGpsPopup callback={gpspopupcallback} />
+          }
 
-      <div style={{display:"flex", flexDirection:"row", justifyContent:"flex-end", marginRight:20, width:'10%'}}>
+        </div>
 
+     
+        <div style={{display:"flex", flexDirection:"row", alignItems:"center",paddingRight:20}} >
 
-        <div style={{display:"flex", flexDirection:"row", alignItems:"center"}} onClick={_handleChat}>
-        <IoChatbubbleEllipsesOutline size={22} />
+        <img src={imageDB.search} width={24} onClick={_handleAI} style={{paddingRight:10}}/>
+        <IoChatbubbleEllipsesOutline size={22}  onClick={_handleChat}/>
           <Badge badgeContent={4} color="warning" style={{paddingBottom:15}} className="alertblink" ></Badge>
         </div>
-      </div>
+    
 
 
     

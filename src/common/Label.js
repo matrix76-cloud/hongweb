@@ -11,12 +11,14 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   width: 100%;
-  padding-left: 10px;
   height: 50px;
   font-family: 'Pretendard-Regular';
   font-size: 16px;
   background : #F9F9F9;
   color :#131313;
+
+
+
 `
 
 const SubLabel= styled.div`
@@ -61,10 +63,7 @@ const Label =({containerStyle, label, sublabel}) =>  {
   return (
 
     <Container style={containerStyle}>
-        <div style={{fontSize:16, width:'120px', fontWeight:600}}>{label}</div>
-
-       
-
+        <div style={{fontFamily: 'Jalnan2', width:'140px', paddingLeft:15}}>{label}</div>
         <SubLabel>{sublabel}</SubLabel>
    
     </Container>

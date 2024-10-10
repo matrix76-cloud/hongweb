@@ -7,6 +7,7 @@ import { Column } from "../common/Column";
 import LottieAnimation from "../common/LottieAnimation";
 import { DataContext } from "../context/Data";
 import { UserContext } from "../context/User";
+import { LoadingCommunityStyle } from "../screen/css/common";
 import { ReadCampingRegion } from "../service/LifeService";
 import { useSleep } from "../utility/common";
 import { imageDB } from "../utility/imageData";
@@ -441,8 +442,8 @@ const MobileLifeCampingRegion =({containerStyle}) =>  {
         </PopupWorkEx>
       }
       {
-        currentloading == true  && <LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
-        width={'50px'} height={'50px'}/>
+        currentloading == true  && <LottieAnimation containerStyle={LoadingCommunityStyle} animationData={imageDB.loading}
+        width={"50px"} height={'50px'}/>
       }
 
       <div style={{position:"absolute", width:"100%"}}>

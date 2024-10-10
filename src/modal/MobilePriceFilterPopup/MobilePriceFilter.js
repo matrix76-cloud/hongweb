@@ -78,26 +78,46 @@ const MainData = styled.div`
   margin: 0 auto;
 `
 
+// const MainDataItem = styled.div`
+//   padding :10px 5px;
+//   justify-content : center;
+//   align-items : center;
+//   border-radius :5px;
+
+
+//   background: ${({check}) => check == true ? ('#fff') :('#fff') };
+//   border:  ${({check}) => check == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
+
+//   margin-left :10px;
+//   margin-bottom: 10px;
+//   display:flex;
+// `
+// const MainDataItemText = styled.span`
+//   font-size :13px;
+//   font-family : ${({theme}) =>theme.REGULAR};
+//   color: ${({check}) => check == 1 ? ('#131313') :('#131313') };
+
+// `
+
 const MainDataItem = styled.div`
-  padding :10px 5px;
-  justify-content : center;
-  align-items : center;
-  border-radius :5px;
-
-
-  background: ${({check}) => check == true ? ('#fff') :('#fff') };
-  border:  ${({check}) => check == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
-
-  margin-left :10px;
-  margin-bottom: 10px;
-  display:flex;
+    padding: 5px 10px;
+    justify-content: space-evenly;
+    align-items: center;
+    display: flex;
+    border-radius: 5px;
+    width: 40%;
+    background-color: #fff;
+    margin-left: 10px;
+    margin-bottom: 10px;
 `
 const MainDataItemText = styled.span`
-  font-size :13px;
+  font-size :16px;
+  font-weight:500;
   font-family : ${({theme}) =>theme.REGULAR};
-  color: ${({check}) => check == 1 ? ('#131313') :('#131313') };
+  color :  ${({check}) => check == 1 ? "#FF4E19" : "#000" };  
 
 `
+
 const ApplyItem = styled.div`
   display :flex;
   flex-direction : row;
@@ -134,10 +154,10 @@ const HeaderPopupline = styled.div`
 
 export const FILTERITEMMONEY ={
   ONE : "3만원 이하",
-  TWO : "3만원 이상 ~ 4만원 이하",
-  THREE : "4만원 이상 ~ 5만원 이하",
-  FOUR : "5만원 이상 ~ 6만원 이하",
-  FIVE : "6만원 이상 ~ 8만원 이하",
+  TWO : "3만원 ~ 4만원",
+  THREE : "4만원 ~ 5만원",
+  FOUR : "5만원 ~ 6만원",
+  FIVE : "6만원 ~ 8만원",
   SIX : "8만원 이상",
 }
 

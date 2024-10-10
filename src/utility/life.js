@@ -27,6 +27,9 @@ export const FAMILYMENU ={
 export const CONVENIENCEMENU ={
     CONVENIENCECAMPING : '전국캠핑장',
 }
+export const BOARDMENU ={
+    BOARD : '게시판',
+}
 
 export const MEDICALMENU ={
     MEDICALMEDICINE : '의약품개요',

@@ -115,7 +115,8 @@ const MobileStoreInfo  = ({containerStyle, height})=>{
             </StoreButtonView>
 
             <StoreBusinessView>
-                <StoreBusinessText>(주)에듀컴 사업자정보</StoreBusinessText>
+                    <StoreBusinessText style={{fontSize:12}}>(주)에듀컴 사업자등록번호 : 765-13-02236 통신판매업 신고번호 : 2024-다산-0881  </StoreBusinessText>
+                
             </StoreBusinessView>
             <StoreBusinessInfoView>
                 <StoreBusinessInfoText>

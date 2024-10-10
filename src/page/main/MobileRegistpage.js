@@ -7,7 +7,7 @@ import MobilePrevheader from "../../screen/Layout/Header/MobilePrevheader";
 import MobileLayout from "../../screen/Layout/Layout/MobileLayout";
 import PCLayout from "../../screen/LayoutPC/Layout/PCLayout";
 import { PCMAINMENU } from "../../utility/screen";
-import { WORKNAME } from "../../utility/work";
+
 
 
 

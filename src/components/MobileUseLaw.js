@@ -13,7 +13,6 @@ import { IoIosArrowUp  } from "react-icons/io";
 import { ref } from "firebase/storage";
 
 const Container = styled.div`
-    padding-top: 50px;
     font-size: 14px;
 `
 const RowItem = styled.div`

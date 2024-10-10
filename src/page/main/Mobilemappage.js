@@ -14,6 +14,9 @@ import MobilePrevLayout2 from "../../screen/Layout/Layout/MobileCommunityLayout"
 import PCLayout from "../../screen/LayoutPC/Layout/PCLayout";
 import { MOBILEMAINMENU, PCMAINMENU } from "../../utility/screen";
 import localforage from 'localforage';
+import { KeywordAddress } from "../../utility/region";
+import { useDispatch, useSelector } from "react-redux";
+import { RESET } from "../../store/menu/MenuSlice";
 const Container = styled.div`
 
 `
@@ -30,21 +33,25 @@ const MobileMappage =() =>  {
   const [refresh, setRefresh] = useState(1);
   const [address_name, setAddress_name] = useState(user.address_name);
 
+  const reduxdispatch = useDispatch();
+  const {value} = useSelector((state)=> state.menu);
+
+
   useLayoutEffect(()=>{
 
-
-    localforage.getItem('address_name')
+    localforage.getItem('userconfig')
     .then(function(value) {
-      console.log("TCL: listener -> GetItem address_name", value)
-      setAddress_name(value);
+      console.log("TCL: listener -> GetItem value", value.address_name)
+      setAddress_name(value.address_name);
     })
     .catch(function(err) {
 
     });
 
-  
     setRefresh((refresh) => refresh +1);
-  },[])
+  },[value])
+
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,7 +61,8 @@ const MobileMappage =() =>  {
   useEffect(()=>{
     async function FetchData(){
     } 
-    FetchData();
+    FetchData();    
+    reduxdispatch(RESET());
   }, [])
   useEffect(()=>{
     setAddress_name(address_name);
@@ -63,7 +71,7 @@ const MobileMappage =() =>  {
  
   return (
 
-    <MobileMapLayout name={address_name} type={MOBILEMAINMENU.REGIONMENU} image=''>
+    <MobileMapLayout name={KeywordAddress(address_name)} type={MOBILEMAINMENU.REGIONMENU} image=''>
         <MobileMapcontainer  ID={location.state.ID} TYPE={location.state.TYPE}  />
     </MobileMapLayout>
   );

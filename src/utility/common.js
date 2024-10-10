@@ -5,19 +5,7 @@ import axios from "axios";
 const isWeb = typeof window !== 'undefined'; // 웹 환경 확인
 
 
-export const getPlatform = () => {
-	if (isWeb) {
-		const userAgent = navigator.userAgent;
-		if (/iPad|iPhone|iPod/.test(userAgent)) {
-			return 'ios';
-		}
-		if (/Android/.test(userAgent)) {
-			return 'android';
-		}
-		return 'web';
-	}
-	return 'native'; // 네이티브 환경으로 간주
-};
+
 
 
 export  const isReactNativeWebView = ()=>{
@@ -73,6 +61,8 @@ export const searchposfromto = (data, firstpos, lastpos) =>{
 	const doc = parser.parseFromString(html, 'text/html');
 	return doc.body.textContent || '';
   }
+
+export const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const useSleep = delay => new Promise(resolve => setTimeout(resolve, delay));
 

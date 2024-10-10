@@ -10,6 +10,7 @@ import { useSleep } from "../../utility/common";
 import { imageDB } from "../../utility/imageData";
 
 import { ReadCampingRegion, ReadHospitalRegion, ReadHospitalRegion1, ReadPerformanceCinema, ReadPerformanceEvent, ReadTourCountry, ReadTourFestival, ReadTourPicture, ReadTourRegion } from "../../service/LifeService";
+import { INCLUDEDISTANCE } from "../../utility/screen";
 
 
 
@@ -141,13 +142,15 @@ const PCSplashcontainer =({containerStyle}) =>  {
 
     async function FetchData(){
 
-      const latitude = "37.630013553801";
-      const longitude = "127.15545777991";
-      const communityitems = await ReadCommunitySummary();
-      const workitems = await ReadWork();
-      const roomitems = await ReadRoom();
+      const latitude = user.latitude;
+      const longitude = user.longitude;
+      const checkdistance = INCLUDEDISTANCE;
 
-      data.communityitems = communityitems;
+      const workitems = await ReadWork({latitude, longitude,checkdistance});
+
+      const roomitems = await ReadRoom({latitude, longitude,checkdistance});
+
+  
       data.workitems = workitems;
       data.roomitems = roomitems;
 

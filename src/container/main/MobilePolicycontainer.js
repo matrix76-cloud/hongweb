@@ -13,9 +13,12 @@ import { DataContext } from "../../context/Data";
 import { UserContext } from "../../context/User";
 import { imageDB } from "../../utility/imageData";
 import { v4 as uuidv4 } from 'uuid';
-import { Create_userdevice, Update_userdevice } from "../../service/UserService";
+import { createuser, Create_userdevice, Update_userdevice } from "../../service/UserService";
 import { useSleep } from "../../utility/common";
 import localforage from 'localforage';
+import { CountryAddress } from "../../utility/region";
+import { _handleCreateName } from "../../utility/data";
+import { PROFILEIMAGE } from "../../utility/screen";
 
 
 
@@ -102,37 +105,56 @@ const MobilePolicycontainer =({containerStyle}) =>  {
 
 
   /**
+   * Mobilemain으로 이동하기전에 값을 세팅 해준다
    * USER를 생성하고 userContext 값에 최종적으로 설정된다
    * ! 최종적으로 userContext 값 설정
-   * 
+   * ! 현재 위치에 맞는 일감 정보와 공간 대여 정보를 가져 와서 DataContext에 설정해준다
+   * ! userContext 와 데이타베이스 그리고 설정 정보에 최신정보를 업데이트 해준다
+   * ! userContext에 이미 구한 전화번호등 기타 정보를 세팅 하기 위해 데이타 베이스관련작업을 먼저 한다
+   * ! userContext 
+   *   1) latitude
+   *   2) longidue
+   *   3) address 기타 정보
+   *   4) phone, nickname, deiviceid, users_id
    */
+   
   const _handleMain = async() =>{
     console.log("TCL: _handleMain -> _handleMain")
     
     let uniqueId = uuidv4();
-   
-    localforage.setItem('uniqueId', uniqueId)
+    let nickname = _handleCreateName(CountryAddress(user.address_name));
+    const USERINFO={
+      deviceid : uniqueId,
+      token : user.token,
+      phone : user.phone,
+      latitude : user.latitude,
+      longitude : user.longitude,
+      address_name : user.address_name,
+      nickname : nickname,
+      userimg : PROFILEIMAGE,
+
+    }
+    const DEVICEID = uniqueId;
+    const TOKEN = user.token;
+    const users_id = await createuser({USERINFO, DEVICEID, TOKEN});
+
+
+    user.users_id = users_id;
+    user.deviceid = uniqueId;
+
+    user.nickname =  nickname;
+    user.userimg = PROFILEIMAGE;
+    dispatch(user);
+
+    localforage.setItem('userconfig', user)
     .then(function(value) {
-      console.log("TCL: listener -> setItem", value)
+      console.log("TCL: userconfig save", value)
 
     })
     .catch(function(err) {
-      console.error('데이터 저장 실패:', err);
+      console.error('TCL : userconfig 데이터 저장 실패:', err);
     });
 
-
-    const DEVICEID = uniqueId;
-    const TOKEN = user.token;
-    const LATITUDE = user.latitude;
-    const LONGITUDE = user.longitude;
-    const PHONE = user.phone;
-    const NICKNAME = '멍청한 놈'
-    const userupdate = await Create_userdevice({DEVICEID, TOKEN, LATITUDE, LONGITUDE,PHONE,NICKNAME});
-    await useSleep(1000);
-
-    user.users_id =userupdate;
-    user.deviceid = DEVICEID;
-    user.nickname = NICKNAME;
     dispatch(user);
 
 

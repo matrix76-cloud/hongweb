@@ -20,6 +20,7 @@ import Axios from "axios";
 import { IoEllipseSharp } from "react-icons/io5";
 import ResultLabel from "../common/ResultLabel";
 import { ReadHospitalRegion1 } from "../service/LifeService";
+import { LoadingCommunityStyle } from "../screen/css/common";
 
 
 const Container = styled.div`
@@ -477,7 +478,7 @@ const MobileLifeMedicalHospital =({containerStyle}) =>  {
         </FlexstartRow>
         </Column>
         {
-          searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
+          searching == true ? (<LottieAnimation containerStyle={LoadingCommunityStyle} animationData={imageDB.loading}
             width={"50px"} height={'50px'}/>)
           :(
 

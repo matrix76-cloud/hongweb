@@ -31,7 +31,7 @@ const MobilePrevheader = ({callback, registbtn, name, iconname}) => {
   const { user, dispatch } = useContext(UserContext);
 
   const location = useLocation();
-  console.log("TCL: MobilePrevheader -> location", location.pathname);
+
 
 
 
@@ -66,7 +66,8 @@ const MobilePrevheader = ({callback, registbtn, name, iconname}) => {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        borderBottom: "1px solid #ededed"
+        borderBottom: "1px solid #ededed",
+        fontFamily:"Pretendard-SemiBold",
   
       }}
     >

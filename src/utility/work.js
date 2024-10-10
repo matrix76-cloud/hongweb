@@ -21,8 +21,11 @@ export const WORKNAME={
 
 }
 
+export const REFRESHTYPE= "REFRESH";
+export const RESETTYPE= "RESET";
+
 export const WORKPOLICY ={
-    HOMECLEAN :12,
+    HOMECLEAN :7,
     BUSINESSCLEAN :12,
     MOVECLEAN:12,
     FOODPREPARE: 12,
@@ -60,11 +63,13 @@ export const REQUESTINFO={
     DATE : "일자",
     MONEY : "금액",
     TARGET : "대상",
+    TIMEMONEY : "시간과 금액",
     TARGETAREA : "대상평수",
     TIME : "시간",
     CLEANINGTIME: "요청시간대",
     CUSTOMERGENDER : "고객님성별",
-    HELPGENDER : "요청성별",
+    HELP: "홍여사성별과연령대",
+    HELPGENDER : "홍여사성별",
     HELPAGE : "요청연령대",
     CUSTOMERREGION :"지역",
     COMMENT :"요구사항",
@@ -129,160 +134,99 @@ export const Requestcleanmessages =[
     },
     
     {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+
     {
-      type:"request", 
+      type:"requesttarget", 
       show:false, 
       index:5, 
-      info:"청소금액을 얼마로 하기를 원하시나여?",
+      info:"청소가 필요한 곳의 대상과 범위을 선택해주세요",
+      selected : false,
+      multiselect_enable:true, 
+      targetpositionselectitems:[
+        {selected : false, key:"아파트", request:"아파트", response:"아파트"},
+        {selected : false, key:"빌라", request:"빌라", response:"빌라"},
+        {selected : false, key:"단독주택", request:"단독주택", response:"단독주택"},
+        {selected : false, key:"오피스텔", request:"오피스텔", response:"오피스텔"},],
+      targetareaselectitems:[
+        {selected : false, key:"10평미만", request:"10평미만", response:"10평미만"},
+        {selected : false, key:"10평대", request:"10평대", response:"10평대"},
+        {selected : false, key:"20평대", request:"20평대", response:"20평대"},
+        {selected : false, key:"30평대", request:"30평대", response:"30평대"},
+        {selected : false, key:"40평대", request:"40평대", response:"40평대"},
+        {selected : false, key:"50평대", request:"50평대", response:"50평대"},]
+    },
+  
+  
+    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.TARGET,  result:""},
+  
+    {
+      type:"requesttimemoney", 
+      show:false, 
+      index:7, 
+      info:"청소시간을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
-      selectitems:[
+      timeselectitems:[
+      {selected : false, key:"3시간", request:"3시간", response:"3시간"},
+      {selected : false, key:"4시간", request:"4시간", response:"4시간"},
+      {selected : false, key:"5시간", request:"5시간", response:"5시간"},
+      {selected : false, key:"청소끝날때까지", request:"하루종일", response:"하루종일"},],
+
+      moneyselectitems:[
         {selected : false, key:"최저임금", request:"최저임금", response:"최저임금"},
-        {selected : false, key:"2만원대", request:"2만원대", response:"2만원대"},
         {selected : false, key:"3만원대", request:"3만원대", response:"3만원대"},
         {selected : false, key:"4만원대", request:"4만원대", response:"4만원대"},
         {selected : false, key:"5만원대", request:"5만원대", response:"5만원대"},
         {selected : false, key:"6만원대", request:"6만원대", response:"6만원대"},
-        {selected : false, key:"7만원대", request:"7만원대", response:"7만원대"},
-        {selected : false, key:"8만원대", request:"8만원대", response:"8만원대"},
-        {selected : false, key:"9만원대", request:"9만원대", response:"9만원대"},
-        {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
-      ]
-    },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
-    {
-      type:"request", 
-      show:false, 
-      index:7, 
-      info:"청소가 필요한 곳을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-        {selected : false, key:"아파트", request:"아파트", response:"아파트"},
-        {selected : false, key:"빌라", request:"빌라", response:"빌라"},
-        {selected : false, key:"단독주택", request:"단독주택", response:"단독주택"},
-        {selected : false, key:"오피스텔", request:"오피스텔", response:"오피스텔"},]
+        {selected : false, key:"협의필요", request:"협의필요", response:"협의필요"},],
     },
   
-  
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
-  
+    {type:"response", responseshow : true, show:false, index:8,requesttype:REQUESTINFO.TIMEMONEY, result:""},
+
     {
-      type:"request", 
+      type:"requesthelp", 
       show:false, 
       index:9, 
-      info:"집은 몇평인가요?",
+      info:"도움주실분의 원하는 성별 과 연령대를 선택해주세요",
       selected : false,
       multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"10평미만", request:"10평미만", response:"10평미만"},
-      {selected : false, key:"10평대", request:"10평대", response:"10평대"},
-      {selected : false, key:"20평대", request:"20평대", response:"20평대"},
-      {selected : false, key:"30평대", request:"30평대", response:"30평대"},
-      {selected : false, key:"40평대", request:"40평대", response:"40평대"},
-      {selected : false, key:"50평대", request:"50평대", response:"50평대"},]},
-  
-      {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.TARGETAREA,  result:""},
-  
-    {
-      type:"request", 
-      show:false, 
-      index:11, 
-      info:"청소시간을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"3시간", request:"3시간", response:"3시간"},
-      {selected : false, key:"4시간", request:"4시간", response:"4시간"},
-      {selected : false, key:"5시간", request:"5시간", response:"5시간"},
-      {selected : false, key:"청소끝날때까지", request:"하루종일", response:"하루종일"},]},
-  
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.TIME, result:""},
-  
-    {
-      type:"request", 
-      show:false, 
-      index:13, 
-      info:"청소하는 시간대는 언제가 좋을까요?",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-        {selected : false, key:"협의가능", request:"협의가능", response:"협의가능"},
-        {selected : false, key:"오전시간", request:"오전시간", response:"오전시간"},
-        {selected : false, key:"오후시간", request:"오후시간", response:"오후시간"},
-        {selected : false, key:"저녁시간", request:"저녁시간", response:"저녁시간"},]},
-  
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
-  
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:15, 
-      info:"고객님의 성별은 무엇인가요?",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"남성", request:"남성", response:"남성"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:17, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
+      helpgenderselectitems:[
       {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
+      {selected : false, key:"여성", request:"여성", response:"여성"},],
+      helpageselectitems:[
+        {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
+        {selected : false, key:"20대", request:"20대", response:"20대"},
+        {selected : false, key:"30대", request:"30대", response:"30대"},
+        {selected : false, key:"40대", request:"40대", response:"40대"},
+        {selected : false, key:"50대", request:"50대", response:"50대"},
+        {selected : false, key:"60대", request:"60대", response:"60대"},]
   
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPGENDER, result:""},
+    },
   
+    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.HELP, result:""},
   
-    {
-      type:"request", 
-      show:false, 
-      index:19, 
-      info:"도움주실분의 연령대을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"20대", request:"20대", response:"20대"},
-      {selected : false, key:"30대", request:"30대", response:"30대"},
-      {selected : false, key:"40대", request:"40대", response:"40대"},
-      {selected : false, key:"50대", request:"50대", response:"50대"},
-      {selected : false, key:"60대", request:"60대", response:"60대"},
-    ]},
-  
-    {type:"response", responseshow : true, show:false, index:20,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:21,
+      index:11,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:12, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
 
     {
       type:"requestcomment", 
       show:false, 
-      index:23,
+      index:13,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:24, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:14, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
   
-    {type:"requestcomplete", show: false, index:25, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestbusinesscleanmessages =[

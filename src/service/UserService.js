@@ -120,7 +120,7 @@ export const get_userInfoForusername = async ({ USER_NICKNAME }) => {
   }
 };
 
-export const get_userInfoForUID = async({USERS_ID}) =>{
+export const getuserInfobyusers_id = async({USERS_ID}) =>{
  
     const userRef = collection(db, "USERS");
     
@@ -219,7 +219,66 @@ export const Create_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE, PH
   }
 }
 
-export const Read_userdevice = async({DEVICEID}) =>{
+export const createuser = async({USERINFO, DEVICEID, TOKEN}) =>{
+
+  let success = true;
+
+  let users_id = "";
+  try{
+
+     const userRef = doc(collection(db, "USERS"));
+     const id = userRef.id;
+     users_id =id;
+     const newuser = {
+         USERS_ID : id,
+         USERINFO : USERINFO,
+         DEVICEID : DEVICEID,
+         TOKEN : TOKEN,
+     }
+     await setDoc(userRef, newuser);
+   
+    
+
+  }catch(e){
+      console.log("auth ", e.message);
+      success =false;
+      return null;
+  }finally{
+    return users_id;
+  }
+}
+
+export const Readuserbyusersid = async({USERS_ID}) =>{
+  return new Promise(async (resolve, reject) => {
+    const userRef = collection(db, "USERS");
+    const q = query(userRef, where("USERS_ID",'==', USERS_ID ));
+
+    let success = false;
+    let searchitems = [];
+  
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        searchitems.push(doc.data());
+      });
+  
+      if (querySnapshot.size > 0) {
+        success = true;
+        resolve(searchitems[0]);
+      }else{
+        resolve(-1);
+      }
+    } catch (e) {
+      resolve(-1);
+    } finally {
+  
+    }
+
+  });
+
+
+}
+export const readuserbydeviceid = async({DEVICEID}) =>{
 
   const userRef = collection(db, "USERS");
   const q = query(userRef, where("DEVICEID",'==', DEVICEID ));
@@ -249,44 +308,69 @@ export const Read_userdevice = async({DEVICEID}) =>{
   }
 
 }
-export const Read_userphone = async({PHONE}) =>{
-
-  const userRef = collection(db, "USERS");
-  const q = query(userRef, where("PHONE",'==', PHONE ));
-
-  let success = false;
-  let searchitems = [];
-
-  try {
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      searchitems.push(doc.data());
-    });
-
-    if (querySnapshot.size > 0) {
-      success = true;
-    }
-  } catch (e) {
-    console.log("error", e.message);
-  } finally {
-    return new Promise((resolve, resject) => {
-      if (success) {
+export const readuserbyphone = async({PHONE}) =>{
+  return new Promise(async (resolve, reject) => {
+    const userRef = collection(db, "USERS");
+    const q = query(userRef);
+  
+    let searchitems = {};
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+  
+        if((doc.data().USERINFO.phone == PHONE)){
+          searchitems = doc.data();
+        }
+  
+      });
+  
+      if (searchitems.USERINFO != undefined) {
         resolve(searchitems);
-      } else {
+      }else{
         resolve(-1);
       }
-    });
-  }
+    } catch (e) {
+      console.log("error", e.message);
+      resolve(-1);
+    } finally {
+
+    }
+  });
+}
+export const readuser = async() =>{
+  return new Promise(async (resolve, reject) => {
+    const userRef = collection(db, "USERS");
+    const q = query(userRef);
+  
+    let searchitems = [];
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        searchitems.push(doc.data());
+      });
+  
+      if (searchitems.length > 0) {
+        resolve(searchitems);
+      }else{
+        resolve(-1);
+      }
+    } catch (e) {
+      console.log("error", e.message);
+      resolve(-1);
+    } finally {
+
+    }
+  });
+
 
 }
-
 export const Update_userdevice = async({DEVICEID, TOKEN, LATITUDE, LONGITUDE, PHONE}) =>{
 console.log("TCL: Update_userdevice -> Update_userdevice", DEVICEID, TOKEN, LATITUDE, LONGITUDE)
 
 
     const userRef = collection(db, "USERS");
 
-    const rows = query(userRef, where("PHONE",'==', PHONE ));
+    const rows = query(userRef, where("DEVICEID",'==', DEVICEID ));
 
     let docid = "";
     try{
@@ -310,6 +394,34 @@ console.log("TCL: Update_userdevice -> Update_userdevice", DEVICEID, TOKEN, LATI
     }
 
 }
+
+export const Update_usertoken = async({DEVICEID, TOKEN}) =>{
+  console.log("TCL: Update_usertoken -> Update_usertoken", DEVICEID, TOKEN)
+  
+  
+      const userRef = collection(db, "USERS");
+  
+      const rows = query(userRef, where("DEVICEID",'==', DEVICEID ));
+  
+      let docid = "";
+      try{
+          const querySnapshot =  await getDocs(rows);
+  
+          querySnapshot.forEach(function (doc) {
+  
+              docid = doc.id;
+              updateDoc(doc.ref, {
+                  TOKEN  : TOKEN,
+              });
+          });
+  
+      }catch(e){
+           console.log("error", e.message);
+      }finally{
+          return docid;
+      }
+  
+  }
 
 export const Update_tokendevice = async({DEVICEID, TOKEN}) =>{
   console.log("TCL: Update_userdevice -> Update_userdevice", DEVICEID, TOKEN)
@@ -339,8 +451,35 @@ export const Update_tokendevice = async({DEVICEID, TOKEN}) =>{
       }
   
 }
+
+export const updatealluserbydeviceid = async({USERINFO, DEVICEID}) =>{
+ 
+  const userRef = collection(db, "USERS");
+
+  const rows = query(userRef, where("DEVICEID",'==', DEVICEID ));
+
+  let docid = "";
+  try{
+      const querySnapshot =  await getDocs(rows);
+
+      querySnapshot.forEach(function (doc) {
+
+          docid = doc.id;
+          updateDoc(doc.ref, {
+            USERINFO  : USERINFO,
+        
+          });
+      });
+
+  }catch(e){
+        console.log("error", e.message);
+  }finally{
+      return docid;
+  }
+
+}
   
-export const Update_addrsbyusersid = async({ADDR, USERS_ID}) =>{
+export const Update_addrbyusersid = async({ADDR, USERS_ID}) =>{
   console.log("TCL:  -> Update_addrsbyusersid", USERS_ID)
   
   
@@ -357,7 +496,36 @@ export const Update_addrsbyusersid = async({ADDR, USERS_ID}) =>{
               docid = doc.id;
               updateDoc(doc.ref, {
       
-                ADDRESS: arrayUnion(ADDR) // 배열 필드에 값 추가
+                ADDRESSITEMS: arrayUnion(ADDR) // 배열 필드에 값 추가
+            
+              });
+          });
+  
+      }catch(e){
+           console.log("error", e.message);
+      }finally{
+          return docid;
+      }
+  
+}
+export const Update_addrItemsbyusersid = async({ADDRITEMS, USERS_ID}) =>{
+  console.log("TCL:  -> Update_addrsbyusersid", USERS_ID)
+  
+  
+      const userRef = collection(db, "USERS");
+  
+      const rows = query(userRef, where("USERS_ID",'==', USERS_ID ));
+  
+      let docid = "";
+      try{
+          const querySnapshot =  await getDocs(rows);
+  
+          querySnapshot.forEach(function (doc) {
+  
+              docid = doc.id;
+              updateDoc(doc.ref, {
+      
+                ADDRESSITEMS: ADDRITEMS // 배열 필드에 값 추가
             
               });
           });
@@ -390,3 +558,34 @@ export const get_phonenumber = async ()=>{
     }
 
 }
+
+export const Update_userinfobyusersid = async({USERINFO, USERS_ID}) =>{
+  console.log("TCL:  -> Update_namebyusersid", USERS_ID)
+  
+  
+      const userRef = collection(db, "USERS");
+  
+      const rows = query(userRef, where("USERS_ID",'==', USERS_ID ));
+  
+      let docid = "";
+      try{
+          const querySnapshot =  await getDocs(rows);
+  
+          querySnapshot.forEach(function (doc) {
+  
+              docid = doc.id;
+              updateDoc(doc.ref, {
+      
+                USERINFO: USERINFO 
+            
+              });
+          });
+  
+      }catch(e){
+           console.log("error", e.message);
+      }finally{
+          return docid;
+      }
+  
+}
+

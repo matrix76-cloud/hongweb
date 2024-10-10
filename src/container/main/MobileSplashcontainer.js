@@ -5,13 +5,13 @@ import LottieAnimation from "../../common/LottieAnimation";
 import { DataContext } from "../../context/Data";
 import { UserContext } from "../../context/User";
 import { ReadCommunitySummary } from "../../service/CommunityService";
-import { DefaultReadRoom, ReadAllRoom, ReadRoom } from "../../service/RoomService";
-import { DefaultReadWork, ReadAllWork, ReadWork } from "../../service/WorkService";
-import { getPlatform, isValidJSON, useSleep } from "../../utility/common";
+import { DefaultReadRoom, findRoomAndFunctionCallFromCurrentPosition, findRoomFromCurrentPosition, ReadAllRoom, ReadRoom } from "../../service/RoomService";
+import { DefaultReadWork, findWorkAndFunctionCallFromCurrentPosition, findWorkFromCurrentPosition, ReadAllWork, ReadWork } from "../../service/WorkService";
+import { useSleep } from "../../utility/common";
 import { imageDB } from "../../utility/imageData";
 import { ReadCampingRegion, ReadHospitalRegion, ReadHospitalRegion1, ReadPerformanceCinema, ReadPerformanceEvent, ReadTourCountry, ReadTourFestival, ReadTourPicture, ReadTourRegion } from "../../service/LifeService";
 import { LINKTYPE, MOVE } from "../../utility/link";
-import { Create_userdevice, Read_userdevice, Update_tokendevice, update_userdevice } from "../../service/UserService";
+import { Create_userdevice, readuserbydeviceid, Read_userdevice, updatealluserbydeviceid, Update_tokendevice, update_userdevice, Update_usertoken } from "../../service/UserService";
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,6 +20,8 @@ import Axios from "axios";
 import randomLocation from 'random-location'
 import { setStorage } from "../../utility/data";
 import { distanceFunc } from "../../utility/region";
+import { CHECKDISTANCE, INCLUDEDISTANCE, PROFILEIMAGE } from "../../utility/screen";
+import { fi } from "date-fns/locale";
 
 
 
@@ -57,10 +59,10 @@ const MobileSplashcontainer =({containerStyle}) =>  {
   const [height, setHeight] = useState(0);
 
   const elementRef = useRef(null);
+  const isWeb = typeof window !== 'undefined'; // 웹 환경 확인
 
   useLayoutEffect(() => {
     setHeight(elementRef.current.offsetHeight -10);
-    console.log("TCL: MobileMaincontainer -> elementRef.current.offsetWidth", elementRef.current.offsetHeight)
   }, []);
 
 
@@ -70,10 +72,40 @@ const MobileSplashcontainer =({containerStyle}) =>  {
   }, []);
 
 
-  // useEffect(()=>{
-  //   setSwitchscreen(switchscreen);
-  //   setWebview(true);
-  // },[refresh])
+  function getPlatform (){
+    if (isWeb) {
+        const userAgent = navigator.userAgent;
+        if (/iPad|iPhone|iPod/.test(userAgent)) {
+            return 'ios';
+        }
+        if (/Android/.test(userAgent)) {
+            return 'android';
+        }
+        return 'web';
+    }
+    return 'native'; // 네이티브 환경으로 간주
+  };
+
+
+  function isReactNativeWebView() {
+    return typeof window.ReactNativeWebView !== 'undefined';
+  }
+
+
+  function isValidJSON(jsonString) {
+    try {
+      JSON.parse(jsonString);
+      return true; // 파싱 성공
+    } catch (error) {
+      return false; // 파싱 실패
+    }
+  }
+
+
+  useEffect(()=>{
+    setSwitchscreen(switchscreen);
+    setWebview(true);
+  },[refresh])
 
 
    /**
@@ -85,26 +117,31 @@ const MobileSplashcontainer =({containerStyle}) =>  {
    * ! 2) 저장된 DEVICEID 가 있지만 서버에 동일한 DEVICEID가 없을때 : Splash => Gate => Phone => Main
    * ! 3) 저장된 DEVICEID 가 없을때: Splash => Gate => Phone => Policy => Main
    */
-  //  const listener = async (event) => {
-  //   if(getPlatform() === 'web'){
-  //     return;
-  //   }
-  //   if(!isValidJSON(event.data))
-  //     return;
-  //   }
-  //   const { appdata, type } = JSON.parse(event.data);
-  //   if (type === LINKTYPE.START) {
-  //     user.token = appdata.token;
-  //     dispatch(user);
-  //   }
-  // };
+   const listener = async (event) => {
+  
+    if(getPlatform() === 'web'){
+      return;
+    }
+    if(!isValidJSON(event.data)){
+      return;
+    }
 
-  // useEffect(() => {
-  //   document.addEventListener("message", listener);
-  //   /** ios */
-  //   window.addEventListener("message", listener);
 
-  // }, []);
+    const { data, type } = JSON.parse(event.data);
+
+    if (type === LINKTYPE.START) {
+      console.log("TCL: listener -> LINKTYPE.START", LINKTYPE.START, data.token);
+      user.token = data.token;
+      dispatch(user);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("message", listener);
+    /** ios */
+    window.addEventListener("message", listener);
+
+  }, []);
 
 
   /**
@@ -112,223 +149,161 @@ const MobileSplashcontainer =({containerStyle}) =>  {
    * ① 메인함수로 이동한다
    */
   useEffect(()=>{
-    // StartProcess();
+    StartProcess();
   }, [])
 
-  // const StartProcess2 = async()=>{
-
-  //   const readroomitems = await ReadAllRoom();
-
-  //   let bExist =false;
-  //   readroomitems.map((data)=>{
-  //     let ROOM_INFONEW = data.ROOM_INFO;
-  //     const FindIndex = ROOM_INFONEW.findIndex(x=>x.requesttype == '지역');
-  //     const distance = distanceFunc(ROOM_INFONEW[FindIndex].latitude , ROOM_INFONEW[FindIndex].longitude,user.latitude,user.longitude );
-
-  //     if(distance < 10){
-  //       bExist = true;
-  //     }
-  //   })
-
-  //   if(!bExist){
-  //     // function에 호출하자
-  //     const latitude = user.latitude;
-  //     const longitude = user.longitude;
-  //     const defaultreadroomitems = await DefaultReadRoom({latitude, longitude});
-  //     console.log("TCL: MobileSplashcontainer -> defaultreadroomitems", defaultreadroomitems)
-
-  //     const jsonPayload = {
-  //       roomitems: defaultreadroomitems,
-     
-  //     };
-  //     console.log("TCL: StartProcess -> defaultreadworkitems", defaultreadroomitems);
-  
-  //     Axios.post('https://asia-northeast1-help-bbcb5.cloudfunctions.net/api/newroom',  jsonPayload, {
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       }
-  //     })
-  //     .then(async(response) =>{
-  //       console.log("TCL: StartProcess -> post url", );
-
-  //       StartProcess3();
-  //     })
-  //     .catch((error) => {
-  
-  //     })
-
-  //   }else{
-     
-  //     StartProcess3();             
-    
-  //   }
-
-  // }
-  // const StartProcess3 = async()=>{
-  //   //Function 호출
-  //   const latitude = user.latitude;
-  //   const longitude = user.longitude;
-  //   const workitems = await ReadWork({latitude, longitude});
-  //   console.log("TCL: MobileSplashcontainer -> workitems", workitems)
-  //   const roomitems = await ReadRoom({latitude, longitude});
-
-  //   data.workitems = workitems;
-  //   data.roomitems = roomitems;
-  //   datadispatch(data);
-
-  //   let uniqueId = "";
-  //   localforage.getItem('uniqueId')
-  //   .then(async function(value) {
-  //     console.log("TCL: listener -> GetItem", value)
-
-  //     uniqueId = value;
-
-    
-  //     if (uniqueId == '') {
-  //       navigate("/Mobilegate");
-  //     }else{
-  
-  //       const DEVICEID = uniqueId;
-  //       const userdata = await Read_userdevice({DEVICEID});
-  //       console.log("TCL: StartProcess -> user", userdata)
-    
-  //       if(userdata == -1){
-  //         navigate("/Mobilegate");
-  //       }else{
-  //         console.log("TCL: FetchLocation -> data", data)
-  //         setRefresh((refresh) => refresh +1);
-  //         user.deviceid = uniqueId;
-  //         user.phone = userdata.PHONE;
-  //         user.nickname = userdata.NICKNAME;
-  //         user.users_id = userdata.USERS_ID;
-
-
-  //         dispatch(user);
-
-  //         setStorage(uniqueId, user.latitude, user.longitude, user.address_name, user.users_id);
-  
-  //         const DEVICEID = user.deviceid;
-  //         const TOKEN = user.token;
-  //         const userupdate = await Update_tokendevice({DEVICEID, TOKEN});
-
-  //         navigate("/Mobilemain");
-  //       }
-  
-  //     }
-
-  //   })
-  //   .catch(function(err) {
-  //   console.log("TCL: StartProcess -> storage fail ",);
-
-  
-  //   navigate("/Mobilegate");
-
-  //   });
-
-  
-  // }
   /**
-   * 모바일 웹에서 시작 
    * 현재 위치를 계산 하여 구한다음 1. 현재 위치로 주소 값을 구하여 userContext에 값을 설정 한다
-   * TODO 2. 현재 위치에서 해당 하는 정보 값에 대한 세팅 값을 먼저 설정하기 위해 Function을 호출한다. 
-   * 3. 일감 정보와 공간 대여정보를 세팅 해주고
-   * 4. 이미 로그인 되어 있는지 확인 해야 한다. 
-   * 5. 로그인 상태를 확인 하기 위해 스토리지값에서 값을 뺀다
-   * 6. 스토리지에 값이 있으면 스토리지로 해당 데이타 베이스에 값을 가져 와서 세팅 해준다
-   * 7. 데이타 베이스에 값이 없으면 /Mobilegate로 이동한다
-   * 8. 데이타 베이스에 값이 있으면 /Mobilemain으로 이동한다
-   * ! 8번 이라면 최종적으로 UserContext 값에 설정
-   * 6-1.스토리지에 값이 없으면 시작화면으로 이동한다 /Mobilegate
+   * ! 현재 위치에서 해당 하는 정보 값에 대한 세팅 값을 먼저 설정하기 위해 Function을 호출한다. 
+   * TODO 현재 위치를 잡아야 하기 때문애 시간이 오래걸릴수 있는 문제가 있다 나중에 해결 해야함
+   * ! room 정보와 work 정보가 현재 위치내에서 존재 하고 있는지 여부를 검사하고 존재 하지않으면
+   * 정보 디비에서 빼온 값을 인자로 해서 Functions을  호출해둔다
+   * 시간이 생명이다. 이러한 처리는 주소지 변경이나 현재 위치 재설정에서도 사용 된다(데이타가 있는것처럼 보여야 하기 때문에)
   */
-  // const StartProcess =() =>{
-  //   console.log("TCL: StartProcess")
-  //   navigator.geolocation.getCurrentPosition(
-  //     (pos) => {
-  //       const { latitude, longitude } = pos.coords;
-  //       setLocation({ latitude, longitude });
-  //       console.log("TCL: StartProcess -> latitude", latitude)
-  //       console.log("TCL: StartProcess -> longitude", longitude)
-  //       // Geocoder를 사용하여 좌표를 주소로 변환
-  //       const geocoder = new kakao.maps.services.Geocoder();
-  //       geocoder.coord2Address(longitude, latitude, async (result, status) => {
-  //         if (status === kakao.maps.services.Status.OK) {
-  //           const address = result[0].address;
+  
+  const StartProcess =() =>{
+    console.log("TCL: StartProcess")
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setLocation({ latitude, longitude });
+        console.log("TCL: StartProcess -> latitude", latitude)
+        console.log("TCL: StartProcess -> longitude", longitude)
+        // Geocoder를 사용하여 좌표를 주소로 변환
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.coord2Address(longitude, latitude, async (result, status) => {
+          if (status === kakao.maps.services.Status.OK) {
+            const address = result[0].address;
 
-  //           console.log("TCL: FetchLocation -> ", address);
-          
-  //           user.address_name = address.address_name;
-  //           user.region_1depth_name = address.region_1depth_name;
-  //           user.region_2depth_name = address.region_2depth_name;
-  //           user.region_3depth_name = address.region_3depth_name;
-  //           user.main_address_no = address.main_address_no;
-  //           user.latitude  = latitude;
-  //           user.longitude = longitude;
-           
-  //           dispatch(user);
-  //           console.log("TCL: FetchLocation -> ", user );
-
-  //           // 5km 내외에 현재 위치에 존재 하는 데이타가 있습니까?
-
-  //           const readworkitems = await ReadAllWork();
-
-  //           let bExist =false;
-  //           readworkitems.map((data)=>{
-
-  //             let WORK_INFONEW = data.WORK_INFO;
-
-  //             const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
-
-  //             const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,latitude,longitude );
-      
-        
-  //             if(distance < 5){
-  //               bExist = true;
-  //             }
-  //           })
-
-  //           if(!bExist){
-  //             // function에 호출하자
-  //             const defaultreadworkitems = await DefaultReadWork({latitude, longitude});
-
-  //             const jsonPayload = {
-  //               workitems: defaultreadworkitems,
-             
-  //             };
-  //             console.log("TCL: StartProcess -> defaultreadworkitems", defaultreadworkitems);
-          
-  //             Axios.post('https://asia-northeast1-help-bbcb5.cloudfunctions.net/api/newwork',  jsonPayload, {
-  //               headers: {
-  //                 "Content-Type": "application/json"
-  //               }
-  //             })
-  //             .then(async(response) =>{
-  //               console.log("TCL: StartProcess -> post url", );
-
-  //               StartProcess2();
-  //             })
-  //             .catch((error) => {
-          
-  //             })
-
-  //           }else{
-             
-  //             StartProcess2();             
+  
+            user.address_name = address.address_name;
+            user.latitude  = latitude;
+            user.longitude = longitude;
+            user.userimg = PROFILEIMAGE;
             
-  //           }
-  //         }else{
-  //          alert(status);
-  //         }
-  //       });
- 
-  //     },
-  //     (err) => {
-  //       console.error(err);
-  //       alert(err);
-  //     }
-  //   );
+            dispatch(user);
+            console.log("TCL: StartProcess  user setting -> ", user );
+
+            // 설정된 거리 내외에 현재 위치에 존재 하는 데이타가 있습니까?
+
+            const currentlatitude = latitude;
+            const currentlongitude = longitude;
+            const checkdistance = CHECKDISTANCE;
+            const workfunctioncall = await findWorkAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
+            const roomfunctioncall= await findRoomAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
+
+            FinalProcess();
+
+  
+          }else{
+            alert(status);
+          }
+        });
+  
+      },
+      (err) => {
+        console.error(err);
+        alert(err);
+      },
+      {
+          enableHighAccuracy: false,  // 높은 정확도 비활성화
+          timeout: 20000,             // 최대 20초 대기
+          maximumAge: 0              // 캐시된 위치 사용 안 함
+      }
+    );
 
 
-  // } 
+  } 
+   /**
+   * 설정 값이 존재하지 않는 다면 mobilegate로 이동 한다
+   * 설정 값이 존재 하지만 데이타 베이스에 설정값(디바이스아이디)에 맞는 데이타가 없다면 mobile phone으로 이동한다
+   * 설정 값이 존재 하고 데이타 베이스에 설정값(디바이스아이디)에 맞는 데이타가 있다면 mobile main으로 이동한다
+   * ! mobile main으로 이동하는 경우에는
+   * ! 현재 위치에 맞는 일감 정보와 공간 대여 정보를 가져 와서 DataContext에 설정해준다
+   * ! userContext 와 데이타베이스 그리고 설정 정보에 최신정보를 업데이트 해준다
+   * ! userContext에 이미 구한 전화번호등 기타 정보를 세팅 하기 위해 데이타 베이스관련작업을 먼저 한다
+   * ! userContext 
+   *   1) latitude
+   *   2) longidue
+   *   3) address 기타 정보
+   *   4) phone, nickname, deiviceid, users_id
+   */
+  const FinalProcess = async()=>{
+    //Function 호출
+    const latitude = user.latitude;
+    const longitude = user.longitude;
+    const checkdistance = INCLUDEDISTANCE;
+
+    const workitems = await ReadWork({latitude, longitude,checkdistance});
+    const roomitems = await ReadRoom({latitude, longitude,checkdistance});
+
+    data.workitems = workitems;
+    data.roomitems = roomitems;
+    datadispatch(data);
+
+
+
+
+    let userconfig = {};
+    localforage.getItem('userconfig')
+    .then(async function(value) {
+      console.log("TCL: Mobile MAIN  -> GetItem", value)
+      userconfig = value;
+      if (userconfig.deviceid  == undefined ||  userconfig.deviceid  =='') {
+        navigate("/Mobilegate");
+      }else{
+  
+        const DEVICEID = userconfig.deviceid;
+        const userdata = await readuserbydeviceid({DEVICEID});
+        console.log("TCL: StartProcess -> user", userdata);
+
+        const TOKEN = user.token;
+
+
+        if(TOKEN != ''){
+          const usertoken = await Update_usertoken({DEVICEID, TOKEN });
+        }
+
+
+        if(userdata == -1){
+          navigate("/Mobilegate");
+        }else{
+          console.log("TCL: Mobile MAIN -> DEVICEID 존재")
+          setRefresh((refresh) => refresh +1);
+          user.deviceid = userdata.DEVICEID;
+          user.phone = userdata.USERINFO.phone
+          user.nickname = userdata.USERINFO.nickname;
+          user.users_id = userdata.USERS_ID;
+          user.userimg = userdata.USERINFO.userimg;
+        
+          dispatch(user); // UserContext 에 address 정보 와 위치 정보, 토큰정보는 StartProcess와 초기 RN과 통신에서 이미 세팅 해둠
+
+          const USERINFO = user;
+          // 객체 저장
+          localforage.setItem('userconfig', USERINFO).then(async function () {
+            const DEVICEID = user.deviceid;
+            const userupdate = await updatealluserbydeviceid({USERINFO, DEVICEID});
+            
+          }).catch(function (err) {
+            console.error('Error saving userconfig:', err);
+          });
+          navigate("/Mobilemain");
+        }
+  
+      }
+
+    })
+    .catch(function(err) {
+    console.log("TCL: StartProcess -> storage fail ",);
+
+  
+    navigate("/Mobilegate");
+
+    });
+
+  
+  }
+
 
 
   return (

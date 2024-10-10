@@ -25,10 +25,11 @@ import { MdDataUsage, MdTurnedInNot } from "react-icons/md";
 import "./table.css";
 import { Requestlargemessages, Requestmediummessages, Requestroommessages, Requestsmallmessages, ROOMSIZE } from "../../utility/room";
 
-import { CreateWork } from "../../service/WorkService";
-import { CreateRoom } from "../../service/RoomService";
+import { CreateWork, CreateWorkInfo } from "../../service/WorkService";
+import { CreateRoom, CreateRoomInfo } from "../../service/RoomService";
 import ImageUploadComponent from "../../components/ImageUpload";
 import Label from "../../common/Label";
+import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
 
 
 
@@ -382,6 +383,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
 
+  const [registWorkSuccess, setRegistWorkSuccess] = useState(false);
+  const [registRoomSuccess, setRegistRoomSuccess] = useState(false);
+
   const useCommentRef= useRef(null);
   const useCompleteRef = useRef(null);
 
@@ -491,6 +495,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     setLatitude(latitude);
     setLongitude(longitude);
     setRoomimg(roomimg);
+    setRegistWorkSuccess(registWorkSuccess);
+    setRegistRoomSuccess(registRoomSuccess);
   },[refresh])
 
 
@@ -553,7 +559,64 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     setRefresh((refresh) => refresh +1);
   }   
 
+  const _handletargetpostioncheck = (index, key) =>{
+    
+    console.log("TCL: _handletargetpostioncheck -> ", messages[index] );
+    messages[index].targetpositionselectitems.map((data)=>{
+      data.selected = false;
+    })
+    const FindIndex = messages[index].targetpositionselectitems.findIndex(x=>x.key == key);
+    messages[index].targetpositionselectitems[FindIndex].selected= true;
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handletargetareacheck = (index, key) =>{
+    messages[index].targetareaselectitems.map((data)=>{
+      data.selected = false;
+    })
+    const FindIndex = messages[index].targetareaselectitems.findIndex(x=>x.key == key);
+    messages[index].targetareaselectitems[FindIndex].selected= true;
+    setRefresh((refresh) => refresh +1);
+  }
+  
 
+  const _handletimecheck = (index, key) =>{
+    
+    console.log("TCL: _handletargetpostioncheck -> ", messages[index] );
+    messages[index].timeselectitems.map((data)=>{
+      data.selected = false;
+    })
+    const FindIndex = messages[index].timeselectitems.findIndex(x=>x.key == key);
+    messages[index].timeselectitems[FindIndex].selected= true;
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handlemoneycheck = (index, key) =>{
+    messages[index].moneyselectitems.map((data)=>{
+      data.selected = false;
+    })
+    const FindIndex = messages[index].moneyselectitems.findIndex(x=>x.key == key);
+    messages[index].moneyselectitems[FindIndex].selected= true;
+    setRefresh((refresh) => refresh +1);
+  }
+
+
+  const _handlehelpgendercheck = (index, key) =>{
+    
+    console.log("TCL: _handletargetpostioncheck -> ", messages[index] );
+    messages[index].helpgenderselectitems.map((data)=>{
+      data.selected = false;
+    })
+    const FindIndex = messages[index].helpgenderselectitems.findIndex(x=>x.key == key);
+    messages[index].helpgenderselectitems[FindIndex].selected= true;
+    setRefresh((refresh) => refresh +1);
+  }
+  const _handlehelpagecheck = (index, key) =>{
+    messages[index].helpageselectitems.map((data)=>{
+      data.selected = false;
+    })
+    const FindIndex = messages[index].helpageselectitems.findIndex(x=>x.key == key);
+    messages[index].helpageselectitems[FindIndex].selected= true;
+    setRefresh((refresh) => refresh +1);
+  }
 
   /**
   * 선택하게 되면
@@ -664,6 +727,143 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     setRefresh((refresh) => refresh +1);
   }
+
+
+  /**
+   * 지역 선택
+   */
+  const _handleRegionNext = async(index) =>{
+
+    let data = seekstepcheck(index);
+
+    let str = totalset +"단계중 "+data+"단계를 설정하였습니다";
+    setStepdata(data);
+    setStepstr(str);
+
+  
+    messages[index].selected = true;
+    messages[index+1].show = true;
+    messages[index+1].result = address;
+    messages[index+1].latitude = latitude;
+    messages[index+1].longitude = longitude;
+    console.log("TCL: _handleRegionNext -> address", address,messages)
+    messages[index+2].show = true;
+
+   
+
+    setRefresh((refresh) => refresh +1);
+    await useSleep(500);
+    if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
+      || type == ROOMSIZE.MEDIUM
+      || type == ROOMSIZE.LARGE
+      || type == ROOMSIZE.EXLARGE
+      ){
+      useCompleteRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    }else{
+      useCommentRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
+    }
+ 
+
+  }
+
+  /**
+   * 타켓 선택
+   */
+  const _handleTargetNext = async(index) =>{
+
+    let data = seekstepcheck(index);
+
+    let str = totalset +"단계중 "+data+"단계를 설정하였습니다";
+    setStepdata(data);
+    setStepstr(str);
+
+  
+    messages[index].selected = true;
+    messages[index+1].show = true;
+    messages[index+1].result = "";
+
+    messages[index+2].show = true;
+
+   
+    setRefresh((refresh) => refresh +1);
+    await useSleep(500);
+
+    window.scrollTo({
+      top: window.scrollY + 150, // 스크롤할 Y 위치
+      behavior: 'smooth', // 부드럽게 스크롤
+    });
+
+
+  }
+
+ /**
+ * 시간과 금액 선택
+ */
+  const _handleTimeMoneyNext = async(index) =>{
+
+    let data = seekstepcheck(index);
+
+    let str = totalset +"단계중 "+data+"단계를 설정하였습니다";
+    setStepdata(data);
+    setStepstr(str);
+
+  
+    messages[index].selected = true;
+    messages[index+1].show = true;
+    messages[index+1].result = "";
+
+    messages[index+2].show = true;
+    console.log("TCL: _handleTimeMoneyNext -> messages", messages)
+
+    
+    setRefresh((refresh) => refresh +1);
+    await useSleep(500);
+
+    window.scrollTo({
+      top: window.scrollY + 150, // 스크롤할 Y 위치
+      behavior: 'smooth', // 부드럽게 스크롤
+    });
+
+
+  }
+
+
+  /**
+ * 도움받을 사람 선택
+ */
+  const _handleHelpNext = async(index) =>{
+
+    let data = seekstepcheck(index);
+
+    let str = totalset +"단계중 "+data+"단계를 설정하였습니다";
+    setStepdata(data);
+    setStepstr(str);
+
+  
+    messages[index].selected = true;
+    messages[index+1].show = true;
+    messages[index+1].result = "";
+
+    messages[index+2].show = true;
+
+    
+    setRefresh((refresh) => refresh +1);
+    await useSleep(500);
+
+    window.scrollTo({
+      top: window.scrollY + 150, // 스크롤할 Y 위치
+      behavior: 'smooth', // 부드럽게 스크롤
+    });
+
+
+  }
+
 
   const _handleCommentNext = async(index)=>{
     let data = seekstepcheck(index);
@@ -885,49 +1085,6 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
   }
 
 
-  /**
-   * 지역 선택
-   */
-  const _handleRegionNext = async(index) =>{
-
-    let data = seekstepcheck(index);
-
-    let str = totalset +"단계중 "+data+"단계를 설정하였습니다";
-    setStepdata(data);
-    setStepstr(str);
-
-  
-    messages[index].selected = true;
-    messages[index+1].show = true;
-    messages[index+1].result = address;
-    messages[index+1].latitude = latitude;
-    messages[index+1].longitude = longitude;
-    console.log("TCL: _handleRegionNext -> address", address,messages)
-    messages[index+2].show = true;
-
-   
-
-    setRefresh((refresh) => refresh +1);
-    await useSleep(500);
-    if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
-      || type == ROOMSIZE.MEDIUM
-      || type == ROOMSIZE.LARGE
-      || type == ROOMSIZE.EXLARGE
-      ){
-      useCompleteRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      });
-    }else{
-      useCommentRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-      });
-    }
- 
-
-  }
-
 
   const _handleReqComplete = async() =>{
 
@@ -950,10 +1107,12 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
       const ROOM_INFO = workinfo;
       const ROOMTYPE = type;
 
-      const work = await CreateRoom({USERS_ID, ROOMTYPE, ROOM_INFO});
-      alert("성공적으로 등록 되었습니다");
+      const room = await CreateRoomInfo({USERS_ID, ROOMTYPE, ROOM_INFO});
+
+      setRegistRoomSuccess(true);
+      
   
-      navigate("/Mobileroom");
+
 
 
     }else{
@@ -964,9 +1123,10 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
   
   
       const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO});
-      alert("성공적으로 등록 되었습니다");
-  
-      navigate("/Mobilemain");
+
+      setRegistWorkSuccess(true);
+
+   
     }
 
 
@@ -1070,8 +1230,28 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     setRefresh((refresh) => refresh +1);
   }
 
+
+  const worksuccesscallback =() =>{
+    setRegistWorkSuccess(false);
+    setRefresh((refresh) => refresh +1);
+    navigate("/Mobilemain");
+  }
+
+  const roomsuccesscallback =() =>{
+    setRegistRoomSuccess(false);
+    setRefresh((refresh) => refresh +1);
+    navigate("/Mobileroom");
+  }
+  
+
   return (
     <>
+      {
+        registWorkSuccess == true && <MobileSuccessPopup callback={worksuccesscallback} content ={'정상적으로 등록되었습니다'} />
+      }
+      {
+        registRoomSuccess == true && <MobileSuccessPopup callback={roomsuccesscallback} content={'정상적으로 등록되었습니다'} />
+      }
       <Container style={containerStyle}>
 
         <Row style={{background:"#fff", height:'120px', position:"fixed", zIndex:5, width:"100%", marginTop:50}}>
@@ -1257,6 +1437,125 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
               </div>      
             )}
 
+            {/* 대상 선택 */} 
+           {("requesttarget" == data.type && data.show == true) && (
+              <div className="fade-in-bottom" style={{width:"100%"}}>
+                <Itemlayer width={'70%'}>
+                    <ItemLeftBox width={'70%'}>
+                    <span>{data.info}</span> 
+                    
+                    <span>{'청소대상'}</span> 
+                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      { data.targetpositionselectitems.map((subdata)=>(
+                        <SelectLayer  check={subdata.selected} onClick={()=>{_handletargetpostioncheck(index, subdata.key)}}>
+                          <div>{subdata.request}</div>
+                          {
+                            subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                          }
+                          
+                        </SelectLayer>
+                      ))}
+                      </BetweenRow>
+                      <span>{'청소범위'}</span> 
+                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      { data.targetareaselectitems.map((subdata)=>(
+                        <SelectLayer  check={subdata.selected} onClick={()=>{_handletargetareacheck(index, subdata.key)}}>
+                          <div>{subdata.request}</div>
+                          {
+                            subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                          }
+                          
+                        </SelectLayer>
+                      ))}
+                      </BetweenRow>
+
+                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTargetNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                    
+                    </ItemLeftBox>       
+                  </Itemlayer>
+
+              </div>      
+            )}
+
+            {/* 시간과 금액 선텍 */} 
+            {("requesttimemoney" == data.type && data.show == true) && (
+              <div className="fade-in-bottom" style={{width:"100%"}}>
+                <Itemlayer width={'70%'}>
+                    <ItemLeftBox width={'70%'}>
+                    <span>{data.info}</span> 
+                    
+               
+                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      { data.timeselectitems.map((subdata)=>(
+                        <SelectLayer  check={subdata.selected} onClick={()=>{_handletimecheck(index, subdata.key)}}>
+                          <div>{subdata.request}</div>
+                          {
+                            subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                          }
+                          
+                        </SelectLayer>
+                      ))}
+                      </BetweenRow>
+                      <span>{'대상'}</span> 
+                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      { data.moneyselectitems.map((subdata)=>(
+                        <SelectLayer  check={subdata.selected} onClick={()=>{_handlemoneycheck(index, subdata.key)}}>
+                          <div>{subdata.request}</div>
+                          {
+                            subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                          }
+                          
+                        </SelectLayer>
+                      ))}
+                      </BetweenRow>
+
+                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTimeMoneyNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                    
+                    </ItemLeftBox>       
+                  </Itemlayer>
+
+              </div>      
+            )}
+            {/* 도움받을 사람 선택 */} 
+            {("requesthelp" == data.type && data.show == true) && (
+              <div className="fade-in-bottom" style={{width:"100%"}}>
+                <Itemlayer width={'70%'}>
+                    <ItemLeftBox width={'70%'}>
+                    <span>{data.info}</span> 
+                    
+               
+                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      { data.helpgenderselectitems.map((subdata)=>(
+                        <SelectLayer  check={subdata.selected} onClick={()=>{_handlehelpgendercheck(index, subdata.key)}}>
+                          <div>{subdata.request}</div>
+                          {
+                            subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                          }
+                          
+                        </SelectLayer>
+                      ))}
+                      </BetweenRow>
+                      <span>{'대상'}</span> 
+                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      { data.helpageselectitems.map((subdata)=>(
+                        <SelectLayer  check={subdata.selected} onClick={()=>{_handlehelpagecheck(index, subdata.key)}}>
+                          <div>{subdata.request}</div>
+                          {
+                            subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
+                          }
+                          
+                        </SelectLayer>
+                      ))}
+                      </BetweenRow>
+
+                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleHelpNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                    
+                    </ItemLeftBox>       
+                  </Itemlayer>
+
+              </div>      
+            )}
+
             {/* 지역 선택 */} 
             {("requestregion" == data.type && data.show == true) && (
             <div className="fade-in-bottom" style={{width:"100%"}}>
@@ -1350,7 +1649,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                     <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'100%',justifyContent: "space-between" }}>
           
                       <Button containerStyle={{border: '1px solid #C3C3C3', fontSize:16, marginTop:10, fontWeight:600}} onPress={_handleReset} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FFF'} color={'#131313'} text={'다시작성하기'}/>
-                      <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'요청하기'}/>
+                      <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'등록하기'}/>
 
                     </div>
                   </ItemLeftBox>  

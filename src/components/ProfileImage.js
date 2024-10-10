@@ -62,20 +62,9 @@ const ProfileImage =({containerStyle,imagetype, source,read}) =>  {
   return (
 
     <Container style={containerStyle}>
-        {/* {
-            imagetype  == CHATIMAGETYPE.HONGIMG &&<ImageLayout className={read == true ?(null):("border-animation")}>
-            <img src={source} style={{width:48, height:48}}/>
-            </ImageLayout>
-        }
-        {
-            imagetype  == CHATIMAGETYPE.USERIMG &&<ImageLayout className={read == true ?(null):("border-animation")}>
-            <img src={source} style={{width:48, height:48}}/>
-            </ImageLayout>
-        } */}
-            <ImageLayout>
-            <img src={source} style={{width:48, height:48}}/>
-            </ImageLayout>
-   
+      <ImageLayout>
+      <img src={source} style={{width:70, height:65}}/>
+      </ImageLayout>
     </Container>
   );
 

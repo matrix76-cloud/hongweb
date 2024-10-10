@@ -1,5 +1,5 @@
 import { ROOMSIZE } from "./room";
-import { WORKNAME } from "./work";
+import { WORKNAME } from "./work_";
 
 export const imageDB = {
   download: require("../assets/imageset/download.png"),
@@ -25,10 +25,15 @@ export const imageDB = {
   performance: require("../assets/imageset/performance.png"),
   expand: require("../assets/imageset/expand.png"),
   success: require("../assets/imageset/success.png"),
+  warning: require("../assets/imageset/warning.png"),
+  fail: require("../assets/imageset/fail.png"),
   dot : require("../assets/imageset/dot.png"),
+  heartoff: require("../assets/imageset/heartoff.png"),
 
   person : require("../assets/imageset/person.png"),
   logo: require("../assets/imageset/logo.png"),
+  logo2: require("../assets/imageset/logo2.png"),
+  honglogo : require("../assets/imageset/honglogo.png"),
   uploadenable : require("../assets/imageset/uploadenable.png"),
   uploaddisable : require("../assets/imageset/uploaddisable.png"),
   mobilebanner1 :require("../assets/imageset/mobilebanner1.png"),
@@ -40,12 +45,16 @@ export const imageDB = {
   mobilebanner7 :require("../assets/imageset/mobilebanner7.png"),
   mobilebanner8 :require("../assets/imageset/mobilebanner8.png"),
   mobilebanner9 :require("../assets/imageset/mobilebanner9.png"),
+  mobilebanner10 :require("../assets/imageset/mobilebanner10.png"),
+  mobilebanner11 :require("../assets/imageset/mobilebanner11.png"),
+  roomplus :require("../assets/imageset/roomplus.png"),
   movegps :require("../assets/imageset/movegps.png"),
   movegpsex :require("../assets/imageset/movegps.gif"),
   check_d:require("../assets/imageset/check_d.png"),
   check_e:require("../assets/imageset/check_e.png"),
   enablecheck:require("../assets/imageset/enablecheck.png"),
   filter:require("../assets/imageset/filter.png"),
+  filterblack:require("../assets/imageset/filterblack.png"),
   reset:require("../assets/imageset/reset.png"),
   memo:require("../assets/imageset/memo.png"),
   enablememo:require("../assets/imageset/enablememo.png"),
@@ -118,6 +127,7 @@ export const imageDB = {
   searchgif : require("../assets/imageset/search.gif"),
   sample38: require("../assets/imageset/sample38.png"),
   sample39: require("../assets/imageset/sample39.png"),
+  license: require("../assets/imageset/license.png"),
 
   communitylist1: require("../assets/imageset/communitylist1.png"),
   communitylist2: require("../assets/imageset/communitylist2.png"),

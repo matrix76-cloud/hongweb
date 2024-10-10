@@ -16,7 +16,10 @@ import { Column } from "../common/Column";
 import { DataContext } from "../context/Data";
 import MobileMapPopup from "../modal/MobileMapPopup/MobileMapPopup";
 import { ReadTourPicture } from "../service/LifeService";
-
+import { TOURISTMENU } from "../utility/life";
+import { GrTransaction } from "react-icons/gr";
+import { SlControlPlay } from "react-icons/sl";
+import { LoadingCommunityStyle } from "../screen/css/common";
 
 const Container = styled.div`
 
@@ -102,6 +105,30 @@ font-family:'Pretendard-Light';
 font-size:10px;
 `  
 
+const ButtonLayer = styled.div`
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content:center;
+`
+
+const FilterButton = styled.div`
+  background-color: #fff;
+  width: 120px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 20px;
+  border: 1px solid #999;
+  font-family: 'Pretendard-SemiBold';
+`
+
 const MobileLifeTourPicture =({containerStyle}) =>  {
 
 
@@ -154,7 +181,6 @@ const MobileLifeTourPicture =({containerStyle}) =>  {
           datadispatch(data);
         }
 
-        await useSleep(1000);
 
         setDisplayitems(data.tourpictureitem);
 
@@ -177,38 +203,55 @@ const MobileLifeTourPicture =({containerStyle}) =>  {
   //     document.body.style.overflow = 'unset';
   //   };
   // }, [show]);
- 
 
+  const _handleView =(index)=>{
+    navigate("/Mobiletourdetailpicture", {state:{index: index, items:displayitems, name:TOURISTMENU.TOURPICTURE}});
+  }
+
+  const _handleautoplay = (index) =>{
+    navigate("/Mobiletourautopicture", {state:{index: index, items:displayitems, name:TOURISTMENU.TOURPICTURE}});
+  }
+ 
   return (
 
     <Container style={containerStyle}>
         
         {
-          searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loading}
+          searching == true ? (<LottieAnimation containerStyle={LoadingCommunityStyle} animationData={imageDB.loading}
             width={"50px"} height={'50px  '} />)
           :(
-            <Row style={{flexWrap:"wrap", width:"100%"}}>      
-            {
-              displayitems.map((data, index)=>(
-              <>
+            <Column>
+              <Row style={{flexWrap:"wrap", width:"90%", margin: "0 auto"}}>      
               {
-                index < 1000 &&
-                  <div style={{width:'45%', margin:"10px auto",}}>
-                  <img src={data.galWebImageUrl} style={{width:"150px", height:"150px"}}/>
-              
-                  <LocationText>{data.galPhotographyLocation}</LocationText>
-                    <SearchText>
-                    {data.galSearchKeyword.slice(0, 25)}
-                    {data.galSearchKeyword.length > 25 ? "..." : null}
-                    </SearchText>
-                  </div>
+                displayitems.map((data, index)=>(
+                <>
+                {
+                    <div style={{width:'45%', margin:"10px auto",}} onClick={()=>{_handleView(index)}}>
+                    <img src={data.galWebImageUrl} style={{width:"150px", height:"150px"}}/>
                 
+                    <LocationText>{data.galPhotographyLocation}</LocationText>
+                      <SearchText>
+                      {data.galSearchKeyword.slice(0, 16)}
+                      {data.galSearchKeyword.length > 16 ? "..." : null}
+                      </SearchText>
+                    </div>
+                  
+                }
+                </>
+    
+              ))
               }
-              </>
-   
-            ))
-            }
-            </Row>)
+              </Row>
+              {/* <ButtonLayer>
+                <FilterButton onClick={()=>{_handleautoplay(0)}}>
+                 <SlControlPlay size={16}/>
+                  <div style={{fontSize:16}}>자동재생</div>
+                </FilterButton>
+              </ButtonLayer> */}
+            </Column>
+     
+            
+            )
         }
   
 

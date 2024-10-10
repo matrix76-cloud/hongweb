@@ -297,23 +297,42 @@ const MainData = styled.div`
   margin: 0 auto;
 `
 
-const MainDataItem = styled.div`
-  padding :10px;
-  justify-content : center;
-  align-items : center;
-  border-radius :5px;
+// const MainDataItem = styled.div`
+//   padding :10px;
+//   justify-content : center;
+//   align-items : center;
+//   border-radius :5px;
 
-  width: 40%;
-  background: ${({check}) => check == true ? ('#FF7125') :('#fff') };
-  border:  ${({check}) => check == true ? (null) :('1px solid #C3C3C3') };
-  display:flex;
-  margin-left :10px;
-  margin-bottom: 10px;
+//   width: 40%;
+//   background: ${({check}) => check == true ? ('#FF7125') :('#fff') };
+//   border:  ${({check}) => check == true ? (null) :('1px solid #C3C3C3') };
+//   display:flex;
+//   margin-left :10px;
+//   margin-bottom: 10px;
+// `
+// const MainDataItemText = styled.span`
+//   font-size :13px;
+//   font-family : ${({theme}) =>theme.REGULAR};
+//   color: ${({check}) => check == 1 ? ('#FFF') :('#131313') };
+
+// `
+
+const MainDataItem = styled.div`
+    padding: 5px 10px;
+    justify-content: space-evenly;
+    align-items: center;
+    display: flex;
+    border-radius: 5px;
+    width: 40%;
+    background-color: #fff;
+    margin-left: 10px;
+    margin-bottom: 10px;
 `
 const MainDataItemText = styled.span`
-  font-size :13px;
+  font-size :16px;
+  font-weight:500;
   font-family : ${({theme}) =>theme.REGULAR};
-  color: ${({check}) => check == 1 ? ('#FFF') :('#131313') };
+  color :  ${({check}) => check == 1 ? "#FF4E19" : "#000" };  
 
 `
 const ApplyItem = styled.div`
@@ -436,7 +455,16 @@ export default function MobileProcessFilter({filterhistory, callback}) {
 
             <MainData>
                 {WorkItems.map((data)=>(
-                    <MainDataItem check={filteraryexist(data.name)} onClick={()=>{_handleData(data.name)}}><MainDataItemText  check={filteraryexist(data.name)}>{data.name}</MainDataItemText></MainDataItem>
+                    <MainDataItem check={filteraryexist(data.name)} onClick={()=>{_handleData(data.name)}}>
+                      <MainDataItemText  check={filteraryexist(data.name)}>{data.name}</MainDataItemText>
+                      
+                      {
+                        filteraryexist(data.name) == false ? (<img src={imageDB.check_d} style={{width:16, paddingLeft:5}}/>):(
+                          <img src={imageDB.check_e} style={{width:16, paddingLeft:5}}/>
+                        )
+                      }
+
+                    </MainDataItem>
                 ))}
             </MainData>
   

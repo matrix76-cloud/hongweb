@@ -21,13 +21,16 @@ import PCWorkMapItem from "../../components/PCWorkMapItem";
 import { IoSearchCircle } from "react-icons/io5";
 import { ref } from "firebase/storage";
 import { useSleep } from "../../utility/common";
-import { REQUESTINFO, WORKNAME } from "../../utility/work";
+import { REFRESHTYPE, REQUESTINFO, WORKNAME } from "../../utility/work";
 import { FILTERITMETYPE, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
 import { ReadRoom } from "../../service/RoomService";
 import PCRoomMapItem from "../../components/PCRoomMapItem";
 import { ROOMSIZE } from "../../utility/room";
 import LottieAnimation from "../../common/LottieAnimation";
+import { useDispatch, useSelector } from "react-redux";
+import { RESET } from "../../store/menu/MenuSlice";
+import MobileServiceFilter from "../../modal/MobileServiceFilterPopup/MobileServiceFilter";
 
 const Container = styled.div`
     max-height:1000px;
@@ -80,13 +83,12 @@ const GuideButtonStyle={
 const ButtonLayer = styled.div`
   position: absolute;
   bottom: 20px;
-  width: 90%;
+  width: 100%;
   z-index: 2;
-  right: 3px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content:flex-start;
+  justify-content:center;
 `
 
 const MapBox = styled.div`
@@ -122,6 +124,18 @@ const LoadingAnimationStyle={
   left: "35%"
 }
 
+const FilterButton = styled.div`
+  background-color: #fff;
+  width: 80px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-evenly;
+  border-radius: 20px;
+  border: 1px solid #ededed;
+  font-family: 'Pretendard-SemiBold';
+`
 
 /**
 /**
@@ -145,6 +159,9 @@ const DetailMeter =300;
  */
 
 const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
+
+  const reduxdispatch = useDispatch();
+  const {value} = useSelector((state)=> state.menu);
 
   const { dispatch, user } = useContext(UserContext);
   const { datadispatch, data } = useContext(DataContext);
@@ -176,6 +193,8 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   const [menuary, setMenuary]= useState([]);
   const [currentloading, setCurrentloading] = useState(true);
 
+  const [servicepopup, setServicepopup] = useState(false);
+  const [servicefilter, setServicefilter] = useState([]);
 
   const itemRefs = useRef([]);
 
@@ -189,7 +208,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   }, []);
 
   useEffect(() =>{
-    menuary.push(WORKNAME.ALLWORK);
+
   }, [])
 
   useEffect(()=>{
@@ -205,6 +224,9 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     setCircle(circle);
     setMenuary(menuary);
     setCurrentloading(currentloading);
+    setServicepopup(servicepopup);
+    setServicefilter(servicefilter);
+
     
   },[refresh])
 
@@ -340,6 +362,11 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   const popupcallback = () =>{
     setPopupstatus(false);
     setRefresh((refresh) => refresh +1);
+  }
+
+  const _handleservicefilterpopup = () =>{
+    setServicepopup(true);
+    setRefresh((refresh) => refresh +1);  
   }
 
   const _handleMapExpand = () =>{
@@ -683,7 +710,6 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
       const longitude = user.longitude;
 
       const workdatas = await ReadWork({latitude, longitude});
-
       const roomdatas = await ReadRoom({latitude, longitude});
 
       let items = [];
@@ -710,7 +736,51 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
     } 
     FetchData();
+    reduxdispatch(RESET());
   }, [])
+
+  useLayoutEffect(()=>{
+
+    if(value != REFRESHTYPE){
+      return;
+    }
+
+    setCurrentloading(true);
+    async function FetchData(){
+
+      const latitude =user.latitude;
+      const longitude = user.longitude;
+
+      const workdatas = await ReadWork({latitude, longitude});
+      const roomdatas = await ReadRoom({latitude, longitude});
+
+      let items = [];
+
+      workdatas.map((data, index) =>{
+        data["TYPE"] = FILTERITMETYPE.HONG;
+        items.push(data);
+      })
+
+      roomdatas.map((data, index) =>{
+        data["TYPE"] = FILTERITMETYPE.ROOM;
+        items.push(data);
+      })
+      console.log("TCL: FetchData -> items", items);
+      setItems(items);
+      setDisplayitems(items);
+
+      ListmapDraw(items);
+
+      setCurrentloading(false);
+
+      setRefresh((refresh) => refresh +1);
+
+
+    } 
+    FetchData();
+ 
+
+  }, [value])
 
   const _handleSupport=()=>{}
   const _handleClose = () =>{
@@ -719,6 +789,102 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   }
   const positioncallback =()=>{}
 
+  const MobileServiceFilterCallback =(filterary) =>{
+
+    if(filterary.length != 0){
+      setMenuary(filterary);
+      console.log("TCL: MobileServiceFilterCallback -> filterary", filterary)
+    }
+
+    let filteritems = [];
+
+    items.map((data, index)=>{
+    if(menuary.includes(data.WORKTYPE)){
+      filteritems.push(data);
+    }
+    if(menuary.includes(data.ROOMTYPE)){
+      filteritems.push(data);
+    }
+  })
+  
+    setRefresh((refresh) => refresh +1);
+    console.log("TCL: _handleMenu -> menuary", menuary);
+
+    ListmapDraw(filteritems);
+
+
+    // let menuaryTmp = [];
+    // const FindIndex = menuary.findIndex(x=> x == menuname);
+    // let filteritems = [];
+
+    // if(menuname == WORKNAME.ALLWORK){
+    //   console.log("TCL: _handleMenu -> menuname", menuname, FindIndex, menuary);
+    //   if(FindIndex == -1){
+    //     menuaryTmp.push(menuname);
+
+    //     setMenuary(menuaryTmp);
+    //   }else{
+    //     setMenuary(menuaryTmp);
+    //   }
+    //   filteritems = items;
+
+    // }else{
+    //   if(FindIndex == -1){
+      
+    //     const allworkFindIndex = menuary.findIndex(x=> x == WORKNAME.ALLWORK);
+    //     if(allworkFindIndex != -1){
+    //       menuary.splice(allworkFindIndex, 1);
+    //     }
+
+    //     menuary.push(menuname);
+
+    //     if(menuname == FILTERITMETYPE.ROOM){
+    //       menuary.push(ROOMSIZE.SMALLER);
+    //       menuary.push(ROOMSIZE.SMALL);
+    //       menuary.push(ROOMSIZE.MEDIUM);
+    //       menuary.push(ROOMSIZE.LARGE);
+    //       menuary.push(ROOMSIZE.EXLARGE);
+    //       console.log("TCL: _handleMenu -> menuary", menuary)
+    //     }
+
+    //   }else{
+    //     menuary.splice(FindIndex, 1);
+
+    //     if(menuname == FILTERITMETYPE.ROOM){
+
+    //       let FindIndex = menuary.findIndex(x=>x == ROOMSIZE.SMALLER);
+    //       menuary.splice(FindIndex,1);
+    //       FindIndex = menuary.findIndex(x=>x == ROOMSIZE.SMALL);
+    //       menuary.splice(FindIndex,1);
+    //       FindIndex = menuary.findIndex(x=>x == ROOMSIZE.MEDIUM);
+    //       menuary.splice(FindIndex,1);
+    //       FindIndex = menuary.findIndex(x=>x == ROOMSIZE.LARGE);
+    //       menuary.splice(FindIndex,1);
+    //       FindIndex = menuary.findIndex(x=>x == ROOMSIZE.EXLARGE);
+    //       menuary.splice(FindIndex,1);
+
+    //     }
+    //   }
+    //   setMenuary(menuary);
+
+    //   items.map((data, index)=>{
+    //     if(menuary.includes(data.WORKTYPE)){
+    //       filteritems.push(data);
+    //     }
+    //     if(menuary.includes(data.ROOMTYPE)){
+    //       filteritems.push(data);
+    //     }
+    //   })
+
+    // }
+    // setRefresh((refresh) => refresh +1);
+    // console.log("TCL: _handleMenu -> menuary", menuary);
+
+    // ListmapDraw(filteritems);
+
+    setServicepopup(false);
+
+  }
   return (
     <>
  
@@ -729,7 +895,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
         </div>  
       </Row>
 
-      {
+      {/* {
    currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
     width={"100px"} height={'100px'}/>) :(       <ButtonLayer>
 
@@ -842,8 +1008,14 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
 
     </ButtonLayer>  )
-    }
+    } */}
 
+      <ButtonLayer>
+        <FilterButton onClick={_handleservicefilterpopup}>
+          <img src ={imageDB.filterblack} style={{width:16}}/>
+          <div style={{fontSize:16}}>필터</div>
+        </FilterButton>
+      </ButtonLayer>
 
       <div style={GuideLeftStyle}>
             <MapBoxControl onClick={_handleMapExpand}>+</MapBoxControl>
@@ -851,6 +1023,9 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
        </div>
    
 
+      {
+        servicepopup == true && <MobileServiceFilter callback={MobileServiceFilterCallback} filterhistory={menuary}/>
+      }
 
     </Container>
     </>

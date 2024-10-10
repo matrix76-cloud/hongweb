@@ -15,8 +15,8 @@ import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import Loading from "../../components/Loading";
 import { FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
-import { WORKNAME } from "../../utility/work";
-import { useSelector } from "react-redux";
+import { REFRESHTYPE, WORKNAME } from "../../utility/work";
+import { useDispatch, useSelector } from "react-redux";
 import { Column } from "../../common/Column";
 import MobileWorkItem from "../../components/MobileWorkItem";
 import Label from "../../common/Label";
@@ -45,7 +45,9 @@ const Container = styled.div`
 padding:50px 0px 0px 0px;
 width: 100%;
 margin : 0 auto;
-min-height:800px;
+height: calc(100vh - 50px);
+scrollbar-width: none; // 스크롤바 안보이게 하기
+overflow-x: hidden; /* X축 스크롤을 숨깁니다. */  
 `
 const SubContainer = styled.div`
   margin: 0 auto;
@@ -82,7 +84,7 @@ const Box = styled.div`
   display: flex;
   justify-content: center;
   flex-direction:column;
-  width: 20%;
+  width: 25%;
   border-radius: 15px;
   padding : 5px 0px;
 
@@ -91,7 +93,7 @@ const Box = styled.div`
 const BoxImg = styled.div`
   border-radius: 30px;
   background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#fff') };
-  padding: 10px;
+  padding: 3px 10px;
   display :flex;
 `
 
@@ -113,7 +115,7 @@ const FilterBox = styled.div`
 `
 const FilterBoxText = styled.div`
 color: ${({clickstatus}) => clickstatus == true ? ('#FFF') :('#131313') };
-font-size:12px;
+font-size:14px;
 margin-left:5px;
 font-weight:600;
 
@@ -131,16 +133,22 @@ const InputLine = styled.div`
 
 `
 
+const StickyPos = styled.div`
+  position: sticky;
+  top:0px;
+
+`
+
 
 const Inputstyle ={
 
   background: '#FFF',
   width: '75%',
-  borderRadius:'30px',
+  borderRadius:'5px',
   fontSize: '16px',
   padding: '0px 20px 0px 20px',
   height : '40px',
-  border : "2px solid #FF7125",
+  border : "1px solid #FF7125",
   position :"absolute"
 
 }
@@ -165,7 +173,23 @@ const SearchElementStyle ={
   width: '100%', 
   marginBottom: '10px',
 }
+const RoomName = styled.div`
+  font-size: 12px;
+  color: #1A1A1A;
+  font-weight: 500;
+  background: #fafafa;
+  border: 1px solid #E3E3E3;
+  padding: 15px 5px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  font-family: 'Pretendard-SemiBold';
+  height: 50px;
+  margin-bottom: 10px;
+  flex-direction: column;
 
+`
 
 
 
@@ -179,12 +203,14 @@ const { kakao } = window;
 
 const RoomItems =[
 
-  {name : ROOMSIZE.SMALLER, img:imageDB.roomsize1, img2:imageDB.roomsize1},
-  {name : ROOMSIZE.SMALL, img:imageDB.roomsize2, img2:imageDB.roomsize2},
-  {name : ROOMSIZE.MEDIUM, img:imageDB.roomsize3, img2:imageDB.roomsize3},
-  {name : ROOMSIZE.LARGE, img:imageDB.roomsize4, img2:imageDB.roomsize4},
-  {name : ROOMSIZE.LARGER, img:imageDB.roomsize5, img2:imageDB.roomsize5},
-  {name : ROOMSIZE.EXLARGE, img:imageDB.roomsize5, img2:imageDB.roomsize5},
+  {name : ROOMSIZE.ONESIZE, img:imageDB.roomsize1, img2:imageDB.roomsize1},
+  {name : ROOMSIZE.TWOSIZE, img:imageDB.roomsize2, img2:imageDB.roomsize2},
+  {name : ROOMSIZE.THREESIZE, img:imageDB.roomsize3, img2:imageDB.roomsize3},
+  {name : ROOMSIZE.FOURSIZE, img:imageDB.roomsize4, img2:imageDB.roomsize4},
+  {name : ROOMSIZE.FIVESIZE, img:imageDB.roomsize4, img2:imageDB.roomsize4},
+  {name : ROOMSIZE.SIXSIZE, img:imageDB.roomsize5, img2:imageDB.roomsize5},
+  {name : ROOMSIZE.SEVENSIZE, img:imageDB.roomsize5, img2:imageDB.roomsize5},
+  {name : ROOMSIZE.EIGHTSIZE, img:imageDB.roomsize5, img2:imageDB.roomsize5},
 
 
 ]
@@ -197,9 +223,9 @@ const FilterItems=[
 ]
 
 const BannerItems =[
-  imageDB.mobilebanner7,
-  imageDB.mobilebanner8,
   imageDB.mobilebanner9,
+  imageDB.mobilebanner10,
+  imageDB.mobilebanner11,
 ]
 
 const LoadingAnimationStyle={
@@ -218,6 +244,7 @@ const LoadingAnimationStyle={
 const MobileRoomcontainer =({containerStyle}) =>  {
 
   const {value} = useSelector((state)=> state.menu);
+  const reduxdispatch = useDispatch();
 
   const { dispatch, user } = useContext(UserContext);
   const { datadispatch, data } = useContext(DataContext);
@@ -343,6 +370,35 @@ const MobileRoomcontainer =({containerStyle}) =>  {
     };
   }, []);
 
+  useLayoutEffect(()=>{
+    if(value != REFRESHTYPE){
+      return;
+    }
+    setCurrentloading(true);
+    async function FetchData(){
+
+      await useSleep(1000);
+      const latitude = user.latitude;
+      const longitude = user.longitude;
+      
+      console.log("TCL: FetchData -> longitude", longitude)
+      console.log("TCL: FetchData -> latitude", latitude)
+
+      const workitems = await ReadWork({latitude, longitude});
+      const roomitems = await ReadRoom({latitude, longitude});
+    
+      data.workitems = workitems;
+      data.roomitems = roomitems;
+      datadispatch(data);
+
+      setRoomitems(roomitems);
+      setRefresh((refresh) => refresh +1);
+      setCurrentloading(false);
+    }
+    FetchData();
+  
+  },[value])
+
   const scrollToInput = () => {
     
     console.log("TCL: scrollToInput -> ", )
@@ -358,20 +414,25 @@ const MobileRoomcontainer =({containerStyle}) =>  {
 
 
 
-  /**
-   * useSelector menu 가 변경됨을 감지 함에 따라 호출되는  Hook 함수
-   * 데이타를 서버로 부터 불러와서 FilterwokrItems 함수로 걸러진값을 workitems 에 설정 해준다
-   */
+  // /**
+  //  * useSelector menu 가 변경됨을 감지 함에 따라 호출되는  Hook 함수
+  //  * 데이타를 서버로 부터 불러와서 FilterwokrItems 함수로 걸러진값을 workitems 에 설정 해준다
+  //  */
 
-  useEffect(()=>{
-    async function FetchData(){
-      const serverroomitems = await ReadRoom();
-      let items = FilterRoomitems(value, serverroomitems);
-      setRoomitems(items);
-    }
-    //FetchData();
-    setRefresh((refresh) => refresh +1);
-  },[value])
+  // useEffect(()=>{
+  //   if(value != REFRESHTYPE){
+  //     return;
+  //   }
+  //   setCurrentloading(true);
+  //   async function FetchData(){
+  //     const serverroomitems = await ReadRoom();
+  //     let items = FilterRoomitems(value, serverroomitems);
+  //     setRoomitems(items);
+  //     setCurrentloading(false);
+  //   }
+  //   FetchData();
+  //   setRefresh((refresh) => refresh +1);
+  // },[value])
 
 
   /**
@@ -547,6 +608,21 @@ const MobileRoomcontainer =({containerStyle}) =>  {
     return itemsTmp;
 
   }
+  function findImage(roomtype){
+  console.log("TCL: findImage -> roomtype", roomtype)
+
+    if(roomtype == ROOMSIZE.SMALLER){
+      return imageDB.roomsize1;
+    }else if(roomtype == ROOMSIZE.SMALL){
+      return imageDB.roomsize2;
+    }else if(roomtype == ROOMSIZE.MEDIUM){
+      return imageDB.roomsize3;
+    }else if(roomtype == ROOMSIZE.LARGE){
+      return imageDB.roomsize4;
+    }else if(roomtype == ROOMSIZE.EXLARGE){
+      return imageDB.roomsize5;
+    }
+  }
 
   function filterenablecheck(name){
 
@@ -640,24 +716,32 @@ const MobileRoomcontainer =({containerStyle}) =>  {
         currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
         width={"100px"} height={'100px'}/>) :(<Container style={containerStyle}>
             <Column>
-            <Column style={{width:"95%", margin: "0 auto"}}>
-            <Label label={'공간대여 서비스'} containerStyle={{paddingLeft:20}}/>
-            <Row style={{flexWrap:"wrap", width:"100%", justifyContent:"flex-start"}}>
+            <Column style={{width:"100%", margin: "0 auto"}}>
+        
+
+            <Label label={'공간을 등록'}/>
+            <BetweenRow style={{flexWrap:"wrap", width:"90%", margin:"0 auto"}}>
               {
                 RoomItems.map((data, index)=>(
-                  <Box onClick={()=>{_handlebasicmenuclick(data.name)}} clickstatus={menu == data.name}>
-                    <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:45, height:45}}/></BoxImg>
-                    <div style={{ fontSize:12, color:"#636363", fontWeight:300}}>{data.name}</div>
+                  <Box onClick={()=>{_handlebasicmenuclick(data.name)}} clickstatus={menu == data.name}>  
+
+                    <RoomName>
+                      <div>{data.name}공간</div>
+                      <img src={imageDB.roomplus} style={{width:25}}/>
+                    </RoomName>
+                 
                   </Box>
                 ))
               }
             
-            </Row>
+            </BetweenRow>
             </Column>
-            <SlickSliderComponent width={width + 'px'}  images={BannerItems} />
-            <Row  id="sticky-element"  style={SearchElementStyle}>
-
-                <Column style={{width:"100%"}}>
+            <Column style={{width:"100%", margin: "0 auto"}}>
+            <SlickSliderComponent width={width}  images={BannerItems} />
+            </Column>
+           
+            {/* <Row  id="sticky-element"  style={SearchElementStyle}>
+                <Column style={{width:"90%"}}>
                 <InputLine>
                   <input  style={Inputstyle} type="text" placeholder="홍여사 AI에 물어주세요"
                         value={search}
@@ -674,14 +758,14 @@ const MobileRoomcontainer =({containerStyle}) =>  {
                   </div>
                 </InputLine>
 
-                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'10%'}}>
+                <FlexstartRow style={{width:"100%", marginTop:20, marginLeft:'5%'}}>
                     <img src={imageDB.infocircle} width={16} height={16} o/>
-                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 짜장라면 맛있게 끓이기</span>                  
+                    <span style={{fontSize:"12px", color :"#636363", marginLeft:5}}>예) 아이성장에 좋은 음식은 무엇인가요?</span>                  
                 </FlexstartRow>
                 </Column>
-            </Row>
+            </Row> */}
        
-
+            <StickyPos>
             <div className="new-div">
               {
                 FilterItems.map((data, index)=>(
@@ -704,7 +788,10 @@ const MobileRoomcontainer =({containerStyle}) =>  {
                 ))
               }
             </div>
+            </StickyPos>
          
+            <Label label={'공간을 구함'}/>
+
               {
                 roomitems.length > 0 ? (
                   <SubContainer>
@@ -722,7 +809,7 @@ const MobileRoomcontainer =({containerStyle}) =>  {
                     }
                   </FlexstartRow>
                   </SubContainer>
-                ) :(<Empty content={'등록된 공간대여가 없습니다'} height={300}/>)
+                ) :(<Empty content={'등록된 공간대여가 없습니다'} height={150}/>)
 
               }
 

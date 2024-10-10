@@ -40,6 +40,8 @@ import ReactTyped from "react-typed";
 import { GrUploadOption } from "react-icons/gr";
 import LottieAnimation from "../../common/LottieAnimation";
 import TypingText from "../../common/TypingText";
+import { LoadingAnimationStyle, LoadingSearchAnimationStyle } from "../../screen/css/common";
+
 
 
 const formatter = buildFormatter(koreanStrings); 
@@ -92,12 +94,7 @@ const InputContent = {
 
 
 
-const LoadingAnimationStyle={
-  zIndex: 11,
-  position: "absolute",
-  top: "35%",
-  left: "35%"
-}
+
 
 
 
@@ -224,7 +221,7 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
 
-      if(research.length > 15){
+      if(research.length > 5){
         AIResearch();
       }
 
@@ -344,17 +341,16 @@ const MobileSearchcontainer = ({ search, search_id }) =>{
 
 
       {
-        currentloading == true ? ( <LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loading}
-          width={"100px"} height={'100px'}
+        currentloading == true ? ( <LottieAnimation containerStyle={LoadingSearchAnimationStyle} animationData={imageDB.loading}
+          width={"50px"} height={'50px'}
           />) :(<Column style={{width:'95%', margin: '0 auto'}}>
           <Popcontent>
             <Row style={{height:"100%"}}>
               <ResultLayer>
 
                 <div   style={{height:60, width:'95%', margin:'60px auto 10px', display:"flex"}}>
-                  <input type={'text'} style={InputContent} value={research}
-                    class="input"
-                    placeholder={'검색어로는 10자 이상 입력해주세요'}
+                  <input type={'text'} style={InputContent} value={research} 
+                    placeholder={'검색어로 5자 이상 입력해주세요'}
                     onKeyDown={handleKeyDown} 
                     onChange={(e) => {
                         setResearch(e.target.value);

@@ -5,6 +5,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { COMMUNITYSTATUS, WORKSTATUS } from '../utility/status';
 import randomLocation from 'random-location'
 import { useSleep } from '../utility/common';
+import Axios from 'axios';
 const authService = getAuth(firebaseApp);
 
 
@@ -51,6 +52,7 @@ export const  deg2rad = (deg)=> {
 
 export const CreateWork = async({USERS_ID,WORKTYPE, WORK_INFO}) =>{
 
+  return new Promise(async (resolve, reject) => {
     let success = true;
     const WORKREF = doc(collection(db, "WORK"));
     const id = WORKREF.id;
@@ -65,16 +67,48 @@ export const CreateWork = async({USERS_ID,WORKTYPE, WORK_INFO}) =>{
            CREATEDT : Date.now(),
        }
        await setDoc(WORKREF, newdata);
+
+       resolve(id);
     
     }catch(e){
       console.log("TCL: CreateWork -> error ",e.message )
        
         alert( e.message);
         success =false;
-        return -1;
+        resolve(-1);
     }finally{
-      return id;
+    
     }
+
+  });
+
+}
+
+export const CreateWorkInfo = async({USERS_ID,WORKTYPE, WORK_INFO}) =>{
+
+  let success = true;
+  const WORKREF = doc(collection(db, "WORKINFO"));
+  const id = WORKREF.id;
+
+  try{
+     const newdata = {
+         WORK_ID : id,
+         WORKTYPE : WORKTYPE,
+         WORK_INFO : WORK_INFO,
+         WORK_STATUS : WORKSTATUS.OPEN,
+         CREATEDT : Date.now(),
+     }
+     await setDoc(WORKREF, newdata);
+  
+  }catch(e){
+    console.log("TCL: CreateWork -> error ",e.message )
+     
+      alert( e.message);
+      success =false;
+      return -1;
+  }finally{
+    return id;
+  }
 }
 
 export const ReadAllWork = async()=>{
@@ -107,7 +141,7 @@ export const ReadAllWork = async()=>{
   }
 }
 
-export const ReadWork = async({latitude, longitude})=>{
+export const ReadWork = async({latitude, longitude, checkdistance =5})=>{
   const workRef = collection(db, "WORK");
 
   let workitems = [];
@@ -125,7 +159,7 @@ export const ReadWork = async({latitude, longitude})=>{
       const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,latitude,longitude );
       
 
-      if(distance < 5){
+      if(distance < checkdistance){
         workitems.push(doc.data());
       }
   
@@ -147,107 +181,36 @@ export const ReadWork = async({latitude, longitude})=>{
   }
 }
 
-export const DefaultReadWork = async({latitude, longitude})=>{
-  const workRef = collection(db, "WORK");
 
-  let workitems = [];
-  let success = false;
-  const q = query(workRef,where("USER_ID", "==", "01062149755"));
-
-  try {
-    const querySnapshot = await getDocs(q);
-
-    let icount = 0;
-    querySnapshot.forEach((doc) => {
-
-      let item ={
-        CREATEDT :"",
-        WORKTYPE : "",
-        WORK_INFO : [],
-        WORK_STATUS :""
-      }
- 
-      item.WORKTYPE = doc.data().WORKTYPE;
-
-      let WORK_INFONEW = doc.data().WORK_INFO;
-
-      const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
-      const P = {
-        latitude: latitude,
-        longitude: longitude
-      }
-
-      const R = 2000 // meters
-      const randomPoint = randomLocation.randomCirclePoint(P, R);
-
-      const geocoder = new kakao.maps.services.Geocoder();
-
-      geocoder.coord2Address(randomPoint.longitude, randomPoint.latitude, async (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-          const address = result[0].address.address_name;
-      
-          WORK_INFONEW[FindIndex].result = address;
-          WORK_INFONEW[FindIndex].latitude = randomPoint.latitude;
-          WORK_INFONEW[FindIndex].longitude = randomPoint.longitude;
-          item.WORK_INFO = WORK_INFONEW;
-          item.WORK_STATUS = doc.data().WORK_STATUS;
-          icount++;
-          workitems.push(item);
-          if(querySnapshot.size == icount){
-            success = true;
-          }
-  
-        }
-      });
-    });
-
-    if (querySnapshot.size > 0) {
-      success = true;
-    }
-  } catch (e) {
-    console.log("error", e.message);
-  } finally {
-
-    await useSleep(3000);
-
-    return new Promise(async (resolve, resject) => {
-
-   
-      if (success) {
-        resolve(workitems);
-      } else {
-        resolve(-1);
-      }
-    });
-  }
-}
 export const ReadWorkByIndividually = async({WORK_ID})=>{
-  const workRef = collection(db, "WORK");
+  return new Promise(async (resolve, reject) => {
+    const workRef = collection(db, "WORK");
 
-  let workitem = {};
-  let success = false;
-  const q = query(workRef,where("WORK_ID", "==", WORK_ID));
- 
-  try {
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      workitem = doc.data();
-    });
-
-    if (querySnapshot.size > 0) {
-      success = true;
-    }
-  } catch (e) {
-    console.log("error", e.message);
-  } finally {
-    return new Promise((resolve, resject) => {
-      if (success) {
+    let workitem = {};
+    let success = false;
+    const q = query(workRef,where("WORK_ID", "==", WORK_ID));
+   
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        workitem = doc.data();
+      });
+  
+      if (querySnapshot.size > 0) {
         resolve(workitem);
-      } else {
+      }else{
         resolve(-1);
       }
-    });
-  }
+
+    } catch (e) {
+      console.log("error", e.message);
+      resolve(-1);
+    } finally {
+
+    }
+
+  });
+
 }
 
 export const ReadRoomByIndividually = async({ROOM_ID})=>{
@@ -310,4 +273,150 @@ export const DeleteWorkByUSER_ID = async({USER_ID}) =>{
   }
 
 
+}
+
+export const DefaultReadWork = async({currentlatitude, currentlongitude})=>{
+
+  return new Promise(async (resolve, resject) => {
+    const workRef = collection(db, "WORKINFO");
+
+    let workitems = [];
+    let success = false;
+    const q = query(workRef);
+  
+    try {
+      const querySnapshot = await getDocs(q);
+  
+      let icount = 0;
+      querySnapshot.forEach((doc) => {
+  
+        let item ={
+          CREATEDT :"",
+          WORKTYPE : "",
+          WORK_INFO : [],
+          WORK_STATUS :""
+        }
+   
+        item.WORKTYPE = doc.data().WORKTYPE;
+  
+        let WORK_INFONEW = doc.data().WORK_INFO;
+  
+  
+        const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
+        const P = {
+          latitude: currentlatitude,
+          longitude: currentlongitude
+        }
+  
+        const R = 5000 // meters
+        const randomPoint = randomLocation.randomCirclePoint(P, R);
+  
+        const geocoder = new kakao.maps.services.Geocoder();
+    
+        geocoder.coord2Address(randomPoint.longitude, randomPoint.latitude, async (result, status) => {
+        
+          if (status === kakao.maps.services.Status.OK) {
+            const address = result[0].address.address_name;
+        
+            console.log("TCL: DefaultReadWork -> randomPoint", randomPoint.longitude, randomPoint.latitude,address);
+  
+            WORK_INFONEW[FindIndex].result = address;
+            WORK_INFONEW[FindIndex].latitude = randomPoint.latitude;
+            WORK_INFONEW[FindIndex].longitude = randomPoint.longitude;
+            item.WORK_INFO = WORK_INFONEW;
+            item.WORK_STATUS = 1;
+            icount++;
+            workitems.push(item);
+            if(querySnapshot.size == icount){
+              console.log("TCL: DefaultReadWork -> icount", icount ,querySnapshot.size)
+              success = true;
+  
+              resolve(workitems);
+            }
+    
+          }
+        });
+      });
+  
+     
+    } catch (e) {
+      console.log("error", e.message);
+    } finally {
+  
+  
+    }
+  });
+
+}
+export const findWorkAndFunctionCallFromCurrentPosition = async({currentlatitude, currentlongitude, checkdistance}) =>{
+
+  let success = false;
+  try{
+
+    const readworkitems = await ReadAllWork();
+    console.log("TCL: findWorkAndFunctionCallFromCurrentPosition -> readworkitems", readworkitems)
+
+    let bExist =false;
+
+    if(readworkitems != -1){
+      readworkitems.map((data)=>{
+  
+        let WORK_INFONEW = data.WORK_INFO;
+    
+        const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
+    
+        const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,currentlatitude,currentlongitude );
+    
+        if(distance < checkdistance){
+          bExist = true;
+        }
+      })
+    }
+
+  
+    if(!bExist){
+      // function에 호출하자
+      const defaultreadworkitems = await DefaultReadWork({currentlatitude, currentlongitude});
+      console.log("TCL: findWorkAndFunctionCallFromCurrentPosition -> defaultreadworkitems", defaultreadworkitems)
+  
+      const jsonPayload = {
+        workitems: defaultreadworkitems,
+      
+      };
+      console.log("TCL: firebase function call", defaultreadworkitems);
+  
+      Axios.post('https://asia-northeast1-help-bbcb5.cloudfunctions.net/api/newwork',  jsonPayload, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(async(response) =>{
+        console.log("TCL: StartProcess -> newwork post url", );
+  
+        success = true;
+      })
+      .catch((error) => {
+  
+      })
+  
+    }else{
+      
+      success = false;             
+    
+    }
+
+  }catch(e){
+
+
+  }finally{
+    return new Promise((resolve, resject) => {
+      if (success) {
+        resolve(0);
+      } else {
+        resolve(-1);
+      }
+    });
   }
+
+
+}

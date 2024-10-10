@@ -2,8 +2,6 @@
     background-color: #fff;
     color: black;
     transition: opacity 0.5s ease-in-out;
-    position: sticky;
-    top: 50px;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -14,9 +12,8 @@
     overflow-x: scroll;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    height: 40px;
     z-index: 2;
-    padding: 0px 15px 15px;
+    padding: 0px 15px 20px;
 
   }
   input::placeholder{

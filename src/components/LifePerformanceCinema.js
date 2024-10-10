@@ -7,6 +7,7 @@ import LottieAnimation from "../common/LottieAnimation";
 import { FlexstartRow, Row } from "../common/Row";
 import { UserContext } from "../context/User";
 import PCMapPopup from "../modal/PcMapPopup/PcMapPopup";
+import { LoadingCommunityStyle } from "../screen/css/common";
 import { useSleep } from "../utility/common";
 import { imageDB } from "../utility/imageData";
 
@@ -201,7 +202,7 @@ console.log("TCL: LifePerformanceCinema -> items", items)
           </Row>
 
             {
-              searching == true ? (<LottieAnimation containerStyle={LoadingStyle} animationData={imageDB.loadinglarge}/>)
+              searching == true ? (<LottieAnimation containerStyle={LoadingCommunityStyle} animationData={imageDB.loadinglarge}/>)
               :( "")
             }
             <div className="table-container">

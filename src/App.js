@@ -59,12 +59,20 @@ import MobileCommunityContentpage from "./page/main/MobileCommunityContentpage";
 import MobileRoomWorkpage from "./page/main/MobileRoomworkpage";
 import { ALLWORK } from "./store/menu/MenuSlice";
 import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
+import MobileCommunityBoardpage from "./page/main/MobileCommunityBoardpage";
+import MobileConfigpage from "./page/main/MobileConfigpage";
+
+import MobileLifeTourDetailPicturepage from "./page/main/MobileLifeTourDetailPicturepage";
+import MobileLifeTourAutoPicturepage from "./page/main/MobileLifeTourAutoPicturepage";
+import MobileConfigContentpage from "./page/main/MobileConfigContentpage";
+import MobileEventdetailpage from "./page/main/MobileEventdetailpage";
+import MobileLadyLicenseAuthpage from "./page/main/MobileLadyLicenseAuthpage";
 
 
 
 const App =() =>  {
 
-  const reduxdispatch = useDispatch();
+
 
   const { user, dispatch } = useContext(UserContext);
   const location = useLocation();
@@ -93,49 +101,23 @@ const App =() =>  {
 
   useEffect(() => {
 
-    localforage.getItem('address_name')
-    .then(function(value) {
-      console.log("TCL: listener -> GetItem address_name", value)
-      user.address_name = value;
-      dispatch(user);
-      reduxdispatch(ALLWORK());
+    // localforage.getItem('userconfig')
+    // .then(function(value) {
+    //   console.log("TCL: listener -> App userconfig", value)
+    //   user.address_name = value.address_name;
+    //   user.users_id = value.users_id;
+    //   user.latitude = value.latitude;
+    //   user.longitude = value.longitude;
+    //   user.userimg = value.userimg;
+    
+    //   dispatch(user);
+
       
-    })
-    .catch(function(err) {
+    // })
+    // .catch(function(err) {
 
-    });
+    // });
 
-    localforage.getItem('users_id')
-    .then(function(value) {
-      console.log("TCL: listener -> GetItem users_id", value)
-      user.users_id = value;
-      dispatch(user);
-    })
-    .catch(function(err) {
-
-    });
-
-
-    localforage.getItem('latitude')
-    .then(function(value) {
-      console.log("TCL: listener -> GetItem latitude", value)
-      user.latitude = value;
-      dispatch(user);
-    })
-    .catch(function(err) {
-
-    });
-
-    localforage.getItem('longitude')
-    .then(function(value) {
-      console.log("TCL: listener -> GetItem longitude", value)
-      user.longitude = value;
-      dispatch(user);
-
-    })
-    .catch(function(err) {
-
-    });
 
 
   }, []);
@@ -158,6 +140,7 @@ const App =() =>  {
       <Route path="/Mobileroom" element={<MobileRoomppage />} />
       <Route path="/Mobilecommunity" element={<MobileCommunityppage />} />
       <Route path="/Mobilecommunitycontent" element={<MobileCommunityContentpage />} />
+      <Route path="/Mobilecommunityboard" element={<MobileCommunityBoardpage />} />
       <Route path="/Mobileworkregister" element={<MobileWorkregistserpage />} />
       <Route path="/Mobileroomregister" element={<MobileRoomregistserpage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
@@ -169,6 +152,12 @@ const App =() =>  {
       <Route path="/Mobilesearch" element={<MobileSearchpage />} />
       <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
       <Route path="/Mobilemapreconfig" element={<MobileMapReconfigpage />} />
+      <Route path="/Mobileconfig" element={<MobileConfigpage />} />
+      <Route path="/Mobiletourdetailpicture" element={<MobileLifeTourDetailPicturepage />} />
+      <Route path="/Mobiletourautopicture" element={<MobileLifeTourAutoPicturepage />} />
+      <Route path ="/Mobileconfigcontent" element={<MobileConfigContentpage />} />
+      <Route path ="/Mobileeventdetail" element={<MobileEventdetailpage />} />
+      <Route path ="/Mobileladylicense" element={<MobileLadyLicenseAuthpage />} />
 
       <Route path="/PCmain" element={<PCMainpage />} />
       <Route path="/PCmap" element={<PCMappage />} />
