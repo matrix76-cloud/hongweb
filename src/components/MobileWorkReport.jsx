@@ -14,6 +14,7 @@ import { Readuserbyusersid } from "../service/UserService";
 import { ReadWorkByIndividually } from "../service/WorkService";
 import { imageDB, Seekimage } from "../utility/imageData";
 import { REQUESTINFO } from "../utility/work_";
+import WorkLocationMap from "./WorkLocationMap";
 
 
 
@@ -167,6 +168,23 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
     setRefresh((refresh) => refresh +1);
   }
 
+  /* 금액류에는 "원"을 붙인다 (형 리뷰 2026-08-12).
+     "협의필요" 같은 문구나 이미 원이 붙은 값은 그대로 둔다. */
+  const MONEY_TYPES = ['금액', '시간과 금액', REQUESTINFO.MONEY];
+  const formatValue = (type, value) => {
+    const v = String(value ?? '');
+    if (!MONEY_TYPES.includes(type)) return v;
+    if (!/[0-9]/.test(v) || v.includes('원')) return v;
+    const num = Number(v.replace(/[^0-9.-]/g, ''));
+    return Number.isFinite(num) && num > 0 ? `${num.toLocaleString('ko-KR')}원` : v;
+  };
+
+  // 지역 좌표 — 아이콘을 눌러 팝업을 띄우는 대신 화면에 바로 지도를 보여준다
+  const regionPoint = (() => {
+    const d = (messages || []).find((x) => x && x.requesttype === REQUESTINFO.CUSTOMERREGION && x.latitude);
+    return d ? { lat: d.latitude, lng: d.longitude, addr: d.result } : null;
+  })();
+
   const _handleMapview= (lat, long, worktype)=>{
 
     setPopupstatus(true);
@@ -212,15 +230,12 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
                  <div style={{display:"flex", flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
                  {
                    data.requesttype == REQUESTINFO.COMMENT ? (
-                   <textarea style={ResultContent} value={data.result}/>):(
-                   <div> {data.result}</div>
+                   <textarea style={ResultContent} value={data.result} readOnly/>):(
+                   <div>{formatValue(data.requesttype, data.result)}</div>
                  )
                  }  
 
-                 {
-                   data.requesttype == REQUESTINFO.CUSTOMERREGION &&
-                   <div  onClick={()=>{_handleMapview(data.latitude,data.longitude, messages.WORKTYPE)}}><img src={imageDB.map} style={{width:20}}/> </div>
-                 }
+
                  </div>
                 </td>
                 </tr>
@@ -231,31 +246,40 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
           </tbody>
            </table>
 
-          <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'100%',justifyContent: "center" }}>
+          {/* 위치 지도 — 팝업 대신 화면에 바로 (형 리뷰 2026-08-12) */}
+          {regionPoint && (
+            <WorkLocationMap
+              latitude={regionPoint.lat}
+              longitude={regionPoint.lng}
+              address={regionPoint.addr}
+              markerimg={Seekimage(WORKTYPE)}
+            />
+          )}
+
+          {/* 하단 고정 액션 바 — 스크롤과 무관하게 항상 보인다 (형 리뷰 2026-08-12) */}
+          <div style={{height:96}} />
+          <ActionBar>
    
 
        {
-         closework == true ? (<Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} height={'44px'} width={'90%'} radius={'4px'} bgcolor={'#EDEDED'} color={'#999'} text={'이미 마감된 일감'}/>)
+         closework == true ? (<Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#EDEDED'} color={'#999'} text={'이미 마감된 일감'}/>)
          :(
            <>
              {
-               supporterwork == true && <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} height={'44px'} width={'90%'} radius={'4px'} bgcolor={'#EDEDED'} color={'#999'} text={'이미 지원한 일감'}/>
+               supporterwork == true && <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#EDEDED'} color={'#999'} text={'이미 지원한 일감'}/>
              }
 
              {
-               ownerwork == true && <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} height={'44px'} width={'90%'} radius={'4px'} bgcolor={'#EDEDED'} color={'#999'} text={'본인이 등록한 일감'}/>
+               ownerwork == true && <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#EDEDED'} color={'#999'} text={'본인이 등록한 일감'}/>
              }
              {
-               (supporterwork ==false && ownerwork == false) && <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'44px'} width={'90%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'지원하기'}/>
+               (supporterwork ==false && ownerwork == false) && <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#FF4E19'} color={'#fff'} text={'지원하기'}/>
 
              }
            </>
          )
        }
-
-   
-  
-          </div>
+          </ActionBar>
           </>)
       }
 
