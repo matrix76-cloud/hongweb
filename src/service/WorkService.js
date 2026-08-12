@@ -51,7 +51,7 @@ export const  deg2rad = (deg)=> {
  */
 
 
-export const CreateWork = async({USERS_ID,WORKTYPE, WORK_INFO}) =>{
+export const CreateWork = async({USERS_ID,WORKTYPE, WORK_INFO, WORK_OPTION}) =>{
 
   return new Promise(async (resolve, reject) => {
     let success = true;
@@ -64,6 +64,8 @@ export const CreateWork = async({USERS_ID,WORKTYPE, WORK_INFO}) =>{
            USERS_ID : USERS_ID,
            WORKTYPE : WORKTYPE,
            WORK_INFO : WORK_INFO,
+           // 올린 사람이 고른 연락 옵션. 지금은 보이스톡 허용 여부 하나뿐이다 (형 리뷰 2026-08-12)
+           WORK_OPTION : { VOICETALK : false, ...(WORK_OPTION || {}) },
            WORK_STATUS : WORKSTATUS.OPEN,
            CREATEDT : Date.now(),
        }

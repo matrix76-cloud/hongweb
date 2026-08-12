@@ -316,6 +316,61 @@ const ResultContent = {
   marginTop:'15px',
  
 }
+/* 등록 직전 연락 옵션 (형 리뷰 2026-08-12)
+   지원자에게 보이스톡 버튼을 열어줄지 올린 사람이 여기서 정한다 */
+const OptionCard = styled.div`
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #E6E6E6;
+  border-radius: 12px;
+  background: #FAFAFA;
+  padding: 14px 16px;
+  margin-top: 14px;
+`
+const OptionTitle = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: #131313;
+  margin-bottom: 10px;
+`
+const OptionRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+`
+const OptionLabel = styled.div`
+  font-size: 15px;
+  font-weight: 600;
+  color: #131313;
+`
+const OptionDesc = styled.div`
+  font-size: 13px;
+  color: #8A8A8A;
+  line-height: 1.5;
+  margin-top: 4px;
+`
+const Switch = styled.div`
+  flex-shrink: 0;
+  width: 50px;
+  height: 30px;
+  border-radius: 100px;
+  background: ${({ $on }) => ($on ? '#FF4E19' : '#D8D8D8')};
+  padding: 3px;
+  box-sizing: border-box;
+  transition: background 0.18s ease;
+`
+const Knob = styled.div`
+  width: 24px;
+  height: 24px;
+  border-radius: 100px;
+  background: #fff;
+  transform: translateX(${({ $on }) => ($on ? '20px' : '0')});
+  transition: transform 0.18s ease;
+`
+
 const ResultContent2 = {
   width: '180px',
   height: '60px',
@@ -432,6 +487,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
   const [registWorkSuccess, setRegistWorkSuccess] = useState(false);
   const [registRoomSuccess, setRegistRoomSuccess] = useState(false);
+
+  /* 연락 옵션 — 켠 사람의 일감에만 상세에서 보이스톡 버튼이 뜬다 (형 리뷰 2026-08-12) */
+  const [voicetalk, setVoicetalk] = useState(false);
 
   const useCommentRef= useRef(null);
   const useCompleteRef = useRef(null);
@@ -1147,8 +1205,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     const USERS_ID= user.users_id;
     const WORK_INFO = workinfo;
     const WORKTYPE = type;
+    const WORK_OPTION = { VOICETALK : voicetalk };
 
-    const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO});
+    const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO, WORK_OPTION});
 
     setRegistWorkSuccess(true);
 
@@ -1655,8 +1714,19 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                         }
                       </tbody>
                     </table>
+                    <OptionCard>
+                      <OptionTitle>연락 옵션</OptionTitle>
+                      <OptionRow onClick={()=>{ setVoicetalk((v)=> !v); setRefresh((refresh)=> refresh +1); }}>
+                        <div>
+                          <OptionLabel>보이스톡 연결 허용</OptionLabel>
+                          <OptionDesc>켜면 일감 상세에서 지원자가 보이스톡으로 연락할 수 있습니다. 끄면 채팅으로만 연락합니다.</OptionDesc>
+                        </div>
+                        <Switch $on={voicetalk}><Knob $on={voicetalk}/></Switch>
+                      </OptionRow>
+                    </OptionCard>
+
                     <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'100%',justifyContent: "space-between" }}>
-          
+
                       <Button containerStyle={{border: '1px solid #C3C3C3', fontSize:16, marginTop:10, fontWeight:600}} onPress={_handleReset} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FFF'} color={'#131313'} text={'다시작성하기'}/>
                       <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'등록하기'}/>
 

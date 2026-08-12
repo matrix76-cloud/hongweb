@@ -45,6 +45,7 @@ import MobileWorkpage from "./page/main/Mobileworkpage";
 import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
 
 import ReviewPage from "./dev/ReviewPage";
+import PushToast from "./components/PushToast";
 
 import { Provider as MyProvider, useDispatch } from 'react-redux';
 import localforage from 'localforage';
@@ -77,6 +78,9 @@ const App = () => {
   }, [refresh])
 
   return (
+    <>
+    {/* 화면을 보고 있을 때 오는 알림은 OS 가 안 띄운다 -> 상단에 직접 (형 지시 2026-08-12) */}
+    <PushToast />
 
     <Routes>
 
@@ -136,7 +140,7 @@ const App = () => {
       {import.meta.env.DEV && <Route path="/review" element={<ReviewPage />} />}
 
     </Routes>
-
+    </>
   );
 }
 

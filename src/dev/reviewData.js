@@ -130,6 +130,17 @@ export const MY_REVIEW = [
   ] },
 ];
 
+/* 리뷰 글을 남기는 화면이 아니라 "눌러서 실제로 푸시가 오는지" 확인하는 보드.
+   noBoard=true 면 리뷰 페이지가 스레드 대신 이 보드를 띄운다. (형 지시 2026-08-12) */
+export const FCM_REVIEW = [
+  { id: 'fcm-test', no: 'F', name: 'FCM 발송 테스트', path: '', status: 'wip', board: 'fcm', spec: [
+    '★ 알림 허용 -> 토큰 등록 -> 케이스 버튼 순으로 누르면 실제 푸시가 발송된다.',
+    '화면을 보고 있으면 상단 인앱 배너, 탭을 내리거나 다른 탭이면 OS 알림으로 온다.',
+    '[미리보기]는 발송 없이 배너 모양만 확인한다.',
+    '리뷰 글은 남기지 않는다.',
+  ] },
+];
+
 export const DOMAINS = [
   { key: 'entry',   label: '진입 · 인증',      screens: ENTRY_REVIEW },
   { key: 'post',    label: '① 일 올리기',      screens: POST_REVIEW },
@@ -137,6 +148,7 @@ export const DOMAINS = [
   { key: 'connect', label: '④ 연결 · 결제',    screens: CONNECT_REVIEW },
   { key: 'find',    label: '찾기',             screens: FIND_REVIEW },
   { key: 'my',      label: '내 정보',          screens: MY_REVIEW },
+  { key: 'fcm',     label: 'FCM 테스트',       screens: FCM_REVIEW, noBoard: true },
 ];
 
 export const STATUS_LABEL = { done: '완료', wip: '작업중', todo: '미검수', none: '없음' };

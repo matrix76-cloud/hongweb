@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DOMAINS, STATUS_LABEL, STATUS_COLOR } from './reviewData';
 import { captureFrame, describeTarget } from './reviewCapture';
+import FcmTestBoard from './FcmTestBoard';
 import { seedChatRooms, clearSeededChats } from './seedChat';
 
 /**
@@ -92,7 +93,15 @@ export default function ReviewPage() {
 
   useEffect(() => () => stopShare(), [stopShare]);
 
-  const countOf = (id) => (thread[id] || []).length;
+  /**
+   * 그 화면에서 아직 답을 안 단 글 수.
+   * 전에는 전체 글 수를 보여줘서 이미 처리한 화면에도 숫자가 남아 헷갈렸다. (형 지시 2026-08-12)
+   */
+  const countOf = (id) => {
+    const items = thread[id] || [];
+    const replied = new Set(items.filter((x) => x.replyTo).map((x) => x.replyTo));
+    return items.filter((x) => !x.replyTo && x.by !== '카스' && !replied.has(x.pid)).length;
+  };
 
   const unanswered = useMemo(() => {
     let n = 0;
@@ -228,6 +237,21 @@ export default function ReviewPage() {
         </div>
       )}
 
+      {/* 도메인 탭 (FCM 보드에서도 이동할 수 있게 위로 뺐다) */}
+      {cur.board === 'fcm' && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+          {DOMAINS.map((d) => (
+            <button key={d.key} style={btn(d.key === domain)}
+              onClick={() => { setDomain(d.key); setCurId(d.screens[0].id); }}>
+              {d.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {cur.board === 'fcm' ? (
+        <div style={{ maxWidth: 760 }}><FcmTestBoard /></div>
+      ) : (
       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
         {/* ── 좌: 실제 화면 (스크롤해도 붙어있게 고정 — 우측 기록만 흐른다) ── */}
@@ -417,6 +441,7 @@ export default function ReviewPage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* 이미지 확대 */}
       {zoom && (

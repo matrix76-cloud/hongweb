@@ -374,3 +374,11 @@ app.post('/newwork', (req, res) => {
 
 
 exports.api = functions.region('asia-northeast1').https.onRequest(app);
+
+
+/* ── 푸시 알림 (FCM) — functions/fcm.js ─────────────────────────
+   notifications 문서 생성 -> 발송 / 즉시 발송 테스트 / 오래된 알림 정리 */
+const fcm = require('./fcm');
+exports.onNotificationCreate = fcm.onNotificationCreate;
+exports.sendTestPush = fcm.sendTestPush;
+exports.notificationCleanup = fcm.notificationCleanup;

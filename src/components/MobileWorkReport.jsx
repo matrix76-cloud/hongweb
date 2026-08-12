@@ -8,6 +8,7 @@ import { UserContext } from "../context/User";
 import MobileMapPopup from "../modal/MobileMapPopup/MobileMapPopup";
 import MobileWorkMapPopup from "../modal/MobileMapPopup/MobileWorkMapPopup";
 import MobileSuccessPopup from "../modal/MobileSuccessPopup/MobileSuccessPopup";
+import MobileWarningPopup from "../modal/MobileWarningPopup/MobileWarningPopup";
 import { CreateChat, ReadChat } from "../service/ChatService";
 
 import { Readuserbyusersid } from "../service/UserService";
@@ -61,6 +62,14 @@ const ActionBar = styled.div`
   padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
   box-sizing: border-box;
 `
+/* 보이스톡을 허용한 일감이면 버튼이 둘이라 나란히 놓는다 */
+const ActionButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 90%;
+  & > * { flex: 1 1 0; min-width: 0; }
+`
 
 const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STATUS}) =>  {
 
@@ -88,6 +97,9 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
   const [ownerwork, setOwnerwork] = useState(false);
   const [closework, setClosework] = useState(false);
   const [currentloading, setCurrentloading] = useState(true);
+  /* 올린 사람이 보이스톡 허용을 켰는지 (일 등록 마지막 '연락 옵션') */
+  const [voicetalk, setVoicetalk] = useState(false);
+  const [voicetalknotice, setVoicetalknotice] = useState(false);
 
   const [supportWorkSuccess, setSupportWorkSuccess] = useState(false);
 
@@ -121,6 +133,9 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
        if(WORK_INFO.USERS_ID == user.users_id){
           setOwnerwork(true);
        }
+
+       // 올린 사람이 보이스톡을 허용한 일감에서만 버튼을 연다 (형 리뷰 2026-08-12)
+       setVoicetalk(WORK_INFO?.WORK_OPTION?.VOICETALK == true);
 
        // 지원 햇는지 확인 필요
        const USERS_ID = user.users_id;
@@ -233,6 +248,10 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
       }
 
       {
+        voicetalknotice == true && <MobileWarningPopup callback={()=>{setVoicetalknotice(false)}} content ={'보이스톡은 준비 중입니다. 지금은 지원하기로 채팅을 열어 연락해 주세요.'} />
+      }
+
+      {
         currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
           width={"100px"} height={'100px'}/>) :(<>
           <table className="workreport-table" style={{  margin: '10px auto', borderTop: "1px solid #434343"}}>      
@@ -291,8 +310,18 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
                ownerwork == true && <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#EDEDED'} color={'#999'} text={'본인이 등록한 일감'}/>
              }
              {
-               (supporterwork ==false && ownerwork == false) && <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#FF4E19'} color={'#fff'} text={'지원하기'}/>
-
+               /* 보이스톡은 올린 사람이 허용을 켠 일감에서만 지원하기 옆에 붙는다.
+                  통화 기능 자체는 아직 없어서 눌러도 준비중 안내만 띄운다 (형 리뷰 2026-08-12) */
+               (supporterwork ==false && ownerwork == false) && (
+                 voicetalk == true ? (
+                   <ActionButtons>
+                     <Button containerStyle={{border: '1px solid #FF4E19', fontSize:17, fontWeight:700}} onPress={()=>{setVoicetalknotice(true)}} height={'52px'} width={'100%'} radius={'10px'} bgcolor={'#FFF'} color={'#FF4E19'} text={'보이스톡'}/>
+                     <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'52px'} width={'100%'} radius={'10px'} bgcolor={'#FF4E19'} color={'#fff'} text={'지원하기'}/>
+                   </ActionButtons>
+                 ) : (
+                   <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#FF4E19'} color={'#fff'} text={'지원하기'}/>
+                 )
+               )
              }
            </>
          )
