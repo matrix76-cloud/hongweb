@@ -7,8 +7,10 @@ import { captureFrame, describeTarget } from './reviewCapture';
  *
  *   좌 = 실제 화면(iframe) + 핀 찍기 + 스샷 캡처
  *   우상 = 도메인 탭 → 화면 버튼 (2단계)
- *   우중 = 그 화면의 기획 사양(spec)
  *   우하 = 기록 스레드 (핀 위치 · 첨부 스샷)
+ *
+ * 기획 사양(spec) 패널은 형 지시로 화면에서 걷어냈다(2026-08-12).
+ * reviewData.js 의 spec 필드는 기록용으로 남겨둔다.
  *
  * 기록은 _docs/review_thread.json, 스샷은 _docs/review_images/ 에 파일로 저장된다.
  * 형이 핀 찍고 캡처해서 메모 남기면 카스가 읽고 조치한 뒤 답글을 단다.
@@ -19,6 +21,9 @@ const C = {
   line: '#e3e3e3', bg: '#f4f5f7', card: '#fff', brand: '#FF4E19', blue: '#2563eb',
 };
 const FONT = "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif";
+
+// 좌측 미리보기 = 실제 폰 사이즈. 360x800 (안드로이드 20:9 표준)
+const PHONE = { w: 360, h: 800 };
 
 const ALL = DOMAINS.flatMap((d) => d.screens.map((s) => ({ ...s, domain: d.key })));
 
@@ -178,9 +183,9 @@ export default function ReviewPage() {
 
       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
-        {/* ── 좌: 실제 화면 ── */}
-        <div style={{ flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap', width: 390 }}>
+        {/* ── 좌: 실제 화면 (스크롤해도 붙어있게 고정 — 우측 기록만 흐른다) ── */}
+        <div style={{ flexShrink: 0, position: 'sticky', top: 12, alignSelf: 'flex-start' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap', width: PHONE.w }}>
             <button style={btn(pinMode)} onClick={() => { setPinMode((v) => !v); setViewPins(null); }}>
               {pinMode ? '핀 찍는 중' : '핀 찍기'}
             </button>
@@ -193,9 +198,11 @@ export default function ReviewPage() {
             )}
             {viewPins && <button style={{ ...btn(false), padding: '6px 9px' }} onClick={() => setViewPins(null)}>보기 끄기</button>}
             {sharing && <button style={{ ...btn(false), padding: '6px 9px' }} onClick={stopShare}>공유 중지</button>}
+            <div style={{ flex: 1 }} />
+            <span style={{ fontSize: 13, color: C.gray2 }}>{PHONE.w} × {PHONE.h}</span>
           </div>
 
-          <div style={{ position: 'relative', width: 390, height: 780, border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
+          <div style={{ position: 'relative', width: PHONE.w, height: PHONE.h, border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
             {cur.path ? (
               <iframe ref={frameRef} title={cur.name} src={cur.path}
                 style={{ width: '100%', height: '100%', border: 'none', display: 'block' }} />
@@ -203,7 +210,7 @@ export default function ReviewPage() {
               <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', justifyContent: 'center', padding: 34, textAlign: 'center' }}>
                 <div style={{ fontSize: 18, fontWeight: 700, color: '#c02020' }}>아직 화면이 없습니다</div>
                 <div style={{ fontSize: 15, color: C.gray, lineHeight: 1.7 }}>
-                  {(cur.spec || []).filter((s) => s.startsWith('★'))[0] || '미구현'}
+                  아직 만들지 않은 화면입니다.
                 </div>
               </div>
             )}
@@ -228,7 +235,7 @@ export default function ReviewPage() {
 
           {/* 첨부 예정 스샷 */}
           {attachImgs.length > 0 && (
-            <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap', width: 390 }}>
+            <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap', width: PHONE.w }}>
               {attachImgs.map((src, i) => (
                 <div key={i} style={{ position: 'relative' }}>
                   <img src={src} alt="" onClick={() => setZoom(src)}
@@ -283,26 +290,14 @@ export default function ReviewPage() {
             })}
           </div>
 
-          <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 10 }}>
+          <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, minHeight: 240 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4 }}>
               <div style={{ fontSize: 18, fontWeight: 700 }}>{cur.no} {cur.name}</div>
               {cur.path
                 ? <a href={cur.path} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: C.blue }}>{cur.path}</a>
                 : <span style={{ fontSize: 14, color: '#c02020', fontWeight: 600 }}>화면 없음</span>}
             </div>
-            {(cur.spec || []).length === 0
-              ? <div style={{ fontSize: 15, color: C.gray2 }}>작성된 사양 없음</div>
-              : (cur.spec || []).map((line, i) => {
-                const key = line.startsWith('★');
-                return (
-                  <div key={i} style={{ fontSize: 15, lineHeight: 1.7, marginBottom: 5, color: key ? C.ink : C.gray, fontWeight: key ? 600 : 400 }}>
-                    {line}
-                  </div>
-                );
-              })}
-          </div>
 
-          <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, minHeight: 240 }}>
             {roots.length === 0 && (
               <div style={{ fontSize: 15, color: C.gray2, padding: '10px 0 16px' }}>아직 기록이 없습니다.</div>
             )}

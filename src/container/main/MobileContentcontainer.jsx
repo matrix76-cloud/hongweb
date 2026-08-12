@@ -236,7 +236,7 @@ const InputChat = styled.textarea`
   resize: none;
   border: none;
   outline: 0;
-  font-family: "SF-Pro-Text-Regular";
+  font-family: "Pretendard-Regular";
   font-size: 16px;
   padding: 10px;
   color :#999;

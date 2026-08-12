@@ -95,7 +95,7 @@ const Point = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  font-family: 'Jalnan2';
+  font-family: 'Pretendard-Bold';
   border: 2px dotted #ff4e19;
 
 `

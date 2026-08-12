@@ -47,21 +47,21 @@ export const REFRESHTYPE= "REFRESH";
 export const RESETTYPE= "RESET";
 
 export const WORKPOLICY ={
-    HOMECLEAN :7,
+    HOMECLEAN :9,
     BUSINESSCLEAN :12,
-    MOVECLEAN:12,
-    FOODPREPARE: 12,
-    ERRAND: 9,
-    GOOUTSCHOOL: 10,
-    BABYCARE :11,
-    LESSON: 11,
-    PATIENTCARE :11,
-    CARRYLOAD : 9,
-    GOHOSPITAL :11,
-    GOSCHOOLEVENT: 9,
-    SHOPPING: 9,
-    GODOGHOSPITAL: 9,
-    GODOGWALK : 9,
+    MOVECLEAN :12,
+    FOODPREPARE :13,
+    ERRAND :9,
+    GOOUTSCHOOL :11,
+    BABYCARE :12,
+    LESSON :12,
+    PATIENTCARE :12,
+    CARRYLOAD :10,
+    GOHOSPITAL :12,
+    GOSCHOOLEVENT :9,
+    SHOPPING :10,
+    GODOGHOSPITAL :10,
+    GODOGWALK :10,
 }
 
 
@@ -80,6 +80,28 @@ export const WORK_INFO= {
 }
 
 export const REQUESTINFO={
+    // 2026-08-12 추가 — 홍여사가 지원 여부를 판단하는 데 필요한 정보
+    PET : "반려동물",
+    TOOL : "청소도구",
+    FLOOR : "층수",
+    MOVETIMING : "이사 시점",
+    MEALCOUNT : "식사 인원",
+    INGREDIENT : "재료 준비",
+    BUDGET : "예상 금액",
+    PAYMENT : "결제 방법",
+    TRANSPORT : "이동 수단",
+    LOADSIZE : "짐 규모",
+    CHILDAGE : "아이 나이",
+    CHILDCOUNT : "아이 인원",
+    SCHOOLTRIP : "등하원 구분",
+    SUBJECT : "과목",
+    GRADE : "학년",
+    EVENTTYPE : "행사 종류",
+    MOBILITY : "거동 상태",
+    CAREPLACE : "돌봄 장소",
+    ACCOMPANY : "동행 범위",
+    DOGSIZE : "반려견 크기",
+    DOGCOUNT : "반려견 수",
     PERIOD : "주기",
     DATE : "일자",
     MONEY : "금액",
@@ -124,7 +146,7 @@ export const Requestcleanmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -135,7 +157,7 @@ export const Requestcleanmessages =[
     {
       type:"request", 
       show:false, 
-      index:1, 
+      index:2, 
       info:"언제마다 청소하시기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -144,22 +166,22 @@ export const Requestcleanmessages =[
         {selected : false, key:"1회만", request:"1회만", response:"1회만"}
       ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
   
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"청소하는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
 
     {
       type:"requesttarget", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"청소가 필요한 곳의 대상과 범위을 선택해주세요",
       selected : false,
       multiselect_enable:true, 
@@ -178,12 +200,12 @@ export const Requestcleanmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.TARGET,  result:""},
   
     {
       type:"requesttimemoney", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"청소시간을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -202,12 +224,12 @@ export const Requestcleanmessages =[
         {selected : false, key:"협의필요", request:"협의필요", response:"협의필요"},],
     },
   
-    {type:"response", responseshow : true, show:false, index:8,requesttype:REQUESTINFO.TIMEMONEY, result:""},
+    {type:"response", responseshow : true, show:false, index:9,requesttype:REQUESTINFO.TIMEMONEY, result:""},
 
     {
       type:"requesthelp", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"도움주실분의 원하는 성별 과 연령대를 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -224,30 +246,60 @@ export const Requestcleanmessages =[
   
     },
   
-    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.HELP, result:""},
+    {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.HELP, result:""},
   
   
     {
       type:"requestregion", 
       show:false, 
-      index:11,
+      index:12,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:12, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:13, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+
+        {
+      type:"request",
+      show:false,
+      index:14,
+      info:"반려동물을 키우시나요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"없음", request:"없음", response:"없음"},
+        {selected : false, key:"강아지", request:"강아지", response:"강아지"},
+        {selected : false, key:"고양이", request:"고양이", response:"고양이"},
+        {selected : false, key:"그 외", request:"그 외", response:"그 외"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:15, requesttype:REQUESTINFO.PET,  result:""},
 
     {
+      type:"request",
+      show:false,
+      index:16,
+      info:"청소도구와 세제는 준비되어 있나요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"집에 있어요", request:"집에 있어요", response:"집에 있어요"},
+        {selected : false, key:"홍여사가 준비해주세요", request:"홍여사가 준비해주세요", response:"홍여사가 준비해주세요"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:17, requesttype:REQUESTINFO.TOOL,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:13,
+      index:18,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:14, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
   
-    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:20, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestbusinesscleanmessages =[
@@ -255,7 +307,7 @@ export const Requestbusinesscleanmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -266,7 +318,7 @@ export const Requestbusinesscleanmessages =[
     {
       type:"request", 
       show:false, 
-      index:1, 
+      index:2, 
       info:"언제마다 청소하시기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -275,21 +327,21 @@ export const Requestbusinesscleanmessages =[
         {selected : false, key:"1회만", request:"1회만", response:"1회만"}
       ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
   
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"청소하는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"청소금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -306,11 +358,11 @@ export const Requestbusinesscleanmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"청소가 필요한 곳을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -320,12 +372,12 @@ export const Requestbusinesscleanmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"청소할곳이 몇평인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -337,12 +389,12 @@ export const Requestbusinesscleanmessages =[
       {selected : false, key:"40평대", request:"40평대", response:"40평대"},
       {selected : false, key:"50평대", request:"50평대", response:"50평대"},]},
   
-      {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.TARGETAREA,  result:""},
+      {type:"response", responseshow : true, show:false, index:11, requesttype:REQUESTINFO.TARGETAREA,  result:""},
   
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"청소시간을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -352,12 +404,12 @@ export const Requestbusinesscleanmessages =[
       {selected : false, key:"5시간", request:"5시간", response:"5시간"},
       {selected : false, key:"청소끝날때까지", request:"하루종일", response:"하루종일"},]},
   
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.TIME, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.TIME, result:""},
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"청소하는 시간대는 언제가 좋을까요?",
       selected : false,
       multiselect_enable:false, 
@@ -367,14 +419,14 @@ export const Requestbusinesscleanmessages =[
         {selected : false, key:"오후시간", request:"오후시간", response:"오후시간"},
         {selected : false, key:"저녁시간", request:"저녁시간", response:"저녁시간"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
   
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
+      index:16, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -382,27 +434,13 @@ export const Requestbusinesscleanmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:17, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:19, 
+      index:18, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -415,30 +453,46 @@ export const Requestbusinesscleanmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:20,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:19,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:21,
+      index:20,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
-    {
+        {
+      type:"request",
+      show:false,
+      index:22,
+      info:"건물 층수와 엘리베이터를 알려주세요",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"1층", request:"1층", response:"1층"},
+        {selected : false, key:"엘리베이터 있음", request:"엘리베이터 있음", response:"엘리베이터 있음"},
+        {selected : false, key:"2~3층 계단", request:"2~3층 계단", response:"2~3층 계단"},
+        {selected : false, key:"4층 이상 계단", request:"4층 이상 계단", response:"4층 이상 계단"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:23, requesttype:REQUESTINFO.FLOOR,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:23,
+      index:24,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:24, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:25, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:25, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:26, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestmovecleanmessages =[
@@ -446,7 +500,7 @@ export const Requestmovecleanmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -457,7 +511,7 @@ export const Requestmovecleanmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 청소하시기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -466,21 +520,21 @@ export const Requestmovecleanmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"청소하는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"청소금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -497,11 +551,11 @@ export const Requestmovecleanmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"청소가 필요한 곳을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -511,12 +565,12 @@ export const Requestmovecleanmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"청소할곳이 몇평인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -528,12 +582,12 @@ export const Requestmovecleanmessages =[
       {selected : false, key:"40평대", request:"40평대", response:"40평대"},
       {selected : false, key:"50평대", request:"50평대", response:"50평대"},]},
   
-      {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.TARGETAREA,  result:""},
+      {type:"response", responseshow : true, show:false, index:11, requesttype:REQUESTINFO.TARGETAREA,  result:""},
   
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"청소시간을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -543,12 +597,12 @@ export const Requestmovecleanmessages =[
       {selected : false, key:"5시간", request:"5시간", response:"5시간"},
       {selected : false, key:"청소끝날때까지", request:"하루종일", response:"하루종일"},]},
   
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.TIME, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.TIME, result:""},
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"청소하는 시간대는 언제가 좋을까요?",
       selected : false,
       multiselect_enable:false, 
@@ -558,14 +612,14 @@ export const Requestmovecleanmessages =[
         {selected : false, key:"오후시간", request:"오후시간", response:"오후시간"},
         {selected : false, key:"저녁시간", request:"저녁시간", response:"저녁시간"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
   
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
+      index:16, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -573,27 +627,13 @@ export const Requestmovecleanmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:17, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:19, 
+      index:18, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -606,30 +646,44 @@ export const Requestmovecleanmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:20,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:19,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:21,
+      index:20,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
-    {
+        {
+      type:"request",
+      show:false,
+      index:22,
+      info:"언제 청소하나요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"이사 전 (빈집)", request:"이사 전 (빈집)", response:"이사 전 (빈집)"},
+        {selected : false, key:"이사 후 (짐 있음)", request:"이사 후 (짐 있음)", response:"이사 후 (짐 있음)"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:23, requesttype:REQUESTINFO.MOVETIMING,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:23,
+      index:24,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:24, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:25, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:25, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:26, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestfoodpreparemessages =[
@@ -637,7 +691,7 @@ export const Requestfoodpreparemessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -648,7 +702,7 @@ export const Requestfoodpreparemessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 식사준비하시기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -657,21 +711,21 @@ export const Requestfoodpreparemessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"식사준비하는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"식사준비금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -684,11 +738,11 @@ export const Requestfoodpreparemessages =[
         {selected : false, key:"8만원~10만원", request:"8만원~10만원", response:"8만원~10만원"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"식사준비가 필요한 곳을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -700,12 +754,12 @@ export const Requestfoodpreparemessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
     {
         type:"request", 
         show:false, 
-        index:9, 
+        index:10, 
         info:"식사준비에 장보기를 포함할까여?",
         selected : false,
         multiselect_enable:false, 
@@ -713,13 +767,13 @@ export const Requestfoodpreparemessages =[
         {selected : false, key:"장보기 포함", request:"장보기 포함", response:"장보기 포함"},
         {selected : false, key:"장보기 미포함", request:"장보기 미포함", response:"장보기 미포함"},]},
     
-      {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.TIME, result:""},
+      {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.TIME, result:""},
 
     
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"식사준비를 어떤걸로 하는지 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -729,12 +783,12 @@ export const Requestfoodpreparemessages =[
       {selected : false, key:"찌개+반찬3개", request:"찌개+반찬3개", response:"찌개+반찬3개"},
       {selected : false, key:"찌개+반찬4개", request:"찌개+반찬4개", response:"찌개+반찬4개"},]},
   
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.TIME, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.TIME, result:""},
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"식사준비하는 시간대는 언제가 좋을까요?",
       selected : false,
       multiselect_enable:false, 
@@ -744,14 +798,14 @@ export const Requestfoodpreparemessages =[
         {selected : false, key:"점심식사", request:"점심식사", response:"점심식사"},
         {selected : false, key:"저녁식사", request:"저녁식사", response:"저녁식사"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
   
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
+      index:16, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -759,27 +813,13 @@ export const Requestfoodpreparemessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:17, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:19, 
+      index:18, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -792,30 +832,59 @@ export const Requestfoodpreparemessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:20,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:19,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:21,
+      index:20,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:22,
+      info:"몇 분 드실 식사인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"1~2인", request:"1~2인", response:"1~2인"},
+        {selected : false, key:"3~4인", request:"3~4인", response:"3~4인"},
+        {selected : false, key:"5인 이상", request:"5인 이상", response:"5인 이상"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:23, requesttype:REQUESTINFO.MEALCOUNT,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:24,
+      info:"재료는 준비되어 있나요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"재료 있어요", request:"재료 있어요", response:"재료 있어요"},
+        {selected : false, key:"장보기부터 해주세요", request:"장보기부터 해주세요", response:"장보기부터 해주세요"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:25, requesttype:REQUESTINFO.INGREDIENT,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:23,
+      index:26,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:24, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:27, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:25, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:28, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requesterrandmessages =[
@@ -823,7 +892,7 @@ export const Requesterrandmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -834,7 +903,7 @@ export const Requesterrandmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 도움받기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -843,21 +912,21 @@ export const Requesterrandmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"도움받는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -874,11 +943,11 @@ export const Requesterrandmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"어떤 도움을 받기를 원하시나요",
       selected : false,
       multiselect_enable:false, 
@@ -894,14 +963,14 @@ export const Requesterrandmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
   
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -909,27 +978,13 @@ export const Requesterrandmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:11, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:13, 
+      index:12, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -942,30 +997,45 @@ export const Requesterrandmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:15,
+      index:14,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:16, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:15, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
-    {
+        {
+      type:"request",
+      show:false,
+      index:16,
+      info:"이동 수단이 필요한가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"도보 가능", request:"도보 가능", response:"도보 가능"},
+        {selected : false, key:"대중교통", request:"대중교통", response:"대중교통"},
+        {selected : false, key:"차량 필요", request:"차량 필요", response:"차량 필요"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:17, requesttype:REQUESTINFO.TRANSPORT,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:17,
+      index:18,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:18, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:20, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestgooutschoolmessages =[
@@ -973,7 +1043,7 @@ export const Requestgooutschoolmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -984,7 +1054,7 @@ export const Requestgooutschoolmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 도움받기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -993,23 +1063,23 @@ export const Requestgooutschoolmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"등원하원 도와주는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:5, 
+        index:6, 
         info:"등원하원 도와주는 시간대는 언제가 좋을까요?",
         selected : false,
         multiselect_enable:false, 
@@ -1019,13 +1089,13 @@ export const Requestgooutschoolmessages =[
           {selected : false, key:"저녁", request:"저녁", response:"저녁"},
           {selected : false, key:"하루종일", request:"하루종일", response:"하루종일"},]},
     
-    {type:"response", responseshow : true, show:false, index:6,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:7,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:7, 
+        index:8, 
         info:"등원하원 대상은 무엇인가요?",
         selected : false,
         multiselect_enable:false, 
@@ -1035,12 +1105,12 @@ export const Requestgooutschoolmessages =[
           {selected : false, key:"학교/학원", request:"학교/학원", response:"학교/학원"},
         ]},
     
-    {type:"response", responseshow : true, show:false, index:8,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:9,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
 
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -1057,13 +1127,13 @@ export const Requestgooutschoolmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:11, requesttype:REQUESTINFO.MONEY,  result:""},
 
   
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -1071,27 +1141,13 @@ export const Requestgooutschoolmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:13, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:15, 
+      index:14, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -1104,30 +1160,60 @@ export const Requestgooutschoolmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:17,
+      index:16,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:18, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:17, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:18,
+      info:"아이 나이대를 알려주세요",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"미취학", request:"미취학", response:"미취학"},
+        {selected : false, key:"초등 저학년", request:"초등 저학년", response:"초등 저학년"},
+        {selected : false, key:"초등 고학년", request:"초등 고학년", response:"초등 고학년"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:19, requesttype:REQUESTINFO.CHILDAGE,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:20,
+      info:"등원과 하원 중 어느 쪽인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"등원만", request:"등원만", response:"등원만"},
+        {selected : false, key:"하원만", request:"하원만", response:"하원만"},
+        {selected : false, key:"등하원 모두", request:"등하원 모두", response:"등하원 모두"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:21, requesttype:REQUESTINFO.SCHOOLTRIP,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:19,
+      index:22,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:20, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:23, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:21, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:24, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestbabycaremessages =[
@@ -1135,7 +1221,7 @@ export const Requestbabycaremessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -1146,7 +1232,7 @@ export const Requestbabycaremessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 아이돌보는것을 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -1155,23 +1241,23 @@ export const Requestbabycaremessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"아이 돌봐주는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:5, 
+        index:6, 
         info:"아이돌봐주는 시간대는 언제가 좋을까요?",
         selected : false,
         multiselect_enable:false, 
@@ -1181,13 +1267,13 @@ export const Requestbabycaremessages =[
           {selected : false, key:"저녁", request:"저녁", response:"저녁"},
           {selected : false, key:"하루종일", request:"하루종일", response:"하루종일"},]},
     
-    {type:"response", responseshow : true, show:false, index:6,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:7,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:7, 
+        index:8, 
         info:"아이돌보는  대상은 무엇인가요?",
         selected : false,
         multiselect_enable:false, 
@@ -1196,12 +1282,12 @@ export const Requestbabycaremessages =[
           {selected : false, key:"2명", request:"2명", response:"2명"},
         ]},
     
-    {type:"response", responseshow : true, show:false, index:8,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:9,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
 
     {
         type:"request", 
         show:false, 
-        index:9, 
+        index:10, 
         info:"아이 돌봐줄곳을 선택해주세요",
         selected : false,
         multiselect_enable:false, 
@@ -1213,12 +1299,12 @@ export const Requestbabycaremessages =[
       },
     
     
-      {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.TARGET,  result:""},
+      {type:"response", responseshow : true, show:false, index:11, requesttype:REQUESTINFO.TARGET,  result:""},
 
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -1235,13 +1321,13 @@ export const Requestbabycaremessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:12, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:13, requesttype:REQUESTINFO.MONEY,  result:""},
 
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -1249,27 +1335,13 @@ export const Requestbabycaremessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:17, 
+      index:16, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -1282,30 +1354,61 @@ export const Requestbabycaremessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:19,
+      index:18,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:20, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:20,
+      info:"아이 나이대를 알려주세요",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"12개월 미만", request:"12개월 미만", response:"12개월 미만"},
+        {selected : false, key:"1~3세", request:"1~3세", response:"1~3세"},
+        {selected : false, key:"4~6세", request:"4~6세", response:"4~6세"},
+        {selected : false, key:"초등학생", request:"초등학생", response:"초등학생"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:21, requesttype:REQUESTINFO.CHILDAGE,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:22,
+      info:"아이는 몇 명인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"1명", request:"1명", response:"1명"},
+        {selected : false, key:"2명", request:"2명", response:"2명"},
+        {selected : false, key:"3명 이상", request:"3명 이상", response:"3명 이상"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:23, requesttype:REQUESTINFO.CHILDCOUNT,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:21,
+      index:24,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:25, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:23, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:26, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestlessonmessages =[
@@ -1313,7 +1416,7 @@ export const Requestlessonmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -1324,7 +1427,7 @@ export const Requestlessonmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 레슨 하는것을 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -1333,24 +1436,24 @@ export const Requestlessonmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
 
 
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"아이 레슨하는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:5, 
+        index:6, 
         info:"아이레슨 시간대는 언제가 좋을까요?",
         selected : false,
         multiselect_enable:false, 
@@ -1360,13 +1463,13 @@ export const Requestlessonmessages =[
          ]
     },
     
-    {type:"response", responseshow : true, show:false, index:6,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:7,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:7,
+        index:8,
         info:"아이 레슨이 필요한 과목은 무엇인가요 ?",
         selected : false,
         multiselect_enable:false, 
@@ -1381,12 +1484,12 @@ export const Requestlessonmessages =[
     },
     
       
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.DATE,  result:""},
 
     {
         type:"request", 
         show:false, 
-        index:9, 
+        index:10, 
         info:"아이 레슨하는곳을 선택해주세요",
         selected : false,
         multiselect_enable:false, 
@@ -1398,12 +1501,12 @@ export const Requestlessonmessages =[
       },
     
     
-      {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.TARGET,  result:""},
+      {type:"response", responseshow : true, show:false, index:11, requesttype:REQUESTINFO.TARGET,  result:""},
 
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -1420,13 +1523,13 @@ export const Requestlessonmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:12, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:13, requesttype:REQUESTINFO.MONEY,  result:""},
 
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -1434,27 +1537,13 @@ export const Requestlessonmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:17, 
+      index:16, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -1467,30 +1556,63 @@ export const Requestlessonmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:19,
+      index:18,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:20, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:20,
+      info:"어떤 과목인가요?",
+      selected : false,
+      multiselect_enable:true,
+      selectitems:[
+        {selected : false, key:"국어", request:"국어", response:"국어"},
+        {selected : false, key:"영어", request:"영어", response:"영어"},
+        {selected : false, key:"수학", request:"수학", response:"수학"},
+        {selected : false, key:"예체능", request:"예체능", response:"예체능"},
+        {selected : false, key:"그 외", request:"그 외", response:"그 외"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:21, requesttype:REQUESTINFO.SUBJECT,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:22,
+      info:"학년을 알려주세요",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"미취학", request:"미취학", response:"미취학"},
+        {selected : false, key:"초등", request:"초등", response:"초등"},
+        {selected : false, key:"중등", request:"중등", response:"중등"},
+        {selected : false, key:"고등", request:"고등", response:"고등"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:23, requesttype:REQUESTINFO.GRADE,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:21,
+      index:24,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:25, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:23, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:26, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestpatientcaremessages =[
@@ -1498,7 +1620,7 @@ export const Requestpatientcaremessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -1509,7 +1631,7 @@ export const Requestpatientcaremessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 간병 하는것을 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -1518,24 +1640,24 @@ export const Requestpatientcaremessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
 
 
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"간병하는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:5, 
+        index:6, 
         info:"간병하는 시간대는 언제가 좋을까요?",
         selected : false,
         multiselect_enable:false, 
@@ -1547,13 +1669,13 @@ export const Requestpatientcaremessages =[
          ]
     },
     
-    {type:"response", responseshow : true, show:false, index:6,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:7,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:7,
+        index:8,
         info:"누구를 간병해야 하나요?",
         selected : false,
         multiselect_enable:false, 
@@ -1570,12 +1692,12 @@ export const Requestpatientcaremessages =[
     },
     
       
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.DATE,  result:""},
 
     {
         type:"request", 
         show:false, 
-        index:9, 
+        index:10, 
         info:"간병하는곳을 선택해주세요",
         selected : false,
         multiselect_enable:false, 
@@ -1585,12 +1707,12 @@ export const Requestpatientcaremessages =[
       },
     
     
-      {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.TARGET,  result:""},
+      {type:"response", responseshow : true, show:false, index:11, requesttype:REQUESTINFO.TARGET,  result:""},
 
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -1603,13 +1725,13 @@ export const Requestpatientcaremessages =[
         {selected : false, key:"8만원~10만원", request:"8만원~10만원", response:"8만원~10만원"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:12, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:13, requesttype:REQUESTINFO.MONEY,  result:""},
 
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"간병이 필요한 사람의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -1617,27 +1739,13 @@ export const Requestpatientcaremessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:17, 
+      index:16, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -1650,30 +1758,60 @@ export const Requestpatientcaremessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:19,
+      index:18,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:20, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:20,
+      info:"거동은 어느 정도 가능하신가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"스스로 가능", request:"스스로 가능", response:"스스로 가능"},
+        {selected : false, key:"부축 필요", request:"부축 필요", response:"부축 필요"},
+        {selected : false, key:"거동 어려움", request:"거동 어려움", response:"거동 어려움"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:21, requesttype:REQUESTINFO.MOBILITY,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:22,
+      info:"어디에서 돌봐드리나요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"집", request:"집", response:"집"},
+        {selected : false, key:"병원", request:"병원", response:"병원"},
+        {selected : false, key:"요양원", request:"요양원", response:"요양원"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:23, requesttype:REQUESTINFO.CAREPLACE,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:21,
+      index:24,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:25, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:23, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:26, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestcarryloadmessages =[
@@ -1681,7 +1819,7 @@ export const Requestcarryloadmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -1692,7 +1830,7 @@ export const Requestcarryloadmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 도움받기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -1701,22 +1839,22 @@ export const Requestcarryloadmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
   
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"도움받는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -1733,11 +1871,11 @@ export const Requestcarryloadmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"어떤 도움을 받기를 원하시나요",
       selected : false,
       multiselect_enable:false, 
@@ -1755,14 +1893,14 @@ export const Requestcarryloadmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
   
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -1770,27 +1908,13 @@ export const Requestcarryloadmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:11, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:13, 
+      index:12, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -1803,30 +1927,61 @@ export const Requestcarryloadmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:15,
+      index:14,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:16, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:15, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:16,
+      info:"층수와 엘리베이터를 알려주세요",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"1층", request:"1층", response:"1층"},
+        {selected : false, key:"엘리베이터 있음", request:"엘리베이터 있음", response:"엘리베이터 있음"},
+        {selected : false, key:"2~3층 계단", request:"2~3층 계단", response:"2~3층 계단"},
+        {selected : false, key:"4층 이상 계단", request:"4층 이상 계단", response:"4층 이상 계단"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:17, requesttype:REQUESTINFO.FLOOR,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:18,
+      info:"짐 규모는 어느 정도인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"박스 몇 개", request:"박스 몇 개", response:"박스 몇 개"},
+        {selected : false, key:"방 하나 분량", request:"방 하나 분량", response:"방 하나 분량"},
+        {selected : false, key:"가구 포함", request:"가구 포함", response:"가구 포함"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:19, requesttype:REQUESTINFO.LOADSIZE,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:17,
+      index:20,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:18, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:22, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestgohospitalmessages =[
@@ -1834,7 +1989,7 @@ export const Requestgohospitalmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -1845,7 +2000,7 @@ export const Requestgohospitalmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 병원같이 가는것을 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -1854,24 +2009,24 @@ export const Requestgohospitalmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
 
 
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"병원가는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:5, 
+        index:6, 
         info:"병원가는 시간대는 언제가 좋을까요?",
         selected : false,
         multiselect_enable:false, 
@@ -1881,13 +2036,13 @@ export const Requestgohospitalmessages =[
          ]
     },
     
-    {type:"response", responseshow : true, show:false, index:6,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:7,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
 
 
     {
         type:"request", 
         show:false, 
-        index:7,
+        index:8,
         info:"누구와 같이 병원을 가야하나요?",
         selected : false,
         multiselect_enable:false, 
@@ -1904,12 +2059,12 @@ export const Requestgohospitalmessages =[
     },
     
       
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.DATE,  result:""},
 
     {
         type:"request", 
         show:false, 
-        index:9, 
+        index:10, 
         info:"병원가는곳을 선택해주세요",
         selected : false,
         multiselect_enable:false, 
@@ -1919,12 +2074,12 @@ export const Requestgohospitalmessages =[
       },
     
     
-      {type:"response", responseshow : true, show:false, index:10, requesttype:REQUESTINFO.TARGET,  result:""},
+      {type:"response", responseshow : true, show:false, index:11, requesttype:REQUESTINFO.TARGET,  result:""},
 
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -1937,13 +2092,13 @@ export const Requestgohospitalmessages =[
         {selected : false, key:"8만원~10만원", request:"8만원~10만원", response:"8만원~10만원"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:12, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:13, requesttype:REQUESTINFO.MONEY,  result:""},
 
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"병원 같이갈 사람의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -1951,27 +2106,13 @@ export const Requestgohospitalmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:17, 
+      index:16, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -1984,30 +2125,60 @@ export const Requestgohospitalmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:19,
+      index:18,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:20, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:20,
+      info:"거동은 어느 정도 가능하신가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"스스로 가능", request:"스스로 가능", response:"스스로 가능"},
+        {selected : false, key:"부축 필요", request:"부축 필요", response:"부축 필요"},
+        {selected : false, key:"휠체어", request:"휠체어", response:"휠체어"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:21, requesttype:REQUESTINFO.MOBILITY,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:22,
+      info:"어디까지 도와드릴까요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"동행만", request:"동행만", response:"동행만"},
+        {selected : false, key:"접수·수납까지", request:"접수·수납까지", response:"접수·수납까지"},
+        {selected : false, key:"약국까지", request:"약국까지", response:"약국까지"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:23, requesttype:REQUESTINFO.ACCOMPANY,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:21,
+      index:24,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:25, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:23, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:26, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestrecipetranmitmessages =[
@@ -2015,7 +2186,7 @@ export const Requestrecipetranmitmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -2026,7 +2197,7 @@ export const Requestrecipetranmitmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 요리비법을 전수받기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -2035,21 +2206,21 @@ export const Requestrecipetranmitmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"요리전수받는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"요리전수받는금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -2062,11 +2233,11 @@ export const Requestrecipetranmitmessages =[
         {selected : false, key:"8만원~10만원", request:"8만원~10만원", response:"8만원~10만원"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"요리비번 전수가 필요한 곳을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -2078,12 +2249,12 @@ export const Requestrecipetranmitmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
     {
         type:"request", 
         show:false, 
-        index:9, 
+        index:10, 
         info:"요리비법 전수에 장보기를 포함할까여?",
         selected : false,
         multiselect_enable:false, 
@@ -2091,13 +2262,13 @@ export const Requestrecipetranmitmessages =[
         {selected : false, key:"장보기 포함", request:"장보기 포함", response:"장보기 포함"},
         {selected : false, key:"장보기 미포함", request:"장보기 미포함", response:"장보기 미포함"},]},
     
-      {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.TIME, result:""},
+      {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.TIME, result:""},
 
   
     {
       type:"request", 
       show:false, 
-      index:11, 
+      index:12, 
       info:"요리비법 전수하는 시간대는 언제가 좋을까요?",
       selected : false,
       multiselect_enable:false, 
@@ -2107,14 +2278,14 @@ export const Requestrecipetranmitmessages =[
         {selected : false, key:"오후", request:"오후", response:"오후"},
         {selected : false, key:"저녁", request:"저녁", response:"저녁"},]},
   
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.CLEANINGTIME, result:""},
   
   
   
     {
       type:"request", 
       show:false, 
-      index:13, 
+      index:14, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -2122,27 +2293,13 @@ export const Requestrecipetranmitmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:15,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:15, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:16,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:17, 
+      index:16, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -2155,30 +2312,30 @@ export const Requestrecipetranmitmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:18,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:17,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:19,
+      index:18,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:20, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
     {
       type:"requestcomment", 
       show:false, 
-      index:21,
+      index:20,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:22, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:23, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:22, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestschooleventmessages =[
@@ -2186,7 +2343,7 @@ export const Requestschooleventmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -2197,7 +2354,7 @@ export const Requestschooleventmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 학교행사에 참석하기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -2206,21 +2363,21 @@ export const Requestschooleventmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"학교행사에 참석하는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -2237,11 +2394,11 @@ export const Requestschooleventmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"어떤 도움을 받기를 원하시나요",
       selected : false,
       multiselect_enable:false, 
@@ -2252,14 +2409,14 @@ export const Requestschooleventmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
   
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -2267,27 +2424,13 @@ export const Requestschooleventmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:11, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:13, 
+      index:12, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -2300,30 +2443,47 @@ export const Requestschooleventmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:15,
+      index:14,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:16, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:15, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
-    {
+        {
+      type:"request",
+      show:false,
+      index:16,
+      info:"어떤 행사인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"녹색어머니", request:"녹색어머니", response:"녹색어머니"},
+        {selected : false, key:"급식 도우미", request:"급식 도우미", response:"급식 도우미"},
+        {selected : false, key:"도서 도우미", request:"도서 도우미", response:"도서 도우미"},
+        {selected : false, key:"체험학습 인솔", request:"체험학습 인솔", response:"체험학습 인솔"},
+        {selected : false, key:"그 외", request:"그 외", response:"그 외"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:17, requesttype:REQUESTINFO.EVENTTYPE,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:17,
+      index:18,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:18, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:19, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:20, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestshoppingmessages =[
@@ -2331,7 +2491,7 @@ export const Requestshoppingmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -2342,7 +2502,7 @@ export const Requestshoppingmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 장보는것을 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -2351,21 +2511,21 @@ export const Requestshoppingmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"장보는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -2382,11 +2542,11 @@ export const Requestshoppingmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"어디서 장보는것을 원하시나요",
       selected : false,
       multiselect_enable:false, 
@@ -2399,14 +2559,14 @@ export const Requestshoppingmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
   
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -2414,27 +2574,13 @@ export const Requestshoppingmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:11, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:13, 
+      index:12, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -2447,30 +2593,59 @@ export const Requestshoppingmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:15,
+      index:14,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:16, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:15, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:16,
+      info:"예상 장보기 금액은 얼마인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"5만원 이하", request:"5만원 이하", response:"5만원 이하"},
+        {selected : false, key:"10만원 이하", request:"10만원 이하", response:"10만원 이하"},
+        {selected : false, key:"10만원 이상", request:"10만원 이상", response:"10만원 이상"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:17, requesttype:REQUESTINFO.BUDGET,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:18,
+      info:"결제는 어떻게 하시나요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"미리 전달", request:"미리 전달", response:"미리 전달"},
+        {selected : false, key:"나중에 정산", request:"나중에 정산", response:"나중에 정산"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:19, requesttype:REQUESTINFO.PAYMENT,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:17,
+      index:20,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:18, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:22, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestdoghospitalmessages =[
@@ -2478,7 +2653,7 @@ export const Requestdoghospitalmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -2489,7 +2664,7 @@ export const Requestdoghospitalmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 도움받기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -2498,21 +2673,21 @@ export const Requestdoghospitalmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"도움받는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -2529,11 +2704,11 @@ export const Requestdoghospitalmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"어떤 도움을 받기를 원하시나요",
       selected : false,
       multiselect_enable:false, 
@@ -2547,14 +2722,14 @@ export const Requestdoghospitalmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
   
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -2562,27 +2737,13 @@ export const Requestdoghospitalmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:11, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:13, 
+      index:12, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -2595,30 +2756,60 @@ export const Requestdoghospitalmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:15,
+      index:14,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:16, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:15, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:16,
+      info:"반려견 크기를 알려주세요",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"소형견", request:"소형견", response:"소형견"},
+        {selected : false, key:"중형견", request:"중형견", response:"중형견"},
+        {selected : false, key:"대형견", request:"대형견", response:"대형견"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:17, requesttype:REQUESTINFO.DOGSIZE,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:18,
+      info:"몇 마리인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"1마리", request:"1마리", response:"1마리"},
+        {selected : false, key:"2마리", request:"2마리", response:"2마리"},
+        {selected : false, key:"3마리 이상", request:"3마리 이상", response:"3마리 이상"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:19, requesttype:REQUESTINFO.DOGCOUNT,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:17,
+      index:20,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:18, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:22, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]
 export const Requestdogwalkmessages =[
@@ -2626,7 +2817,7 @@ export const Requestdogwalkmessages =[
     {
      type:"initialize", 
      show:true, 
-     index:0, 
+     index:1, 
      info:"몇가지 정보만 알려주시면 실시간으로 견적을 받을수 있어요",
      selected: false,
      multiselect_enable: false,
@@ -2637,7 +2828,7 @@ export const Requestdogwalkmessages =[
     {
         type:"request", 
         show:false, 
-        index:1, 
+        index:2, 
         info:"언제마다 도움받기를 원하시나여?",
         selected : false,
         multiselect_enable:false, 
@@ -2646,21 +2837,21 @@ export const Requestdogwalkmessages =[
             {selected : false, key:"1회만", request:"1회만", response:"1회만"}
           ]
     },
-    {type:"response", responseshow : true, show:false, index:2, requesttype:REQUESTINFO.PERIOD,  result:""},
+    {type:"response", responseshow : true, show:false, index:3, requesttype:REQUESTINFO.PERIOD,  result:""},
     
     {
       type:"requestdate", 
       show:false, 
-      index:3,
+      index:4,
       info:"도움받는 시기를 언제로 할까요 ?",
       selected : false,
     },
     
-    {type:"response", responseshow : true, show:false, index:4, requesttype:REQUESTINFO.DATE,  result:""},
+    {type:"response", responseshow : true, show:false, index:5, requesttype:REQUESTINFO.DATE,  result:""},
     {
       type:"request", 
       show:false, 
-      index:5, 
+      index:6, 
       info:"도움받기 금액을 얼마로 하기를 원하시나여?",
       selected : false,
       multiselect_enable:false, 
@@ -2677,11 +2868,11 @@ export const Requestdogwalkmessages =[
         {selected : false, key:"10만원대", request:"10만원대", response:"10만원대"},
       ]
     },
-    {type:"response", responseshow : true, show:false, index:6, requesttype:REQUESTINFO.MONEY,  result:""},
+    {type:"response", responseshow : true, show:false, index:7, requesttype:REQUESTINFO.MONEY,  result:""},
     {
       type:"request", 
       show:false, 
-      index:7, 
+      index:8, 
       info:"어떤 도움을 받기를 원하시나요",
       selected : false,
       multiselect_enable:false, 
@@ -2695,14 +2886,14 @@ export const Requestdogwalkmessages =[
     },
   
   
-    {type:"response", responseshow : true, show:false, index:8, requesttype:REQUESTINFO.TARGET,  result:""},
+    {type:"response", responseshow : true, show:false, index:9, requesttype:REQUESTINFO.TARGET,  result:""},
 
   
   
     {
       type:"request", 
       show:false, 
-      index:9, 
+      index:10, 
       info:"고객님의 성별은 무엇인가요?",
       selected : false,
       multiselect_enable:false, 
@@ -2710,27 +2901,13 @@ export const Requestdogwalkmessages =[
       {selected : false, key:"남성", request:"남성", response:"남성"},
       {selected : false, key:"여성", request:"여성", response:"여성"},]},
   
-    {type:"response", responseshow : true, show:false, index:10,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
+    {type:"response", responseshow : true, show:false, index:11,requesttype:REQUESTINFO.CUSTOMERGENDER, result:""},
   
   
     {
       type:"request", 
       show:false, 
-      index:11, 
-      info:"도움주실분의 원하는 성별을 선택해주세요",
-      selected : false,
-      multiselect_enable:false, 
-      selectitems:[
-      {selected : false, key:"상관없음", request:"상관없음", response:"상관없음"},
-      {selected : false, key:"여성", request:"여성", response:"여성"},]},
-  
-    {type:"response", responseshow : true, show:false, index:12,requesttype:REQUESTINFO.HELPGENDER, result:""},
-  
-  
-    {
-      type:"request", 
-      show:false, 
-      index:13, 
+      index:12, 
       info:"도움주실분의 연령대을 선택해주세요",
       selected : false,
       multiselect_enable:false, 
@@ -2743,29 +2920,59 @@ export const Requestdogwalkmessages =[
       {selected : false, key:"60대", request:"60대", response:"60대"},
     ]},
   
-    {type:"response", responseshow : true, show:false, index:14,requesttype:REQUESTINFO.HELPAGE, result:""},
+    {type:"response", responseshow : true, show:false, index:13,requesttype:REQUESTINFO.HELPAGE, result:""},
   
     {
       type:"requestregion", 
       show:false, 
-      index:15,
+      index:14,
       info:"도움이 필요한곳의 지역을 클릭해주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:16, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:15, requesttype:REQUESTINFO.CUSTOMERREGION, result:"", latitude:"", longitude:""},
   
+        {
+      type:"request",
+      show:false,
+      index:16,
+      info:"반려견 크기를 알려주세요",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"소형견", request:"소형견", response:"소형견"},
+        {selected : false, key:"중형견", request:"중형견", response:"중형견"},
+        {selected : false, key:"대형견", request:"대형견", response:"대형견"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:17, requesttype:REQUESTINFO.DOGSIZE,  result:""},
+
     {
+      type:"request",
+      show:false,
+      index:18,
+      info:"몇 마리인가요?",
+      selected : false,
+      multiselect_enable:false,
+      selectitems:[
+        {selected : false, key:"1마리", request:"1마리", response:"1마리"},
+        {selected : false, key:"2마리", request:"2마리", response:"2마리"},
+        {selected : false, key:"3마리 이상", request:"3마리 이상", response:"3마리 이상"},
+      ]
+    },
+    {type:"response", responseshow : true, show:false, index:19, requesttype:REQUESTINFO.DOGCOUNT,  result:""},
+
+{
       type:"requestcomment", 
       show:false, 
-      index:17,
+      index:20,
       info:"도움이 필요한내용을 적어주세요",
       selected : false,
     
     },
-    {type:"response", responseshow : false,  show:false, index:18, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
+    {type:"response", responseshow : false,  show:false, index:21, requesttype:REQUESTINFO.COMMENT, result:"", latitude:"", longitude:""},
 
 
-    {type:"requestcomplete", show: false, index:19, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
+    {type:"requestcomplete", show: false, index:22, info:"고객님이 작성하신 요구사항은 다음과 같습니다"},
   
 ]

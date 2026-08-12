@@ -30,7 +30,7 @@ const style = {
 };
 
 const MainLogoText = styled.div`
-  font-family: 'JalnanGothic';
+  font-family: 'Pretendard-Bold';
   font-size: 22px;
   color :#131313;
 `

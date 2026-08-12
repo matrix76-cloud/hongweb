@@ -75,10 +75,9 @@ const TitleLayer = styled.div`
 `
 const Title = styled.div`
   font-size: 20px;
-  line-height: 60px;
-  font-weight :600;
-  margin-left:10px;
-
+  line-height: 1.3;
+  font-weight: 700;
+  color: #131313;
 `
 
 const Itemlayer = styled.div`
@@ -107,36 +106,44 @@ const ItemLeftLayercontent = styled.div`
 
 const ItemLeftBox = styled.div`
   background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  margin: 5px 10px 0px;
+  border: 1px solid #ECECEC;
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  padding: 18px 20px;
+  margin: 6px 10px 0px;
   color: #131313;
   display: flex;
   flex-direction: column;
   width: ${({width}) => width};
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 1.5;
   text-align: left;
-  min-width:200px;
-  font-weight:400;
-
-
+  min-width: 200px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
 `;
 
 
 const SelectLayer = styled.div`
-  border: 1px solid #C3C3C3;
+  box-sizing: border-box;
   width: 48%;
   margin: 5px 0px;
-  border: ${({check}) => check == true ? ('1px solid #F75100'):('1px solid #C3C3C3')};
-  color: #131313;
-  font-weight:600;
-  border-radius: 5px;
-  font-size:12px;
+  padding: 0 10px;
+  border: ${({check}) => check == true ? ('1.5px solid #FF4E19') : ('1px solid #E3E3E3')};
+  background: ${({check}) => check == true ? ('#FFF5F0') : ('#fff')};
+  color: ${({check}) => check == true ? ('#FF4E19') : ('#131313')};
+  font-weight: ${({check}) => check == true ? (700) : (500)};
+  border-radius: 10px;
+  font-size: 15px;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 34px;
+  height: 46px;
+  cursor: pointer;
+  transition: all .12s ease;
+  word-break: keep-all;
+  &:active { transform: scale(0.97); }
 `;
 
 const ItemRightLayer = styled.div`
@@ -148,52 +155,86 @@ const ItemRightLayer = styled.div`
   margin-bottom: 5px;
 `;
 const ItemRightBox = styled.div`
-  background: #FFF;
-  border-top-right-radius: 0px;
-  border-top-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
-  border : 1px solid #F75100;
-  padding: 10px 16px;
+  background: #FF4E19;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border-bottom-left-radius: 16px;
+  padding: 12px 18px;
   margin: 10px 10px 0px;
-  color: #000;
+  color: #fff;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
   text-align: left;
 `;
 
-const ProgressLayer = styled.div`
-  position: absolute;
-  background: rgb(19, 19, 19);
-  width: 220px;
-  border-radius: 5px;
-  padding: 6px 12px;
-  color: rgb(255, 255, 255);
-  top: 10px;
-  left :${({progress}) => progress}px;
+const RegistHeader = styled.div`
+  position: fixed;
+  top: 50px;
+  left: 0;
   z-index: 5;
-  height: 30px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-bottom: 1px solid #F0F0F0;
+  padding: 18px 20px 16px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -15px; /* 화살표를 대화창 아래쪽에 위치시키기 위한 설정 */
-    left: 150px; /* 화살표를 대화창의 왼쪽에서 20px만큼 떨어뜨리기 */
-    border-width: 10px; /* 삼각형의 크기 */
-    border-style: solid;
-    border-color: rgb(19,19,19) transparent transparent transparent;
-  }
-
+  flex-direction: column;
+  gap: 12px;
 `
+
+const HeaderTop = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`
+
+const StepCount = styled.div`
+  font-size: 16px;
+  color: #A3A3A3;
+  font-weight: 500;
+  b { color: #FF4E19; font-weight: 700; font-size: 18px; }
+`
+
+const ProgressLayer = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #F0F0F0;
+  padding: 12px 20px 14px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`
+
+const ProgressTrack = styled.div`
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #F0F0F0;
+  overflow: hidden;
+`
+
+const ProgressFill = styled.div`
+  height: 100%;
+  border-radius: 2px;
+  background: #FF4E19;
+  width: ${({progress}) => Math.min(100, Math.max(0, progress))}%;
+  transition: width .25s ease;
+`
+
 const ProgressLayerText = styled.div`
-
-  font-size:14px;
-  font-weight:700;
-
+  font-size: 15px;
+  font-weight: 600;
+  color: #131313;
 `
 
 export const StyledCalendarWrapper = styled.div`
@@ -1229,43 +1270,29 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
       }
       <Container style={containerStyle}>
 
-        <Row style={{background:"#fff", height:'120px', position:"fixed", zIndex:5, width:"100%", marginTop:50}}>
-
-          <AroundRow style={{width:"100%", paddingTop:40}}>
-            <Row>
-              <img src={Seekimage(type)} style={{width:40}}/>
+        <RegistHeader>
+          <HeaderTop>
+            <Row style={{gap:10, alignItems:"center"}}>
+              <img src={Seekimage(type)} style={{width:36, height:36, objectFit:"contain"}}/>
               <Title>{type}</Title>
             </Row>
+            <StepCount>
+              <b>{stepdata}</b> / {totalset}
+            </StepCount>
+          </HeaderTop>
 
-            <Row style={{alignItems:"unset"}}>
-                <progress class="progress" id="progress" value={stepdata *10} min="0" max="100" style={{width:120}}></progress>
-                <div style={{paddingLeft:10}}>
-                  <div style={{display:"flex"}}>
-                    <Text containerStyle={{fontFamily:"Pretendard-Bold"}} value={ parseInt(stepdata / totalset *100) + '%'} size={18} color={'#FF4E19'} ></Text>
-                  </div>
-                </div>   
-            </Row>
-          </AroundRow>
+          <ProgressTrack>
+            <ProgressFill progress={totalset ? (stepdata / totalset) * 100 : 0} />
+          </ProgressTrack>
 
-          <ProgressLayer progress={parseInt(stepdata / totalset *100 + 20)}>
-              <ProgressLayerText>
-              {
-                stepdata == 0 ? (
-                  <>
-                    <span style={{color:"#FF7125"}}>총{totalset}</span><span>단계를 설정 하면  등록이 완료됩니다</span>
-                  </>
-                ):(
-                  <>
-                    <span >총{totalset} 단계중</span><span style={{color:"#FF7125", fontWeight:700, marginLeft:5}}>{stepdata}단계</span><span>를 설정하였습니다</span>
-                  </>
-                )
-              }
-              </ProgressLayerText>
-           
-          </ProgressLayer>
-        
-
-        </Row>
+          <ProgressLayerText>
+            {
+              stepdata == 0
+                ? <>총 <b style={{color:"#FF4E19"}}>{totalset}단계</b>만 설정하면 등록이 끝나요</>
+                : <>{totalset}단계 중 <b style={{color:"#FF4E19"}}>{stepdata}단계</b> 완료</>
+            }
+          </ProgressLayerText>
+        </RegistHeader>
 
 
           <ContentLayer>

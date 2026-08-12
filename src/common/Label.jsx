@@ -63,7 +63,7 @@ const Label =({containerStyle, label, sublabel}) =>  {
   return (
 
     <Container style={containerStyle}>
-        <div style={{fontFamily: 'Jalnan2', width:'140px', paddingLeft:15}}>{label}</div>
+        <div style={{fontFamily: 'Pretendard-Bold', width:'140px', paddingLeft:15}}>{label}</div>
         <SubLabel>{sublabel}</SubLabel>
    
     </Container>

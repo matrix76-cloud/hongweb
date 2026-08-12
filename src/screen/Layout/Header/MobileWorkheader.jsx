@@ -16,7 +16,7 @@ const LogoText = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'SF-Pro-Text-Semibold';
+    font-family: 'Pretendard-SemiBold';
     font-weight:600;
     padding-top: 5px;
     font-size: 16px;

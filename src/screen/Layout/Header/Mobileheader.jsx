@@ -9,7 +9,7 @@ import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import Image from "../../../common/Image";
 import { GoPlus } from "react-icons/go";
 import { MOBILEMAINMENU } from "../../../utility/screen";
-import { HeaderAddress, KeywordAddress } from "../../../utility/region";
+import { HeaderAddress } from "../../../utility/region";
 import { FaChevronRight } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useSleep } from "../../../utility/common";
@@ -22,7 +22,7 @@ const LogoText = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'SF-Pro-Text-Semibold';
+    font-family: 'Pretendard-SemiBold';
     font-weight:600;
     padding-top: 5px;
     font-size: 20px;
@@ -146,9 +146,9 @@ useEffect(() => {
         <div style={{marginLeft:15, display:"flex",color:"#131313", fontSize:"16px",
         display:"flex", justifyContent:"flex-start", alignItems:"center",fontFamily:"Pretendard-SemiBold",
         fontWeight:400}}>
-          <img src={imageDB.honglogo} style={{width:60, height:23}}/>
+          <img src={imageDB.logo} style={{width:28, height:28}}/>
           <img src={imageDB.mappin} style={{width:20, height:20, marginLeft:5}} onClick={_handlemapgps}/>
-          <div style={{ marginRight:10}}>{KeywordAddress(address_name)}</div>
+          <div style={{ marginRight:10}}>{HeaderAddress(address_name)}</div>
           <FaChevronRight onClick={_handlemapreconfig}/>
 
           {

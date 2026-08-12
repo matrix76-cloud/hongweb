@@ -2,18 +2,28 @@
 import moment from 'moment';
 import axios from "axios";
 
+/**
+ * 위치를 아직 못 잡았을 때(GPS 거부·최초 진입·주소 미저장) 쓰는 임시 지역.
+ * 이게 없으면 헤더에 "undefined undefined" 가 그대로 노출된다.
+ */
+export const DEFAULT_REGION = "경기도 남양주시 다산동";
+
+// 주소 문자열을 [시도, 시군구, 읍면동] 으로 쪼갠다. 값이 없거나 모자라면 임시 지역으로 대체.
+const regionParts = (address) => {
+	const addr = String(address ?? "").trim().split(" ").filter(Boolean);
+	return addr.length >= 3 ? addr : DEFAULT_REGION.split(" ");
+}
+
 export const KeywordAddress =(address)=>{
 
-	let addr = [];
-	addr = address.split(" ");
+	const addr = regionParts(address);
 
 	return addr[0] + ' '+ addr[1] + ' ' + addr[2];
 }
 
 export const ChatAddress =(address)=>{
 
-	let addr = [];
-	addr = address.split(" ");
+	const addr = regionParts(address);
 
 	return addr[2];
 }
@@ -21,16 +31,14 @@ export const ChatAddress =(address)=>{
 
 export const HeaderAddress =(address)=>{
 
-	let addr = [];
-	addr = address.split(" ");
+	const addr = regionParts(address);
 
 	return addr[1] + ' ' + addr[2];
 }
 
 export const CountryAddress =(address)=>{
 
-	let addr = [];
-	addr = address.split(" ");
+	const addr = regionParts(address);
 
 	return  addr[2];
 }

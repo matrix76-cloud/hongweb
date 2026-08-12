@@ -1,61 +1,76 @@
+/* ─────────────────────────────────────────────────────────────
+   폰트: Pretendard 하나로 통일 (2026-08-12)
+   - 파일은 가변폰트 woff2 한 개(public/fonts/PretendardVariable.woff2)만 쓴다.
+   - 기존 코드가 'Pretendard-SemiBold' 처럼 굵기별 이름을 직접 참조하므로
+     같은 파일을 굵기 고정 별칭으로 재등록해 호환을 유지한다.
+   - 새 코드는 font-family:'Pretendard' + font-weight 방식으로 쓸 것.
+   - 제거: SF-Pro-Text(Regular/Semibold), JalnanGothic, Jalnan2 → 모두 Pretendard.
+   - 유지: CODE39-1 / free3of9 는 바코드 출력용이라 본문 폰트가 아니다.
+   ───────────────────────────────────────────────────────────── */
 
 @font-face {
-  font-family: "JalnanGothic";
-  font-weight: normal;
-  src: url("./fonts/JalnanGothicTTF.ttf") format("truetype");
+  font-family: "Pretendard Variable";
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations"),
+       url("/fonts/PretendardVariable.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Jalnan2";
-  font-weight: normal;
-  src: url("./fonts/Jalnan2TTF.ttf") format("truetype");
+  font-family: "Pretendard";
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations"),
+       url("/fonts/PretendardVariable.woff2") format("woff2");
 }
 
+/* 굵기별 별칭 — 기존 컴포넌트 호환용 (해당 패밀리에 페이스가 하나뿐이라
+   font-weight 를 따로 안 줘도 아래 굵기로 렌더된다) */
 @font-face {
   font-family: "Pretendard-Light";
-  font-weight: normal;
-  src: url("./fonts/Pretendard-Light.woff") format("truetype");
-}
-
-@font-face {
-  font-family: "Pretendard-Black";
-  font-weight: normal;
-  src: url("./fonts/Pretendard-Black.woff") format("truetype");
-}
-@font-face {
-  font-family: "Pretendard-Bold";
-  font-weight: normal;
-  src: url("./fonts/Pretendard-Bold.woff") format("truetype");
-}
-@font-face {
-  font-family: "Pretendard-SemiBold";
-  font-weight: normal;
-  src: url("./fonts/Pretendard-SemiBold.woff") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
 }
 @font-face {
   font-family: "Pretendard-Regular";
-  font-weight: normal;
-  src: url("./fonts/Pretendard-Regular.woff") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
 }
-
-
 @font-face {
-  font-family: "SF-Pro-Text-Regular";
-  font-weight: normal;
-  src: url("./fonts/SF-Pro-Text-Regular.otf") format("truetype");
+  font-family: "Pretendard-Medium";
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
 }
-
-
 @font-face {
-  font-family: "SF-Pro-Text-Regular";
-  font-weight: normal;
-  src: url("./fonts/SF-Pro-Text-Regular.otf") format("truetype");
+  font-family: "Pretendard-SemiBold";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Pretendard-Bold";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Pretendard-Black";
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2-variations");
 }
 
-@font-face {
-  font-family: "SF-Pro-Text-Semibold";
-  font-weight: bold;
-  src: url("./fonts/SF-Pro-Text-Semibold.otf") format("truetype");
-}
+/* 바코드 전용 (본문 폰트 아님) */
 @font-face {
   font-family: "CODE39-1";
   font-weight: bold;
@@ -65,7 +80,8 @@
 body {
   text-align: left;
   color: #3f4850;
-  font-family: "Pretendard-Regular","Pretendard-Light","Pretendard-Black","Pretendard-Bold","Pretendard-SemiBold","SF-Pro-Text-Regular","SF-Pro-Text-Semibold","free3of9", Helvetica, Arial, sans-serif,"Jalnan2";
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Malgun Gothic", Helvetica, Arial, sans-serif;
   margin :unset;
   letter-spacing: -0.32px;
   overflow-x: hidden !important;
