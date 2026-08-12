@@ -130,8 +130,8 @@ const FilterBox = styled.div`
 const ProcessRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 18px;
-  padding: 10px 2px 2px;
+  gap: 20px;
+  padding: 0 20px 12px;   /* 필터 버튼과 좌우 정렬을 맞춘다 */
 `
 const ProcessLabel = styled.label`
   display: flex;
@@ -158,10 +158,15 @@ const FilterBoxText = styled.div`
   text-overflow: ellipsis;
 `
 
+/* 필터 줄 + 진행여부 체크박스. sticky 인데 배경이 없어서
+   스크롤된 목록이 그대로 비쳐 "일감 N건" 위에 겹쳐 보였다 (형 리뷰 2026-08-12) */
 const StickyPos = styled.div`
   position: sticky;
-  top:0px;
-
+  top: 0;
+  z-index: 4;
+  background: #fff;
+  border-bottom: 1px solid #F0F0F0;
+  padding-top: 12px;
 `
 
 const Bannerstyle={

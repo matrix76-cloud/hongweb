@@ -1,4 +1,5 @@
-import React, { useState, createContext } from "react";
+import React, { useState, useEffect, createContext } from "react";
+import localforage from "localforage";
 import { FIXED_LOCATION, USE_FIXED_LOCATION } from "../utility/devLocation";
 
 const UserContext = createContext({
@@ -27,6 +28,24 @@ const INITIAL_USER = USE_FIXED_LOCATION
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(INITIAL_USER);
+
+  /**
+   * 저장된 계정(userconfig)을 부팅할 때 한 번 읽어 넣는다. (형 지시 2026-08-12)
+   *
+   * 예전엔 스플래시를 거쳐야만 user 가 채워져서, /Mobilechat 같은 화면으로 바로 들어오면
+   * users_id 가 비어 내 대화방을 하나도 못 찾았다. 흐름만 볼 때도 계정이 잡혀 있어야 한다.
+   * 스플래시가 나중에 다시 dispatch 하면 그 값이 이긴다.
+   */
+  useEffect(() => {
+    let alive = true;
+    localforage.getItem('userconfig')
+      .then((saved) => {
+        if (!alive || !saved || !saved.users_id) return;
+        setUser((prev) => (prev && prev.users_id ? prev : { ...INITIAL_USER, ...saved }));
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   const dispatch = ({
     deviceid,

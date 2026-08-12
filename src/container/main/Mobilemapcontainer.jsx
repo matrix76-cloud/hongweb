@@ -145,6 +145,9 @@ const FilterButton = styled.div`
 // 최상단에서 구조분해하면 SDK 로드 전 undefined 로 굳는다 (Vite=ES모듈, 2026-08-12)
 
 const DetailLevel = 1;
+/* 이 레벨 이하로 확대하면 가격 카드(CustomOverlay), 그보다 넓게 보면 클러스터.
+   일감이 한자리에 뭉쳐 보이던 문제 해소 (형 리뷰 2026-08-12) */
+const CLUSTER_MIN_LEVEL = 4;
 const DetailMeter =300;
 
 /**
@@ -582,6 +585,30 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
 
 
+    // 마커 클러스터 — 일감이 한자리에 뭉쳐 보이던 것 해소 (형 리뷰 2026-08-12)
+    // 카카오 클러스터러는 Marker 만 묶을 수 있어서, 멀리서는 클러스터/마커를 보여주고
+    // 충분히 확대(CLUSTER_MIN_LEVEL 이하)하면 가격 카드(CustomOverlay)로 바꿔 보여준다.
+    const clusterer = new kakao.maps.MarkerClusterer({
+      map: map,
+      averageCenter: true,
+      minLevel: CLUSTER_MIN_LEVEL,
+      disableClickZoom: false,
+      gridSize: 70,
+      styles: [{
+        width: '44px', height: '44px',
+        background: '#FF4E19',
+        borderRadius: '22px',
+        color: '#fff',
+        textAlign: 'center',
+        lineHeight: '44px',
+        fontSize: '15px',
+        fontWeight: '700',
+        border: '2px solid #fff',
+        boxShadow: '0 2px 6px rgba(0,0,0,.25)',
+      }],
+    });
+    const clusterMarkers = [];
+
     // 오버레이를 지도에 추가하고 클릭 이벤트 처리
     overlaysTmp.forEach(function(overlayData, index) {
     
@@ -624,10 +651,20 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
           items : overlayData.ITEMS
         };
         customOverlay.customData = customData;
-        // Custom Overlay 지도에 추가
-        customOverlay.setMap(map);
+        // 확대했을 때만 가격 카드를 띄운다 (그 전엔 클러스터/마커)
+        customOverlay.setMap(map.getLevel() <= CLUSTER_MIN_LEVEL ? map : null);
 
         overlays.push(customOverlay);
+
+        // 같은 지점을 가리키는 클러스터용 마커
+        const clusterMarker = new kakao.maps.Marker({ position: overlayData.POSITION });
+        clusterMarker.customData = customData;
+        kakao.maps.event.addListener(clusterMarker, 'click', function () {
+          map.setLevel(DetailLevel);
+          map.setCenter(clusterMarker.getPosition());
+          _handleControlFromMap(clusterMarker.customData.id, clusterMarker.customData.items);
+        });
+        clusterMarkers.push(clusterMarker);
       
         // 클릭 이벤트 등록 
         // 지도에서 클릭 햇을때는 리스트에서 클릭 했을때와 달리 별도로 circle을 표시할 필요는 없다
@@ -645,6 +682,17 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
     });
 
+    // 마커를 클러스터에 넣고, 줌 레벨에 따라 [클러스터 <-> 가격 카드] 를 전환한다
+    clusterer.addMarkers(clusterMarkers);
+
+    const syncByLevel = () => {
+      const detail = map.getLevel() <= CLUSTER_MIN_LEVEL;
+      overlays.forEach((o) => o.setMap(detail ? map : null));
+      if (detail) clusterer.clear();
+      else clusterer.addMarkers(clusterMarkers);
+    };
+    kakao.maps.event.addListener(map, 'zoom_changed', syncByLevel);
+    syncByLevel();
 
     //오버레이를 변수에 담아둔다
     setOverlays(overlays);

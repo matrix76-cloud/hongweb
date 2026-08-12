@@ -96,16 +96,13 @@ const MobileMapheader = ({callback, image,name}) => {
         gpspopup == true && <MobileGpsPopup callback={gpspopupcallback} />
       }
 
-      <div style={{paddingLeft:15, width:'90%', display:"flex",color:"#131313", 
-      fontSize:"16px",display:"flex", justifyContent:"flex-start", alignItems:"center",
-      fontWeight:400}}>
-        <img src={imageDB.mappin} style={{width:20, height:20}} onClick={_handlemapgps}/>
-        <div style={{marginLeft:10, marginRight:10}}>{name}</div>
-        <FaChevronRight onClick={_handlemapreconfig}/>
-      </div>
- 
-      <div  style={{display: "flex",flexDirection: "row",justifyContent: "flex-end",marginRight: "20px",width: "10%"}}>
-        <img onClick={_handleprev} src={imageDB.close2} style={{width:24}}/>
+      {/* 화살표(>)와 닫기(X) 제거 — 지도는 하단 탭 화면이라 뒤로 갈 곳이 탭이다 (형 리뷰 2026-08-12).
+          위치 변경은 지역명 자체를 누르면 된다. */}
+      <div style={{paddingLeft:20, width:'100%', display:"flex", color:"#131313",
+      fontSize:"17px", justifyContent:"flex-start", alignItems:"center",
+      fontWeight:600, gap:8, cursor:"pointer"}} onClick={_handlemapreconfig}>
+        <img src={imageDB.mappin} style={{width:20, height:20}}/>
+        <div>{name}</div>
       </div>
     </Container>
   );

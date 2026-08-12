@@ -12,6 +12,7 @@ import {
   collection, doc, getDocs, limit, query, setDoc, where, writeBatch, orderBy,
 } from 'firebase/firestore';
 import { db } from '../api/config';
+import { FIXED_LOCATION } from '../utility/devLocation';
 
 // 일감 종류와 무관하게 자연스럽게 읽히는 대화 묶음. 방마다 하나를 골라 쓴다.
 const SCRIPTS = [
@@ -64,11 +65,64 @@ const pick = (arr, n) => {
   return out;
 };
 
-/** 지금 앱에 로그인된 사용자 */
+// 로그인 없이 흐름만 보기 위한 데모 계정 (형 지시 2026-08-12 — 로그인은 나중에 붙인다)
+const DEMO_DEVICEID = 'demo-review-device';
+
+/**
+ * 지금 앱에 로그인된 사용자.
+ * 없으면 데모 계정을 만들어 USERS 에 넣고 userconfig 에 심는다.
+ * 스플래시가 userconfig.deviceid 로 사용자를 찾으므로, 이걸 심어두면 로그인 화면을 안 거친다.
+ */
 const loadMe = async () => {
   const cfg = await localforage.getItem('userconfig');
-  if (!cfg || !cfg.users_id) throw new Error('로그인된 계정이 없습니다. 앱에서 먼저 로그인해 주세요.');
-  return cfg;
+  if (cfg && cfg.users_id) return cfg;
+
+  // 이미 만들어 둔 데모 계정이 있으면 재사용
+  const found = await getDocs(query(collection(db, 'USERS'), where('DEVICEID', '==', DEMO_DEVICEID), limit(1)));
+  let demo = null;
+  found.forEach((d) => { demo = d.data(); });
+
+  if (!demo) {
+    const ref = doc(collection(db, 'USERS'));
+    demo = {
+      USERS_ID: ref.id,
+      DEVICEID: DEMO_DEVICEID,
+      DEVICETYPE: 'web',
+      CREATEDT: Date.now(),
+      LASTLOGINDT: Date.now(),
+      ACTIVITY: [],
+      REVIEWITEMS: [],
+      COMMUNITYITEMS: [],
+      CHATINFO: [],
+      USERINFO: {
+        nickname: '데모 사용자',
+        userimg: '',
+        phone: '01000000000',
+        token: '',
+        address_name: FIXED_LOCATION.address_name,
+        latitude: FIXED_LOCATION.latitude,
+        longitude: FIXED_LOCATION.longitude,
+        users_id: ref.id,
+      },
+      SEEDED: true,
+    };
+    await setDoc(ref, demo);
+  }
+
+  // 앱(UserContext)이 쓰는 납작한 형태로 저장한다
+  const flat = {
+    deviceid: DEMO_DEVICEID,
+    users_id: demo.USERS_ID,
+    nickname: demo.USERINFO.nickname,
+    userimg: demo.USERINFO.userimg || '',
+    phone: demo.USERINFO.phone || '',
+    token: '',
+    address_name: demo.USERINFO.address_name,
+    latitude: demo.USERINFO.latitude,
+    longitude: demo.USERINFO.longitude,
+  };
+  await localforage.setItem('userconfig', flat);
+  return flat;
 };
 
 /** 상대로 쓸 실제 사용자 — 닉네임이 있는 사람만 */
