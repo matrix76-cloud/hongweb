@@ -589,3 +589,23 @@ export const Update_userinfobyusersid = async({USERINFO, USERS_ID}) =>{
   
 }
 
+/**
+ * 프로필 이미지 갱신 — 홍여사 등록 화면에서 쓴다.
+ * 원래 import 만 있고 구현이 없어 등록이 저장 직전에 터졌다. (2026-08-12)
+ */
+export const Update_userimg_by_usersid = async({USERS_ID, profileImg}) =>{
+  const userRef = collection(db, "USERS");
+  const rows = query(userRef, where("USERS_ID", "==", USERS_ID));
+  try{
+    const querySnapshot = await getDocs(rows);
+    const jobs = [];
+    querySnapshot.forEach(function (doc) {
+      jobs.push(updateDoc(doc.ref, { USERIMG : profileImg }));
+    });
+    await Promise.all(jobs);
+    return true;
+  }catch(e){
+    console.log("Update_userimg_by_usersid error", e.message);
+    return false;
+  }
+}

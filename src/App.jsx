@@ -30,6 +30,7 @@ import MobileConfigpage from "./page/main/MobileConfigpage";
 import MobileContentpage from "./page/main/MobileContentpage";
 import MobileGatepage from "./page/main/MobileGatepage";
 import MobileLadyLicenseAuthpage from "./page/main/MobileLadyLicenseAuthpage";
+import MobileWorkerRegistpage from "./page/main/MobileWorkerRegistpage";
 import MobileMainpage from "./page/main/MobileMainpage";
 import MobileMapPickpage from "./page/main/MobileMapPickpage";
 import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
@@ -90,6 +91,8 @@ const App = () => {
       <Route path="/Mobilephone" element={<MobilePhonepage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
       <Route path="/Mobileladylicense" element={<MobileLadyLicenseAuthpage />} />
+      {/* 홍여사(일하는 사람) 등록 — 공급자 입구. 라우트가 없어 화면에 도달할 수 없었다 (2026-08-12) */}
+      <Route path="/Mobileworkerregist" element={<MobileWorkerRegistpage />} />
 
       {/* ① 일 올리기 · 리스트 */}
       <Route path="/Mobilemain" element={<MobileMainpage />} />

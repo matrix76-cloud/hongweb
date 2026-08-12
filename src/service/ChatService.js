@@ -236,7 +236,11 @@ export const SubscribeChatRooms = ({ USERS_ID }, callback) => {
     const rooms = [];
     snapshot.forEach((d) => {
       const room = d.data();
-      if (room.OWNER_ID === USERS_ID || room.SUPPORTER_ID === USERS_ID) rooms.push(room);
+      const mine = room.OWNER_ID === USERS_ID || room.SUPPORTER_ID === USERS_ID;
+      if (!mine) return;
+      // 내가 나간 방은 내 목록에서만 뺀다 (상대에게는 그대로 남는다)
+      if (Array.isArray(room.EXITED) && room.EXITED.includes(USERS_ID)) return;
+      rooms.push(room);
     });
     // 마지막 대화가 있는 방을 위로 (없으면 만든 시간 기준)
     rooms.sort((a, b) => (b.LASTMESSAGE_AT || b.CREATEDT || 0) - (a.LASTMESSAGE_AT || a.CREATEDT || 0));
@@ -250,3 +254,106 @@ export const SubscribeChatRooms = ({ USERS_ID }, callback) => {
 /** 방 목록에서 내 안읽음 총합 (하단 탭 뱃지용) */
 export const UnreadTotalOf = (rooms, USERS_ID) =>
   (rooms || []).reduce((sum, r) => sum + ((r.UNREAD && r.UNREAD[USERS_ID]) || 0), 0);
+
+/* ────────────────────────────────────────────────────────────
+   대화방 관리 — 삭제 · 나가기 · 신고 · 차단 (형 지시 2026-08-12)
+   ──────────────────────────────────────────────────────────── */
+
+/** 내가 쓴 메시지 지우기. 남의 글은 못 지운다. */
+export const DeleteMessage = async ({ CHAT_ID, MESSAGE_ID, USERS_ID }) => {
+  try {
+    const ref = doc(db, `CHAT/${CHAT_ID}/messages`, MESSAGE_ID);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return false;
+    if (snap.data().USERS_ID !== USERS_ID) return false;
+
+    await deleteDoc(ref);
+    return true;
+  } catch (e) {
+    console.log("TCL: DeleteMessage -> error", e.message);
+    return false;
+  }
+};
+
+/**
+ * 대화방 나가기.
+ * 방 문서는 지우지 않는다 — 상대에게는 대화가 남아야 한다.
+ * 나간 사람 목록(EXITED)에 넣고, 목록에서 그 사람에게만 안 보이게 한다.
+ */
+export const ExitChat = async ({ CHAT_ID, USERS_ID, nickname }) => {
+  try {
+    const chatRef = doc(db, "CHAT", CHAT_ID);
+    const snap = await getDoc(chatRef);
+    if (!snap.exists()) return false;
+
+    const exited = snap.data().EXITED || [];
+    if (!exited.includes(USERS_ID)) exited.push(USERS_ID);
+
+    await updateDoc(chatRef, { EXITED: exited, [`UNREAD.${USERS_ID}`]: 0 });
+
+    // 상대 화면에 남길 안내
+    await CreateMessage({
+      CHAT_ID,
+      msg: `${nickname || '상대방'}님이 대화방을 나갔습니다.`,
+      users_id: USERS_ID,
+      read: [USERS_ID],
+      CHAT_CONTENT_TYPE: "퇴장",
+    });
+    return true;
+  } catch (e) {
+    console.log("TCL: ExitChat -> error", e.message);
+    return false;
+  }
+};
+
+/** 신고 — 내용은 REPORT 컬렉션에 쌓고, 운영에서 확인한다. */
+export const ReportChat = async ({ CHAT_ID, USERS_ID, TARGET_ID, REASON, DETAIL }) => {
+  try {
+    const ref = doc(collection(db, "REPORT"));
+    await setDoc(ref, {
+      REPORT_ID: ref.id,
+      CHAT_ID,
+      USERS_ID,          // 신고한 사람
+      TARGET_ID,         // 신고당한 사람
+      REASON: REASON || "",
+      DETAIL: DETAIL || "",
+      STATUS: "접수",
+      CREATEDT: Date.now(),
+    });
+    return true;
+  } catch (e) {
+    console.log("TCL: ReportChat -> error", e.message);
+    return false;
+  }
+};
+
+/** 차단 — 내 USERS 문서에 담아둔다. 차단한 사람의 방은 내 목록에서 빠진다. */
+export const BlockUser = async ({ USERS_ID, TARGET_ID }) => {
+  try {
+    const q = query(collection(db, "USERS"), where("USERS_ID", "==", USERS_ID));
+    const snap = await getDocs(q);
+    if (snap.empty) return false;
+
+    const target = snap.docs[0];
+    const blocked = target.data().BLOCKED || [];
+    if (!blocked.includes(TARGET_ID)) blocked.push(TARGET_ID);
+
+    await updateDoc(target.ref, { BLOCKED: blocked });
+    return true;
+  } catch (e) {
+    console.log("TCL: BlockUser -> error", e.message);
+    return false;
+  }
+};
+
+/** 내가 차단한 사람 목록 */
+export const ReadBlocked = async ({ USERS_ID }) => {
+  try {
+    const snap = await getDocs(query(collection(db, "USERS"), where("USERS_ID", "==", USERS_ID)));
+    if (snap.empty) return [];
+    return snap.docs[0].data().BLOCKED || [];
+  } catch (e) {
+    console.log("TCL: ReadBlocked -> error", e.message);
+    return [];
+  }
+};

@@ -183,7 +183,8 @@ const MobileLadyLicenseAuthcontainer = ({role}) => {
 
 
   const _handleauthcomplete = () =>{
-    navigate("/config")
+    // 인증이 끝나면 홍여사 프로필 등록으로 이어진다 (예전엔 없는 화면 /config 로 갔다)
+    navigate("/Mobileworkerregist")
   }
 
 

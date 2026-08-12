@@ -16,7 +16,7 @@ import { useSleep } from "../../utility/common";
 import Chatgate from "../../components/Chatgate";
 import Emptychat from "../../components/Emptychat";
 import { readuser } from "../../service/UserService";
-import { SubscribeChatRooms } from "../../service/ChatService";
+import { SubscribeChatRooms, ReadBlocked } from "../../service/ChatService";
 import LottieAnimation from "../../common/LottieAnimation";
 import { LoadingChatAnimationStyle } from "../../screen/css/common";
 
@@ -83,16 +83,25 @@ const MobileChatcontainer =({containerStyle}) =>  {
   */
   useEffect(()=>{
 
+    const USERS_ID = user.users_id;
+    let blocked = [];
+
     async function FetchData(){
       const users = await readuser();
       setUseritems(users);
+      // 차단한 사람의 방은 목록에서 뺀다 (형 지시 2026-08-12)
+      blocked = await ReadBlocked({USERS_ID});
+      setRefresh((refresh) => refresh +1);
     }
     FetchData();
 
     // 대화방 목록은 실시간으로 받는다 — 새 메시지가 오면 목록이 알아서 갱신된다 (형 리뷰 2026-08-12)
-    const USERS_ID = user.users_id;
     const unsubscribe = SubscribeChatRooms({USERS_ID}, (rooms)=>{
-      setChatitems(rooms);
+      const visible = rooms.filter((r)=>{
+        const other = r.OWNER_ID === USERS_ID ? r.SUPPORTER_ID : r.OWNER_ID;
+        return !blocked.includes(other);
+      });
+      setChatitems(visible);
       setCurrentloading(false);
       setRefresh((refresh) => refresh +1);
     });

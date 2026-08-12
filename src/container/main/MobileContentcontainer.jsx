@@ -1,4 +1,4 @@
-import React, { Component, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { Component, Fragment, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HashRouter, Route, BrowserRouter, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
@@ -14,7 +14,8 @@ import Button from "../../common/Button";
 import { DataContext } from "../../context/Data";
 import { useSleep } from "../../utility/common";
 import Chatgate from "../../components/Chatgate";
-import { distanceFunc } from "../../utility/region";
+import ChatprofileImage from "../../components/ChatprofileImage";
+import { distanceFunc, shortRegion } from "../../utility/region";
 import { CommaFormatted } from "../../utility/money";
 import MobileContact from "../../modal/MobileContactPopup/MobileContactPopup";
 import { WORKNAME,REQUESTINFO } from "../../utility/work";
@@ -23,8 +24,10 @@ import {
   SlPaperClip,
   SlLogout,
   SlUserUnfollow,
+  SlOptionsVertical,
+  SlTrash,
 } from "react-icons/sl";
-import { CreateMessage, MarkRead } from "../../service/ChatService";
+import { CreateMessage, MarkRead, DeleteMessage, ExitChat, ReportChat, BlockUser } from "../../service/ChatService";
 import { workOf, msgTimeOf } from "../../utility/chat";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../api/config";
@@ -131,45 +134,50 @@ const ItemRightBox = styled.div`
   text-align: left;
 `;
 
+/* 상단 일감 요약 바 — 헤더(50px) 바로 아래 고정. 버튼을 absolute 로 띄워 겹치던 걸 flex 로 폈다.
+   (형 지시 2026-08-12) */
 const Enter = styled.div`
-  text-align: left;
-  padding: 10px;
-  border-top: 1px solid #ededed;
-  border-bottom: 1px solid #ededed;
-  display:flex;
-  position:fixed;
-  background-color :white;
+  position: fixed;
+  top: 50px;
+  left: 0;
   width: 100%;
-  height:80px;
+  box-sizing: border-box;
+  z-index: 4;
+  background-color: #fff;
+  border-bottom: 1px solid #ededed;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
 `
 
 const EnterButton = styled.div`
-display: flex;
-flex-direction: row;
-width: 30%;
-/* height: 80px; */
-justify-content: flex-end;
-align-items: flex-end;
-padding-right: 15px;
-position: absolute;
-left: 65%;
-position: absolute;
-left: 65%;
-top: 60px;
-
-
+  flex: none;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
 `
 const StoreName = styled.div`
-  font-size: 14px;
-  font-weight: 600
+  font-size: 16px;
+  font-weight: 700;
+  color: #131313;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 const StoreAddr = styled.div`
-  font-size: 12px;
-  color :#aba8a8;
-
+  font-size: 13px;
+  color: #A3A3A3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 const StorePrice = styled.div`
-font-size: 14px;
+  font-size: 14px;
+  color: #131313;
 `
 
 const StoreIntroduce = styled.div`
@@ -178,69 +186,62 @@ const StoreIntroduce = styled.div`
 `
 
 const Content = styled.div`
-  padding-top:120px;
+  padding-top: 78px;
 `
 const SupportTag = styled.div`
-  background: #FF7125;
-  font-size: 12px;
-  color: #fff;
-  padding: 2px 10px;
-  border-radius: 15px;
-  margin-right: 5px;
-  height: 15px;
+  font-size: 13px;
+  color: #A3A3A3;
+  margin-right: 6px;
   display: flex;
-  justify-content: center;
   align-items: center;
-
 `
 
 const OwnerTag = styled.div`
-  background: #25a3ff;
-  font-size: 12px;
-  color: #fff;
-  padding: 2px 10px;
-  border-radius: 15px;
-  margin-right: 5px;
-  height: 15px;
+  font-size: 13px;
+  color: #A3A3A3;
+  margin-right: 6px;
   display: flex;
-  justify-content: center;
   align-items: center;
-
 `
 const BottomLine = styled.div`
-  height: 50px;
-  background-color: white;
+  background-color: #fff;
   position: fixed;
   width: 100%;
+  left: 0;
   bottom: 0;
+  box-sizing: border-box;
   border-top: 1px solid #ededed;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
 `;
 const ChatbtnLayer = styled.div`
   display: flex;
-
   align-items: center;
+  gap: 8px;
   flex-direction: row;
-  justify-content: space-between;
-  position: relative;
-
 `;
 const ChatIconLayer = styled.div`
+  flex: none;
   display: flex;
-  flex-direction: row;
-  width: 60px;
-  justify-content: space-around;
-  padding-left:10px;
+  align-items: center;
+  cursor: pointer;
 `;
 
 const InputChat = styled.textarea`
-  width: 100%;
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  box-sizing: border-box;
   resize: none;
-  border: none;
+  border: 1px solid #E3E3E3;
+  border-radius: 10px;
   outline: 0;
   font-family: "Pretendard-Regular";
   font-size: 16px;
-  padding: 10px;
-  color :#999;
+  line-height: 1.4;
+  padding: 10px 12px;
+  color: #131313;
+  background: #FAFAFA;
 `;
 
 const ShowContainer = styled.div`
@@ -267,10 +268,12 @@ const ChatUserImg = styled.div`
 `;
 const ItemLayerAname = styled.div`
   justify-content: flex-start;
-  font-size: 12px;
+  font-size: 14px;
+  color: #71717a;
   flex-direction: row;
   display: flex;
-  padding-left: 10px;
+  padding-left: 6px;
+  margin-bottom: 2px;
 `;
 const ItemLayerAcontent = styled.div`
   display: flex;
@@ -278,13 +281,12 @@ const ItemLayerAcontent = styled.div`
   align-items: flex-end;
 `;
 const ItemLayerAdate = styled.div`
-  font-size: 10px;
-  width: 100px;
+  font-size: 13px;
   display: flex;
-  justify-content: flex-start;
-  padding-bottom:10px;
+  align-items: flex-end;
+  padding-bottom: 2px;
   color:#A3A3A3;
-  flex-direction:column;
+  white-space: nowrap;
 `;
 
 const ItemLayerB = styled.div`
@@ -304,42 +306,127 @@ const ItemLayerBBox = styled.div`
 
 `;
 
+/* 상대 말풍선 — 폭을 60%로 못박아 짧은 말도 넓게 벌어졌다. 내용만큼만 차지하게 바꿨다.
+   (형 지시 2026-08-12) */
 const ItemBoxA = styled.div`
-  background: #F9F9F9;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 5px 10px 0px 5px;
+  background: #F4F4F5;
+  border-radius: 14px;
+  border-top-left-radius: 4px;
+  padding: 10px 13px;
+  margin: 2px 8px 0px 4px;
   color: #131313;
-  display: flex;
-  flex-direction: column;
-  width: 60%;
-  font-size: 14px;
+  display: inline-block;
+  max-width: 72%;
+  width: fit-content;
+  font-size: 15px;
+  line-height: 1.5;
   text-align: left;
+  word-break: break-word;
+  white-space: pre-wrap;
 `;
 
+/* 내 말풍선 — 노란색(#FFE477)은 브랜드와 겉돌아 옅은 포인트색으로 바꿨다 */
 const ItemBoxB = styled.div`
-  background: #FFE477;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 10px 10px 0px;
+  background: #FFEDE6;
+  border-radius: 14px;
+  border-top-right-radius: 4px;
+  padding: 10px 13px;
+  margin: 2px 8px 0px;
   color: #131313;
-  display: flex;
-  flex-direction: column;
-  max-width: 50%;
-  justify-content: flex-end;
-  font-size: 14px;
+  display: inline-block;
+  max-width: 72%;
+  width: fit-content;
+  font-size: 15px;
+  line-height: 1.5;
   text-align: left;
+  word-break: break-word;
+  white-space: pre-wrap;
 `;
 
 
 const ItemLayerBdate = styled.div`
-  font-size: 10px;
+  font-size: 13px;
   display: flex;
-  justify-content: flex-end;
+  align-items: flex-end;
   padding-bottom: 2px;
   color:#A3A3A3;
-  flex-direction:column;
-  
+  white-space: nowrap;
+`;
+
+const MoreBtn = styled.button`
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`;
+
+/* 나가기 · 신고 · 차단 — 아래에서 올라오는 시트 */
+const MenuDim = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  align-items: flex-end;
+`;
+const MenuSheet = styled.div`
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+`;
+const MenuItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 16px;
+  color: ${({$danger}) => ($danger ? '#c02020' : '#131313')};
+  cursor: pointer;
+  &:active { background: #FAFAFA; }
+`;
+
+/* 내 글 삭제 버튼 — 말풍선을 누르면 나타난다 */
+const DeleteBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 10px 0 0;
+  padding: 5px 10px;
+  align-self: flex-end;
+  background: #fff;
+  border: 1px solid #E3E3E3;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #c02020;
+  cursor: pointer;
+`;
+
+/* 날짜 구분선 */
+const DateDivider = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0 8px;
+
+  span {
+    font-size: 13px;
+    color: #71717a;
+    background: #F1F1F3;
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
 `;
 
 const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME}) =>  {
@@ -354,6 +441,8 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
   const [contactsignpopup, setContactsignpopup] = useState(false);
   const [contactwritepopup, setContactwritepopup] = useState(false);
   const [paypopup, setPaypopup] = useState(false);
+  const [roommenu, setRoommenu] = useState(false);   // 나가기·신고·차단 메뉴
+  const [pickedmsg, setPickedmsg] = useState(null);  // 삭제하려고 고른 내 글
   const [downloadpopup, setDownloadpopup] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -584,6 +673,48 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
     
   }
 
+  // 결제 (의뢰한 사람만 누를 수 있다)
+  const _handlepay = () =>{
+    setPaypopup(true);
+    setRefresh((refresh) => refresh +1 );
+  }
+
+  /** 내가 쓴 글 지우기 — 남의 글은 서비스에서 막는다 */
+  const _handledeletemessage = async (data) =>{
+    if(!data || data.USERS_ID != user.users_id) return;
+    if(!window.confirm('이 글을 지울까요?')) return;
+    await DeleteMessage({ CHAT_ID: chatid, MESSAGE_ID: data.MESSAGE_ID, USERS_ID: user.users_id });
+    setPickedmsg(null);
+  }
+
+  /** 대화방 나가기 — 방은 지우지 않는다. 상대에게는 대화가 남아야 한다 */
+  const _handleexit = async () =>{
+    if(!window.confirm('대화방을 나가면 목록에서 사라집니다. 나갈까요?')) return;
+    await ExitChat({ CHAT_ID: chatid, USERS_ID: user.users_id, nickname: user.nickname });
+    setRoommenu(false);
+    navigate('/Mobilechat');
+  }
+
+  /** 신고 — 사유를 받아 REPORT 로 쌓는다 */
+  const _handlereport = async () =>{
+    const reason = window.prompt('어떤 점을 신고하시나요? (욕설 · 사기 · 광고 등)');
+    if(!reason) return;
+    const TARGET_ID = OWNER == true ? ITEM.SUPPORTER_ID : ITEM.OWNER_ID;
+    await ReportChat({ CHAT_ID: chatid, USERS_ID: user.users_id, TARGET_ID, REASON: reason });
+    setRoommenu(false);
+    window.alert('신고가 접수되었습니다.');
+  }
+
+  /** 차단 — 차단하면 그 사람 방은 내 목록에서 빠진다 */
+  const _handleblock = async () =>{
+    if(!window.confirm('이 사람을 차단할까요? 대화방이 목록에서 사라집니다.')) return;
+    const TARGET_ID = OWNER == true ? ITEM.SUPPORTER_ID : ITEM.OWNER_ID;
+    await BlockUser({ USERS_ID: user.users_id, TARGET_ID });
+    await ExitChat({ CHAT_ID: chatid, USERS_ID: user.users_id, nickname: user.nickname });
+    setRoommenu(false);
+    navigate('/Mobilechat');
+  }
+
   // 메인 다이랄로그 열기 위해 사용
   const _handlecontact = () =>{
     setContactpopup(true);
@@ -681,6 +812,24 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       }
 
       {
+        roommenu == true && (
+          <MenuDim onClick={()=>{ setRoommenu(false); }}>
+            <MenuSheet onClick={(e)=> e.stopPropagation()}>
+              <MenuItem onClick={_handleexit}>
+                <SlLogout size={18} color="#71717a" /> 대화방 나가기
+              </MenuItem>
+              <MenuItem onClick={_handlereport}>
+                <SlShield size={18} color="#71717a" /> 신고하기
+              </MenuItem>
+              <MenuItem $danger onClick={_handleblock}>
+                <SlUserUnfollow size={18} color="#c02020" /> 차단하기
+              </MenuItem>
+            </MenuSheet>
+          </MenuDim>
+        )
+      }
+
+      {
         downloadpopup == true && <MobileContactDoc callback={MobileContactdownloadCallback} 
         messages={workOf(ITEM).WORK_INFO} 
         WORK_ID ={workOf(ITEM).WORK_ID}
@@ -695,61 +844,49 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
       <Row margin={'0px auto;'} width={'100%'} height={'100%'} >
         <Column style={{background:"#fff", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid #ededed"}}>
-          <Enter onClick={()=>{}}>
-            <Row style={{paddingLeft:20}}>
-              <img src={Seekimage(workOf(ITEM).WORKTYPE)} style={{width:"60px", height:"60px"}}/>
-            </Row>
-            <Row style={{width:"100%", justifyContent:"flex-start"}}>
-            <div style={{display:"flex", flexDirection:"column", paddingLeft:"10px",lineHeight:1.9, width:"70%"}}>
-              <div style={{display:"flex", flexDirection:"column",justifyContent:"flex-start"}}>
-              <FlexstartRow>
-              {
-                OWNER == true ? (   <OwnerTag>의뢰</OwnerTag>):(   <SupportTag>지원</SupportTag>)
-              }
-              <StoreName>{workOf(ITEM).WORKTYPE}</StoreName>
+          <Enter>
+            <img src={Seekimage(workOf(ITEM).WORKTYPE)} style={{width:44, height:44, flex:"none", objectFit:"contain"}}/>
+
+            <div style={{flex:1, minWidth:0}}>
+              <FlexstartRow style={{alignItems:"center"}}>
+                {
+                  OWNER == true ? (<OwnerTag>의뢰</OwnerTag>):(<SupportTag>지원</SupportTag>)
+                }
+                <StoreName>{workOf(ITEM).WORKTYPE}</StoreName>
               </FlexstartRow>
 
-              <StoreAddr>{ITEM.OWNER.USERINFO.address_name} {parseInt(distanceFunc(user.latitude, user.longitude, user.latitude, user.longitude) /1000)}km</StoreAddr>
-              </div>
-          
-              <StorePrice>가격 {findPrice()}</StorePrice>
+              {/* 거리는 같은 좌표를 두 번 넣어 늘 0 이었다. 주소와 가격만 보여준다 (형 지시 2026-08-12) */}
+              <StoreAddr>
+                {shortRegion(ITEM.OWNER.USERINFO.address_name)}
+                {findPrice() ? ` · ${findPrice()}` : ''}
+              </StoreAddr>
             </div>
+
             <EnterButton>
-                <Button
-                text={"계약"}
-                onPress={_handlecontact}
-                containerStyle={{
-                  color: "#fff",
-                  background: "#A3A3A3",
-                  width: "50px",
-                  height: "25px",
-                  fontSize: "14px",
-                  marginLeft:"unset",
-                  borderRadius:"5px",
-                  border : "none",
-                  fontFamily :"Pretendard"
-                }}
-                />
-                     <Button
-                text={"결제"}
-                onPress={_handlecontact}
-                containerStyle={{
-                  color: "#fff",
-                  background: "#A3A3A3",
-                  width: "50px",
-                  height: "25px",
-                  fontSize: "14px",
-                  marginLeft:"10px",
-                  borderRadius:"5px",
-                  border : "none",
-                  fontFamily :"Pretendard"
-                }}
-                />
+                {/* 계약은 없어졌다. 결제만 두고, 일을 맡긴 사람에게만 보인다 (형 지시 2026-08-12) */}
+                {OWNER == true && (
+                  <Button
+                    text={"결제"}
+                    onPress={_handlepay}
+                    containerStyle={{
+                      color: "#fff",
+                      background: "#FF4E19",
+                      border: "none",
+                      width: "62px",
+                      height: "34px",
+                      fontSize: "14px",
+                      marginLeft: "0px",
+                      borderRadius: "8px",
+                      fontFamily: "Pretendard",
+                    }}
+                  />
+                )}
 
+                {/* 나가기 · 신고 · 차단 */}
+                <MoreBtn onClick={()=>{ setRoommenu(true); }} aria-label="더보기">
+                  <SlOptionsVertical size={16} color="#71717a" />
+                </MoreBtn>
             </EnterButton>
-
-            </Row>
-        
           </Enter>
           <Content>
             <InfoBox>
@@ -760,7 +897,12 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
             currentloading == true ? (<LottieAnimation containerStyle={LoadingChat2AnimationStyle} animationData={imageDB.loading}
               width={"50px"} height={'50px'}/>) :(<ShowContainer>
               {messages.map((data, index) => (
-                <>
+                <Fragment key={data.MESSAGE_ID || index}>
+
+                  {/* 날짜가 바뀌면 구분선 (형 지시 2026-08-12) */}
+                  {(index === 0 || getDate(msgTimeOf(messages[index - 1])) !== getDate(msgTimeOf(data))) && (
+                    <DateDivider><span>{getDate(msgTimeOf(data))}</span></DateDivider>
+                  )}
             
                   {(data.CHAT_CONTENT_TYPE != CHATCONTENTTYPE.EXIT
                   && data.CHAT_CONTENT_TYPE != CHATCONTENTTYPE.ENTER) &&
@@ -769,14 +911,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                         <ItemLayerA>
                           <Row>
                             <ChatUserImg>
-                              <img
-                                src={LEFTIMAGE}
-                                style={{
-                                  width: 50,
-                                  height: 45,
-                                  borderRadius: 30,
-                                }}
-                              />
+                              <ChatprofileImage source={LEFTIMAGE} size={36} />
                             </ChatUserImg>
                             <FlexstartColumn>
                               <ItemLayerAname>
@@ -794,10 +929,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                                   />):( <ItemBoxA>{data.TEXT}</ItemBoxA>)
                                 }
                               
-                                <ItemLayerAdate>
-                                  <div> {getDate(msgTimeOf(data))}</div>
-                                  <div> {getTime(msgTimeOf(data))}</div>
-                                </ItemLayerAdate>
+                                <ItemLayerAdate>{getTime(msgTimeOf(data))}</ItemLayerAdate>
                               </ItemLayerAcontent>
                             </FlexstartColumn>
                           </Row>
@@ -811,29 +943,37 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                               <ItemLayerBUnread>{ReadCount(data)}</ItemLayerBUnread>
                             }
                           */}
-                            <ItemLayerBdate>
-                              <div> {getDate(msgTimeOf(data))}</div>
-                              <div> {getTime(msgTimeOf(data))}</div>
-                             
-                              </ItemLayerBdate>
+                            <ItemLayerBdate>{getTime(msgTimeOf(data))}</ItemLayerBdate>
                           </ItemLayerBBox>
                           {
                             data.CHAT_CONTENT_TYPE == CHATCONTENTTYPE.IMAGE  ? (<img src={data.TEXT}
+                              onClick={()=>{ setPickedmsg(pickedmsg == data.MESSAGE_ID ? null : data.MESSAGE_ID); }}
                               style={{width: '70%',
                               height: '250px',
                               padding: '10px',
                               borderRadius: '20px'  
                               }}
-                            />):( <ItemBoxB>{data.TEXT}</ItemBoxB>)
+                            />):(
+                              <ItemBoxB onClick={()=>{ setPickedmsg(pickedmsg == data.MESSAGE_ID ? null : data.MESSAGE_ID); }}>
+                                {data.TEXT}
+                              </ItemBoxB>
+                            )
                           }
                         </ItemLayerB>
                       )
                       }
+
+                      {/* 내 글만 지울 수 있다 (형 지시 2026-08-12) */}
+                      {pickedmsg == data.MESSAGE_ID && data.USERS_ID == user.users_id && (
+                        <DeleteBtn onClick={()=>{ _handledeletemessage(data); }}>
+                          <SlTrash size={13} /> 삭제
+                        </DeleteBtn>
+                      )}
                     </>
                   }
             
-                  
-                </>
+
+                </Fragment>
               ))}
           </ShowContainer>)
           }
