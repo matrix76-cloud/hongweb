@@ -12,6 +12,7 @@ import IconButton from "../../common/IconButton";
 import { Column } from "../../common/Column";
 import { DataContext } from "../../context/Data";
 import { FaArrowLeft } from "react-icons/fa";
+import { MdMyLocation } from "react-icons/md";
 
 import "./Mobilemap.css"
 import { Any } from "@react-spring/web";
@@ -82,7 +83,8 @@ const GuideButtonStyle={
 
 const ButtonLayer = styled.div`
   position: absolute;
-  bottom: 20px;
+  /* 하단 탭(76px)에 가려져 필터 버튼이 안 보였다 — 탭 위로 올린다 (형 리뷰 2026-08-12) */
+  bottom: 90px;
   width: 100%;
   z-index: 2;
   display: flex;
@@ -135,6 +137,51 @@ const FilterButton = styled.div`
   border-radius: 20px;
   border: 1px solid #ededed;
   font-family: 'Pretendard-SemiBold';
+`
+
+/* 현재 위치로 이동 — 지도 위 동그란 아이콘 버튼 (형 리뷰 2026-08-12) */
+const CurrentPosButton = styled.div`
+  position: absolute;
+  right: 14px;
+  bottom: 146px;   /* 필터 줄 바로 위 */
+  z-index: 5;
+  width: 46px;
+  height: 46px;
+  border-radius: 100px;
+  background: #fff;
+  border: 1px solid #ededed;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  &:active { transform: scale(0.94); }
+  transition: transform .12s ease;
+`
+
+/* 진행중인 일감만 보기 — 필터 버튼 옆 체크박스 (형 리뷰 2026-08-12) */
+const OpenOnlyLabel = styled.label`
+  margin-left: 10px;
+  height: 40px;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #131313;
+  cursor: pointer;
+  user-select: none;
+`
+const OpenOnlyCheck = styled.input`
+  width: 17px;
+  height: 17px;
+  accent-color: #FF4E19;
+  cursor: pointer;
+  pointer-events: none;
 `
 
 /**
@@ -204,6 +251,12 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   const [servicefilter, setServicefilter] = useState([]);
 
   const itemRefs = useRef([]);
+
+  /* 지도 객체를 ListmapDraw 밖에서도 쓰려고 잡아둔다 — 현재위치 이동에 필요 (형 리뷰 2026-08-12) */
+  const mapRef = useRef(null);
+  /* 진행중인 일감만 보기 */
+  const [openonly, setOpenonly] = useState(false);
+  const openonlyRef = useRef(false);
 
 
   useLayoutEffect(() => {
@@ -485,9 +538,14 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
    * 리스트에서 위치 이동을 위해 refs 배열에 값을 세팅해준다
    * ! 하이라이트 표시 는 css로 적용
    */
-  async function ListmapDraw(datas){
+  async function ListmapDraw(rawdatas){
 
     if(!(await ensureKakao())) return;
+
+    /* 진행중만 보기가 켜져 있으면 마감된 일감은 지도에 안 그린다 (형 리뷰 2026-08-12) */
+    const datas = openonlyRef.current
+      ? rawdatas.filter((d)=> (d.TYPE == FILTERITMETYPE.ROOM ? d.ROOM_STATUS : d.WORK_STATUS) == WORKSTATUS.OPEN)
+      : rawdatas;
 
     setLoading(true);
     setRefresh((refresh) =>refresh +1);
@@ -495,10 +553,13 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
           center: new kakao.maps.LatLng(37.625660993622, 127.14833958893), // 지도의 중심좌표
-          level: 5 // 지도의 확대 레벨
+          /* 처음 들어왔을 때 동네가 한눈에 들어오는 정도 (형 리뷰 2026-08-12).
+             5는 너무 붙어 있어 주변 일감이 화면 밖으로 밀려났다. */
+          level: 6
     };
 
     var map = new kakao.maps.Map(mapContainer, mapOption);
+    mapRef.current = map;
 
     const geocoder = new window.kakao.maps.services.Geocoder();
 
@@ -507,19 +568,10 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
             const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
 
             map.setCenter(coords);
-            const circle = new window.kakao.maps.Circle({
-                center: coords,
-                radius: 2500, // 반경 2.5키로미터
-                strokeWeight: 2,
-                strokeColor: '#ff4e19',
-                strokeOpacity: 1,
-                strokeStyle: 'dashed',
-                fillColor: '#FFCF70',
-                fillOpacity: 0.2
-            });
-            circle.setMap(map);
+            /* 반경 2.5km 를 노란 원으로 덮던 것 삭제 — 지도가 탁해지고 일감 카드가 묻혔다 (형 리뷰 2026-08-12) */
         } else {
-            alert('주소를 찾을 수 없습니다.');
+            /* 주소를 못 찾아도 알럿으로 막지 않는다. 지도는 기본 좌표로 그대로 보여준다 */
+            console.warn('[map] 주소를 찾지 못했습니다:', user.address_name);
         }
     });
 
@@ -691,6 +743,12 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
     /* 클러스터에 묶인 것(2개 이상)은 뱃지로, 혼자인 것은 원래대로 가격 카드로 보여준다.
        (형 리뷰 2026-08-12 — "한개짜리는 그냥 원래 표현하던 방법으로") */
+    /* 축소할 때 화면이 깜빡이던 문제 (형 지적 2026-08-12)
+       ① 상태가 그대로인 오버레이까지 매번 setMap 을 다시 불러 전부 떼었다 붙였다 했다
+          -> 지금 붙어 있는지(getMap) 보고 "바뀐 것만" 건드린다
+       ② zoom_changed 와 clustered 가 연달아 발화해 같은 작업이 두세 번 돌았다
+          -> 다음 프레임에 한 번만 돌도록 묶는다 */
+    let syncQueued = false;
     const syncOverlays = () => {
       const grouped = new Set();
       // 클러스터가 동작하지 않는 레벨(확대 상태)에서는 전부 가격 카드로 보여준다
@@ -700,22 +758,36 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
         });
       }
       overlays.forEach((o) => {
-        const alone = !grouped.has(o.customData?.id);
-        o.setMap(alone ? map : null);
+        const shouldShow = !grouped.has(o.customData?.id);
+        const isShown = !!o.getMap();
+        if (shouldShow === isShown) return;      // 그대로면 건드리지 않는다
+        o.setMap(shouldShow ? map : null);
       });
     };
-    kakao.maps.event.addListener(clusterer, 'clustered', syncOverlays);
-    kakao.maps.event.addListener(map, 'zoom_changed', () => setTimeout(syncOverlays, 0));
-    setTimeout(syncOverlays, 0);
+    const requestSync = () => {
+      if (syncQueued) return;
+      syncQueued = true;
+      requestAnimationFrame(() => { syncQueued = false; syncOverlays(); });
+    };
+
+    kakao.maps.event.addListener(clusterer, 'clustered', requestSync);
+    kakao.maps.event.addListener(map, 'zoom_changed', requestSync);
+    requestSync();
 
     //오버레이를 변수에 담아둔다
     setOverlays(overlays);
     setRefresh((refresh) => refresh +1);
 
 
-    // 확대/축소 레벨 제한 설정
+    // 확대/축소 레벨 제한.
+    // setMinLevel/setMaxLevel 을 쓰면 지도가 그 범위를 넘지 않으므로
+    // zoom_changed 안에서 setLevel 로 되돌릴 일 자체가 없다 (깜빡임의 근본 원인 제거).
     const minLevel = 1;
     const maxLevel = 9;
+    try {
+      map.setMinLevel(minLevel);
+      map.setMaxLevel(maxLevel);
+    } catch { /* 구버전 SDK 대비 — 아래 보정이 대신 처리한다 */ }
 
 
     window.kakao.maps.event.addListener(map, 'drag', () => {
@@ -742,9 +814,14 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
         setRefresh((refresh) => refresh +1);
 
-        if (level < minLevel) {
+        /* 확대/축소 한계 보정.
+           ★ zoom_changed 안에서 조건 없이 setLevel 을 부르면 그 setLevel 이 다시
+             zoom_changed 를 일으켜 무한 루프가 된다. 한계에 닿은 채로 더 축소하면
+             화면이 계속 깜빡였던 원인 (형 지적 2026-08-12).
+             지금 레벨과 다를 때만 되돌린다. */
+        if (level < minLevel && map.getLevel() !== minLevel) {
             map.setLevel(minLevel);
-        } else if (level > maxLevel) {
+        } else if (level > maxLevel && map.getLevel() !== maxLevel) {
             map.setLevel(maxLevel);
         }
     });
@@ -841,6 +918,42 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     setSelectroomitemindex(-1);
   }
   const positioncallback =()=>{}
+
+  /**
+   * 현재 위치로 지도 옮기기 (형 리뷰 2026-08-12).
+   * 기기 위치를 못 받으면 가입할 때 적은 주소 좌표로라도 옮긴다.
+   */
+  const _handleMoveCurrent = () =>{
+    const move = (lat, lng)=>{
+      const map = mapRef.current;
+      if(!map || !window.kakao) return;
+      map.setLevel(4);
+      map.panTo(new window.kakao.maps.LatLng(lat, lng));
+    }
+
+    if(!navigator.geolocation){
+      if(user.latitude && user.longitude) move(user.latitude, user.longitude);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos)=>{ move(pos.coords.latitude, pos.coords.longitude); },
+      ()=>{
+        // 위치 권한이 없을 때 — 조용히 등록 주소로 대신한다
+        if(user.latitude && user.longitude) move(user.latitude, user.longitude);
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+    );
+  }
+
+  /** 진행중인 일감만 보기 토글 — 지도를 다시 그린다 */
+  const _handleOpenonly = () =>{
+    const next = !openonly;
+    openonlyRef.current = next;
+    setOpenonly(next);
+    ListmapDraw(items);
+    setRefresh((refresh) => refresh +1);
+  }
 
   const MobileServiceFilterCallback =(filterary) =>{
 
@@ -1063,11 +1176,20 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     </ButtonLayer>  )
     } */}
 
+      {/* 현재 위치로 이동 — 필터 줄 바로 위 오른쪽 (형 리뷰 2026-08-12) */}
+      <CurrentPosButton onClick={_handleMoveCurrent} title="현재 위치로 이동" aria-label="현재 위치로 이동">
+        <MdMyLocation size={22} color="#131313"/>
+      </CurrentPosButton>
+
       <ButtonLayer>
         <FilterButton onClick={_handleservicefilterpopup}>
           <img src ={imageDB.filterblack} style={{width:16}}/>
           <div style={{fontSize:16}}>필터</div>
         </FilterButton>
+        <OpenOnlyLabel onClick={_handleOpenonly}>
+          <OpenOnlyCheck type="checkbox" checked={openonly} readOnly/>
+          진행중인 일감만
+        </OpenOnlyLabel>
       </ButtonLayer>
 
       <div style={GuideLeftStyle}>
