@@ -120,7 +120,7 @@ const FilterApplyButtonText = styled.span`
 `
 
 const CheckItem = styled.div`
-  background: ${({check}) => check == true ? ('#FF4E19') :('#FFF')};
+  background: ${({check}) => check == true ? ('#FF4E19') :('var(--surface)')};
   height:15px; 
   width:15px; 
   borderRadius:15px;

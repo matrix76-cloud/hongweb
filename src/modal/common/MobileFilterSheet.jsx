@@ -135,7 +135,7 @@ const Option = styled.div`
 const OptionText = styled.span`
   font-size: 16px;
   font-weight: ${({ $on }) => ($on ? 700 : 500)};
-  color: ${({ $on }) => ($on ? '#FF4E19' : '#131313')};
+  color: ${({ $on }) => ($on ? '#FF4E19' : 'var(--text)')};
   line-height: 1.3;
   word-break: keep-all;
 `;

@@ -69,7 +69,7 @@ const TitleLayer = styled.div`
   justify-content: center;
   flex-direction: column;
   position: sticky;
-  background: #fffefe;
+  background: #FFFefe;
   width: 100%;
   z-index: 5;
   top: 135px;
@@ -149,8 +149,8 @@ const SelectLayer = styled.div`
   overflow-wrap: anywhere;
   padding: 10px 8px;
   border: ${({$check}) => $check == true ? ('1.5px solid #FF4E19') : ('1px solid var(--border)')};
-  background: ${({$check}) => $check == true ? ('#FFF5F0') : ('#fff')};
-  color: ${({$check}) => $check == true ? ('#FF4E19') : ('#131313')};
+  background: ${({$check}) => $check == true ? ('#FFF5F0') : ('var(--surface)')};
+  color: ${({$check}) => $check == true ? ('#FF4E19') : ('var(--text)')};
   font-weight: ${({$check}) => $check == true ? (700) : (500)};
   border-radius: 10px;
   font-size: 15px;

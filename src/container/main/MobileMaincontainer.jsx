@@ -115,7 +115,7 @@ const FilterBox = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('#fff')};
+  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('var(--surface)')};
   border: 1px solid ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('var(--border)')};
   border-radius: 8px;
   height: 38px;
@@ -166,7 +166,7 @@ const ProcessLabel = styled.label`
   gap: 6px;
   font-size: 15px;
   font-weight: ${({$on}) => ($on ? 600 : 500)};
-  color: ${({$on}) => ($on ? '#131313' : '#71717a')};
+  color: ${({$on}) => ($on ? 'var(--text)' : '#71717a')};
   cursor: pointer;
   user-select: none;
 `
@@ -177,7 +177,7 @@ const ProcessCheck = styled.input`
   cursor: pointer;
 `
 const FilterBoxText = styled.div`
-  color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') : ('#131313')};
+  color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') : ('var(--text)')};
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
@@ -982,7 +982,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
                 <Fragment key={data.name}>
                 {
                   index == 0 && <FilterBox $fixed onClick={()=>{_handlefiltermenuclick(data.name)}} $clickstatus={filterenablecheck(data.name)}>
-                    <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
+                    <img className="mono-icon" src={imageDB.init} style={{width:'16px', height:"16px"}}/>
                 </FilterBox>
                 }
                 {

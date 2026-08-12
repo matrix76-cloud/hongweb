@@ -20,7 +20,7 @@ const box = { background: 'var(--surface)', border: `1px solid ${C.line}`, borde
 const btn = (kind = 'normal') => ({
   fontSize: 15, fontWeight: 700, padding: '10px 16px', borderRadius: 10, cursor: 'pointer',
   border: kind === 'primary' ? 'none' : `1px solid ${C.line}`,
-  background: kind === 'primary' ? C.brand : '#fff',
+  background: kind === 'primary' ? C.brand : 'var(--surface)',
   color: kind === 'primary' ? '#fff' : C.ink,
 });
 

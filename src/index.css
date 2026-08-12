@@ -12,15 +12,19 @@
   --border-soft:#EFEFEF;
 }
 
+/* 검은 선으로 그려진 단색 아이콘은 어두운 배경에서 안 보인다 — 반전시킨다 (형 리뷰 2026-08-13).
+   지도 위 요소나 컬러 일러스트에는 붙이지 않는다. */
+:root[data-theme="dark"] .mono-icon { filter: invert(1) brightness(1.6); }
+
 :root[data-theme="dark"] {
   --bg:        #121212;
   --bg-soft:   #1A1A1A;
-  --surface:   #1E1E1E;
+  --surface:   #202124;
   --text:      #EDEDED;
   --text-sub:  #A1A1AA;
   --text-weak: #7A7A7A;
-  --border:    #333333;
-  --border-soft:#2A2A2A;
+  --border:    #3C3C42;
+  --border-soft:#32323A;
 }
 
 /* ─────────────────────────────────────────────────────────────

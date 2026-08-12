@@ -105,7 +105,7 @@ export const SocialBtn = styled.button`
   height: 54px;
   border-radius: 10px;
   border: ${({ $kind }) => ($kind === "google" ? "1px solid var(--border)" : "none")};
-  background: ${({ $kind }) => ($kind === "kakao" ? "#FEE500" : "#fff")};
+  background: ${({ $kind }) => ($kind === "kakao" ? "#FEE500" : "var(--surface)")};
   color: var(--text);
   font-size: 16px;
   font-weight: 700;
@@ -149,7 +149,7 @@ export const Tab = styled.button`
   background: none;
   border: none;
   border-bottom: 2px solid ${({ $on }) => ($on ? "#FF4E19" : "transparent")};
-  color: ${({ $on }) => ($on ? "#131313" : "#A3A3A3")};
+  color: ${({ $on }) => ($on ? "var(--text)" : "#A3A3A3")};
   font-size: 16px;
   font-weight: ${({ $on }) => ($on ? 700 : 500)};
   font-family: inherit;

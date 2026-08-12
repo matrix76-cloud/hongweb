@@ -126,7 +126,7 @@ const Dot = styled.span`
   width: ${({ $on }) => ($on ? "18px" : "6px")};
   height: 6px;
   border-radius: 100px;
-  background: ${({ $on }) => ($on ? "#fff" : "rgba(255,255,255,.38)")};
+  background: ${({ $on }) => ($on ? "var(--surface)" : "rgba(255,255,255,.38)")};
   transition: width .18s ease;
 `;
 

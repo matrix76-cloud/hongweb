@@ -18,7 +18,7 @@ const formatter = buildFormatter(koreanStrings);
 const Container = styled.div`
   box-sizing: border-box;
   width: ${({ width }) => width || '100%'};
-  background: ${({ selected }) => (selected ? '#F9F9F9' : '#FFFFFF')};
+  background: ${({ selected }) => (selected ? 'var(--bg-soft)' : 'var(--surface)')};
   border: 1px solid ${({ selected }) => (selected ? '#A3A3A3' : 'var(--border)')};
   border-radius: 16px;
   padding: 20px;
@@ -53,7 +53,7 @@ const StatusTag = styled.div`
   border-radius: 4px;
   font-size: 14px;
   line-height: 1.3;
-  background: ${({ $done }) => ($done ? '#F3F3F3' : '#FFF5F5')};
+  background: ${({ $done }) => ($done ? 'var(--bg)' : '#FFF5F5')};
   color: ${({ $done }) => ($done ? '#A3A3A3' : '#FF2121')};
 `;
 
@@ -313,7 +313,7 @@ const MobileWorkItem = ({ containerStyle, width, workdata, onPress, index, selec
       <Bottom>
         <BottomRow>
           <ViewCount>
-            <img src={imageDB.eyesolid} alt="조회수" style={{ width: 16, height: 16, objectFit: 'contain' }} />
+            <img className="mono-icon" src={imageDB.eyesolid} alt="조회수" style={{ width: 16, height: 16, objectFit: 'contain' }} />
             <span>{workdata.VIEW_COUNT ?? 0}</span>
           </ViewCount>
           <ProgressCount>

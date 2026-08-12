@@ -53,7 +53,7 @@ const SearchBar = styled.div`
   height: 50px;
   padding: 0 14px;
   border-radius: 12px;
-  background: #F6F6F6;
+  background: var(--bg-soft);
 `;
 const SearchInput = styled.input`
   flex: 1;

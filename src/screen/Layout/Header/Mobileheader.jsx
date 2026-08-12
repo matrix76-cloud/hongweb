@@ -155,7 +155,7 @@ useEffect(() => {
           {/* 핀·지역·화살표가 한 덩어리로 위치 시트를 연다 (seekone 방식) */}
           <div onClick={_handlelocation}
             style={{display:"flex", alignItems:"center", marginLeft:5, cursor:"pointer"}}>
-            <img src={imageDB.mappin} style={{width:20, height:20}}/>
+            <img className="mono-icon" src={imageDB.mappin} style={{width:20, height:20}}/>
             <div style={{ margin:"0 6px 0 2px"}}>{regionLabel(address_name)}</div>
             <FaChevronRight />
           </div>
@@ -176,7 +176,7 @@ useEffect(() => {
         <div style={{display:"flex", flexDirection:"row", alignItems:"center",paddingRight:20}} >
 
         {/* 채팅 아이콘·알림 배지 제거 — 하단 탭에 채팅이 이미 있고 배지 숫자는 가짜였다 (형 리뷰 2026-08-12) */}
-        <img src={imageDB.search} width={24} onClick={_handleAI} style={{paddingRight:14, cursor:"pointer"}}/>
+        <img className="mono-icon" src={imageDB.search} width={24} onClick={_handleAI} style={{paddingRight:14, cursor:"pointer"}}/>
         {/* 공지사항 (형 리뷰 2026-08-12) */}
         <PiMegaphoneBold size={23} color="#131313" onClick={_handleNotice} style={{cursor:"pointer"}} aria-label="공지사항"/>
         </div>

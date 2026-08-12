@@ -75,8 +75,8 @@ const TimeChip = styled.button`
   font-size: 15px;
   cursor: pointer;
   border: ${({ $on }) => ($on ? "1.5px solid #FF4E19" : "1px solid var(--border)")};
-  background: ${({ $on }) => ($on ? "#FFF5F0" : "#fff")};
-  color: ${({ $on }) => ($on ? "#FF4E19" : "#131313")};
+  background: ${({ $on }) => ($on ? "#FFF5F0" : "var(--surface)")};
+  color: ${({ $on }) => ($on ? "#FF4E19" : "var(--text)")};
   font-weight: ${({ $on }) => ($on ? 700 : 500)};
 `;
 

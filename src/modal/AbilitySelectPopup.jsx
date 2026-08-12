@@ -62,14 +62,14 @@ const Card = styled.div`
   padding: 14px;
   border-radius: 12px;
   border: ${({ active }) => (active ? "2px solid #ff7e19" : "1px solid #ddd")};
-  background: ${({ active }) => (active ? "#fff4e6" : "#fdfdfd")};
+  background: ${({ active }) => (active ? "#FFF4e6" : "#fdfdfd")};
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   margin-bottom: 10px;
 
   &:hover {
     border-color: #ff7e19;
-    background: ${({ active }) => (active ? "#fff4e6" : "#fff7ef")};
+    background: ${({ active }) => (active ? "#FFF4e6" : "#FFF7ef")};
   }
 `;
 

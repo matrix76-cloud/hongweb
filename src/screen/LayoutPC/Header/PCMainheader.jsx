@@ -91,7 +91,7 @@ const EventDesc = styled.div`
 
 const MainMenuText = styled.div`
   font-size: 20px;
-  color: ${({$clickstatus}) => $clickstatus == true ? ('#ff2a75') :('#131313') };
+  color: ${({$clickstatus}) => $clickstatus == true ? ('#ff2a75') :('var(--text)') };
   font-weight: ${({$clickstatus}) => $clickstatus == true ? ('600') :('400') };
 `
 

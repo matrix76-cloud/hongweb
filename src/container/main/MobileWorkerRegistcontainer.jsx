@@ -58,7 +58,7 @@ const Textarea = styled.textarea`
   min-height: 350px;
   max-height: 400px; // ✅ 한계 높이 설정 (선택)
   overflow-y: auto;  // ✅ 세로 스크롤 생기게!
-  background-color: ${({ invalid }) => (invalid ? "#ffe5e5" : "#fff")};
+  background-color: ${({ invalid }) => (invalid ? "#ffe5e5" : "var(--surface)")};
   line-height:1.6;
 `;
 
@@ -112,7 +112,7 @@ const TagItem = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  background: ${({ active }) => (active ? `${COLORS.primary};` : "#fff")};
+  background: ${({ active }) => (active ? `${COLORS.primary};` : "var(--surface)")};
   color: ${({ active }) => (active ? "#fff" : "#000")};
   border: ${({ active }) => (active ? `2px solid ${COLORS.primary};` : "1px solid #ccc")};
 `;
@@ -130,7 +130,7 @@ const AgeOption = styled.div`
   font-weight: 500;
   text-align: center;
   cursor: pointer;
-  background: ${({ active }) => (active ? `${COLORS.primary};` : "#fff")};
+  background: ${({ active }) => (active ? `${COLORS.primary};` : "var(--surface)")};
   color: ${({ active }) => (active ? "#fff" : "#000")};
   border: ${({ active }) => (active ? `2px solid ${COLORS.primary};` : "1px solid #ccc")};
 `;
@@ -142,7 +142,7 @@ const ErrorText = styled.span`
 `;
 
 const PhoneInfoBox = styled.div`
-  background: #fff8e1;
+  background: #FFF8e1;
   border: 1px solid #ffe082;
   border-radius: 8px;
   padding: 10px 12px;

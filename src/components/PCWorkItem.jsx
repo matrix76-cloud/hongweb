@@ -19,7 +19,7 @@ import { REQUESTINFO, WORKNAME } from "../utility/work_";
 const formatter = buildFormatter(koreanStrings); 
 
 const Container = styled.div`
-  background: ${({selected}) => selected == true ?('#ededed'):('#fff')};
+  background: ${({selected}) => selected == true ?('#ededed'):('var(--surface)')};
   height: 300px;
   width: ${({width}) => width};
   margin-bottom: 20px;

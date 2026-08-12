@@ -116,7 +116,7 @@ const InfoRow = styled.div`
   align-items: flex-start;
   gap: 14px;
   padding: 14px 2px;
-  border-bottom: 1px solid #F3F3F3;
+  border-bottom: 1px solid var(--border);
 `
 const InfoLabel = styled.div`
   flex: 0 0 88px;
@@ -353,7 +353,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
           {/* 홈 카드에 있던 조회수·진행중 건수를 상세에도 (형 리뷰 2026-08-12) */}
           <CountRow>
             <CountItem>
-              <img src={imageDB.eyesolid} alt="조회수" style={{width:16, height:16, objectFit:'contain'}}/>
+              <img className="mono-icon" src={imageDB.eyesolid} alt="조회수" style={{width:16, height:16, objectFit:'contain'}}/>
               <span>{workinfo.VIEW_COUNT ?? 0}</span>
             </CountItem>
             <CountDot />

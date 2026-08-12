@@ -10,7 +10,7 @@ import { CENTERTYPE, LAWTYPE } from "../utility/screen";
 const TRANSPARENT = 'transparent';
 
 const Container = styled.div`
-    background-color : #F2F3F4;
+    background-color : var(--bg-soft);
     height: ${({height}) =>height}px;
     padding: 20px 30px;
     margin-bottom:30px;
@@ -25,7 +25,7 @@ const StoreNameText = styled.span`
 `
 
 const StoreLineView = styled.div`
-    background-color : #EAEBED;
+    background-color : var(--border-soft);
     height :1px;
 `
 const StoreButtonView = styled.div`

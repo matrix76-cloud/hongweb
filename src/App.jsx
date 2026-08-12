@@ -25,6 +25,7 @@ import PCWorkregistserpage from "./page/PCmain/PCWorkregisterpage";
 
 // Mobile
 import MobileChatpage from "./page/main/MobileChatpage";
+import MobileCallpage from "./page/main/MobileCallpage";
 import MobileConfigContentpage from "./page/main/MobileConfigContentpage";
 import MobileConfigpage from "./page/main/MobileConfigpage";
 import MobileContentpage from "./page/main/MobileContentpage";
@@ -159,6 +160,8 @@ const App = () => {
 
       {/* ④ 연결 */}
       <Route path="/Mobilechat" element={<MobileChatpage />} />
+      {/* 보이스톡 — 인앱 배너[받기]와 OS 알림[탭] 이 모두 이 화면으로 들어온다 */}
+      <Route path="/Mobilecall" element={<MobileCallpage />} />
 
 
       {/* 내 정보 */}

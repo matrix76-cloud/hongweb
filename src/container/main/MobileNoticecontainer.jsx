@@ -27,7 +27,7 @@ const List = styled.div`
 `;
 
 const Item = styled.div`
-  border-bottom: 1px solid #F3F3F3;
+  border-bottom: 1px solid var(--border);
   &:last-child { border-bottom: none; }
 `;
 

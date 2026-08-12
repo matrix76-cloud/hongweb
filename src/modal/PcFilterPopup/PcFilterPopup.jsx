@@ -385,7 +385,7 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                   </CheckButton>
 
                   <CheckButton  onClick={()=>{}} style={{height:44, width:96, borderRadius:5,
-                     background:"#FF7125", color :"#fff"}}>
+                     background:"#FF7125", color :"var(--surface)"}}>
                      5건 찾음
                   </CheckButton>
 

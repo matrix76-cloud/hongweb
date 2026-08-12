@@ -64,12 +64,13 @@ export const notifyPicked = ({ supporterId, workType }) =>
  * 통화는 "지금 받아야" 의미가 있으므로 다른 알림과 성격이 다르다.
  * 알림을 누르면 대화방으로 바로 들어가게 한다.
  */
-export const notifyVoiceCall = ({ targetId, callerName, chatId }) =>
+export const notifyVoiceCall = ({ targetId, callerName, callId }) =>
   createNotification({
     type: NOTI_TYPE.VOICECALL,
     title: '보이스톡 연결 요청',
     body: `${callerName || '상대방'}님이 통화를 요청했어요`,
-    link: chatId ? `/Mobilecontent?chat=${chatId}` : '/Mobilechat',
+    // 이 link 가 "받기"의 실체다 — 누르면 통화 화면이 그대로 열린다
+    link: callId ? `/Mobilecall?id=${callId}` : '/Mobilechat',
     targetUids: [targetId],
   });
 

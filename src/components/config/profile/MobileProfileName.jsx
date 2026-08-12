@@ -68,7 +68,7 @@ const FilterBox = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('#fff') };
+  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('var(--surface)') };
   border:  ${({$clickstatus}) => $clickstatus == true ? (null) :('1px solid #C3C3C3') };
   margin-right: 3px;
   border-radius: 4px;
@@ -78,7 +78,7 @@ const FilterBox = styled.div`
 
 `
 const FilterBoxText = styled.div`
-color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') :('#131313') };
+color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') :('var(--text)') };
 font-size:14px;
 margin-left:5px;
 font-weight:600;

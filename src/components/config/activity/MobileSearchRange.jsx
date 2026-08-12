@@ -44,8 +44,8 @@ const Option = styled.div`
   margin-bottom: 10px;
   border-radius: 12px;
   border: 1.5px solid ${({ $on }) => ($on ? '#FF4E19' : 'var(--border)')};
-  background: ${({ $on }) => ($on ? '#FFF5F0' : '#fff')};
-  color: ${({ $on }) => ($on ? '#FF4E19' : '#131313')};
+  background: ${({ $on }) => ($on ? '#FFF5F0' : 'var(--surface)')};
+  color: ${({ $on }) => ($on ? '#FF4E19' : 'var(--text)')};
   font-size: 16px;
   font-weight: ${({ $on }) => ($on ? 700 : 500)};
   cursor: pointer;

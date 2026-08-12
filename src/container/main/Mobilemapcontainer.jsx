@@ -95,7 +95,7 @@ const ButtonLayer = styled.div`
 
 const MapBox = styled.div`
 border: 1px solid #cbcbcb;
-background: ${({$enable})=> $enable == true ? ("#FF4E19") : ("#fff")};
+background: ${({$enable})=> $enable == true ? ("#FF4E19") : ("var(--surface)")};
 display: flex;
 flex-direction: column;
 justify-content: center;
@@ -106,6 +106,7 @@ padding : 0px 5px;
 const MapBoxControl = styled.div`
   border: 1px solid #cbcbcb;
   background: ${({$enable})=> $enable == true ? ("#FF4E19") : ("#fff")};
+  color: #131313;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -117,7 +118,7 @@ const MapBoxControl = styled.div`
 
 const MapBoxSpan = styled.div`
   font-size:9px;
-  color: ${({$enable})=> $enable == true ? ("#fff") : ("#131313")};
+  color: ${({$enable})=> $enable == true ? ("#fff") : ("var(--text)")};
 `
 const LoadingAnimationStyle={
   zIndex: 11,
@@ -126,8 +127,10 @@ const LoadingAnimationStyle={
   left: "35%"
 }
 
+/* 지도 위 버튼들은 어두운 모드에서도 흰색을 유지한다 — 지도 타일이 밝다 (형 리뷰 2026-08-13) */
 const FilterButton = styled.div`
-  background-color: var(--surface);
+  background-color: #fff;
+  color: #131313;
   width: 80px;
   height: 40px;
   display: flex;
@@ -148,7 +151,8 @@ const CurrentPosButton = styled.div`
   width: 46px;
   height: 46px;
   border-radius: 100px;
-  background: var(--surface);
+  background: #fff;
+  color: #131313;
   border: 1px solid var(--border-soft);
   box-shadow: 0 2px 8px rgba(0,0,0,0.14);
   display: flex;
@@ -165,7 +169,7 @@ const OpenOnlyLabel = styled.div`
   margin-left: 10px;
   height: 40px;
   padding: 0 14px;
-  background: var(--surface);
+  background: #fff;
   border: 1px solid var(--border-soft);
   border-radius: 20px;
   display: flex;
@@ -173,7 +177,7 @@ const OpenOnlyLabel = styled.div`
   gap: 7px;
   font-size: 15px;
   font-weight: 600;
-  color: var(--text);
+  color: #131313;
   cursor: pointer;
   user-select: none;
 `

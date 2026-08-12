@@ -371,6 +371,12 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             </SubLabel>
 
 
+        </BoxItem>
+
+        {/* 설정은 활동내역이 아니다 — 따로 묶는다 (형 리뷰 2026-08-13 "위치가 잘못 들어가 있어") */}
+        <BoxItem>
+          <Label>앱 설정</Label>
+
             <SubLabel onClick={_handleSearchRange}>
               <Row>
                 <PiMapPinBold/>
@@ -378,7 +384,6 @@ const MobileConfigcontainer =({containerStyle}) =>  {
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
-
 
             <SubLabel onClick={_handleNotiSetting}>
               <Row>
@@ -388,14 +393,13 @@ const MobileConfigcontainer =({containerStyle}) =>  {
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
 
-          {/* 화면 설정 — 알림설정 바로 아래가 자연스럽다 (형 요청 2026-08-13) */}
-          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.THEMESETTING)}>
-            <Row>
-              <PiMoonBold/>
-              <SubLabelContent>화면 설정</SubLabelContent>
-            </Row>
-            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
-          </SubLabel>
+            <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.THEMESETTING)}>
+              <Row>
+                <PiMoonBold/>
+                <SubLabelContent>화면 설정</SubLabelContent>
+              </Row>
+              <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
+            </SubLabel>
         </BoxItem>
 
         <BoxItem>

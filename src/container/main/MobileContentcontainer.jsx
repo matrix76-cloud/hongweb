@@ -45,6 +45,7 @@ import { setRef } from "@mui/material";
 import MobileContactSign from "../../modal/MobileContactSignPopup/MobileContactSignPopup";
 import MobileContactDoc from "../../modal/MobileContactDocPopup/MobileContactDocPopup";
 import MobilePayPopup from "../../modal/MobilePayPopup/MobilePayPopup";
+import { startCall } from "../../service/CallService";
 
 const Container = styled.div`
     background-color : var(--surface);
@@ -424,7 +425,7 @@ const MenuItem = styled.button`
   border: none;
   text-align: left;
   font-size: 16px;
-  color: ${({$danger}) => ($danger ? '#c02020' : '#131313')};
+  color: ${({$danger}) => ($danger ? '#c02020' : 'var(--text)')};
   cursor: pointer;
   &:active { background: var(--bg-soft); }
 `;
@@ -788,12 +789,31 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
   }
 
   /**
-   * 보이스톡 — 버튼만 있고 통화는 아직 없다.
-   * 붙일 때는 RN 네이티브 화면 + Agora 로 가는 게 낫다(마이크 권한·백그라운드 유지). TODO.md 참고.
+   * 보이스톡 — 통화를 걸고 통화 화면으로 간다. (2026-08-13)
+   * 상대에게는 푸시가 가고, 그 알림의 link 가 같은 화면을 연다.
+   * 즉 상대가 앱을 보고 있으면 상단 배너[받기], 아니면 OS 알림 -> 둘 다 여기로 들어온다.
    */
-  const _handlevoice = () =>{
-    setVoicenotice(true);
-    setTimeout(()=>{ setVoicenotice(false); }, 2000);
+  const _handlevoice = async () =>{
+    const TARGET_ID = OWNER == true ? ITEM.SUPPORTER_ID : ITEM.OWNER_ID;
+    if(!TARGET_ID || !user?.users_id){
+      setVoicenotice(true);
+      setTimeout(()=>{ setVoicenotice(false); }, 2000);
+      return;
+    }
+
+    try{
+      const CALL_ID = await startCall({
+        callerId : user.users_id,
+        callerName : user.nickname,
+        calleeId : TARGET_ID,
+        chatId : chatid,
+      });
+      navigate(`/Mobilecall?id=${CALL_ID}`);
+    }catch(e){
+      console.error('[call] 통화 걸기 실패', e);
+      setVoicenotice(true);
+      setTimeout(()=>{ setVoicenotice(false); }, 2000);
+    }
   }
 
   // 결제 (의뢰한 사람만 누를 수 있다)
@@ -999,7 +1019,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       }
 
       {
-        voicenotice == true && <VoiceToast>음성통화는 준비 중입니다</VoiceToast>
+        voicenotice == true && <VoiceToast>지금은 통화를 걸 수 없어요</VoiceToast>
       }
 
       {
@@ -1090,7 +1110,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                   />
                 )}
 
-                {/* 보이스톡 — 자리만 잡아둔 상태. 실제 통화는 아직 안 붙였다 (형 지시 2026-08-12) */}
+                {/* 보이스톡 (2026-08-13) */}
                 <MoreBtn onClick={_handlevoice} aria-label="음성통화">
                   <IoCallOutline size={19} color="#131313" />
                 </MoreBtn>

@@ -22,7 +22,7 @@ import { shortRegion } from "../utility/region";
 const formatter = buildFormatter(koreanStrings); 
 
 const Container = styled.div`
-  background: ${({selected}) => selected == true ?('#f2efef'):('#fff')};
+  background: ${({selected}) => selected == true ?('#f2efef'):('var(--surface)')};
   width: ${({width}) => width};
 
   margin-bottom: 20px;
@@ -44,7 +44,7 @@ const KeywordBox = styled.div`
   justify-content: center;
   align-items: center;
   height: 24px;
-  background: ${({selected}) => selected == true ?('#FFF'):('#FFF5E5')};
+  background: ${({selected}) => selected == true ?('var(--surface)'):('#FFF5E5')};
   border-radius: 5px;
   margin-right: 5px;
   padding: 4px 8px;
@@ -85,7 +85,7 @@ const InfoContainer = styled.div`
   flex-direction: column;
   justify-content:center;
   align-items:center;
-  background: ${({selected}) => selected == true ?('#f2efef'):('#fff')};
+  background: ${({selected}) => selected == true ?('#f2efef'):('var(--surface)')};
   height:60%;
   width:100%;
 

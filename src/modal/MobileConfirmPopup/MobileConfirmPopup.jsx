@@ -76,7 +76,7 @@ const Btn = styled.button`
   border: ${({ $kind }) => ($kind === "ghost" ? "1px solid var(--border)" : "none")};
   background: ${({ $kind }) =>
     $kind === "ghost" ? "#fff" : $kind === "danger" ? "#c02020" : "#FF4E19"};
-  color: ${({ $kind }) => ($kind === "ghost" ? "#131313" : "#fff")};
+  color: ${({ $kind }) => ($kind === "ghost" ? "var(--text)" : "#fff")};
   &:disabled { opacity: .5; cursor: default; }
 `;
 

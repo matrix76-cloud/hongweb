@@ -33,7 +33,7 @@ const ALL = DOMAINS.flatMap((d) => d.screens.map((s) => ({ ...s, domain: d.key }
 const btn = (on) => ({
   fontSize: 14, fontWeight: on ? 700 : 500, padding: '7px 13px', borderRadius: 8, cursor: 'pointer',
   border: `1px solid ${on ? C.brand : C.line}`,
-  background: on ? C.brand : '#fff',
+  background: on ? C.brand : 'var(--surface)',
   color: on ? '#fff' : C.ink,
 });
 
@@ -324,7 +324,7 @@ export default function ReviewPage() {
                       marginLeft: 6, fontSize: 12, fontWeight: 700,
                       minWidth: 18, height: 18, lineHeight: '18px', borderRadius: 9,
                       padding: '0 5px', textAlign: 'center', display: 'inline-block',
-                      background: C.red, color: '#fff',
+                      background: C.red, color: 'var(--surface)',
                     }}>{n}</span>
                   )}
                 </button>
@@ -347,7 +347,7 @@ export default function ReviewPage() {
                     <span style={{
                       fontSize: 12, fontWeight: 700, minWidth: 18, height: 18, lineHeight: '18px',
                       borderRadius: 9, padding: '0 5px', textAlign: 'center',
-                      background: C.red, color: '#fff',
+                      background: C.red, color: 'var(--surface)',
                       border: on ? '1px solid #fff' : 'none',
                     }}>{n}</span>
                   )}
@@ -395,7 +395,7 @@ export default function ReviewPage() {
                 {e.pins?.length > 0 && (
                   <button onClick={() => { setViewPins(e.pins); setPinMode(false); }} style={{
                     marginTop: 7, fontSize: 13, fontWeight: 700, color: '#c2410c',
-                    background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 6, padding: '4px 10px', cursor: 'pointer',
+                    background: '#FFF7ed', border: '1px solid #fed7aa', borderRadius: 6, padding: '4px 10px', cursor: 'pointer',
                   }}>화면 핀 {e.pins.length}개 위치 보기</button>
                 )}
 
@@ -430,7 +430,7 @@ export default function ReviewPage() {
                   }} />
                 <button onClick={post} style={{
                   flexShrink: 0, alignSelf: 'flex-end', padding: '0 20px', height: 44, border: 'none', borderRadius: 8,
-                  background: C.brand, color: '#fff', fontSize: 15, fontWeight: 700, cursor: 'pointer',
+                  background: C.brand, color: 'var(--surface)', fontSize: 15, fontWeight: 700, cursor: 'pointer',
                 }}>남기기</button>
               </div>
             </div>

@@ -65,7 +65,7 @@ const TitleLayer = styled.div`
   justify-content: center;
   flex-direction: column;
   position: sticky;
-  background: #fffefe;
+  background: #FFFefe;
   width: 100%;
   z-index: 5;
   top: 135px;
