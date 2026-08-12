@@ -1,0 +1,126 @@
+input::placeholder{
+  color : #C3C3C3;
+  font-size: 14px;
+
+}
+
+
+
+.dropdown{
+  position : relative;
+  display : inline-block;
+  flex-direction: row;
+}
+
+
+.dropdown-content{
+  display: block;
+  border: none;
+  height: 150px;
+  position: absolute;
+  background-color: #1b1818;
+  width: 600px;
+  z-index: 1;
+  text-align: left;
+  color: #c0b6b6;
+  font-size: 14ppx;
+  flex-direction: row;
+  font-weight: 700;
+  padding: 10px;
+
+ 
+}
+
+
+.dropdown-nav{
+  display : flex;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.whitemenu-item {
+
+  cursor: pointer;
+  color: #cecece;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Pretendard-SemiBold';
+  letter-spacing: -0.7px;
+
+}
+
+.whitemenu-item:hover {
+  font-family: 'Pretendard-SemiBold';
+  /* transition: color 0.3s; */
+  color: #fff;
+}
+
+
+.whitemenu-item.dimmed {
+  color: #838282;
+  /* 옅은 검은색 (비활성 메뉴) */
+}
+
+
+.menu-item {
+
+  cursor: pointer;
+  color :#131313;
+  display:flex;
+  flex-direction:row;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Pretendard-SemiBold';
+  letter-spacing: -0.7px;
+
+}
+
+.menu-item:hover {
+  font-family: 'Pretendard-SemiBold';
+  background-color: #fff;
+  /* transition: color 0.3s; */
+  color :#131313;
+}
+
+
+.menu-item.dimmed {
+  color: #838282; /* 옅은 검은색 (비활성 메뉴) */
+}
+
+
+.submenu-item {
+  cursor: pointer;
+  color :#383838;
+  display:flex;
+  flex-direction:row;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Pretendard-Regular';
+  width :90px;
+  z-index: 300;
+
+}
+
+.submenu-item:hover {
+  background-color: #f0f0f0;
+  transition: background-color 0.3s; 
+  width :90px;
+}
+
+
+.submenu-item.dimmed {
+  background-color: #fff; /* 옅은 검은색 (비활성 메뉴) */
+  width :90px;
+}
+
+

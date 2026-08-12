@@ -1,0 +1,720 @@
+[
+  {
+    "id": 1,
+    "storename": "맛집1호점",
+    "type": "고발",
+    "writer": "맛집헌터",
+    "location": {
+      "region": "지금동",
+      "lat": 37.635046,
+      "lng": 127.222064
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.06.03",
+    "likes": 26,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+
+    ],
+    "USERS_ID": "user_foodhunter"
+  },
+  {
+    "id": 2,
+    "storename": "맛집2호점",
+    "type": "고발",
+    "writer": "다산맘82",
+    "location": {
+      "region": "호평동",
+      "lat": 37.634059,
+      "lng": 127.228862
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.06.02",
+    "likes": 18,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "맛집헌터",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.06.03",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_jungnang"
+      },
+      {
+        "writer": "익명",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.06.03"
+      },
+      {
+        "writer": "익명",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.06.02"
+      }
+    ],
+    "USERS_ID": "user_dasanmom"
+  },
+  {
+    "id": 3,
+    "storename": "맛집3호점",
+    "type": "칭찬",
+    "writer": "맛집헌터",
+    "location": {
+      "region": "다산동",
+      "lat": 37.639872,
+      "lng": 127.211271
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.06.01",
+    "likes": 10,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "맛집헌터",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "다산맘82",
+        "content": "헐 여기 찐이네요",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_dasanmom"
+      }
+    ],
+    "USERS_ID": "user_foodhunter"
+  },
+  {
+    "id": 4,
+    "storename": "맛집4호점",
+    "type": "고발",
+    "writer": "다산맘82",
+    "location": {
+      "region": "지금동",
+      "lat": 37.643049,
+      "lng": 127.224905
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.31",
+    "likes": 11,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "다산맘82",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_dasanmom"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.06.01",
+        "USERS_ID": "user_jungnang"
+      }
+    ],
+    "USERS_ID": "user_dasanmom"
+  },
+  {
+    "id": 5,
+    "storename": "맛집5호점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "다산동",
+      "lat": 37.641875,
+      "lng": 127.226543
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.30",
+    "likes": 35,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "중랑탱크",
+        "content": "헐 여기 찐이네요",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_jungnang"
+      },
+      {
+        "writer": "행복이엄마",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.01",
+        "USERS_ID": "user_happy_mom"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.06.03",
+        "USERS_ID": "user_jungnang"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "storename": "맛집6호점",
+    "type": "칭찬",
+    "writer": "중랑탱크",
+    "location": {
+      "region": "호평동",
+      "lat": 37.639207,
+      "lng": 127.218203
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.29",
+    "likes": 21,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "중랑탱크",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_jungnang"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.01",
+        "USERS_ID": "user_jungnang"
+      }
+    ],
+    "USERS_ID": "user_jungnang"
+  },
+  {
+    "id": 7,
+    "storename": "맛집7호점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "지금동",
+      "lat": 37.635524,
+      "lng": 127.222044
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.28",
+    "likes": 10,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "다산맘82",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_dasanmom"
+      },
+      {
+        "writer": "행복이엄마",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_happy_mom"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "storename": "맛집8호점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "다산동",
+      "lat": 37.633475,
+      "lng": 127.223319
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.27",
+    "likes": 18,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "중랑탱크",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_jungnang"
+      },
+      {
+        "writer": "맛집헌터",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_foodhunter"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "storename": "맛집9호점",
+    "type": "고발",
+    "writer": "행복이엄마",
+    "location": {
+      "region": "다산동",
+      "lat": 37.632184,
+      "lng": 127.213878
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.26",
+    "likes": 40,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "헐 여기 찐이네요",
+        "createdAt": "2025.06.01"
+      }
+    ],
+    "USERS_ID": "user_happy_mom"
+  },
+  {
+    "id": 10,
+    "storename": "맛집10호점",
+    "type": "고발",
+    "writer": "맛집헌터",
+    "location": {
+      "region": "지금동",
+      "lat": 37.644569,
+      "lng": 127.22224
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.25",
+    "likes": 48,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "다산맘82",
+        "content": "헐 여기 찐이네요",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_dasanmom"
+      },
+      {
+        "writer": "맛집헌터",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.06.01",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "다산맘82",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.03",
+        "USERS_ID": "user_dasanmom"
+      }
+    ],
+    "USERS_ID": "user_foodhunter"
+  },
+  {
+    "id": 11,
+    "storename": "맛집11호점",
+    "type": "고발",
+    "writer": "맛집헌터",
+    "location": {
+      "region": "지금동",
+      "lat": 37.640601,
+      "lng": 127.222398
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.24",
+    "likes": 37,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "다산맘82",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_dasanmom"
+      },
+      {
+        "writer": "익명",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.05.30"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_jungnang"
+      },
+      {
+        "writer": "익명",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.06.02"
+      }
+    ],
+    "USERS_ID": "user_foodhunter"
+  },
+  {
+    "id": 12,
+    "storename": "맛집12호점",
+    "type": "고발",
+    "writer": "행복이엄마",
+    "location": {
+      "region": "호평동",
+      "lat": 37.631057,
+      "lng": 127.229432
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.23",
+    "likes": 31,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "헐 여기 찐이네요",
+        "createdAt": "2025.05.31"
+      },
+      {
+        "writer": "행복이엄마",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_happy_mom"
+      },
+      {
+        "writer": "익명",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.05.30"
+      },
+      {
+        "writer": "행복이엄마",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_happy_mom"
+      }
+    ],
+    "USERS_ID": "user_happy_mom"
+  },
+  {
+    "id": 13,
+    "storename": "맛집13호점",
+    "type": "칭찬",
+    "writer": "행복이엄마",
+    "location": {
+      "region": "지금동",
+      "lat": 37.639178,
+      "lng": 127.224694
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.22",
+    "likes": 48,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "중랑탱크",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_jungnang"
+      },
+      {
+        "writer": "맛집헌터",
+        "content": "헐 여기 찐이네요",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "익명",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.01"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.06.01",
+        "USERS_ID": "user_jungnang"
+      }
+    ],
+    "USERS_ID": "user_happy_mom"
+  },
+  {
+    "id": 14,
+    "storename": "맛집14호점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "호평동",
+      "lat": 37.642722,
+      "lng": 127.225608
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.21",
+    "likes": 39,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.05.31"
+      },
+      {
+        "writer": "다산맘82",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_dasanmom"
+      },
+      {
+        "writer": "익명",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.05.30"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "storename": "맛집15호점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "호평동",
+      "lat": 37.640369,
+      "lng": 127.229118
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.20",
+    "likes": 12,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "맛집헌터",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "다산맘82",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_dasanmom"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_jungnang"
+      },
+      {
+        "writer": "익명",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.06.01"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "storename": "맛집16호점",
+    "type": "칭찬",
+    "writer": "익명",
+    "location": {
+      "region": "호평동",
+      "lat": 37.641717,
+      "lng": 127.212842
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.19",
+    "likes": 17,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "중랑탱크",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_jungnang"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "storename": "맛집17호점",
+    "type": "칭찬",
+    "writer": "맛집헌터",
+    "location": {
+      "region": "호평동",
+      "lat": 37.642118,
+      "lng": 127.21789
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.18",
+    "likes": 43,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.02"
+      },
+      {
+        "writer": "익명",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.05.30"
+      },
+      {
+        "writer": "맛집헌터",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "다산맘82",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.06.03",
+        "USERS_ID": "user_dasanmom"
+      }
+    ],
+    "USERS_ID": "user_foodhunter"
+  },
+  {
+    "id": 18,
+    "storename": "맛집18호점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "지금동",
+      "lat": 37.632708,
+      "lng": 127.22612
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.17",
+    "likes": 25,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "행복이엄마",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.06.01",
+        "USERS_ID": "user_happy_mom"
+      },
+      {
+        "writer": "다산맘82",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.05.30",
+        "USERS_ID": "user_dasanmom"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "storename": "맛집19호점",
+    "type": "칭찬",
+    "writer": "익명",
+    "location": {
+      "region": "호평동",
+      "lat": 37.647215,
+      "lng": 127.221292
+    },
+    "content": "여기 진짜 좀 아쉬웠어요",
+    "createdAt": "2025.05.16",
+    "likes": 35,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "행복이엄마",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.06.01",
+        "USERS_ID": "user_happy_mom"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "storename": "맛집20호점",
+    "type": "고발",
+    "writer": "다산맘82",
+    "location": {
+      "region": "다산동",
+      "lat": 37.63871,
+      "lng": 127.229024
+    },
+    "content": "여기 진짜 맛있었어요",
+    "createdAt": "2025.05.15",
+    "likes": 10,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "행복이엄마",
+        "content": "진짜 좋은 집이에요 감사합니다",
+        "createdAt": "2025.05.31",
+        "USERS_ID": "user_happy_mom"
+      },
+      {
+        "writer": "맛집헌터",
+        "content": "추천받고 갔는데 정말 만족!",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "중랑탱크",
+        "content": "한번 가보세요 무조건 재방문각입니다",
+        "createdAt": "2025.06.02",
+        "USERS_ID": "user_jungnang"
+      }
+    ],
+    "USERS_ID": "user_dasanmom"
+  }
+]

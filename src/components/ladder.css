@@ -1,0 +1,342 @@
+/* 전체 사다리 컨테이너 */
+.ladder-container {
+    background-color: #f5efdd;
+    /* ✅ 연한 따뜻한 배경 */
+    border: none;
+    position: relative;
+    width: 100%;
+    height: 440px;
+    overflow: visible;
+    margin: 0 auto;
+    border-radius: 12px; }
+
+    
+
+/* 세로 줄 */
+.ladder-line {
+    position: absolute;
+    width: 10px;
+    height: 100%;
+    background-color: #c4bfb2;
+    border-radius: 5px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+}
+/* 세로 줄 하이라이트 */
+.ladder-line.passed-strong {
+    background-color: #000;
+    width: 4px;
+}
+
+/* 가로 줄 */
+.ladder-step {
+    height: 10px;
+    background-color: #c4bfb2;
+    border-radius: 0;
+    /* ✅ 라운드 제거 */
+    position: absolute;
+    z-index: 3; 
+    }
+/* 가로 줄 하이라이트 */
+.ladder-step.passed-strong {
+    background-color: #000;
+    height: 3px;
+}
+
+/* 뱃지 (결과 도착점만 표시) */
+.result-badge {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #ccc;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.result-badge.active {
+    background: #000;
+    opacity: 1;
+}
+
+/* 천 가리는 구조 */
+.ladder-cover {
+    position: absolute;
+        top: 50px;
+        height: 350px;
+        width: 80%;
+        background: #FE6225;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.6s ease;
+        margin: 0 auto;
+        margin-left: 10%;
+        border-radius: 10px;
+}
+
+.ladder-cover.closed {
+    opacity: 1;
+}
+
+.ladder-cover.open {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ladder-cover.result {
+    opacity: 0.95;
+    color: white;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+/* 선택 버튼 */
+.select-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 0 20px;
+}
+
+.select-button {
+    width: 60px;
+    padding: 8px 0;
+    background: #eee;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height:30px;
+}
+
+.select-button.selected {
+    background-color: #ffdf8c;
+    border-color: #f90;
+    color: #000;
+}
+
+/* 시작 버튼 */
+.start-button {
+    padding: 12px 28px;
+    background-color: #ff7e19;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.start-button:hover:enabled {
+    background-color: #e26d0e;
+}
+
+.start-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* 하단 당첨 로그 */
+.fake-log-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #2f2f2f;
+    color: #fff;
+    padding: 6px 16px;
+    font-size: 14px;
+    z-index: 5;
+    animation: fadeInUp 0.3s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.result-badge-box {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    background: #fff7dd;
+    border: 2px solid #ffbf00;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    opacity: 0.6;
+    transition: opacity 0.4s ease, transform 0.2s ease;
+}
+
+.result-badge-box.active {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+    background: #ffe500;
+    border-color: #f90;
+    color: #000;
+}
+
+.walker-line {
+    position: absolute;
+    background-color: #000;
+    height: 40px;
+    /* ✅ 높이 증가 (줄 두께 감각 보정) */
+    border-radius: 6px;
+    /* ✅ 비율 맞춰 둥글게 */
+    transition: all 0.3s ease;
+    z-index:5;
+}
+
+.result-badge-box {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    background: #fff7dd;
+    border: 2px solid #ffbf00;
+    border-radius: 12px;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    opacity: 0.4;
+    /* ✅ 기본은 흐릿하게 */
+    transition: all 0.3s ease;
+}
+
+.result-badge-box.active {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+    background: #ffe500;
+    border-color: #f90;
+    color: #000; }
+
+/* 이미지 기반 캐릭터 선택 버튼 스타일 */
+.select-character {
+width: 64px;
+height: 64px;
+border-radius: 50%;
+margin: 0 6px;
+border: 2px solid transparent;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.select-character.selected {
+border-color: #ff9800;
+transform: scale(1.1);
+}
+
+/* 이미지 기반 보상 아이콘 위치 */
+.reward-image {
+position: absolute;
+bottom: -50px;
+/* ✅ 줄에서 살짝 아래로 배치 */
+width: 56px;
+height: 56px;
+transform: translateX(-50%);
+opacity: 0.4;
+transition: all 0.3s ease;
+z-index: 10;
+}
+
+.reward-image.active {
+opacity: 1;
+transform: translateX(-50%) scale(1.15);
+z-index: 15; }
+
+
+.ladder-results {
+    position: absolute;
+    bottom: -70px;
+    width: 85%;
+
+    display: flex;
+    justify-content: space-between;
+    /* ✅ 버튼 간 간격 자동 정렬 */
+    padding: 0 20px;
+    /* ⬅ 여백 조정 */
+}
+
+.reward-button {
+    position: static;
+    /* ✅ 절대 위치 제거 */
+    transform: none;
+    background: #fff;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-bottom: 8px;
+}
+
+.reward-button.active {
+    opacity: 1;
+    background-color: #ffe500;
+    border-color: #ff9800;
+    transform: translateX(-50%) scale(1.15);
+    z-index: 10;
+}
+
+.start-wait {
+    color: #fff;
+    text-align: center;
+    font-family: 'Pretendard-SemiBold';
+}
+
+.walker {
+    width: 40px;
+    height: 40px;
+    background-image: url('../assets/imageset/honglady_walking.gif');
+    /* ✅ 홍여사 이미지로 변경 */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
+    z-index: 10;
+    opacity:0;
+}
+
+.start-ready {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.start-line {
+    font-size: 14px;
+    margin-bottom: 4px;
+    opacity: 0.9;
+}
+
+.start-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.start-subtitle {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "storename": "김밥천국 다산점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "지금동",
+      "lat": 37.636052,
+      "lng": 127.218765
+    },
+    "content": "반찬을 3개나 더 주셨어요. 감동입니다!",
+    "createdAt": "2025.06.04",
+    "likes": 40,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "맛집헌터",
+        "content": "저도 여기 다녀왔는데 완전 공감해요! 진짜 좋은 집이에여 너무 감사해요",
+        "createdAt": "2025.06.04",
+        "USERS_ID": "user_foodhunter"
+      },
+      {
+        "writer": "익명",
+        "content": "공감해요!",
+        "createdAt": "2025.06.04"
+      }
+    ]
+  }
+]

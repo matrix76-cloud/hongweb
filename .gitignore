@@ -64,3 +64,17 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# --- cleanup/back-to-core 정리 (2026-08-12) ---
+# Firebase 관리자 키 (절대 커밋 금지)
+functions/serviceAccountKey.json
+functions/google-services.json
+# node_modules 사본
+functions/node_modules_/
+# 대용량 미디어 / 아카이브 (레포 비대화 방지)
+*.mp4
+*.zip
+# 빌드 산출물
+/build/
+/dist/
+.DS_Store

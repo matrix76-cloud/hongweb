@@ -1,0 +1,7 @@
+.table-row {
+    transition: background-color 0.5s ease; /* 부드러운 강조 효과 */
+  }
+  
+  .highlighted {
+    background-color: #ffeb3b; /* 강조 색상 (노란색) */
+  }

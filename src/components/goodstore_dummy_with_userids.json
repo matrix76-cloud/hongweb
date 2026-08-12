@@ -1,0 +1,314 @@
+[
+  {
+    "id": 1,
+    "storename": "김밥천국 다산점",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "지금동",
+      "lat": 37.636052,
+      "lng": 127.218765
+    },
+    "content": "반찬을 3개나 더 주셨어요. 감동입니다!",
+    "createdAt": "2025.06.04",
+    "likes": 40,
+    "images": ["https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740","https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "다음엔 꼭 가봐야겠어요!",
+        "createdAt": "2025.06.04"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "storename": "OO치킨 별내점",
+    "type": "칭찬",
+    "writer": "익명",
+    "location": {
+      "region": "호평동",
+      "lat": 37.649387,
+      "lng": 127.222336
+    },
+    "content": "사장님이 아이에게 쿠키 하나 더 주셨어요.",
+    "createdAt": "2025.06.03",
+    "likes": 29,
+    "images": ["https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.05.31"
+      },
+      {
+        "writer": "익명",
+        "content": "친절하시더라구요 저도 추천!",
+        "createdAt": "2025.05.26"
+      },
+      {
+        "writer": "익명",
+        "content": "좋은 정보 감사합니다~",
+        "createdAt": "2025.06.03"
+      },
+      {
+        "writer": "익명",
+        "content": "이런 후기 너무 좋아요~",
+        "createdAt": "2025.06.04"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "storename": "꽃피는빵집",
+    "type": "칭찬",
+    "writer": "맛집헌터",
+    "location": {
+      "region": "지금동",
+      "lat": 37.637383,
+      "lng": 127.224585
+    },
+    "content": "닭껍질이 타고 콜라는 미지근했습니다.",
+    "createdAt": "2025.06.02",
+    "likes": 43,
+    "images": ["https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740","https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740","https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "친절하시더라구요 저도 추천!",
+        "createdAt": "2025.05.30"
+      }
+    ],
+    "USERS_ID": "user_foodhunter"
+  },
+  {
+    "id": 4,
+    "storename": "동네미용실",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "호평동",
+      "lat": 37.648062,
+      "lng": 127.213777
+    },
+    "content": "서비스가 빠르고 너무 친절했어요.",
+    "createdAt": "2025.06.01",
+    "likes": 36,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740",
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "저도 여기 다녀왔는데 완전 공감해요!",
+        "createdAt": "2025.06.03"
+      },
+      {
+        "writer": "익명",
+        "content": "이런 후기 너무 좋아요~",
+        "createdAt": "2025.05.30"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "storename": "홍반장세탁소",
+    "type": "칭찬",
+    "writer": "익명",
+    "location": {
+      "region": "별내동",
+      "lat": 37.654981,
+      "lng": 127.212993
+    },
+    "content": "기본 김치까지 맛있었어요. 재방문 의사 있음!",
+    "createdAt": "2025.05.31",
+    "likes": 40,
+    "images": [],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "헐 여기 나도 당한 적 있어요…",
+        "createdAt": "2025.05.30"
+      },
+      {
+        "writer": "익명",
+        "content": "헐 여기 나도 당한 적 있어요…",
+        "createdAt": "2025.05.27"
+      },
+      {
+        "writer": "익명",
+        "content": "친절하시더라구요 저도 추천!",
+        "createdAt": "2025.05.30"
+      },
+      {
+        "writer": "익명",
+        "content": "친절하시더라구요 저도 추천!",
+        "createdAt": "2025.05.26"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "storename": "카페마마",
+    "type": "칭찬",
+    "writer": "행복이엄마",
+    "location": {
+      "region": "별내동",
+      "lat": 37.638655,
+      "lng": 127.227722
+    },
+    "content": "리뷰보고 갔는데 과대광고였어요.",
+    "createdAt": "2025.05.30",
+    "likes": 25,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "친절하시더라구요 저도 추천!",
+        "createdAt": "2025.05.25"
+      },
+      {
+        "writer": "익명",
+        "content": "와 진짜 인정합니다ㅋㅋ",
+        "createdAt": "2025.05.31"
+      },
+      {
+        "writer": "익명",
+        "content": "다음엔 꼭 가봐야겠어요!",
+        "createdAt": "2025.05.27"
+      }
+    ],
+    "USERS_ID": "user_happy_mom"
+  },
+  {
+    "id": 7,
+    "storename": "든든한국밥집",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "지금동",
+      "lat": 37.638839,
+      "lng": 127.215724
+    },
+    "content": "머리 자르는데 대충하시는 느낌…",
+    "createdAt": "2025.05.29",
+    "likes": 26,
+    "images": [],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "이런 후기 너무 좋아요~",
+        "createdAt": "2025.06.01"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "storename": "24시편의점",
+    "type": "칭찬",
+    "writer": "맛집헌터",
+    "location": {
+      "region": "호평동",
+      "lat": 37.638694,
+      "lng": 127.221128
+    },
+    "content": "떡볶이 진짜 국물까지 싹 비움. 인정합니다.",
+    "createdAt": "2025.05.28",
+    "likes": 39,
+    "images": [
+      "https://img.freepik.com/free-photo/beautiful-bouquet-flowers-wooden-table_181624-18937.jpg?ga=GA1.1.842398629.1740615989&semt=ais_items_boosted&w=740"
+    ],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "정말 그런 일이? 참고할게요!",
+        "createdAt": "2025.05.30"
+      },
+      {
+        "writer": "익명",
+        "content": "정말 그런 일이? 참고할게요!",
+        "createdAt": "2025.06.04"
+      },
+      {
+        "writer": "익명",
+        "content": "좋은 정보 감사합니다~",
+        "createdAt": "2025.05.26"
+      },
+      {
+        "writer": "익명",
+        "content": "좋은 정보 감사합니다~",
+        "createdAt": "2025.05.25"
+      }
+    ],
+    "USERS_ID": "user_foodhunter"
+  },
+  {
+    "id": 9,
+    "storename": "건강한샐러드",
+    "type": "칭찬",
+    "writer": "익명",
+    "location": {
+      "region": "호평동",
+      "lat": 37.649793,
+      "lng": 127.208976
+    },
+    "content": "이렇게 깔끔한 편의점은 처음이에요.",
+    "createdAt": "2025.05.27",
+    "likes": 7,
+    "images": [],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "정말 그런 일이? 참고할게요!",
+        "createdAt": "2025.05.31"
+      },
+      {
+        "writer": "익명",
+        "content": "서비스가 확실히 달라요.",
+        "createdAt": "2025.06.03"
+      },
+      {
+        "writer": "익명",
+        "content": "헐 여기 나도 당한 적 있어요…",
+        "createdAt": "2025.06.02"
+      },
+      {
+        "writer": "익명",
+        "content": "서비스가 확실히 달라요.",
+        "createdAt": "2025.05.26"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "storename": "용달이네떡볶이",
+    "type": "고발",
+    "writer": "익명",
+    "location": {
+      "region": "도농동",
+      "lat": 37.641736,
+      "lng": 127.209519
+    },
+    "content": "사장님이 인사성도 밝고 기분 좋아졌어요.",
+    "createdAt": "2025.05.26",
+    "likes": 43,
+    "images": [],
+    "comments": [
+      {
+        "writer": "익명",
+        "content": "와 진짜 인정합니다ㅋㅋ",
+        "createdAt": "2025.05.25"
+      },
+      {
+        "writer": "익명",
+        "content": "헐 여기 나도 당한 적 있어요…",
+        "createdAt": "2025.05.29"
+      }
+    ]
+  }
+]

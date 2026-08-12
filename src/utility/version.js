@@ -1,0 +1,1 @@
+export const CURRENT_WEB_VERSION = '2.0.24';

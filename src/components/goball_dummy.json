@@ -1,0 +1,93 @@
+[
+    {
+        "id": 1,
+        "target": "아들",
+        "writer": "익명",
+        "location": "경기 남양주시",
+        "content": "매번 집에 오면 설거지는 그대로 있고, 치킨도 시켜놓고 혼자 다 먹고 방은 난장판이고 심지어 리모컨은 손에 쥔 채 자고 있네요. 대체 왜 그러는지 모르겠습니다. 가족이라는 이유로 너무 하는 것 같아서 고발합니다.",
+        "createdAt": "2025.06.02",
+        "likes": 18
+    },
+    {
+        "id": 2,
+        "target": "딸",
+        "writer": "다산맘82",
+        "location": "경기 남양주시",
+        "content": "설거지 안함. 리모컨 독점. 게임만 함.",
+        "createdAt": "2025.06.01",
+        "likes": 38
+    },
+    {
+        "id": 3,
+        "target": "남편",
+        "writer": "익명",
+        "location": "서울 강서구",
+        "content": "문 안 닫음. 몰래 간식 줌. 리모컨 독점.",
+        "createdAt": "2025.05.31",
+        "likes": 10
+    },
+    {
+        "id": 4,
+        "target": "남편",
+        "writer": "비밀계정",
+        "location": "서울 강서구",
+        "content": "방 청소 안함. 간식 숨겨놓음. TV 소리 너무 큼.",
+        "createdAt": "2025.05.30",
+        "likes": 9
+    },
+    {
+        "id": 5,
+        "target": "엄마",
+        "writer": "익명",
+        "location": "부산 해운대구",
+        "content": "리모컨 독점. 게임만 함. 몰래 간식 줌.",
+        "createdAt": "2025.05.29",
+        "likes": 25
+    },
+    {
+        "id": 6,
+        "target": "아빠",
+        "writer": "익명",
+        "location": "대전 중구",
+        "content": "게임만 함. 방 청소 안함. 문 안 닫음.",
+        "createdAt": "2025.05.28",
+        "likes": 21
+    },
+    {
+        "id": 7,
+        "target": "아내",
+        "writer": "행복이엄마",
+        "location": "인천 미추홀구",
+        "content": "간식 숨겨놓음. 설거지 안함. 리모컨 독점.",
+        "createdAt": "2025.05.27",
+        "likes": 32
+    },
+    {
+        "id": 8,
+        "target": "친구",
+        "writer": "익명",
+        "location": "서울 송파구",
+        "content": "TV 소리 너무 큼. 게임만 함. 문 안 닫음.",
+        "createdAt": "2025.05.26",
+        "likes": 14
+    },
+    {
+        "id": 9,
+        "target": "아빠",
+        "writer": "중랑탱크",
+        "location": "서울 중랑구",
+        "content": "치킨 다 먹고 나몰라라. 간식 숨김. 설거지 안함.",
+        "createdAt": "2025.05.25",
+        "likes": 29
+    },
+    {
+        "id": 10,
+        "target": "엄마",
+        "writer": "익명",
+        "location": "광주 북구",
+        "content": "몰래 간식 줌. 게임만 함. 문 안 닫음.",
+        "createdAt": "2025.05.24",
+        "likes": 17
+    }
+
+]
