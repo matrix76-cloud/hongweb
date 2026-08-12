@@ -25,7 +25,6 @@ import PCWorkregistserpage from "./page/PCmain/PCWorkregisterpage";
 
 // Mobile
 import MobileChatpage from "./page/main/MobileChatpage";
-import MobileCommunityBoardpage from "./page/main/MobileCommunityBoardpage";
 import MobileConfigContentpage from "./page/main/MobileConfigContentpage";
 import MobileConfigpage from "./page/main/MobileConfigpage";
 import MobileContentpage from "./page/main/MobileContentpage";
@@ -104,8 +103,6 @@ const App = () => {
       {/* ④ 연결 */}
       <Route path="/Mobilechat" element={<MobileChatpage />} />
 
-      {/* 커뮤니티 — 일상 대화. 목록 화면은 신규 제작 예정 */}
-      <Route path="/Mobilecommunityboard" element={<MobileCommunityBoardpage />} />
 
       {/* 내 정보 */}
       <Route path="/Mobileconfig" element={<MobileConfigpage />} />

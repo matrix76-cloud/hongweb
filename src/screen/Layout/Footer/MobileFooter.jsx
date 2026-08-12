@@ -1,184 +1,64 @@
-
-
-import React, { Fragment, useContext, useEffect, useState} from "react";
+import React, { Fragment } from "react";
 import './Footer.css';
-import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import { IoChatbubbleEllipses, IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { imageDB } from '../../../utility/imageData';
-import { useLocation, useNavigate } from "react-router-dom";
-import { UserContext } from "../../../context/User";
-import { FiHome, FiUser, FiShare2,FiGrid } from "react-icons/fi";
-import { IoSettingsOutline } from "react-icons/io5";
 import { MOBILEMAINMENU } from "../../../utility/screen";
 
-const FooterContent = styled.div`
-  padding: 20px;
-  justify-content: flex-start;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-`
+const ON_COLOR = '#FF4E19';
+const OFF_COLOR = '#9b9b9b';
 
-const MobileFooter = ({type}) => {
-  const navigation = useNavigate();
-  const {user, dispatch} = useContext(UserContext);
-  const [foottype, setFoottype] = useState(0);
-  const [refresh, setRefresh] = useState(1);
-  const location = useLocation();
+/**
+ * 하단 탭 — 홈 / 지도 / 채팅 / 내 정보
+ * 공간대여·커뮤니티는 제거했다. 채팅은 ④연결 단계라 하단에 둔다. (CORE.md 참조)
+ */
+const TABS = [
+  { key: MOBILEMAINMENU.HOMEMENU,   label: '홈',      path: '/Mobilemain',   on: 'home_e',   off: 'home_d' },
+  { key: MOBILEMAINMENU.MAPMENU,    label: '지도',    path: '/Mobilemap',    on: 'map_e',    off: 'map_d' },
+  { key: MOBILEMAINMENU.CHATMENU,   label: '채팅',    path: '/Mobilechat',   icon: true },
+  { key: MOBILEMAINMENU.CONFIGMENU, label: '내 정보', path: '/Mobileconfig', on: 'myinfo_e', off: 'myinfo_d' },
+];
 
-  useEffect(()=>{
+const MobileFooter = ({ type, unreadCount = 0 }) => {
+  const navigate = useNavigate();
 
-  },[refresh])
-
-  const _handleMain=()=>{
-    navigation("/Mobilemain");
-  }
-  const _handleRoom=()=>{
-    navigation("/Mobileroom");  
-  }
-  const _handleMap=()=>{
-    navigation("/Mobilemap" ,{state :{WORK_ID :"", TYPE : ""}});
-  }
-  const _handleCommunity=()=>{
-    navigation("/Mobilecommunity");
-  }
-  const _handleConfig=()=>{
-    navigation("/Mobileconfig");
-  }
-
+  const go = (tab) => {
+    if (tab.key === MOBILEMAINMENU.MAPMENU) {
+      navigate(tab.path, { state: { WORK_ID: "", TYPE: "" } });
+      return;
+    }
+    navigate(tab.path);
+  };
 
   return (
     <Fragment>
       <footer>
         <div className="site-mobile-footer2">
-            <div className="buttonview">
-              <div className="button">
-                {type == MOBILEMAINMENU.HONGMENU ? (
-                  <>
-                    <div className="imageicon" onClick={_handleMain}>
-                    <img src={imageDB.home_e} width={22}/>
-                    </div>
-                    <div className="buttonEnableText">홈</div>
-                  </>
-                ) : (
-                  <>
-                    <div className="imageicon" onClick={_handleMain}>
-                    <img src={imageDB.home_d} width={22}/>
-                    </div>
-                    <div className="buttonDisableText">홈</div>
-                  </>
-                )}
-              </div>
-              <div className="button">
-                {type == MOBILEMAINMENU.ROOMMENU ? (
-                  <>
-                    <div className="imageicon" onClick={_handleRoom}>
-               
-                    <img src={imageDB.room_e} width={22}/>
-                    </div>
-                    <div className="buttonEnableText">공간대여</div>
-                  </>
-                ) : (
-                  <>
-                    <div className="imageicon" onClick={_handleRoom}>
-           
-                    <img src={imageDB.room_d} width={22}/>
-                    </div>
-                    <div className="buttonDisableText">공간대여</div>
-                  </>
-                )}
-              </div>
-  
-              <div className="upbutton" >
-                <div
-                  style={{
-                    backgroundColor: "#FFF",
-                    height: 50,
-                    width: 60,
-                    display: "flex",
-                    justifyContent: "center",
-                    padding: 5,
-                  }}
+          <div className="buttonview">
+            {TABS.map((tab) => {
+              const active = type === tab.key;
+              return (
+                <div className="button" key={tab.label} onClick={() => go(tab)}>
+                  <div className="imageicon" style={{ position: 'relative' }}>
+                    {tab.icon ? (
+                      active
+                        ? <IoChatbubbleEllipses size={24} color={ON_COLOR} />
+                        : <IoChatbubbleEllipsesOutline size={24} color={OFF_COLOR} />
+                    ) : (
+                      <img src={imageDB[active ? tab.on : tab.off]} width={24} alt={tab.label} />
+                    )}
 
-            
-              
-                >
-
-
-                  <div
-                    style={{
-                      display: "flex",
-                      paddingTop: "5px",
-                      paddingBottom: "10px",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div >
-                      <img onClick={_handleMap}
-                        src={imageDB.movegpsex}
-                        style={{ width: 42, height: 42 }}
-                      />
-                      
-                  
-                    </div>
+                    {tab.key === MOBILEMAINMENU.CHATMENU && unreadCount > 0 && (
+                      <div className="footerBadge">{unreadCount > 99 ? '99+' : unreadCount}</div>
+                    )}
                   </div>
-
-                  <div
-                    style={{
-                      fontSize: 10,
-                      color: "#9b9b9b",
-                      paddingTop: 3,
-                      position: "absolute",
-                      top: 40,
-                    }}
-                  >
-                    내주변
+                  <div className={active ? "buttonEnableText" : "buttonDisableText"}>
+                    {tab.label}
                   </div>
                 </div>
-              </div>
-
-              <div className="button">
-                {type == MOBILEMAINMENU.COMMUNITYMENU ? (
-                  <>
-                    <div className="imageicon" onClick={_handleCommunity}>
-                    <img src={imageDB.community_e} width={22}/>
-                    </div>
-                    <div className="buttonEnableText">커뮤니티</div>
-                  </>
-                ) : (
-                  <>
-                    <div className="imageicon" onClick={_handleCommunity}>
-                    <img src={imageDB.community_d} width={22}/>
-                    </div>
-                    <div className="buttonDisableText">커뮤니티</div>
-                  </>
-                )}
-              </div>
-
-          
-
-       
-
-              <div className="button">
-                {type == MOBILEMAINMENU.CONFIGMENU ? (
-                  <>
-                    {" "}
-                    <div className="imageicon" onClick={_handleConfig}>
-                    <img src={imageDB.myinfo_e} width={22}/>
-                    </div>
-                    <div className="buttonEnableText">내정보</div>
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    <div className="imageicon" onClick={_handleConfig}>
-                    <img src={imageDB.myinfo_d} width={22}/>
-                    </div>
-                    <div className="buttonDisableText">내정보	</div>
-                  </>
-                )}
-              </div>
-            </div>
+              );
+            })}
+          </div>
         </div>
       </footer>
     </Fragment>

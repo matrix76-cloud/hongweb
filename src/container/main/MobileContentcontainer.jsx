@@ -9,8 +9,6 @@ import PCWorkItem from "../../components/PCWorkItem";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import { Column, FlexstartColumn } from "../../common/Column";
 import { CHATCONTENTTYPE, CHATIMAGETYPE, EventItems, PCCOMMNUNITYMENU } from "../../utility/screen";
-import Communitymenu from "../../common/Communitymenu";
-import CommunityItem from "../../components/CommunityItem";
 import Empty from "../../components/Empty";
 import Button from "../../common/Button";
 import { DataContext } from "../../context/Data";

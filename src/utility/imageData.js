@@ -218,6 +218,8 @@ import _img_room_d from "../assets/imageset/room_d.png";
 import _img_community_e from "../assets/imageset/community_e.png";
 import _img_community_d from "../assets/imageset/community_d.png";
 import _img_myinfo_e from "../assets/imageset/myinfo_e.png";
+import _img_gps_e from "../assets/imageset/gps_e.png";
+import _img_gps_d from "../assets/imageset/gps_d.png";
 import _img_myinfo_d from "../assets/imageset/myinfo_d.png";
 
 export const imageDB = {
@@ -448,6 +450,8 @@ export const imageDB = {
   room_d :_img_room_d,
   community_e :_img_community_e,
   community_d :_img_community_d,
+  map_e :_img_gps_e,
+  map_d :_img_gps_d,
   myinfo_e :_img_myinfo_e,
   myinfo_d :_img_myinfo_d,
 

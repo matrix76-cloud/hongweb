@@ -16,6 +16,7 @@ export const PCMAINMENU={
 
 export const MOBILEMAINMENU={
     HOMEMENU : "홍여사",
+    MAPMENU : "지도",
     ROOMMENU : "공간대여",
     REGIONMENU : "내주변",
     COMMUNITYMENU : "커뮤니티",
