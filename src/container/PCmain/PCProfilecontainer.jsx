@@ -128,7 +128,7 @@ const PCProfilecontainer =({containerStyle}) =>  {
 
   return (
     <Container style={containerStyle}>
-      <Row margin={'0px auto;'} width={'80%'} style={{background:"#fff", height:"800px"}} >
+      <Row margin={'0px auto;'} width={'80%'} style={{background:"var(--surface)", height:"800px"}} >
         <div style={{width:'70%', background:'#f0f0f0', height:"800px"}}>
 
           

@@ -32,7 +32,7 @@ import Label from "../../common/Label";
 
 
 const Container = styled.div`
-  background :#f3f3f3;
+  background :var(--bg);
   height:3600px;
   display:flex;
   flex-direction:column;
@@ -46,7 +46,7 @@ const ContentLayer = styled.div`
   margin : 0px auto;
   font-size : 16px;
   font-weight:400;
-  color :#131313;
+  color :var(--text);
 
 
 `
@@ -69,8 +69,8 @@ const TitleLayer = styled.div`
   width: 100%;
   z-index: 5;
   top: 135px;
-  border-top: 1px solid #ededed;
-  border-right: 1px solid #ededed;
+  border-top: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
 `
 const Title = styled.div`
   font-size: 20px;
@@ -105,11 +105,11 @@ const ItemLeftLayercontent = styled.div`
 
 
 const ItemLeftBox = styled.div`
-  background: #fff;
+  background: var(--surface);
   border-radius: 10px;
   padding: 20px;
   margin: 5px 10px 0px;
-  color: #131313;
+  color: var(--text);
   display: flex;
   flex-direction: column;
   width: ${({width}) => width};
@@ -127,7 +127,7 @@ const SelectLayer = styled.div`
   width: 46%;
   margin: 10px 3px;
   border: ${({check}) => check == true ? ('1px solid #F75100'):('1px solid #C3C3C3')};
-  color: #131313;
+  color: var(--text);
   font-weight:600;
   border-radius: 5px;
   font-size:16px;
@@ -147,7 +147,7 @@ const ItemRightLayer = styled.div`
   margin-bottom: 5px;
 `;
 const ItemRightBox = styled.div`
-  background: #FFF;
+  background: var(--surface);
   border-top-right-radius: 0px;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -964,7 +964,7 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
     <>
       <Container style={containerStyle}>
 
-        <Row style={{background:"#fff", height:'80px', position:"fixed", zIndex:5, width:"100%"}}>
+        <Row style={{background:"var(--surface)", height:'80px', position:"fixed", zIndex:5, width:"100%"}}>
 
           <AroundRow style={{width:"600px", margin : "0 auto"}}>
             <Row>

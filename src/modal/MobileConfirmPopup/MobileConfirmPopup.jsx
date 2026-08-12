@@ -27,7 +27,7 @@ const Box = styled.div`
   width: 100%;
   max-width: 320px;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--surface);
   border-radius: 16px;
   padding: 22px 20px 16px;
 `;
@@ -35,7 +35,7 @@ const Box = styled.div`
 const Title = styled.div`
   font-size: 17px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
 `;
 
 const Message = styled.div`
@@ -52,10 +52,10 @@ const Input = styled.input`
   margin-top: 14px;
   height: 44px;
   padding: 0 12px;
-  border: 1px solid #E3E3E3;
+  border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 15px;
-  color: #131313;
+  color: var(--text);
   outline: none;
   &:focus { border-color: #FF4E19; }
 `;
@@ -73,7 +73,7 @@ const Btn = styled.button`
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  border: ${({ $kind }) => ($kind === "ghost" ? "1px solid #E3E3E3" : "none")};
+  border: ${({ $kind }) => ($kind === "ghost" ? "1px solid var(--border)" : "none")};
   background: ${({ $kind }) =>
     $kind === "ghost" ? "#fff" : $kind === "danger" ? "#c02020" : "#FF4E19"};
   color: ${({ $kind }) => ($kind === "ghost" ? "#131313" : "#fff")};

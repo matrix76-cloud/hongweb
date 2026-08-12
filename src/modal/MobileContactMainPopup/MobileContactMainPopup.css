@@ -1,6 +1,6 @@
 .blink {
     animation: blink-animation 2s steps(5, start) infinite;
-    color: #131313; /* 깜빡이는 텍스트의 색상 */
+    color: var(--text); /* 깜빡이는 텍스트의 색상 */
   }
 
   @keyframes blink-animation {
@@ -11,7 +11,7 @@
 
 .blink2 {
     animation: blink-animation 4s steps(5, start) infinite;
-    color: #131313; /* 깜빡이는 텍스트의 색상 */
+    color: var(--text); /* 깜빡이는 텍스트의 색상 */
   }
 
   @keyframes blink-animation {

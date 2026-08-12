@@ -29,7 +29,7 @@ const EventBox = styled.div`
   
 `
 const txtWrap = {
-  backgroundColor:'#fafafa',
+  backgroundColor:'var(--bg-soft)',
   padding: '18px 20px 24px',
   lineHeight:2
 }
@@ -180,7 +180,7 @@ const MobileProfileBadge =({containerStyle}) =>  {
                     
                     
                     </BoxImg>
-                    <div style={{ fontSize:12, color:"#131313", fontFamily:"Pretendard-SemiBold", marginTop:5}}>{data.name}</div>
+                    <div style={{ fontSize:12, color:"var(--text)", fontFamily:"Pretendard-SemiBold", marginTop:5}}>{data.name}</div>
                   </Box>
                 ))
               }

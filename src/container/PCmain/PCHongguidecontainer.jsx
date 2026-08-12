@@ -121,7 +121,7 @@ const PCHongguidecontainer =({containerStyle}) =>  {
   return (
     <Container style={containerStyle}>
       <Row>
-        <div style={{display:"flex", width:'100%', height:1000, backgroundColor:'#fff'}}>
+        <div style={{display:"flex", width:'100%', height:1000, backgroundColor:'var(--surface)'}}>
 
         <Button onPress={_handledataimport} height={'40px'} width={'300px'} radius={'5px'} bgcolor={'#ededed'} color={'#222'} text={'홈 데이타 import'}/>
 

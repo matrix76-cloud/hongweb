@@ -47,9 +47,11 @@ const MobileSearchpage =() =>  {
 
   
  
+  // 우측 햄버거(옛 AI 검색이력)는 뺐다 — iconname 을 넘기지 않으면 안 그린다 (형 리뷰 2026-08-12)
   return (
-    <MobilePrevLayout iconname = {'searchmenu'} callback={'main'}>
-        <MobileSearchcontainer search={location.state.search} search_id={location.state.search_id} />
+    <MobilePrevLayout name={'검색'} callback={'main'}>
+        {/* 주소로 바로 들어오면 state 가 없다 (2026-08-12) */}
+        <MobileSearchcontainer search={location.state?.search} />
     </MobilePrevLayout>
 
    

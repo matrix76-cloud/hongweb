@@ -19,7 +19,7 @@ export const SOOMGO = {
     textPrimary: '#1A1A1A',
     textSecondary: '#666666',
     textTertiary: '#999999',
-    border: '#F0F0F0',
+    border: 'var(--border-soft)',
 };
   
 export const withAlpha = (hex, alpha) => {

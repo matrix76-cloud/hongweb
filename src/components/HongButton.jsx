@@ -17,7 +17,7 @@ const BUTTON_COLORS = {
     hover: '#E0E0E0',
   },
   outline: {
-    background: '#FFFFFF',
+    background: 'var(--surface)',
     text: COLORS.primary,
     border: COLORS.primary,
     hover: '#FFF0E5',

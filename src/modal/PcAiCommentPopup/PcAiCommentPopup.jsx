@@ -82,7 +82,7 @@ const style = {
 
 const Popcontent = styled.div`
     width:100%;
-    background:#fff;
+    background:var(--surface);
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -197,7 +197,7 @@ const PcAiCommentpopup = ({ search_id,callback, top, left, height, width, basicc
       >
         <Fade in={open}>
           <Box sx={[style, style.top={top},style.left={left}, style.height={height}, style.width={width}] }>
-            <Column style={{height:300, width:'100%', background:"#fff"}}>
+            <Column style={{height:300, width:'100%', background:"var(--surface)"}}>
               <Popcontent>
            
                 <div style={{fontSize:16, width:350}}>검색 결과 에 추가해줄 메모를 적어서 추가해주세요</div>

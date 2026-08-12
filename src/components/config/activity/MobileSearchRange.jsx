@@ -22,7 +22,7 @@ const Head = styled.div`
   gap: 8px;
   font-size: 17px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   margin-bottom: 6px;
 `;
 
@@ -43,7 +43,7 @@ const Option = styled.div`
   padding: 0 18px;
   margin-bottom: 10px;
   border-radius: 12px;
-  border: 1.5px solid ${({ $on }) => ($on ? '#FF4E19' : '#E3E3E3')};
+  border: 1.5px solid ${({ $on }) => ($on ? '#FF4E19' : 'var(--border)')};
   background: ${({ $on }) => ($on ? '#FFF5F0' : '#fff')};
   color: ${({ $on }) => ($on ? '#FF4E19' : '#131313')};
   font-size: 16px;
@@ -57,10 +57,10 @@ const Result = styled.div`
   margin-top: 18px;
   padding: 16px 18px;
   border-radius: 12px;
-  background: #F9F9F9;
+  background: var(--bg-soft);
   font-size: 15px;
   line-height: 1.6;
-  color: #131313;
+  color: var(--text);
   b { color: #FF4E19; font-weight: 700; font-size: 17px; }
 `;
 

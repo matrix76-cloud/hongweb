@@ -21,7 +21,7 @@ const Container = styled.div`
   flex-direction: column;
   alignItems:center;
   width :100%;
-  background : #FFF;
+  background : var(--surface);
 
 
 `
@@ -32,13 +32,13 @@ const style = {
 const MainLogoText = styled.div`
   font-family: 'Pretendard-Bold';
   font-size: 22px;
-  color :#131313;
+  color :var(--text);
 `
 
 const SubText = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 18px;
-  color :#131313;
+  color :var(--text);
   margin-top:10px;
 `
 

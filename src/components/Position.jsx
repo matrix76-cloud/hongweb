@@ -137,7 +137,7 @@ const Position =({containerStyle, type, callback,}) =>  {
 
             <Row 
               onClick={_handleCurrentpos}
-              style={{backgroundColor:"#fff",
+              style={{backgroundColor:"var(--surface)",
               height:"44px",
               padding: "0px 16px 0px 16px",
               border :"1px solid #C3C3C3",
@@ -150,7 +150,7 @@ const Position =({containerStyle, type, callback,}) =>  {
 
             <Row 
               onClick={_handleCurrentpos}
-              style={{backgroundColor:"#fff",
+              style={{backgroundColor:"var(--surface)",
               height:"44px",
               padding: "0px 16px 0px 16px",
               border :"1px solid #C3C3C3",

@@ -23,7 +23,7 @@ import { LoadingChatAnimationStyle } from "../../screen/css/common";
 /* 높이를 900px 로 못박아둬서 화면보다 길거나 짧았다. 헤더만 비우고 내용만큼 늘어나게 한다.
    (형 지시 2026-08-12) */
 const Container = styled.div`
-    background-color : #fff;
+    background-color : var(--surface);
     min-height: calc(100vh - 50px);
     padding-top: 50px;
     box-sizing: border-box;

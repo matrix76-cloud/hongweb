@@ -88,7 +88,8 @@ const MobileStoreInfo  = ({containerStyle, height = 200})=>{
     return(
         <Container style={containerStyle} height={ height}>
             <StoreNameView>
-                <StoreNameText>홍여사</StoreNameText>
+                {/* 서비스 이름은 "구해줘 홍여사" 다 (형 리뷰 2026-08-12) */}
+                <StoreNameText>구해줘 홍여사</StoreNameText>
             </StoreNameView>
 
 

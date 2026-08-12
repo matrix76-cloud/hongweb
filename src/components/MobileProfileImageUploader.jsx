@@ -93,7 +93,7 @@ const MobileProfileImageUploader = ({ initialImage, onUploadComplete, onFileSele
                     style={{
                         display: "inline-block",
                         padding: "6px 14px",
-                        background: "#fff",
+                        background: "var(--surface)",
                         border: "1px solid #ccc",
                         borderRadius: "6px",
                         fontSize: "13px",

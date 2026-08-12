@@ -31,8 +31,8 @@ const Bar = styled.div`
   gap: 12px;
   padding: 14px 16px;
   border-radius: 14px;
-  background: #fff;
-  border: 1px solid #ECECEC;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
   box-shadow: 0 6px 24px rgba(0, 0, 0, .16);
   cursor: pointer;
   animation: ${slideIn} .22s ease-out;
@@ -54,7 +54,7 @@ const Texts = styled.div`
 const Title = styled.div`
   font-size: 15px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

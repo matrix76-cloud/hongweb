@@ -64,7 +64,7 @@ const Tag = styled.div`
   font-family:"Pretendard-Light";
 `
 const DisableTag = styled.div`
-  background: #F3F3F3;
+  background: var(--bg);
   color: #A3A3A3;
   padding: 4px 8px;
   border-radius: 5px;
@@ -86,7 +86,7 @@ const WorkTypeText = styled.div`
   font-size: 18px;
   font-family:Pretendard-Regular;
   font-weight:700;
-  color :#131313;
+  color :var(--text);
   line-height:23.4px;
 `
 
@@ -131,7 +131,8 @@ const PCWorkItem =({containerStyle, width, workdata, onPress, index, selected}) 
     const lat2 = workdata.WORK_INFO[FindIndex].latitude;;
     const lon2 = workdata.WORK_INFO[FindIndex].longitude;;
     const dist = distanceFunc(lat1, lon1, lat2, lon2);
-    return parseFloat(Math.round(dist /1000 * 1000) / 1000);
+    // km 를 또 1000 으로 나눠 2km 가 0.002km 로 찍히던 것 수정 (형 리뷰 2026-08-12)
+    return distanceLabel(dist);
   }
 
   function Price(){
@@ -215,8 +216,8 @@ const PCWorkItem =({containerStyle, width, workdata, onPress, index, selected}) 
     <Container style={containerStyle} width={width} onClick={_handleworkselect} selected={selected}   >
 
 
-      <Column style={{height:"40%", background:"#fff",width:"100%"}}>
-        <Row style={{height:"86px", background:"#fff",width:"100%"}}>
+      <Column style={{height:"40%", background:"var(--surface)",width:"100%"}}>
+        <Row style={{height:"86px", background:"var(--surface)",width:"100%"}}>
           <FlexstartColumn style={{height:"100%",width:"66%"}}>
             {
               workdata.WORK_STATUS== 0 ? (<TagItem>
@@ -231,7 +232,7 @@ const PCWorkItem =({containerStyle, width, workdata, onPress, index, selected}) 
           </FlexstartColumn>
 
           <BetweenRow style={{height:"100%", width:"34%"}}>
-            <div style={{background:"#F9F9F9", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
+            <div style={{background:"var(--bg-soft)", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
             <img src={Seekimage(workdata.WORKTYPE)} style={{width:64}}/>
             </div>
           </BetweenRow>
@@ -243,13 +244,13 @@ const PCWorkItem =({containerStyle, width, workdata, onPress, index, selected}) 
         {Comment().length > 25 ? "..." : null}
       </BetweenRow>
 
-      <div style={{border :"1.5px dashed #ededed", width:"100%"}}></div>
+      <div style={{border :"1.5px dashed var(--border-soft)", width:"100%"}}></div>
 
   
-      <Column style={{height:"60%", background:"#fff",width:"100%",justifyContent: "start"}}>
+      <Column style={{height:"60%", background:"var(--surface)",width:"100%",justifyContent: "start"}}>
 
         <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px 0px", color:"#A3A3A3", fontSize:12}} >
-        <div>{Region()} / 거리 {Distance()}km </div>
+        <div>{Region()} / 거리 {Distance()}</div>
         <div><TimeAgo date={getFullTime(workdata.CREATEDT)}formatter={formatter}/></div>
         </BetweenRow>
         <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px 0px"}}>

@@ -36,7 +36,7 @@ const Container = styled.div`
   align-items:center;
   width :95%;
   margin : 0 auto;
-  background : #FFF;
+  background : var(--surface);
   padding-top:70px;
 
 `
@@ -49,7 +49,7 @@ const Label = styled.div`
   padding-left: 20px;
   font-family: 'Pretendard-SemiBold';
   font-size: 22px;
-  color: #131313;
+  color: var(--text);
 
 
 `
@@ -63,12 +63,12 @@ const SubText = styled.div`
   width: 100%;
   padding-left: 20px;
   margin-top: 10px;
-  color: #131313;
+  color: var(--text);
   margin-bottom:10px;
 `
 const Inputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '90%',
   borderRadius:'5px',
   fontSize:'16px',
@@ -78,7 +78,7 @@ const Inputstyle ={
 
 const CodeInputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '90%',
   borderRadius:'5px',
   fontSize:'16px',
@@ -117,10 +117,10 @@ const BoxItem = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 20px 0px;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid var(--border-soft);
   width: 100%;
   font-size: 14px;
-  color: #131313;
+  color: var(--text);
 `
 const LoadingAnimationStyle={
   zIndex: 11,

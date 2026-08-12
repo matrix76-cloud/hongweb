@@ -15,7 +15,7 @@ const Container = styled.div`
   width: 100%;
   box-sizing: border-box;
   min-height: ${({ $height }) => $height}px;
-  background-color: #fff;
+  background-color: var(--surface);
   display: flex;
   flex-direction: column;
   justify-content: center;

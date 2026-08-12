@@ -129,7 +129,7 @@ export default function MobileWarningPopup({callback, content}) {
                 <IconCloseView >
                   <img src={imageDB.warning} style={{width:"32px", height:"32px",paddingTop:5}}/>
                 </IconCloseView>
-                <div style={{fontSize:"16px", color:"#131313", fontFamily:'Pretendard', paddingLeft:10}}>{content}</div>           
+                <div style={{fontSize:"16px", color:"var(--text)", fontFamily:'Pretendard', paddingLeft:10}}>{content}</div>           
              </Row>
 
              <Row style={{width:"100%", background:"#E3E3E3", height:'45px',borderBottomRightRadius: "10px",

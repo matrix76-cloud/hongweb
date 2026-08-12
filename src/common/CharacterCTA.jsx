@@ -108,7 +108,7 @@ const Badge = styled.span`
   align-self: flex-start;
   font-size: 12px; font-weight: 700;
   color: #1A1E28;
-  background: #fff; border-radius: 999px;
+  background: var(--surface); border-radius: 999px;
   padding: 4px 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,.15);
 `;

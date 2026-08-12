@@ -1,3 +1,4 @@
+import hongprofile from "../assets/imageset/hongprofile.svg";
 import { imageDB } from "./imageData"
 
 
@@ -157,7 +158,9 @@ export const  CHATIMAGETYPE = {
 export const INCLUDEDISTANCE = "5";
 export const CHECKDISTANCE = "5";
 
-export const PROFILEIMAGE ="https://firebasestorage.googleapis.com/v0/b/help-bbcb5.appspot.com/o/images%2Fperson.png?alt=media&token=0413209a-88c0-4893-b0f4-1f0bb94fb992";
+/* 기본 프로필 — 홍여사 캐릭터 (형 리뷰 2026-08-12).
+   예전에는 Storage 에 올려둔 회색 사람 그림을 썼다. 아무 서비스나 쓰는 그림이라 캐릭터로 바꿨다. */
+export const PROFILEIMAGE = hongprofile;
   
 
 export const CHATCONTENTTYPE ={
@@ -193,6 +196,16 @@ export const CONFIGMOVE = {
     WORKERAUTH: "신분증인증",
     MYWORK: "등록한 일감",
     SEARCHRANGE: "나의 범위설정",
+    NOTISETTING: "실시간 알림설정",
+    THEMESETTING: "화면 설정",
+    FAVORITEWORK: "찜한 일감",
+    DEALOPEN: "체결중인 거래",
+    DEALDONE: "체결완료된 거래",
+    PAY: "결제관리",
+    DEPOSIT: "입금관리",
+    SUPPORT: "고객센터",
+    FAQ: "자주묻는 질문",
+    ABOUT: "홍여사 알아보기",
     CLOSEDWORK: "마감한 일감",
     LAWPOLICY:"이용약관",
     LAWPRIVACY :"개인정보 처리지침",

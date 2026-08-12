@@ -9,7 +9,7 @@ const Overlay = styled.div`
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  background: #fff;
+  background: var(--surface);
   z-index: 9999;
   overflow-y: auto;
   padding: 20px;
@@ -45,7 +45,7 @@ const CategoryGroup = styled.div`
   padding: 16px;
   border: 1px solid #ddd;
   border-radius: 12px;
-  background-color: #fff;
+  background-color: var(--surface);
 `;
 
 const CategoryHeader = styled.div`
@@ -110,7 +110,7 @@ const SkipButton = styled(HongButton)`
 `;
 
 const WhiteOutlineButton = styled.button`
-  background-color: #fff;
+  background-color: var(--surface);
   color: #333;
   font-family: Pretendard-Bold;
   font-size: ${() => getFontSize(15)}px;
@@ -123,7 +123,7 @@ const WhiteOutlineButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #f9f9f9;
+    background-color: var(--bg-soft);
     border-color: #bbb;
   }
 

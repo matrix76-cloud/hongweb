@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PiCoinsBold } from 'react-icons/pi';
 import MobileFilterSheet, { FilterOption, OptionGrid } from '../common/MobileFilterSheet';
 
 export const FILTERITEMMONEY = {
@@ -27,7 +28,7 @@ export default function MobilePriceFilter({ filterhistory, callback }) {
   const handleApply = () => callback(picked ? [picked] : []);
 
   return (
-    <MobileFilterSheet title={'홍여사 가격 선택'} onClose={handleClose} onApply={handleApply} minheight={200}>
+    <MobileFilterSheet title={'홍여사 가격 선택'} icon={<PiCoinsBold size={19}/>} onClose={handleClose} onApply={handleApply} minheight={200}>
       <OptionGrid>
         {WorkItems.map((name) => (
           <FilterOption key={name} label={name} selected={picked == name} onClick={() => setPicked(name)} />

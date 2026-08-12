@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FILTERITEMDISTANCE } from '../../utility/screen';
+import { PiMapPinBold } from 'react-icons/pi';
 import MobileFilterSheet, { FilterOption, OptionGrid } from '../common/MobileFilterSheet';
 
 const WorkItems = [
@@ -19,7 +20,7 @@ export default function MobileDistanceFilter({ filterhistory, callback }) {
   const handleApply = () => callback(picked ? [picked] : []);
 
   return (
-    <MobileFilterSheet title={'홍여사 거리 선택'} onClose={handleClose} onApply={handleApply} minheight={200}>
+    <MobileFilterSheet title={'홍여사 거리 선택'} icon={<PiMapPinBold size={19}/>} onClose={handleClose} onApply={handleApply} minheight={200}>
       <OptionGrid>
         {WorkItems.map((name) => (
           <FilterOption key={name} label={name} selected={picked == name} onClick={() => setPicked(name)} />

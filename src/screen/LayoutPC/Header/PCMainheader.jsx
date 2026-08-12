@@ -35,7 +35,7 @@ import "./PCMainheader.css";
 const PCHeader = styled.div`
   height: ${({height}) => height}px;
   text-align: center;
-  background-color: #fff;
+  background-color: var(--surface);
   display: flex;
   flex-direction: column;
   z-index: 2;
@@ -48,7 +48,7 @@ const CategoryContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
+  background-color: var(--surface);
   padding:10px 0px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
 `;
@@ -153,7 +153,7 @@ const TwoContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--surface);
   z-index: 5;
   margin-top: 34px;
 
@@ -172,7 +172,7 @@ const LineControl = styled.div`
 
 const Inputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '100%',
   borderRadius:'5px',
   fontSize:'16px',
@@ -209,7 +209,7 @@ display: block;
 border: none;
 height: 110px;
 position: absolute;
-background-color: #fff;
+background-color: var(--surface);
 width: 100%;
 z-index: 1;
 text-align: left;
@@ -222,7 +222,7 @@ top: 120px;
 left: 10px;
 font-size: 14px;
 line-height: 2;
-border-bottom: 1px solid #ededed;
+border-bottom: 1px solid var(--border-soft);
 
 `
 const MenuItem = styled.div`

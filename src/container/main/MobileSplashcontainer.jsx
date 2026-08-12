@@ -13,6 +13,8 @@ import { Create_userdevice, readuserbydeviceid, updatealluserbydeviceid, Update_
 import { v4 as uuidv4 } from 'uuid';
 
 import localforage from 'localforage';
+import { isOnboardingDone } from './MobileOnboardingcontainer';
+import { isAgreed } from './MobileAgreecontainer';
 import Axios from "axios";
 import randomLocation from 'random-location'
 ;
@@ -36,7 +38,7 @@ const Container = styled.div`
   justify-content:center;
   alignItems:center;
   width :100%;
-  background : #FFF;
+  background : var(--surface);
 `
 const style = {
   display: "flex"
@@ -253,7 +255,14 @@ const MobileSplashcontainer =({containerStyle}) =>  {
       console.log("TCL: Mobile MAIN  -> GetItem", value)
       userconfig = value;
       if (userconfig.deviceid  == undefined ||  userconfig.deviceid  =='') {
-        navigate("/Mobilegate");
+        // 처음 온 사람이면 온보딩부터 보여준다. 한 번 본 뒤에는 바로 가입 화면으로 (형 지시 2026-08-12)
+        // 온보딩 → 약관 동의 → 로그인 순서로 보낸다 (형 지시 2026-08-12)
+        const seen = await isOnboardingDone();
+        if (!seen) { navigate("/Mobileonboarding"); }
+        else {
+          const agreed = await isAgreed();
+          navigate(agreed ? "/Mobilelogin" : "/Mobileagree");
+        }
       }else{
   
         const DEVICEID = userconfig.deviceid;

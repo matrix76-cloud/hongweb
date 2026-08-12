@@ -75,7 +75,7 @@ input::placeholder{
 /* 로고와 텍스트 */
 .intro-content {
   text-align: center;
-  color: #131313;
+  color: var(--text);
   animation: fadeIn 3s ease-in-out;
   width:70%;
 }
@@ -89,7 +89,7 @@ input::placeholder{
 .intro-text {
   font-size: 32px;
   margin-top: 20px;
-  color :#131313;
+  color :var(--text);
   font-family: 'Pretendard-SemiBold';
   animation: fadeInText 5s ease-in-out;
 }

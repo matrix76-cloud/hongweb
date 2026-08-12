@@ -82,12 +82,12 @@ const MainDataItem = styled.div`
   justify-content: flex-start;
   align-items: center;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: var(--surface);
   margin-left: 10px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid var(--border-soft);
   width: 100%;
 `
 const MainDataItemText = styled.span`
@@ -203,7 +203,7 @@ export default function MobileSignPopup({callback}) {
               <HeaderPopupline/>
             </Row>
             <BetweenRow style={{width:"90%", margin: "5px auto", }}>
-                <div style={{fontSize:"18px", fontWeight:900, color:"#131313", fontFamily:'Pretendard-SemiBold'}}>본인 서명</div>
+                <div style={{fontSize:"18px", fontWeight:900, color:"var(--text)", fontFamily:'Pretendard-SemiBold'}}>본인 서명</div>
                 <IconCloseView onClick={handleClose} >
                 <img src={imageDB.close} style={{width:"22px", height:"22px"}}/>
                 </IconCloseView>

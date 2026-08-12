@@ -26,7 +26,7 @@ const Dim = styled.div`
 const Sheet = styled.div`
   width: 100%;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--surface);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
@@ -41,7 +41,7 @@ const SheetHead = styled.div`
 const SheetTitle = styled.b`
   flex: 1;
   font-size: 17px;
-  color: #131313;
+  color: var(--text);
 `;
 
 const CloseBtn = styled.button`
@@ -80,7 +80,7 @@ const RowTitle = styled.span`
   display: block;
   font-size: 16px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
 `;
 
 const RowDesc = styled.span`

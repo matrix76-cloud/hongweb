@@ -14,7 +14,7 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #fff;
+    background: var(--surface);
     margin-top: 30px;
     margin: 0px auto;
 `
@@ -30,7 +30,7 @@ const PictureBoxLayer = styled.div`
 `
 const PictureBoxEnableLayer = styled.div`
   height: 200px;
-  background: #fff;
+  background: var(--surface);
   width: 90%;
   margin-top: 20px;
   display:flex;

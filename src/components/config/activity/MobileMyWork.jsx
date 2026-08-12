@@ -30,8 +30,8 @@ const Summary = styled.div`
 const Card = styled.div`
   box-sizing: border-box;
   width: 100%;
-  background: #fff;
-  border: 1px solid #E3E3E3;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 18px;
   margin-bottom: 12px;
@@ -39,7 +39,7 @@ const Card = styled.div`
   align-items: center;
   gap: 14px;
   cursor: pointer;
-  &:active { background: #FAFAFA; }
+  &:active { background: var(--bg-soft); }
 `;
 
 const IconCircle = styled.div`
@@ -47,7 +47,7 @@ const IconCircle = styled.div`
   width: 56px;
   height: 56px;
   border-radius: 100px;
-  background: #F9F9F9;
+  background: var(--bg-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,7 +70,7 @@ const TitleRow = styled.div`
 const Title = styled.div`
   font-size: 17px;
   font-weight: 600;
-  color: #131313;
+  color: var(--text);
 `;
 
 const Status = styled.span`
@@ -82,7 +82,7 @@ const Status = styled.span`
 const Price = styled.div`
   font-size: 16px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
 `;
 
 const Meta = styled.div`

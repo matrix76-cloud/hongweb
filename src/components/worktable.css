@@ -1,6 +1,6 @@
 .hospitaltable tbody tr td:first-child {
     text-align: left;
-    background-color: #FAFAFA;
+    background-color: var(--bg-soft);
     font-weight: 600;
     min-width: 50px;
     width: 50px;

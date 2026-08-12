@@ -13,7 +13,7 @@ const Container = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  background: #fff;
+  background: var(--surface);
   width: 100%;
   height: 50px;
   display: flex;
@@ -22,14 +22,14 @@ const Container = styled.div`
   justify-content: flex-start;
   padding: 0 20px;
   box-sizing: border-box;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid var(--border-soft);
 `;
 
 const Title = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 19px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
 `;
 
 const MobileTitleheader = ({ name }) => {

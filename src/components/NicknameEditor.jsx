@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
-import { PiPencilSimpleBold } from "react-icons/pi";
+import { PiPencilSimpleBold, PiArrowsClockwiseBold } from "react-icons/pi";
 import { UserContext } from "../context/User";
 import { Update_userinfobyusersid, Update_nickname_by_usersid, Read_nickname_next_at } from "../service/UserService";
 import { NoticeNicknameChanged } from "../service/ChatService";
@@ -23,7 +23,7 @@ const Row = styled.div`
 const NameText = styled.div`
   font-size: ${({ $size }) => $size}px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -48,6 +48,42 @@ const Input = styled.input`
   outline: none;
 `;
 
+/* 대화명 자동 생성 — 비워둔 사람이 많아 직접 짓지 않아도 되게 (형 리뷰 2026-08-12) */
+const GenBtn = styled.button`
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #E6E6E6;
+  border-radius: 10px;
+  background: var(--surface);
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  &:active { background: #F5F5F5; }
+`;
+
+/* 연필 아이콘만 (형 리뷰 2026-08-12 "수정 글씨 제거") */
+const EditBtn = styled.button`
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #E6E6E6;
+  border-radius: 8px;
+  background: var(--surface);
+  color: #555;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  &:active { background: #F5F5F5; }
+`;
+
 const SaveBtn = styled.button`
   flex: none;
   height: 42px;
@@ -68,6 +104,20 @@ const Hint = styled.div`
   margin-top: 5px;
 `;
 
+/* 대화명 만들어주기 — 앞말 + 뒷말을 붙여 6자 안에 떨어지게 짠다.
+   숫자를 뒤에 붙이면 6자를 넘겨 잘리므로 안 쓴다. (형 리뷰 2026-08-12) */
+const MAXLEN = 6;
+const GEN_HEAD = ['든든', '다정', '따뜻', '씩씩', '성실', '밝은', '친절', '꼼꼼', '손큰', '상냥', '야무진', '부지런'];
+const GEN_TAIL = ['이웃', '일꾼', '손길', '친구', '동행', '살림꾼', '파트너'];
+const makeNickname = () => {
+  // 6자를 넘지 않는 조합만 골라서 그 안에서 하나 뽑는다
+  const pool = [];
+  GEN_HEAD.forEach((h) => GEN_TAIL.forEach((t) => {
+    if ((h + t).length <= MAXLEN) pool.push(h + t);
+  }));
+  return pool[Math.floor(Math.random() * pool.length)];
+};
+
 /* 남은 시간을 사람이 읽는 말로 */
 const untilText = (nextAt) => {
   const ms = nextAt - Date.now();
@@ -77,9 +127,12 @@ const untilText = (nextAt) => {
   return h > 0 ? `${h}시간 ${m}분 뒤` : `${m}분 뒤`;
 };
 
-const NicknameEditor = ({ size = 18, hint = true, onChanged }) => {
+const NicknameEditor = ({ size = 18, hint = true, onChanged, onEditingChange }) => {
   const { user, dispatch } = useContext(UserContext);
   const [editing, setEditing] = useState(false);
+
+  /* 편집 중에는 옆 버튼을 접어 입력칸에 폭을 내준다 (형 리뷰 2026-08-12) */
+  useEffect(() => { onEditingChange?.(editing); }, [editing]);
   const [draft, setDraft] = useState('');
   const [saving, setSaving] = useState(false);
   const [nextAt, setNextAt] = useState(0);   // 다음 변경 가능 시각 (하루 1회)
@@ -101,13 +154,15 @@ const NicknameEditor = ({ size = 18, hint = true, onChanged }) => {
       alert(`대화명은 하루에 한 번만 바꿀 수 있어요.\n${untilText(nextAt)} 다시 시도해주세요.`);
       return;
     }
-    setDraft(user.nickname || '');
+    /* 아직 대화명이 없으면 빈칸 대신 하나 만들어 넣어준다. 마음에 안 들면 새로고침 */
+    setDraft(user.nickname || makeNickname());
     setEditing(true);
   };
 
   const save = async () => {
     const next = (draft || '').trim();
     if (!next) { alert('대화명을 입력해주세요'); return; }
+    if (next.length > MAXLEN) { alert(`대화명은 ${MAXLEN}자까지 쓸 수 있어요.`); return; }
     const before = user.nickname;
     if (next === before) { setEditing(false); return; }
 
@@ -150,14 +205,17 @@ const NicknameEditor = ({ size = 18, hint = true, onChanged }) => {
           <Input
             value={draft}
             autoFocus
-            maxLength={12}
+            maxLength={MAXLEN}
             placeholder="대화명"
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={(e) => setDraft(e.target.value.slice(0, MAXLEN))}
             onKeyDown={(e) => { if (e.key === 'Enter') save(); }}
           />
+          <GenBtn onClick={() => setDraft(makeNickname())} title="대화명 새로 만들기" aria-label="대화명 새로 만들기">
+            <PiArrowsClockwiseBold size={18} />
+          </GenBtn>
           <SaveBtn onClick={save} disabled={saving}>{saving ? '저장 중' : '저장'}</SaveBtn>
         </EditRow>
-        {hint && <Hint>바꾸면 대화방에도 알려드려요 · 하루 한 번만 가능</Hint>}
+        {hint && <Hint>새로고침을 누르면 대화명을 만들어 드려요 · 하루 한 번만 바꿀 수 있어요</Hint>}
       </div>
     );
   }
@@ -166,13 +224,16 @@ const NicknameEditor = ({ size = 18, hint = true, onChanged }) => {
     <div style={{ flex: 1, minWidth: 0 }}>
       <Row onClick={start}>
         <NameText $size={size}>{user.nickname || '대화명 없음'}</NameText>
-        <PiPencilSimpleBold size={Math.round(size * 0.95)} color="#A3A3A3" />
+        {/* 누를 곳이 어디인지 분명하게 — 글자만으론 눌리는 줄 몰랐다 (형 리뷰 2026-08-12) */}
+        <EditBtn onClick={(e) => { e.stopPropagation(); start(); }} aria-label="대화명 수정">
+          <PiPencilSimpleBold size={15} />
+        </EditBtn>
       </Row>
       {hint && (
         <Hint>
           {locked
             ? `대화명은 하루 한 번 · ${untilText(nextAt)} 변경 가능`
-            : '이름을 눌러 대화명을 바꿀 수 있어요'}
+            : '수정을 누르면 이 자리에서 바로 바꿀 수 있어요'}
         </Hint>
       )}
     </div>

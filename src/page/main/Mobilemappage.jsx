@@ -72,7 +72,8 @@ const MobileMappage =() =>  {
   return (
 
     <MobileMapLayout name={KeywordAddress(address_name)} type={MOBILEMAINMENU.MAPMENU} image=''>
-        <MobileMapcontainer  ID={location.state.ID} TYPE={location.state.TYPE}  />
+        {/* 탭이 아니라 주소로 바로 들어오면 state 가 없어 흰 화면이 됐다 (2026-08-12) */}
+        <MobileMapcontainer  ID={location.state?.ID} TYPE={location.state?.TYPE}  />
     </MobileMapLayout>
   );
 

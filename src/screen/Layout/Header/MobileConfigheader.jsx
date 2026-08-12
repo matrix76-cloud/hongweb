@@ -17,7 +17,7 @@ const Container = styled.div``;
 
 
 const ProfileConfigBtn = styled.div`
-  background: #f9f9f9;
+  background: var(--bg-soft);
   padding: 10px;
   font-family: 'Pretendard-SemiBold';
   font-size: 12px;
@@ -80,7 +80,7 @@ const MobileConfigheader = ({callback, image,name}) => {
       style={{
         zIndex: 999,
         position: "fixed",
-        background: "#fff",
+        background: "var(--surface)",
         width: "100%",
         height: "50px",
         display: "flex",
@@ -89,7 +89,7 @@ const MobileConfigheader = ({callback, image,name}) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        borderBottom: "1px solid #ededed",
+        borderBottom: "1px solid var(--border-soft)",
         padding :"0px 10px",
         fontFamily:"Pretendard-SemiBold",
   
@@ -99,7 +99,7 @@ const MobileConfigheader = ({callback, image,name}) => {
 
 
         <>
-        <div style={{ display:"flex", fontWeight:700, fontSize:'16px', color:"#131313", alignItems:"center"}}>
+        <div style={{ display:"flex", fontWeight:700, fontSize:'16px', color:"var(--text)", alignItems:"center"}}>
           <div style={{paddingLeft:10}}>{name}</div>
         </div>
         {/* 로그아웃은 내 정보 아래 '계정' 으로 내렸다 (형 지시 2026-08-12) */}

@@ -28,9 +28,10 @@ const Container = styled.div`
   flex-direction: column;
   align-items:center;
   width :100%;
-  background : #FFF;
-
-
+  background : var(--surface);
+  /* 고정 헤더(50px)에 첫 약관 제목이 깔려 위로 스크롤해도 안 보였다 (형 리뷰 2026-08-12) */
+  padding-top: 50px;
+  box-sizing: border-box;
 `
 const style = {
   display: "flex"

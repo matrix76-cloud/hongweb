@@ -36,7 +36,7 @@ const Container = styled.div`
   align-items:center;
   width :95%;
   margin : 0 auto;
-  background : #FFF;
+  background : var(--surface);
   padding-top:70px;
 
 `
@@ -65,7 +65,7 @@ const SubText = styled.div`
 `
 const Inputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '90%',
   borderRadius:'5px',
   fontSize:'16px',
@@ -75,7 +75,7 @@ const Inputstyle ={
 
 const CodeInputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '90%',
   borderRadius:'5px',
   fontSize:'16px',

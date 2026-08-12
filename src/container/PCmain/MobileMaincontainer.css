@@ -1,5 +1,5 @@
 .new-div {
-    background-color: #fff;
+    background-color: var(--surface);
     color: black;
     transition: opacity 0.5s ease-in-out;
     display: flex;

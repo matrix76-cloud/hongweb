@@ -128,7 +128,7 @@ const PCLogincontainer =({containerStyle}) =>  {
 
   return (
     <Container style={containerStyle}>
-      <Row margin={'0px auto;'} width={'70%'} style={{background:"#fff", height:"800px"}} >
+      <Row margin={'0px auto;'} width={'70%'} style={{background:"var(--surface)", height:"800px"}} >
         <div style={{width:'50%'}}>
           <FlexstartColumn style={{paddingLeft:30, margin:"50px 0px"}}>
             <Login>홍여사 로그인</Login>

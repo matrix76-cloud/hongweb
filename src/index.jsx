@@ -1,3 +1,4 @@
+import { initTheme } from "./utility/theme";
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -16,6 +17,9 @@ import { DataProvider } from './context/Data';
  * dispatch 는 아무 데도 반영되지 않았다(=위치를 잡아도 저장이 안 됨).
  * 일감 목록이 거리 계산(NaN)으로 전부 걸러지던 근본 원인. (2026-08-12)
  */
+// 저장해둔 화면 모드를 먼저 입힌다 (형 요청 2026-08-13)
+initTheme();
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(

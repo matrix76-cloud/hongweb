@@ -23,7 +23,7 @@ const RowItem = styled.div`
     flex-direction:row;
     justify-content:space-between;
     align-items:center;
-    border-bottom: 1px solid #ededed; 
+    border-bottom: 1px solid var(--border-soft); 
     padding-bottom:20px;
     padding-top:20px;
 `
@@ -32,7 +32,7 @@ const ColumnItem = styled.div`
     flex-direction:column;
     justify-content:space-between;
     align-items:center;
-    border-bottom: 1px solid #ededed; 
+    border-bottom: 1px solid var(--border-soft); 
     padding-bottom:20px;
     padding-top:20px;
 `

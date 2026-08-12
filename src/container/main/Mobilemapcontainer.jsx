@@ -127,7 +127,7 @@ const LoadingAnimationStyle={
 }
 
 const FilterButton = styled.div`
-  background-color: #fff;
+  background-color: var(--surface);
   width: 80px;
   height: 40px;
   display: flex;
@@ -135,7 +135,7 @@ const FilterButton = styled.div`
   align-items: center;
   justify-content: space-evenly;
   border-radius: 20px;
-  border: 1px solid #ededed;
+  border: 1px solid var(--border-soft);
   font-family: 'Pretendard-SemiBold';
 `
 
@@ -148,8 +148,8 @@ const CurrentPosButton = styled.div`
   width: 46px;
   height: 46px;
   border-radius: 100px;
-  background: #fff;
-  border: 1px solid #ededed;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
   box-shadow: 0 2px 8px rgba(0,0,0,0.14);
   display: flex;
   justify-content: center;
@@ -159,20 +159,21 @@ const CurrentPosButton = styled.div`
   transition: transform .12s ease;
 `
 
-/* 진행중인 일감만 보기 — 필터 버튼 옆 체크박스 (형 리뷰 2026-08-12) */
-const OpenOnlyLabel = styled.label`
+/* 진행중인 일감만 보기 — 필터 버튼 옆 체크박스 (형 리뷰 2026-08-12).
+   label 로 두면 클릭이 내부 input 으로 한 번 더 전달돼 지도를 두 번 그렸다 → div 로 바꿨다 */
+const OpenOnlyLabel = styled.div`
   margin-left: 10px;
   height: 40px;
   padding: 0 14px;
-  background: #fff;
-  border: 1px solid #ededed;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
   border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 7px;
   font-size: 15px;
   font-weight: 600;
-  color: #131313;
+  color: var(--text);
   cursor: pointer;
   user-select: none;
 `
@@ -257,6 +258,10 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
   /* 진행중인 일감만 보기 */
   const [openonly, setOpenonly] = useState(false);
   const openonlyRef = useRef(false);
+  /* 지난번에 그린 오버레이·마커. 다시 그리기 전에 지워야 겹치지 않는다 (형 리뷰 2026-08-12) */
+  const drawnRef = useRef({ overlays: [], markers: [], clusterer: null });
+  /* 지금 지도에 그리고 있는 원본 목록(진행중 필터 적용 전). 체크박스가 서비스 필터를 풀지 않게 */
+  const sourceRef = useRef([]);
 
 
   useLayoutEffect(() => {
@@ -542,6 +547,8 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
     if(!(await ensureKakao())) return;
 
+    sourceRef.current = rawdatas || [];
+
     /* 진행중만 보기가 켜져 있으면 마감된 일감은 지도에 안 그린다 (형 리뷰 2026-08-12) */
     const datas = openonlyRef.current
       ? rawdatas.filter((d)=> (d.TYPE == FILTERITMETYPE.ROOM ? d.ROOM_STATUS : d.WORK_STATUS) == WORKSTATUS.OPEN)
@@ -558,12 +565,26 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
           level: 6
     };
 
-    var map = new kakao.maps.Map(mapContainer, mapOption);
-    mapRef.current = map;
+    /* 다시 그릴 때마다 지도를 새로 만들면 이전 가격 카드가 화면에 그대로 남아
+       카드가 겹쳐 늘어났다(14 -> 40). 지도는 한 번만 만들고 재사용한다. (형 리뷰 2026-08-12) */
+    const firstDraw = !mapRef.current;
+    var map = mapRef.current;
+    if(firstDraw){
+      map = new kakao.maps.Map(mapContainer, mapOption);
+      mapRef.current = map;
+    }
+
+    // 지난번에 올려둔 가격 카드·마커를 먼저 걷어낸다
+    try{
+      drawnRef.current.overlays.forEach((o)=> o.setMap(null));
+      drawnRef.current.markers.forEach((m)=> m.setMap(null));
+      if(drawnRef.current.clusterer) drawnRef.current.clusterer.clear();
+    }catch(e){ console.warn('[map] 이전 오버레이 정리 실패', e); }
+    drawnRef.current = { overlays: [], markers: [], clusterer: null };
 
     const geocoder = new window.kakao.maps.services.Geocoder();
 
-    geocoder.addressSearch(user.address_name, (result, status) => {
+    if(firstDraw) geocoder.addressSearch(user.address_name, (result, status) => {
         if (status === window.kakao.maps.services.Status.OK) {
             const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
 
@@ -774,6 +795,9 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     kakao.maps.event.addListener(map, 'zoom_changed', requestSync);
     requestSync();
 
+    // 다음번에 지울 수 있게 기억해둔다
+    drawnRef.current = { overlays, markers: clusterMarkers, clusterer };
+
     //오버레이를 변수에 담아둔다
     setOverlays(overlays);
     setRefresh((refresh) => refresh +1);
@@ -951,31 +975,26 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     const next = !openonly;
     openonlyRef.current = next;
     setOpenonly(next);
-    ListmapDraw(items);
+    // 서비스 필터가 걸려 있으면 그 결과 위에서 다시 거른다
+    ListmapDraw(sourceRef.current.length ? sourceRef.current : items);
     setRefresh((refresh) => refresh +1);
   }
 
   const MobileServiceFilterCallback =(filterary) =>{
+    setServicepopup(false);
 
-    if(filterary.length != 0){
-      setMenuary(filterary);
-      console.log("TCL: MobileServiceFilterCallback -> filterary", filterary)
+    /* 빈 배열 = 시트를 그냥 닫은 것(취소). 목록은 건드리지 않는다 */
+    if(!filterary || filterary.length == 0){
+      setRefresh((refresh) => refresh +1);
+      return;
     }
 
-    let filteritems = [];
+    /* 방금 고른 값으로 걸러야 한다. setMenuary 는 바로 반영되지 않아
+       예전 코드는 직전 값(처음엔 빈 배열)으로 걸러서 아무것도 안 나왔다. (형 리뷰 2026-08-12) */
+    setMenuary(filterary);
+    const filteritems = items.filter((d)=> filterary.includes(d.WORKTYPE) || filterary.includes(d.ROOMTYPE));
 
-    items.map((data, index)=>{
-    if(menuary.includes(data.WORKTYPE)){
-      filteritems.push(data);
-    }
-    if(menuary.includes(data.ROOMTYPE)){
-      filteritems.push(data);
-    }
-  })
-  
     setRefresh((refresh) => refresh +1);
-    console.log("TCL: _handleMenu -> menuary", menuary);
-
     ListmapDraw(filteritems);
 
 

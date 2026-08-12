@@ -22,6 +22,7 @@ import { ko, se } from 'date-fns/locale';
 import { DAYOPTION, OPTIONTYPE, PCDAYMENU } from "../../utility/screen";
 import SelectItem from "../../components/SelectItem";
 import { MdDataUsage, MdTurnedInNot } from "react-icons/md";
+import { PiPencilSimpleBold } from "react-icons/pi";
 import "./table.css";
 import { Requestlargemessages, Requestmediummessages, Requestroommessages, Requestsmallmessages, ROOMSIZE } from "../../utility/room";
 
@@ -29,11 +30,13 @@ import { CreateWork, CreateWorkInfo } from "../../service/WorkService";
 import ImageUploadComponent from "../../components/ImageUpload";
 import Label from "../../common/Label";
 import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
+import { ensureKakao } from "../../utility/kakaoReady";
+import WorkPhotoPicker from "../../components/WorkPhotoPicker";
 
 
 
 const Container = styled.div`
-  background :#f3f3f3;
+  background :var(--bg);
   height:3000px;
   display:flex;
   flex-direction:column;
@@ -47,7 +50,7 @@ const ContentLayer = styled.div`
   margin : 0px auto;
   font-size : 16px;
   font-weight:400;
-  color :#131313;
+  color :var(--text);
 
 
 `
@@ -70,14 +73,14 @@ const TitleLayer = styled.div`
   width: 100%;
   z-index: 5;
   top: 135px;
-  border-top: 1px solid #ededed;
-  border-right: 1px solid #ededed;
+  border-top: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
 `
 const Title = styled.div`
   font-size: 20px;
   line-height: 1.3;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
 `
 
 const Itemlayer = styled.div`
@@ -105,13 +108,13 @@ const ItemLeftLayercontent = styled.div`
 
 
 const ItemLeftBox = styled.div`
-  background: #fff;
-  border: 1px solid #ECECEC;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
   border-radius: 16px;
   border-top-left-radius: 4px;
   padding: 18px 20px;
   margin: 6px 10px 0px;
-  color: #131313;
+  color: var(--text);
   display: flex;
   flex-direction: column;
   width: ${({width}) => width};
@@ -124,21 +127,31 @@ const ItemLeftBox = styled.div`
 `;
 
 
-/* 선택 칩.
-   폭을 48% 로 못박아두면 "중고거래대행" 같은 긴 항목이 체크 아이콘을 밀어내고 잘렸다.
-   flex-basis 48% + min-width:min-content 로 바꿔서, 글자가 길면 칩이 스스로 넓어지고
-   한 줄에 둘이 안 들어가면 그 칩만 다음 줄을 통째로 쓴다. (형 리뷰 2026-08-12) */
+/* 선택 칩을 담는 2열 그리드.
+   전에는 space-between + flex-basis 48% + min-width:min-content 라
+   칩마다 폭이 제각각이고(1층 / 엘리베이터 있음) 마지막 홀수 칩이 혼자 늘어나
+   줄이 어긋나 보였다. 그리드로 바꿔 폭·높이를 딱 맞춘다. (형 리뷰 2026-08-12) */
+const SelectGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+  margin: 12px 0;
+`;
+
+/* 선택 칩 — 그리드 칸을 꽉 채운다. 글자가 길면 두 줄로 접히고 칸 높이는 줄끼리 같이 맞는다.
+   "홍여사가 준비해주세요" 처럼 한 어절이 칸보다 길면 keep-all 만으로는 글자가 칸 밖으로 삐져나갔다.
+   그럴 때만 어절 안에서도 줄을 바꾸게 한다. (형 리뷰 2026-08-12) */
 const SelectLayer = styled.div`
   box-sizing: border-box;
-  flex: 0 1 48%;
-  min-width: min-content;
-  max-width: 100%;
-  margin: 5px 0px;
-  padding: 8px 10px;
-  border: ${({check}) => check == true ? ('1.5px solid #FF4E19') : ('1px solid #E3E3E3')};
-  background: ${({check}) => check == true ? ('#FFF5F0') : ('#fff')};
-  color: ${({check}) => check == true ? ('#FF4E19') : ('#131313')};
-  font-weight: ${({check}) => check == true ? (700) : (500)};
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 10px 8px;
+  border: ${({$check}) => $check == true ? ('1.5px solid #FF4E19') : ('1px solid var(--border)')};
+  background: ${({$check}) => $check == true ? ('#FFF5F0') : ('#fff')};
+  color: ${({$check}) => $check == true ? ('#FF4E19') : ('#131313')};
+  font-weight: ${({$check}) => $check == true ? (700) : (500)};
   border-radius: 10px;
   font-size: 15px;
   text-align: center;
@@ -150,6 +163,25 @@ const SelectLayer = styled.div`
   transition: all .12s ease;
   word-break: keep-all;
   &:active { transform: scale(0.97); }
+`;
+
+/* 답변 밑의 수정 — 눌리는 게 분명하도록 버튼 모양으로 (형 리뷰 2026-08-12) */
+const AdjustBtn = styled.button`
+  margin: 8px 10px 0 0;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  background: var(--surface);
+  color: #555;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  &:active { background: #F5F5F5; }
 `;
 
 const ItemRightLayer = styled.div`
@@ -185,8 +217,8 @@ const RegistHeader = styled.div`
   z-index: 5;
   width: 100%;
   box-sizing: border-box;
-  background: #fff;
-  border-bottom: 1px solid #F0F0F0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
   padding: 18px 20px 16px;
   display: flex;
   flex-direction: column;
@@ -212,8 +244,8 @@ const ProgressLayer = styled.div`
   top: 0;
   z-index: 5;
   width: 100%;
-  background: #fff;
-  border-bottom: 1px solid #F0F0F0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
   padding: 12px 20px 14px;
   box-sizing: border-box;
   display: flex;
@@ -240,7 +272,7 @@ const ProgressFill = styled.div`
 const ProgressLayerText = styled.div`
   font-size: 15px;
   font-weight: 600;
-  color: #131313;
+  color: var(--text);
 `
 
 export const StyledCalendarWrapper = styled.div`
@@ -323,14 +355,14 @@ const OptionCard = styled.div`
   box-sizing: border-box;
   border: 1px solid #E6E6E6;
   border-radius: 12px;
-  background: #FAFAFA;
+  background: var(--bg-soft);
   padding: 14px 16px;
   margin-top: 14px;
 `
 const OptionTitle = styled.div`
   font-size: 16px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   margin-bottom: 10px;
 `
 const OptionRow = styled.div`
@@ -344,7 +376,7 @@ const OptionRow = styled.div`
 const OptionLabel = styled.div`
   font-size: 15px;
   font-weight: 600;
-  color: #131313;
+  color: var(--text);
 `
 const OptionDesc = styled.div`
   font-size: 13px;
@@ -366,7 +398,7 @@ const Knob = styled.div`
   width: 24px;
   height: 24px;
   border-radius: 100px;
-  background: #fff;
+  background: var(--surface);
   transform: translateX(${({ $on }) => ($on ? '20px' : '0')});
   transition: transform 0.18s ease;
 `
@@ -382,26 +414,32 @@ const ResultContent2 = {
   border:"none",
  
 }
+/* 요청 내용 입력칸.
+   260x88 에 글자 14px 이라 두 줄만 써도 답답했다. 폭을 카드에 맞추고 높이를 키웠다.
+   글자 16px 은 iOS 에서 입력할 때 화면이 확대되는 걸 막아준다. (형 리뷰 2026-08-12) */
 const CommentContent = {
-  width: '260px',
-  height: '88px',
-  fontSize: '14px',
+  width: '100%',
+  boxSizing: 'border-box',
+  minHeight: '132px',
+  fontSize: '16px',
   fontFamily: 'Pretendard-Regular',
-  lineHeight: 2,
+  lineHeight: 1.6,
+  padding: '12px 14px',
   outline:"none",
   resize :"none",
-  border:"1px solid #E3E3E3",
+  border:"1px solid var(--border)",
+  borderRadius: '10px',
 }
 const DayBtn = styled.div`
   height: 34px;
   width: 58px;
   border-radius: 5px;
-  background: #fff;
+  background: var(--surface);
   display: flex;
   justify-content: center;
   align-items: center;
   border: ${({$enable}) => $enable == true ? ('1px solid #F75100') : ('1px solid #C3C3C3')};
-  color: #131313;
+  color: var(--text);
 
 `
 
@@ -490,6 +528,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
   /* 연락 옵션 — 켠 사람의 일감에만 상세에서 보이스톡 버튼이 뜬다 (형 리뷰 2026-08-12) */
   const [voicetalk, setVoicetalk] = useState(false);
+  /* 참고 사진 (형 리뷰 2026-08-12) — 올린 뒤의 URL 목록 */
+  const [photos, setPhotos] = useState([]);
 
   const useCommentRef= useRef(null);
   const useCompleteRef = useRef(null);
@@ -755,74 +795,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     if(messages[index +2].type == 'requestregion'){
       
-      new Promise(resolve => setTimeout(resolve, 2000)).then(()=>{
-
-        console.log("TCL: _handleNext -> ",messages[index +2], user );
-
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-        mapOption = { 
-              center: new kakao.maps.LatLng(user.latitude, user.longitude), // 지도의 중심좌표
-              level: 5, // 지도의 확대 레벨
-              zoomable: false, // 확대/축소 비활성화
-        };
-    
-        var map = new kakao.maps.Map(mapContainer, mapOption);
-
-        var imageSrc = imageDB.movegps; // 마커 이미지의 URL
-        var imageSize = new kakao.maps.Size(64, 69); // 마커 이미지의 크기
-        var imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커의 좌표에 일치시킬 이미지 안의 좌표
-    
-        // 마커 이미지를 생성합니다
-        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-        const markerPosition = new window.kakao.maps.LatLng(user.latitude, user.longitude);
-
-        const marker = new window.kakao.maps.Marker({
-          position: markerPosition,
-          image: markerImage // 마커 이미지 설정
-        });
-    
-        // 마커를 지도 위에 표시
-        marker.setMap(map);
-        const geocoder = new kakao.maps.services.Geocoder();
-        // 좌표로 주소를 검색
-        geocoder.coord2Address(user.longitude, user.latitude, (result, status) => {
-          if (status === kakao.maps.services.Status.OK) {
-            const address = result[0].address.address_name;
-            setLatitude(user.latitude);
-            setLongitude(user.longitude)
-            setAddress(address);
-          } else {
-            console.error('주소를 찾을 수 없습니다.');
-          }
-        });
-      
-
-  
-        kakao.maps.event.addListener(map, 'click', (mouseEvent) => {
-
-          const latlng = mouseEvent.latLng; // 클릭한 위치의 위도와 경도 정보
-
-          // Geocoder 객체 생성
-          const geocoder = new kakao.maps.services.Geocoder();
-
-
-          // 좌표로 주소를 검색
-          geocoder.coord2Address(latlng.getLng(), latlng.getLat(), (result, status) => {
-            if (status === kakao.maps.services.Status.OK) {
-              const address = result[0].address.address_name;
-              setLatitude(latlng.getLat());
-              setLongitude(latlng.getLng())
-              setAddress(address);
-            } else {
-              console.error('주소를 찾을 수 없습니다.');
-            }
-          });
-
-          marker.setPosition(latlng);
-          setRefresh((refresh) => refresh +1);
-    
-        });
-      });
+      drawRegionMap();
     }
 
     window.scrollTo({
@@ -863,18 +836,44 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
       || type == ROOMSIZE.LARGE
       || type == ROOMSIZE.EXLARGE
       ){
-      useCompleteRef.current.scrollIntoView({
+      useCompleteRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
       });
     }else{
-      useCommentRef.current.scrollIntoView({
+      useCommentRef.current?.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
       });
     }
  
 
+  }
+
+  /**
+   * 요청 내용 입력칸을 눌렀을 때 (형 리뷰 2026-08-12)
+   *
+   * 모바일 키보드가 올라오면 화면 아래 절반을 덮는다. 입력칸이 그 밑에 깔리면
+   * 자기가 뭘 쓰는지 안 보인다. visualViewport 로 실제 보이는 높이를 받아
+   * 입력칸이 그 안에 들어오게 올려준다. (없는 브라우저는 가운데로 스크롤)
+   */
+  const _handleCommentFocus = (e) =>{
+    const el = e.target;
+    const bring = () =>{
+      const vv = window.visualViewport;
+      if(!vv){
+        el.scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      const bottomLimit = vv.height - 16;          // 키보드 위 남은 영역
+      if(rect.bottom > bottomLimit){
+        window.scrollBy({ top: rect.bottom - bottomLimit, behavior:'smooth' });
+      }
+    }
+    // 키보드가 올라오는 동안 높이가 바뀌므로 조금 기다렸다 두 번 맞춘다
+    setTimeout(bring, 200);
+    setTimeout(bring, 550);
   }
 
   /**
@@ -987,7 +986,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     setRefresh((refresh) => refresh +1);
 
     await useSleep(500);
-    useCompleteRef.current.scrollIntoView({
+    useCompleteRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
     });
@@ -1017,76 +1016,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     if(messages[index +2].type == 'requestregion'){
       
-      new Promise(resolve => setTimeout(resolve, 2000)).then(()=>{
-
-        console.log("TCL: _handleNext -> ",messages[index +2], user );
-
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-        mapOption = { 
-              center: new kakao.maps.LatLng(user.latitude, user.longitude), // 지도의 중심좌표
-              level: 4, // 지도의 확대 레벨
-              zoomable: false, // 확대/축소 비활성화
-        };
-    
-        var map = new kakao.maps.Map(mapContainer, mapOption);
-
-  
-        var imageSrc = imageDB.movegps; // 마커 이미지의 URL
-        var imageSize = new kakao.maps.Size(64, 69); // 마커 이미지의 크기
-        var imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커의 좌표에 일치시킬 이미지 안의 좌표
-    
-        // 마커 이미지를 생성합니다
-        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-        const markerPosition = new window.kakao.maps.LatLng(user.latitude, user.longitude);
-
-        const marker = new window.kakao.maps.Marker({
-          position: markerPosition,
-          image: markerImage // 마커 이미지 설정
-        });
-    
-        // 마커를 지도 위에 표시
-        marker.setMap(map);
-
-
-        const geocoder = new kakao.maps.services.Geocoder();
-        // 좌표로 주소를 검색
-        geocoder.coord2Address(user.longitude, user.latitude, (result, status) => {
-          if (status === kakao.maps.services.Status.OK) {
-            const address = result[0].address.address_name;
-            setLatitude(user.latitude);
-            setLongitude(user.longitude)
-            setAddress(address);
-          } else {
-            console.error('주소를 찾을 수 없습니다.');
-          }
-        });
-
-  
-        kakao.maps.event.addListener(map, 'click', (mouseEvent) => {
-
-          const latlng = mouseEvent.latLng; // 클릭한 위치의 위도와 경도 정보
-
-          // Geocoder 객체 생성
-          const geocoder = new kakao.maps.services.Geocoder();
-
-
-          // 좌표로 주소를 검색
-          geocoder.coord2Address(latlng.getLng(), latlng.getLat(), (result, status) => {
-            if (status === kakao.maps.services.Status.OK) {
-              const address = result[0].address.address_name;
-              setLatitude(latlng.getLat());
-              setLongitude(latlng.getLng())
-              setAddress(address);
-            } else {
-              console.error('주소를 찾을 수 없습니다.');
-            }
-          });
-
-          marker.setPosition(latlng);
-          setRefresh((refresh) => refresh +1);
-    
-        });
-      });
+      drawRegionMap();
     }
 
 
@@ -1191,6 +1121,101 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
 
 
+  /**
+   * 지역 선택 단계의 지도 (형 리뷰 2026-08-12 "뒤에 흰색은 뭔지 모르겠음").
+   *
+   * 전에는 특정 '다음' 버튼 안에서만 지도를 만들었다. 다른 경로로 이 단계에 오면
+   * 지도가 안 그려져 270x320 흰 박스만 남았다. 이제 이 단계가 화면에 뜨면 항상 그린다.
+   * 카카오 SDK 가 아직 안 올라왔을 수 있어 준비를 기다린 뒤에 만든다.
+   */
+  const regionMapRef = useRef(null);
+  const drawRegionMap = async () =>{
+    if(regionMapRef.current) return;          // 이미 그렸으면 다시 만들지 않는다
+    regionMapRef.current = 'pending';
+    try{
+      if(!(await ensureKakao())) { console.warn('[regist] 카카오 지도를 불러오지 못했습니다'); regionMapRef.current = null; return; }
+      let mapContainer = null;
+      for(let t=0; t<40 && !mapContainer; t++){
+        mapContainer = document.getElementById('map');
+        if(!mapContainer) await new Promise(r => setTimeout(r, 100));
+      }
+      if(!mapContainer) { console.warn('[regist] 지도 자리를 찾지 못했습니다'); regionMapRef.current = null; return; }
+
+        var mapOption = {
+              center: new kakao.maps.LatLng(user.latitude, user.longitude), // 지도의 중심좌표
+              level: 5, // 지도의 확대 레벨
+              zoomable: false, // 확대/축소 비활성화
+        };
+    
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        var imageSrc = imageDB.movegps; // 마커 이미지의 URL
+        var imageSize = new kakao.maps.Size(64, 69); // 마커 이미지의 크기
+        var imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커의 좌표에 일치시킬 이미지 안의 좌표
+    
+        // 마커 이미지를 생성합니다
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+        const markerPosition = new window.kakao.maps.LatLng(user.latitude, user.longitude);
+
+        const marker = new window.kakao.maps.Marker({
+          position: markerPosition,
+          image: markerImage // 마커 이미지 설정
+        });
+    
+        // 마커를 지도 위에 표시
+        marker.setMap(map);
+        const geocoder = new kakao.maps.services.Geocoder();
+        // 좌표로 주소를 검색
+        geocoder.coord2Address(user.longitude, user.latitude, (result, status) => {
+          if (status === kakao.maps.services.Status.OK) {
+            const address = result[0].address.address_name;
+            setLatitude(user.latitude);
+            setLongitude(user.longitude)
+            setAddress(address);
+          } else {
+            console.error('주소를 찾을 수 없습니다.');
+          }
+        });
+      
+
+  
+        kakao.maps.event.addListener(map, 'click', (mouseEvent) => {
+
+          const latlng = mouseEvent.latLng; // 클릭한 위치의 위도와 경도 정보
+
+          // Geocoder 객체 생성
+          const geocoder = new kakao.maps.services.Geocoder();
+
+
+          // 좌표로 주소를 검색
+          geocoder.coord2Address(latlng.getLng(), latlng.getLat(), (result, status) => {
+            if (status === kakao.maps.services.Status.OK) {
+              const address = result[0].address.address_name;
+              setLatitude(latlng.getLat());
+              setLongitude(latlng.getLng())
+              setAddress(address);
+            } else {
+              console.error('주소를 찾을 수 없습니다.');
+            }
+          });
+
+          marker.setPosition(latlng);
+          setRefresh((refresh) => refresh +1);
+    
+        });
+      regionMapRef.current = map;
+    }catch(e){
+      console.error('[regist] 지도 그리기 실패', e);
+      regionMapRef.current = null;
+    }
+  }
+
+  /* 어떤 경로로 오든 지역 선택 단계가 화면에 뜨면 지도를 그린다 (형 리뷰 2026-08-12) */
+  useEffect(()=>{
+    const shown = (messages || []).some((m)=> m && m.type == 'requestregion' && m.show == true);
+    if(shown) drawRegionMap();
+  }, [refresh]);
+
   const _handleReqComplete = async() =>{
 
     let workinfo = [];
@@ -1206,8 +1231,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
     const WORK_INFO = workinfo;
     const WORKTYPE = type;
     const WORK_OPTION = { VOICETALK : voicetalk };
+    const WORK_PHOTOS = photos;
 
-    const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO, WORK_OPTION});
+    const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO, WORK_OPTION, WORK_PHOTOS});
 
     setRegistWorkSuccess(true);
 
@@ -1364,7 +1390,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
           <ContentLayer>
           {
             messages.map((data, index) => (
-            <Fragment>
+            <Fragment key={index}>
             {("initialize" == data.type && data.show == true) && (
                 <Itemlayer width={'100%'} style={{marginTop:180}}>      
                   <ItemLeftBox width={'100%'}>
@@ -1382,9 +1408,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                       data.selected == false ?
                       (
                         <>
-                          <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                          <SelectGrid>
                           { data.selectitems.map((subdata)=>(
-                            <SelectLayer  check={subdata.selected} onClick={()=>{_handlecheck(index, subdata.key)}}>
+                            <SelectLayer  key={subdata.key} $check={subdata.selected} onClick={()=>{_handlecheck(index, subdata.key)}}>
                               <div>{subdata.request}</div>
                               {
                                 subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1392,7 +1418,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                               
                             </SelectLayer>
                           ))}
-                          </BetweenRow>
+                          </SelectGrid>
                           <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </>
                       ):(<span>{data.request}</span>)
@@ -1445,43 +1471,43 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                                 
            
 
-                                <DayBtn onClick={()=>{_handleWeekDate('일')}} enable ={FindDay('일')} >
+                                <DayBtn onClick={()=>{_handleWeekDate('일')}} $enable ={FindDay('일')} >
                                   일
                                   {
                                     FindDay('일') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
                                   }
                                 </DayBtn>
-                                <DayBtn onClick={()=>{_handleWeekDate('월')}} enable ={FindDay('월')}>
+                                <DayBtn onClick={()=>{_handleWeekDate('월')}} $enable ={FindDay('월')}>
                                   월
                                   {
                                     FindDay('월') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
                                   }
                                 </DayBtn>
-                                <DayBtn onClick={()=>{_handleWeekDate('화')}}  enable ={FindDay('화')} >
+                                <DayBtn onClick={()=>{_handleWeekDate('화')}}  $enable ={FindDay('화')} >
                                   화
                                   {
                                     FindDay('화') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
                                   }
                                 </DayBtn>     
-                                <DayBtn onClick={()=>{_handleWeekDate('수')}}  enable ={FindDay('수')} >
+                                <DayBtn onClick={()=>{_handleWeekDate('수')}}  $enable ={FindDay('수')} >
                                   수
                                   {
                                     FindDay('수') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
                                   }
                                 </DayBtn>  
-                                <DayBtn onClick={()=>{_handleWeekDate('목')}}  enable ={FindDay('목')} >
+                                <DayBtn onClick={()=>{_handleWeekDate('목')}}  $enable ={FindDay('목')} >
                                   목
                                   {
                                     FindDay('목') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
                                   }
                                 </DayBtn>  
-                                <DayBtn onClick={()=>{_handleWeekDate('금')}}  enable ={FindDay('금')} >
+                                <DayBtn onClick={()=>{_handleWeekDate('금')}}  $enable ={FindDay('금')} >
                                   금
                                   {
                                     FindDay('금') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
                                   }
                                 </DayBtn>  
-                                <DayBtn onClick={()=>{_handleWeekDate('토')}}  enable ={FindDay('토')} >
+                                <DayBtn onClick={()=>{_handleWeekDate('토')}}  $enable ={FindDay('토')} >
                                   토
                                   {
                                     FindDay('토') == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1513,9 +1539,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                     <span>{data.info}</span> 
                     
                     <span>{'청소대상'}</span> 
-                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      <SelectGrid>
                       { data.targetpositionselectitems.map((subdata)=>(
-                        <SelectLayer  check={subdata.selected} onClick={()=>{_handletargetpostioncheck(index, subdata.key)}}>
+                        <SelectLayer  key={subdata.key} $check={subdata.selected} onClick={()=>{_handletargetpostioncheck(index, subdata.key)}}>
                           <div>{subdata.request}</div>
                           {
                             subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1523,11 +1549,11 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                           
                         </SelectLayer>
                       ))}
-                      </BetweenRow>
+                      </SelectGrid>
                       <span>{'청소범위'}</span> 
-                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      <SelectGrid>
                       { data.targetareaselectitems.map((subdata)=>(
-                        <SelectLayer  check={subdata.selected} onClick={()=>{_handletargetareacheck(index, subdata.key)}}>
+                        <SelectLayer  key={subdata.key} $check={subdata.selected} onClick={()=>{_handletargetareacheck(index, subdata.key)}}>
                           <div>{subdata.request}</div>
                           {
                             subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1535,7 +1561,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                           
                         </SelectLayer>
                       ))}
-                      </BetweenRow>
+                      </SelectGrid>
 
                       <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTargetNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                     
@@ -1553,9 +1579,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                     <span>{data.info}</span> 
                     
                
-                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      <SelectGrid>
                       { data.timeselectitems.map((subdata)=>(
-                        <SelectLayer  check={subdata.selected} onClick={()=>{_handletimecheck(index, subdata.key)}}>
+                        <SelectLayer  key={subdata.key} $check={subdata.selected} onClick={()=>{_handletimecheck(index, subdata.key)}}>
                           <div>{subdata.request}</div>
                           {
                             subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1563,11 +1589,11 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                           
                         </SelectLayer>
                       ))}
-                      </BetweenRow>
+                      </SelectGrid>
                       <span>{'대상'}</span> 
-                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      <SelectGrid>
                       { data.moneyselectitems.map((subdata)=>(
-                        <SelectLayer  check={subdata.selected} onClick={()=>{_handlemoneycheck(index, subdata.key)}}>
+                        <SelectLayer  key={subdata.key} $check={subdata.selected} onClick={()=>{_handlemoneycheck(index, subdata.key)}}>
                           <div>{subdata.request}</div>
                           {
                             subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1575,7 +1601,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                           
                         </SelectLayer>
                       ))}
-                      </BetweenRow>
+                      </SelectGrid>
 
                       <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTimeMoneyNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                     
@@ -1592,9 +1618,9 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                     <span>{data.info}</span> 
                     
                
-                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      <SelectGrid>
                       { data.helpgenderselectitems.map((subdata)=>(
-                        <SelectLayer  check={subdata.selected} onClick={()=>{_handlehelpgendercheck(index, subdata.key)}}>
+                        <SelectLayer  key={subdata.key} $check={subdata.selected} onClick={()=>{_handlehelpgendercheck(index, subdata.key)}}>
                           <div>{subdata.request}</div>
                           {
                             subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1602,11 +1628,11 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                           
                         </SelectLayer>
                       ))}
-                      </BetweenRow>
+                      </SelectGrid>
                       <span>{'대상'}</span> 
-                      <BetweenRow top={5} style={{flexWrap:'wrap', margin: '10px 0px'}}>
+                      <SelectGrid>
                       { data.helpageselectitems.map((subdata)=>(
-                        <SelectLayer  check={subdata.selected} onClick={()=>{_handlehelpagecheck(index, subdata.key)}}>
+                        <SelectLayer  key={subdata.key} $check={subdata.selected} onClick={()=>{_handlehelpagecheck(index, subdata.key)}}>
                           <div>{subdata.request}</div>
                           {
                             subdata.selected == true ? (<div style={{paddingLeft:10}}><img src={imageDB.enablecheck} style={{width:"16px", hieght:"14px"}}/></div>):(<div style={{paddingLeft:10}}><img src={imageDB.check_d} style={{width:"16px", hieght:"14px"}}/></div>)
@@ -1614,7 +1640,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                           
                         </SelectLayer>
                       ))}
-                      </BetweenRow>
+                      </SelectGrid>
 
                       <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleHelpNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                     
@@ -1645,18 +1671,19 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {("requestcomment" == data.type && data.show == true) && (
             <div className="fade-in-bottom" style={{width:"100%"}} ref={useCommentRef}>
                     <Itemlayer width={'90%'}>
-                    <ItemLeftBox style={{width:"100%", height:"180px"}}>
+                    {/* 입력칸이 absolute 로 카드 밖에 떠 있어서 좁고 잘렸다 — 그냥 흐름 안에 둔다 (형 리뷰 2026-08-12) */}
+                    <ItemLeftBox style={{width:"100%"}}>
                       <span>{data.info}</span>
-                      <div style={{marginTop:35, height:200, position:"absolute",  top: '30px'}}>
-                        <textarea maxlength={40} style={CommentContent} value={comment}  onChange={(e) => {setComment(e.target.value);}}
-                        placeholder={'필수입력사항아님. 40자 이내로 입력'}
+                      <div style={{marginTop:12, width:'100%'}}>
+                        <textarea maxLength={40} style={CommentContent} value={comment}  onChange={(e) => {setComment(e.target.value);}}
+                        onFocus={_handleCommentFocus}
+                        placeholder={'필수 입력은 아니에요. 40자 이내로 적어주세요'}
                         />
                         <Row>
-      
-                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleCommentNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleCommentNext(index)}} height={'46px'} width={'100%'} radius={'8px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
                         </Row>
                       </div>
-                    </ItemLeftBox>  
+                    </ItemLeftBox>
                   </Itemlayer>  
             </div>
             )}
@@ -1687,8 +1714,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
              
                       <tbody>
                         {
-                          messages.map((data)=>(
-                            <>
+                          messages.map((data, ridx)=>(
+                            <Fragment key={ridx}>
                             {
                             data.type =='response' &&
                             <tr>
@@ -1700,7 +1727,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                               ) :(<div>
                                 {
                                   data.requesttype == REQUESTINFO.COMMENT ? (
-                                    <textarea style={ResultContent2} value={data.result}/>):(
+                                    <textarea style={ResultContent2} value={data.result} readOnly/>):(
                                     <div> {data.result}</div>
                                   )
                                 }
@@ -1709,11 +1736,18 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                             </td>
                             </tr>
                             }
-                            </>                  
+                            </Fragment>                  
                           ))
                         }
                       </tbody>
                     </table>
+                    {/* 참고 사진 — 등록 마지막에 물어본다 (형 리뷰 2026-08-12) */}
+                    <OptionCard>
+                      <OptionTitle>참고할 만한 사진이 있나요?</OptionTitle>
+                      <OptionDesc style={{marginTop:0}}>없으면 넘어가셔도 됩니다. 사진이 있으면 홍여사가 상황을 훨씬 빨리 파악합니다.</OptionDesc>
+                      <WorkPhotoPicker photos={photos} onChange={(next)=>{ setPhotos(next); setRefresh((refresh)=> refresh +1); }} />
+                    </OptionCard>
+
                     <OptionCard>
                       <OptionTitle>연락 옵션</OptionTitle>
                       <OptionRow onClick={()=>{ setVoicetalk((v)=> !v); setRefresh((refresh)=> refresh +1); }}>
@@ -1745,7 +1779,10 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                         <ItemRightBox><span>{data.result}</span>
                         <img src={imageDB.enablecheck} style={{width:"16px", hieght:"16px", marginLeft:5}}/>
                         </ItemRightBox>
-                        <Row onClick={()=>{_handleAdjust(index)}} style={{textDecoration:"underline", marginTop:10, marginRight:10}}> 수정</Row>
+                        {/* 밑줄 글자라 눌리는 줄 몰랐다 — 버튼으로 (형 리뷰 2026-08-12) */}
+                        <AdjustBtn onClick={()=>{_handleAdjust(index)}}>
+                          <PiPencilSimpleBold size={14}/>수정
+                        </AdjustBtn>
                    </ItemRightLayer>
                    </ResponseContainer>
                   </div>

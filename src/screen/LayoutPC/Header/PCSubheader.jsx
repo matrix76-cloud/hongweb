@@ -25,7 +25,7 @@ import { GoPlus } from "react-icons/go";
 
 const PCHeader = styled.div`
   text-align: center;
-  background-color: #fff;
+  background-color: var(--surface);
   display: flex;
   flex-direction: column;
   z-index: 2;
@@ -39,8 +39,8 @@ const Container = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #fafafa;
-  border-top: 1px solid #f0f0f0;
+  background-color: var(--bg-soft);
+  border-top: 1px solid var(--border-soft);
   padding:20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, .06);
 `;
@@ -95,9 +95,9 @@ const TwoContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--surface);
   z-index: 5;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-soft);
   height: 80px;
   justify-content: center;
 `;
@@ -112,7 +112,7 @@ const LoginBtn = styled.div`
 
 const Inputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '100%',
   borderRadius:'5px',
   fontSize:'16px',

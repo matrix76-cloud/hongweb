@@ -48,7 +48,7 @@ export async function captureViaHtml2canvas(iframeEl, pins) {
     const doc = iframeEl.contentDocument;
     const win = iframeEl.contentWindow;
     base = await html2canvas(doc.body, {
-      useCORS: true, allowTaint: false, backgroundColor: '#ffffff', logging: false,
+      useCORS: true, allowTaint: false, backgroundColor: 'var(--surface)', logging: false,
       width: w, height: h, windowWidth: w, windowHeight: h,
       x: (win && win.scrollX) || 0, y: (win && win.scrollY) || 0, scale: 1,
     });

@@ -57,7 +57,7 @@ const Box = styled.div`
 
 `
 const BoxImg = styled.div`
-  background: #f9f9f9;
+  background: var(--bg-soft);
   border-radius: 100px;
   border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
   padding: 10px;
@@ -164,7 +164,7 @@ const MobileWorkregistercontainer =({containerStyle}) =>  {
     <>
       <Container style={containerStyle}>
 
-        <Column style={{ backgroundColor:"#fff", height:"95%"}}>
+        <Column style={{ backgroundColor:"var(--surface)", height:"95%"}}>
           <TitleLayer><Title>홍여사에 요청할 일감 유형을 선택해 주세요</Title></TitleLayer>
           <Row style={{flexWrap:"wrap", margin:"5px 10px"}}>
             {

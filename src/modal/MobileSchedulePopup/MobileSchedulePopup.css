@@ -2,7 +2,7 @@
 
 .chatCalendar .react-calendar {
   width: 100%;
-  border: 1px solid #EDEDED;
+  border: 1px solid var(--border-soft);
   border-radius: 12px;
   padding: 8px;
   font-family: inherit;
@@ -17,7 +17,7 @@
 .chatCalendar .react-calendar__navigation button {
   font-size: 15px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   background: none;
 }
 
@@ -60,13 +60,13 @@
 .chatCalendar .react-calendar__tile--hasActive:enabled:hover,
 .chatCalendar .react-calendar__tile--hasActive:enabled:focus {
   background: #FFF0EA;
-  color: #131313;
+  color: var(--text);
 }
 
 .chatCalendar .react-calendar__navigation button:enabled:hover,
 .chatCalendar .react-calendar__navigation button:enabled:focus,
 .chatCalendar .react-calendar__navigation button:disabled {
-  background: #fff;
+  background: var(--surface);
 }
 
 .chatCalendar .react-calendar__month-view__days__day--weekend {

@@ -26,7 +26,7 @@ const Container = styled.div`
   height: calc(100vh + 1px);
   overflow-y: auto;
   padding: 30px 30px;
-  background-color: #fff;
+  background-color: var(--surface);
   box-sizing: border-box;
 `;
 
@@ -45,7 +45,7 @@ const Input = styled.input`
   font-size: ${() => getFontSize(15)}px !important;
   border-radius: 8px;
   border: 1px solid #ccc;
-  background : #fff;
+  background : var(--surface);
 `;
 
 const Textarea = styled.textarea`
@@ -311,7 +311,7 @@ const AIButton = styled.button`
   width :100%;
   margin : 5px auto;
   border: 1px solid #ddd;
-  background: #f9f9f9;
+  background: var(--bg-soft);
   border-radius: 6px;
   color: #1a8f5c;
   cursor: pointer;
@@ -324,7 +324,7 @@ const AIButton = styled.button`
 `;
 
 const WhiteOutlineButton = styled.button`
-  background-color: #fff;
+  background-color: var(--surface);
   color: #333;
   font-family: Pretendard-Bold;
   font-size: ${() => getFontSize(15)}px;
@@ -337,7 +337,7 @@ const WhiteOutlineButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: #f9f9f9;
+    background-color: var(--bg-soft);
     border-color: #bbb;
   }
 

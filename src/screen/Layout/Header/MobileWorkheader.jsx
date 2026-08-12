@@ -56,7 +56,7 @@ const MobileWorkheader = ({callback, image,name}) => {
       style={{
         zIndex: 999,
         position: "fixed",
-        background: "#fff",
+        background: "var(--surface)",
         width: "100%",
         height: "50px",
         display: "flex",
@@ -65,14 +65,14 @@ const MobileWorkheader = ({callback, image,name}) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        borderBottom: "1px solid #ededed",
+        borderBottom: "1px solid var(--border-soft)",
         fontFamily:"Pretendard-SemiBold",
   
       }}
     >
 
 
-      <div style={{paddingLeft:15, display:"flex", fontWeight:700, fontSize:'16px', color:"#131313", alignItems:"center"}}>
+      <div style={{paddingLeft:15, display:"flex", fontWeight:700, fontSize:'16px', color:"var(--text)", alignItems:"center"}}>
         <img src={Seekimage(image)} style={{width:32}}/>
         <div style={{paddingLeft:10}}>{name}</div>
       </div>

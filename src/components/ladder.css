@@ -275,7 +275,7 @@ z-index: 15; }
     position: static;
     /* ✅ 절대 위치 제거 */
     transform: none;
-    background: #fff;
+    background: var(--surface);
     border: none;
     padding: 4px 10px;
     border-radius: 6px;

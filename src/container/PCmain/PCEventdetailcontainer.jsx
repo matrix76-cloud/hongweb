@@ -94,7 +94,7 @@ console.log("TCL: PCEventdetailcontainer -> EVENTITEM", EVENTITEM)
 
   return (
     <Container style={containerStyle}>
-      <Column margin={'0px auto;'} width={'70%'} style={{background:"#fff"}} >
+      <Column margin={'0px auto;'} width={'70%'} style={{background:"var(--surface)"}} >
         <EventTitle>
           <div style={{marginTop:30}}>
             <EventProcessTag>진행중</EventProcessTag>

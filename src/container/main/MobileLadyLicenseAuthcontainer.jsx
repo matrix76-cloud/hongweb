@@ -22,7 +22,7 @@ import { imageDB } from "../../utility/imageData";
 
 
 const Container = styled.ul`
-  background: #fff;
+  background: var(--surface);
   display: flex;
   justify-content: center;
   align-items: center;

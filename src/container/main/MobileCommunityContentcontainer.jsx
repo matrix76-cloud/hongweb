@@ -77,7 +77,7 @@ const FlexMenu = styled.div`
 const Box = styled.div`
 
   background: ${({$clickstatus}) => $clickstatus == true ? ('#fff') :('#fff')};
-  color :  #131313;
+  color :  var(--text);
   font-size : 13px;
   font-family : 'Pretendard-Regular';
   font-weight:500;
@@ -94,7 +94,7 @@ const Box = styled.div`
   flex: 0 0 auto;
   margin-left: 2%;
   margin-bottom: 10px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-soft);
   border-radius: 10px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: box-shadow 0.3s ease;

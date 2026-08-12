@@ -27,7 +27,7 @@ const Container = styled.div`
   height: 100vh;
   padding-top: 50px;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--surface);
 `;
 
 const MapArea = styled.div`
@@ -78,11 +78,11 @@ const LabelPill = styled.div`
   gap: 6px;
   padding: 9px 16px;
   border-radius: 999px;
-  background: #fff;
+  background: var(--surface);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   font-size: 15px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -97,7 +97,7 @@ const CurrentBtn = styled.button`
   height: 46px;
   border: none;
   border-radius: 50%;
-  background: #fff;
+  background: var(--surface);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
@@ -110,7 +110,7 @@ const BottomBar = styled.div`
   display: flex;
   gap: 10px;
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border-soft);
 `;
 
 const GhostBtn = styled.button`
@@ -118,7 +118,7 @@ const GhostBtn = styled.button`
   height: 50px;
   border-radius: 12px;
   border: 1px solid #FF4E19;
-  background: #fff;
+  background: var(--surface);
   color: #FF4E19;
   font-size: 16px;
   font-weight: 700;

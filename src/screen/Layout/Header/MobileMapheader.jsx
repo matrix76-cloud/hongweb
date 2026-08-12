@@ -76,7 +76,7 @@ const MobileMapheader = ({callback, image,name}) => {
       style={{
         zIndex: 999,
         position: "fixed",
-        background: "#fff",
+        background: "var(--surface)",
         width: "100%",
         height: "50px",
         display: "flex",
@@ -85,7 +85,7 @@ const MobileMapheader = ({callback, image,name}) => {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
-        borderBottom: "1px solid #ededed",
+        borderBottom: "1px solid var(--border-soft)",
         fontFamily: 'Pretendard-SemiBold',
   
       }}
@@ -98,7 +98,7 @@ const MobileMapheader = ({callback, image,name}) => {
 
       {/* 화살표(>)와 닫기(X) 제거 — 지도는 하단 탭 화면이라 뒤로 갈 곳이 탭이다 (형 리뷰 2026-08-12).
           위치 변경은 지역명 자체를 누르면 된다. */}
-      <div style={{paddingLeft:20, width:'100%', display:"flex", color:"#131313",
+      <div style={{paddingLeft:20, width:'100%', display:"flex", color:"var(--text)",
       fontSize:"17px", justifyContent:"flex-start", alignItems:"center",
       fontWeight:600, gap:8, cursor:"pointer"}} onClick={_handlemapreconfig}>
         <img src={imageDB.mappin} style={{width:20, height:20}}/>

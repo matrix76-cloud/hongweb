@@ -17,7 +17,7 @@ const style = {
 };
 
 const ImageLayout = styled.div`
-    background: #fff;
+    background: var(--surface);
     height: 50px;
     border-radius: 50px;
     width: 50px;
@@ -27,7 +27,7 @@ const ImageLayout = styled.div`
    
 `
 const ImageLayout2 = styled.div`
-    background: #fff;
+    background: var(--surface);
     height: 50px;
     border-radius: 50px;
     width: 50px;

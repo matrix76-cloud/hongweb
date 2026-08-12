@@ -19,19 +19,25 @@ import MobileProfileName from "../../components/config/profile/MobileProfileName
 import MobileMyWork from "../../components/config/activity/MobileMyWork";
 import { WORKSTATUS } from "../../utility/status";
 import MobileSearchRange from "../../components/config/activity/MobileSearchRange";
+import MobileNotiSetting from "../../components/config/activity/MobileNotiSetting";
+import MobileThemeSetting from "../../components/config/activity/MobileThemeSetting";
+import MobileFavoriteWork from "../../components/config/activity/MobileFavoriteWork";
+import MobileDealList from "../../components/config/activity/MobileDealList";
+import MobilePayList from "../../components/config/money/MobilePayList";
+import MobileSupport from "../../components/config/support/MobileSupport";
 
 
 
 
 const Container = styled.div`
   padding-top:55px;
-  background-color : #f9f9f9;
+  background-color : var(--bg-soft);
 
 
 `
 const BoxItem = styled.div`
 
-  background: #fff;
+  background: var(--surface);
   color: rgb(0, 0, 0);
   display: flex;
   flex-direction : column;
@@ -46,7 +52,7 @@ const Name = styled.div`
   padding-left:5px;
 `
 const ProfileConfigBtn = styled.div`
-  background: #f9f9f9;
+  background: var(--bg-soft);
   padding: 10px;
   font-family: 'Pretendard-SemiBold';
   font-size: 12px;
@@ -129,6 +135,46 @@ const MobileConfigContentcontainer =({containerStyle, name}) =>  {
 
         {
           name == CONFIGMOVE.SEARCHRANGE && <MobileSearchRange/>
+        }
+
+        {
+          name == CONFIGMOVE.NOTISETTING && <MobileNotiSetting/>
+        }
+
+        {
+          name == CONFIGMOVE.THEMESETTING && <MobileThemeSetting/>
+        }
+
+        {
+          name == CONFIGMOVE.FAVORITEWORK && <MobileFavoriteWork/>
+        }
+
+        {
+          name == CONFIGMOVE.DEALOPEN && <MobileDealList done={false}/>
+        }
+
+        {
+          name == CONFIGMOVE.DEALDONE && <MobileDealList done={true}/>
+        }
+
+        {
+          name == CONFIGMOVE.PAY && <MobilePayList kind={'pay'}/>
+        }
+
+        {
+          name == CONFIGMOVE.DEPOSIT && <MobilePayList kind={'deposit'}/>
+        }
+
+        {
+          name == CONFIGMOVE.SUPPORT && <MobileSupport kind={'support'}/>
+        }
+
+        {
+          name == CONFIGMOVE.FAQ && <MobileSupport kind={'faq'}/>
+        }
+
+        {
+          name == CONFIGMOVE.ABOUT && <MobileSupport kind={'about'}/>
         }
         {
           name == CONFIGMOVE.MYWORK && <MobileMyWork status={WORKSTATUS.OPEN}/>

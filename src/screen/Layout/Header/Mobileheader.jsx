@@ -9,6 +9,7 @@ import { GoPlus } from "react-icons/go";
 import { MOBILEMAINMENU } from "../../../utility/screen";
 import { regionLabel } from "../../../utility/geo";
 import { FaChevronRight } from "react-icons/fa6";
+import { PiMegaphoneBold } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { useSleep } from "../../../utility/common";
 import localforage from 'localforage';
@@ -95,6 +96,11 @@ const Mobileheader = ({callback, registbtn, name}) => {
     setRefresh((refresh) => refresh +1);
   }
 
+  /* 공지사항 (형 리뷰 2026-08-12) */
+  const _handleNotice = () =>{
+    navigation("/Mobilenotice");
+  }
+
 
 /**
  * 마우스를 움직일때 사라지고 없어지고 한다
@@ -124,7 +130,7 @@ useEffect(() => {
       style={{
         zIndex: 999,
         position: "fixed",
-        background: "#fff",
+        background: "var(--surface)",
         width: "100%",
         height: "50px",
         display: "flex",
@@ -141,7 +147,7 @@ useEffect(() => {
 
      
 
-        <div style={{marginLeft:15, display:"flex",color:"#131313", fontSize:"16px",
+        <div style={{marginLeft:15, display:"flex",color:"var(--text)", fontSize:"16px",
         display:"flex", justifyContent:"flex-start", alignItems:"center",fontFamily:"Pretendard-SemiBold",
         fontWeight:400}}>
           <img src={imageDB.logo} style={{width:28, height:28}}/>
@@ -170,7 +176,9 @@ useEffect(() => {
         <div style={{display:"flex", flexDirection:"row", alignItems:"center",paddingRight:20}} >
 
         {/* 채팅 아이콘·알림 배지 제거 — 하단 탭에 채팅이 이미 있고 배지 숫자는 가짜였다 (형 리뷰 2026-08-12) */}
-        <img src={imageDB.search} width={24} onClick={_handleAI} style={{paddingRight:10}}/>
+        <img src={imageDB.search} width={24} onClick={_handleAI} style={{paddingRight:14, cursor:"pointer"}}/>
+        {/* 공지사항 (형 리뷰 2026-08-12) */}
+        <PiMegaphoneBold size={23} color="#131313" onClick={_handleNotice} style={{cursor:"pointer"}} aria-label="공지사항"/>
         </div>
     
 

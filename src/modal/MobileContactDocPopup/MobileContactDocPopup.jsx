@@ -87,7 +87,7 @@ const IconCloseView = styled.div`
 const MainData = styled.div`
   display :flex;
   flex-direction:column;
-  background-color : #fff;
+  background-color : var(--surface);
   flex-wrap : wrap;
   margin: 0 auto;
   width:100%;
@@ -115,14 +115,14 @@ const HeaderPopupline = styled.div`
 const InfoBox = styled.div`
   font-size: 14px;
   margin: 15px 0px 5px;
-  background: #f9f9f9;
+  background: var(--bg-soft);
   margin: 10px auto;
   width: 85%;
   padding: 10px;
   text-align: left;
   line-height: 2;
   border-radius: 10px;
-  color: #131313;
+  color: var(--text);
 
 `
 const ResultContent = {
@@ -134,7 +134,7 @@ const ResultContent = {
   resize :"none",
   border :'none',
   borderRadius:'5px',
-  backgroundColor:"#fff",
+  backgroundColor:"var(--surface)",
   marginLeft:10
 
 }
@@ -142,7 +142,7 @@ const ResultContent = {
 const SignLine = styled.div`
   width: 100px;
   height: 70px;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid var(--border-soft);
   display:flex;
   justify-content:center;
   align-items:center;
@@ -155,7 +155,7 @@ const InputContent = {
   margin:'0px auto',
   border :'1px solid #dadada',
   borderRadius: '5px',
-  backgroundColor :'#fff',
+  backgroundColor :'var(--surface)',
   fontFamily: 'Pretendard-Light',
   flex: '0 0 auto',
 }
@@ -266,7 +266,7 @@ export default function MobileContactDoc({callback, messages, WORKTYPE, OWNER, W
               <HeaderPopupline/>
             </Row>
             <BetweenRow style={{width:"80%", margin: "20px auto", }}>
-                <div style={{fontSize:"18px", fontWeight:900, color:"#131313", fontFamily:'Pretendard-SemiBold'}}>홍여사 계약서 작성</div>
+                <div style={{fontSize:"18px", fontWeight:900, color:"var(--text)", fontFamily:'Pretendard-SemiBold'}}>홍여사 계약서 작성</div>
                 <IconCloseView onClick={handleClose} >
                 <img src={imageDB.close} style={{width:"22px", height:"22px"}}/>
                 </IconCloseView>

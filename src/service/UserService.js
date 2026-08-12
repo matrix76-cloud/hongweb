@@ -2,6 +2,10 @@ import { db, auth, storage, firebaseConfig, firebaseApp } from '../api/config';
 import { collection, getDocs, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy, arrayUnion } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPhoneNumber, signOut, updateProfile } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { imageDB } from "../utility/imageData";
+
+/* 사진을 안 올린 사람의 기본 프로필 — 홍여사 캐릭터 (형 리뷰 2026-08-12) */
+export const DEFAULT_PROFILE_IMG = imageDB.hongprofile;
 
 
 
@@ -229,9 +233,14 @@ export const createuser = async({USERINFO, DEVICEID, TOKEN}) =>{
      const userRef = doc(collection(db, "USERS"));
      const id = userRef.id;
      users_id =id;
+     // 사진을 안 고른 사람은 홍여사 기본 프로필로 저장한다 (형 리뷰 2026-08-12)
+     const INFO = { ...(USERINFO || {}) };
+     if(!INFO.userimg || String(INFO.userimg).trim() === ''){
+       INFO.userimg = DEFAULT_PROFILE_IMG;
+     }
      const newuser = {
          USERS_ID : id,
-         USERINFO : USERINFO,
+         USERINFO : INFO,
          DEVICEID : DEVICEID,
          TOKEN : TOKEN,
      }

@@ -68,7 +68,7 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   zIndex:100,
-  border : "1px solid #E3E3E3",
+  border : "1px solid var(--border)",
   borderTopLeftRadius: "10px",
   borderTopRightRadius: "10px",
   borderBottomLeftRadius: "10px",
@@ -132,7 +132,7 @@ export default function MobileFailPopup({callback, content}) {
                 <IconCloseView >
                   <img src={imageDB.fail} style={{width:"32px", height:"32px",paddingTop:5}}/>
                 </IconCloseView>
-                <div style={{fontSize:"16px", color:"#131313", fontFamily:'Pretendard', paddingLeft:10}}>{content}</div>           
+                <div style={{fontSize:"16px", color:"var(--text)", fontFamily:'Pretendard', paddingLeft:10}}>{content}</div>           
              </Row>
 
              <Row style={{width:"100%", background:"#E3E3E3", height:'35px',borderBottomRightRadius: "10px",

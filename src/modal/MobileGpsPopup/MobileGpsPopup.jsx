@@ -84,7 +84,7 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   zIndex:100,
-  border : "1px solid #E3E3E3",
+  border : "1px solid var(--border)",
   borderTopLeftRadius: "10px",
   borderTopRightRadius: "10px",
   borderBottomLeftRadius: "10px",
@@ -232,10 +232,10 @@ export default function MobileGpsPopup({callback}) {
               complete == false ? ( <Row style={{width:"90%", margin: "25px auto 0px", height:'80px'}}>
               <LottieAnimation containerStyle={{zIndex:11}} animationData={imageDB.loading}
                 width={35} height={35}/>
-                  <div style={{fontSize:"16px", color:"#131313", fontFamily:'Pretendard', paddingLeft:10}}>현재 위치로 재조정중입니다</div>           
+                  <div style={{fontSize:"16px", color:"var(--text)", fontFamily:'Pretendard', paddingLeft:10}}>현재 위치로 재조정중입니다</div>           
                </Row>):( <Row style={{width:"90%", margin: "20px auto", height:'45px'}}>
                <img src={imageDB.success} style={{width:"32px", height:"32px"}}/>
-                  <div style={{fontSize:"16px", color:"#131313", fontFamily:'Pretendard', paddingLeft:10}}>현재 위치로 지정되었습니다</div>           
+                  <div style={{fontSize:"16px", color:"var(--text)", fontFamily:'Pretendard', paddingLeft:10}}>현재 위치로 지정되었습니다</div>           
                </Row>)
              }
            

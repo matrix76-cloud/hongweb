@@ -33,6 +33,8 @@ import _img_person from "../assets/imageset/person.png";
 import _img_logo from "../assets/imageset/logo.png";
 import _img_logo2 from "../assets/imageset/logo2.png";
 import _img_honglogo from "../assets/imageset/honglogo.png";
+// 홍여사 기본 프로필 (형 리뷰 2026-08-12) — 사진 안 올린 사람의 기본값으로 저장된다
+import _img_hongprofile from "../assets/imageset/hongprofile.svg";
 import _img_uploadenable from "../assets/imageset/uploadenable.png";
 import _img_uploaddisable from "../assets/imageset/uploaddisable.png";
 import _img_mobilebanner1 from "../assets/imageset/mobilebanner1.png";
@@ -255,6 +257,7 @@ export const imageDB = {
   logo: _img_logo,
   logo2: _img_logo2,
   honglogo : _img_honglogo,
+  hongprofile : _img_hongprofile,
   uploadenable : _img_uploadenable,
   uploaddisable : _img_uploaddisable,
   mobilebanner1 :_img_mobilebanner1,

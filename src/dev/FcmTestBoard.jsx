@@ -16,7 +16,7 @@ import { createNotification, PUSH_CASES } from "../service/notiService";
 
 const C = { ink: '#131313', gray: '#71717a', line: '#e3e3e3', brand: '#FF4E19', ok: '#1a7f37', bad: '#c02020' };
 
-const box = { background: '#fff', border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, marginBottom: 12 };
+const box = { background: 'var(--surface)', border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, marginBottom: 12 };
 const btn = (kind = 'normal') => ({
   fontSize: 15, fontWeight: 700, padding: '10px 16px', borderRadius: 10, cursor: 'pointer',
   border: kind === 'primary' ? 'none' : `1px solid ${C.line}`,

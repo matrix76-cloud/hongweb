@@ -25,7 +25,7 @@ const EventBox = styled.div`
   
 `
 const txtWrap = {
-  backgroundColor:'#fafafa',
+  backgroundColor:'var(--bg-soft)',
   padding: '18px 20px 24px',
   lineHeight:2
 }

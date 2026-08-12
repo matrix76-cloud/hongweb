@@ -32,6 +32,11 @@ import MobileGatepage from "./page/main/MobileGatepage";
 import MobileLadyLicenseAuthpage from "./page/main/MobileLadyLicenseAuthpage";
 import MobileWorkerRegistpage from "./page/main/MobileWorkerRegistpage";
 import MobileMainpage from "./page/main/MobileMainpage";
+import MobileAgreepage from "./page/main/MobileAgreepage";
+import MobileSignuppage from "./page/main/MobileSignuppage";
+import MobileFindAccountpage from "./page/main/MobileFindAccountpage";
+import MobileLoginpage from "./page/main/MobileLoginpage";
+import MobileOnboardingpage from "./page/main/MobileOnboardingpage";
 import MobileMapPickpage from "./page/main/MobileMapPickpage";
 import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
 import MobileMappage from "./page/main/Mobilemappage";
@@ -40,6 +45,7 @@ import MobilePolicypage from "./page/main/MobilePolicypage";
 import MobileRegistpage from "./page/main/MobileRegistpage";
 import MobileSearchHistorypage from "./page/main/MobileSearchHistorypage";
 import MobileSearchpage from "./page/main/MobileSearchpage";
+import MobileNoticepage from "./page/main/MobileNoticepage";
 import MobileSplashpage from "./page/main/MobileSplashpage";
 import MobileWorkpage from "./page/main/Mobileworkpage";
 import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
@@ -50,6 +56,7 @@ import PushToast from "./components/PushToast";
 import { Provider as MyProvider, useDispatch } from 'react-redux';
 import localforage from 'localforage';
 import { ALLWORK } from "./store/menu/MenuSlice";
+import { APP_TO_WEB, isInApp, listenApp, saveAppPushToken, sendToApp, setAppMainScreen } from "./service/appBridge";
 
 const App = () => {
 
@@ -77,6 +84,37 @@ const App = () => {
   useEffect(() => {
   }, [refresh])
 
+  /* 앱(WebView) 안에서 열렸을 때 — 앱이 준 토큰을 저장하고 딥링크를 따라간다.
+     앱은 껍데기라 저장·이동은 웹이 한다 (2026-08-13) */
+  useEffect(() => {
+    if (!isInApp()) return undefined;
+
+    const stop = listenApp(async (type, data) => {
+      if (type === APP_TO_WEB.INIT) {
+        if (data.token && user?.users_id) {
+          await saveAppPushToken({ USERS_ID: user.users_id, token: data.token, platform: data.platform });
+        }
+        if (data.latitude && data.longitude) {
+          user.latitude = data.latitude;
+          user.longitude = data.longitude;
+          dispatch(user);
+        }
+        if (data.pushLink) navigate(data.pushLink);
+      }
+
+      if (type === APP_TO_WEB.PUSH_OPENED && data.link) navigate(data.link);
+    });
+
+    sendToApp('ready');
+    return stop;
+  }, [user?.users_id]);
+
+  // 지금 화면이 메인인지 앱에 알려준다 — 앱의 뒤로가기 동작이 갈린다
+  useEffect(() => {
+    const mains = ['/Mobilemain', '/Mobilemap', '/Mobilechat', '/Mobileconfig', '/'];
+    setAppMainScreen(mains.includes(location.pathname));
+  }, [location.pathname]);
+
   return (
     <>
     {/* 화면을 보고 있을 때 오는 알림은 OS 가 안 띄운다 -> 상단에 직접 (형 지시 2026-08-12) */}
@@ -90,7 +128,13 @@ const App = () => {
         />
 
       {/* 가입 / 인증 */}
+      <Route path="/Mobileonboarding" element={<MobileOnboardingpage />} />
       <Route path="/Mobilegate" element={<MobileGatepage />} />
+      {/* 가입 흐름: 온보딩 → 약관 동의 → 로그인/가입 (형 지시 2026-08-12) */}
+      <Route path="/Mobileagree" element={<MobileAgreepage />} />
+      <Route path="/Mobilelogin" element={<MobileLoginpage />} />
+      <Route path="/Mobilesignup" element={<MobileSignuppage />} />
+      <Route path="/Mobilefindaccount" element={<MobileFindAccountpage />} />
       <Route path="/Mobilepolicy" element={<MobilePolicypage />} />
       <Route path="/Mobilephone" element={<MobilePhonepage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
@@ -107,6 +151,8 @@ const App = () => {
       {/* 찾기 */}
       <Route path="/Mobilemap" element={<MobileMappage />} />
       <Route path="/Mobilesearch" element={<MobileSearchpage />} />
+      {/* 공지사항 (형 리뷰 2026-08-12) */}
+      <Route path="/Mobilenotice" element={<MobileNoticepage />} />
       <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
       <Route path="/Mobilemapreconfig" element={<MobileMapReconfigpage />} />
       <Route path="/Mobilemappick" element={<MobileMapPickpage />} />

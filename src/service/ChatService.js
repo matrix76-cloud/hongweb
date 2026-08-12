@@ -433,3 +433,35 @@ export const NoticeNicknameChanged = async ({ USERS_ID, beforeName, afterName })
   );
   return rooms.length;
 };
+
+/**
+ * 일감별 지원자 모음 (형 리뷰 2026-08-13
+ * "진행중인 건수 -> 채팅중인 건수, 그 밑에 지원자 프로필을 겹쳐서").
+ *
+ * 목록 카드마다 채팅을 따로 읽으면 카드 수만큼 조회가 나간다.
+ * 한 번만 읽어 WORK_ID 별로 묶어 돌려준다.
+ *   { [WORK_ID] : [{ id, nickname, userimg }, ...] }
+ */
+export const ReadSupportersByWork = async () => {
+  try {
+    const snap = await getDocs(query(collection(db, "CHAT")));
+    const map = {};
+    snap.forEach((d) => {
+      const room = d.data();
+      const WORK_ID = (room.INFO || room.WORK_INFO || {}).WORK_ID;
+      if (!WORK_ID || !room.SUPPORTER_ID) return;
+      const bucket = (map[WORK_ID] ||= []);
+      if (bucket.some((x) => x.id === room.SUPPORTER_ID)) return;   // 같은 사람이 여러 방을 열었을 수 있다
+      const info = room.SUPPORTER?.USERINFO || room.SUPPORTER || {};
+      bucket.push({
+        id: room.SUPPORTER_ID,
+        nickname: info.nickname || '',
+        userimg: info.userimg || '',
+      });
+    });
+    return map;
+  } catch (e) {
+    console.log("ReadSupportersByWork error", e.message);
+    return {};
+  }
+};

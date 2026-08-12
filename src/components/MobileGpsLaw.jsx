@@ -16,13 +16,15 @@ import { LAWTYPE } from "../utility/screen";
 const Container = styled.div`
     width:100%;
     font-size: 14px;
+    /* 앞 약관과 붙어 시작 지점이 안 보였다 (형 리뷰 2026-08-12) */
+    padding-top: 28px;
 `
 const RowItem = styled.div`
     display:flex;
     flex-direction:row;
     justify-content:space-between;
     align-items:center;
-    border-bottom: 1px solid #ededed; 
+    border-bottom: 1px solid var(--border-soft); 
     padding:10px 20px;
 `
 

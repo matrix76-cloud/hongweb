@@ -14,13 +14,16 @@ import { ref } from "firebase/storage";
 
 const Container = styled.div`
     font-size: 14px;
+    /* 약관이 세로로 이어 붙는 화면이라 앞 약관과 붙어 시작 지점이 안 보였다.
+       제목 위에 여백을 준다. (형 리뷰 2026-08-12) */
+    padding-top: 28px;
 `
 const RowItem = styled.div`
     display:flex;
     flex-direction:row;
     justify-content:space-between;
     align-items:center;
-    border-bottom: 1px solid #ededed; 
+    border-bottom: 1px solid var(--border-soft); 
     padding:10px 20px;
 `
 const ColumnItem = styled.div`
@@ -28,7 +31,7 @@ const ColumnItem = styled.div`
     flex-direction:column;
     justify-content:space-between;
     align-items:center;
-    border-bottom: 1px solid #ededed; 
+    border-bottom: 1px solid var(--border-soft); 
     padding-bottom:20px;
     padding-top:20px;
 `

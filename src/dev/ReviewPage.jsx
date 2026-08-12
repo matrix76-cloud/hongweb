@@ -233,7 +233,7 @@ export default function ReviewPage() {
       </div>
 
       {seedmsg && (
-        <div style={{ marginBottom: 12, fontSize: 14, color: C.ink, background: '#fff', border: `1px solid ${C.line}`, borderRadius: 8, padding: '10px 12px', whiteSpace: 'pre-wrap' }}>
+        <div style={{ marginBottom: 12, fontSize: 14, color: C.ink, background: 'var(--surface)', border: `1px solid ${C.line}`, borderRadius: 8, padding: '10px 12px', whiteSpace: 'pre-wrap' }}>
           {seedmsg}
         </div>
       )}
@@ -259,7 +259,7 @@ export default function ReviewPage() {
             <span style={{ fontSize: 13, color: C.gray2 }}>{PHONE.w} × {PHONE.h}</span>
           </div>
 
-          <div style={{ position: 'relative', width: PHONE.w, height: PHONE.h, border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
+          <div style={{ position: 'relative', width: PHONE.w, height: PHONE.h, border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: 'var(--surface)' }}>
             {cur.path ? (
               <iframe ref={frameRef} title={cur.name} src={cur.path}
                 style={{ width: '100%', height: '100%', border: 'none', display: 'block' }} />

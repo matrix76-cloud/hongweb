@@ -32,7 +32,7 @@ const NameLayout = styled.div`
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid var(--border-soft);
 `
 const NameText = styled.div`
   padding-left:20px;
@@ -46,7 +46,7 @@ const ReadAlertLayout = styled.div`
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid var(--border-soft);
   margin-right:5px;
 
 `
@@ -100,7 +100,7 @@ const PCChatcontainer =({containerStyle}) =>  {
         <Column style={{background:"#ededed", width:"10%", height:"100%", justifyContent:"flex-start"}}>
           <img src ={imageDB.sample36} style={{width:80}} />
         </Column>
-        <Column style={{background:"#fff", width:"30%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid #ededed"}}>
+        <Column style={{background:"var(--surface)", width:"30%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid var(--border-soft)"}}>
             <NameLayout><NameText>이행렬</NameText></NameLayout>
             <ReadAlertLayout><ReadAlertText>안읽은 메시지만 보기</ReadAlertText>
               <div style={{display:"flex"}}><img src={imageDB.sample37} style={{width:24}}/></div>
@@ -115,7 +115,7 @@ const PCChatcontainer =({containerStyle}) =>  {
             content={'계약서 작성 하고 진행 하실까요...네'} read={false}/>
 
         </Column>
-        <Row style={{background:"#fff", width:"60%", height:"100%"}}></Row>
+        <Row style={{background:"var(--surface)", width:"60%", height:"100%"}}></Row>
     
 
       </Row>

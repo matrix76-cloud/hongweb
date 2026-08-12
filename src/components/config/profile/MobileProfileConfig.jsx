@@ -29,7 +29,7 @@ const style = {
 };
 
 const BoxItem = styled.div`
-  background: #fff;
+  background: var(--surface);
   display: flex;
   flex-direction : column;
   width: 85%;
@@ -85,7 +85,7 @@ const Name = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 20px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
 `
 const TemperatureLine = styled.div`
   display: flex;
@@ -94,7 +94,7 @@ const TemperatureLine = styled.div`
   align-items: center;
   width: 100%;
   font-size: 17px;
-  color: #131313;
+  color: var(--text);
   font-family: 'Pretendard-SemiBold';
 `
 const PointBox = styled.div`

@@ -74,7 +74,7 @@
 //   display :flex;
 //   flex-direction:row;
 //   padding: 20px 20px 0px;
-//   background-color : #fff;
+//   background-color : var(--surface);
 //   flex-wrap : wrap;
 // `
 
@@ -99,7 +99,7 @@
 //   flex-direction : row;
 //   justify-content : flex-end;
 //   align-items : center;
-//   background-color : #fff;
+//   background-color : var(--surface);
 //   margin-bottom : 20px;
 // `
 // const FilterApplyButton = styled.div`
@@ -296,7 +296,7 @@ const IconCloseView = styled.div`
 const MainData = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: #fff;
+  background-color: var(--surface);
   flex-wrap: wrap;
   width: 85%;
   margin: 0 auto;
@@ -331,7 +331,7 @@ const MainDataItem = styled.div`
     display: flex;
     border-radius: 5px;
     width: 40%;
-    background-color: #fff;
+    background-color: var(--surface);
     margin-left: 10px;
     margin-bottom: 10px;
 `
@@ -347,7 +347,7 @@ const ApplyItem = styled.div`
   flex-direction : row;
   justify-content : center;
   align-items : center;
-  background-color : #fff;
+  background-color : var(--surface);
   margin-bottom : 20px;
 `
 const FilterApplyButton = styled.div`
@@ -458,7 +458,7 @@ export default function MobileWorkMapPopup({filterhistory, callback}) {
        
 
               <BetweenRow style={{width:"70%", margin: "20px auto", }}>
-                <div style={{fontSize:"18px", fontWeight:900, color:"#131313", fontFamily:'Pretendard-SemiBold'}}>주소지 선택</div>
+                <div style={{fontSize:"18px", fontWeight:900, color:"var(--text)", fontFamily:'Pretendard-SemiBold'}}>주소지 선택</div>
                 <IconCloseView onClick={handleClose} >
                 <img src={imageDB.close} style={{width:"22px", height:"22px"}}/>
                 </IconCloseView>

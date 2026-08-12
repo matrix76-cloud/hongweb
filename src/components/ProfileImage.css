@@ -12,6 +12,6 @@
       border-color: red;
   }
   100% {
-      border-color: #ededed;
+      border-color: var(--border-soft);
   }
 }

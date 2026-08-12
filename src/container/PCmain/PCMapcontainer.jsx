@@ -105,7 +105,7 @@ const GuideButtonStyle={
 const PopupWorkEx = styled.div`
     position: absolute;
     width: 250px;
-    background: #fff;
+    background: var(--surface);
     height: 100%;
     z-index: 2;
     padding:0px 30px;
@@ -144,7 +144,7 @@ const FullItem = styled.div`
 
 const ItemLabel = styled.div`
 
-  color :#131313;
+  color :var(--text);
   font-weight : 700;
   font-size :14px;
   line-height:18.2px;
@@ -776,7 +776,7 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
           <Requestdoc INFO ={item.WORK_INFO} TYPE ={item.WORKTYPE} />
           <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "120px",justifyContent: "space-around" }}>
               <Button text={"닫기"} onPress={_handleClose}
-              containerStyle={{backgroundColor: "#fff",color :"#131313",border :"1px solid #C3C3C3",borderRadius: "4px",
+              containerStyle={{backgroundColor: "var(--surface)",color :"var(--text)",border :"1px solid #C3C3C3",borderRadius: "4px",
               fontSize: 16,height:44, marginRight:10, width: "76px",}}/>   
 
               <Button text={"지원하기"} onPress={_handleSupport}
@@ -792,7 +792,7 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
           <div style={{display:"flex", flexDirection:"row",position: "absolute",bottom: "120px",justifyContent: "space-around" }}>
 
             <Button text={"닫기"} onPress={_handleClose}
-            containerStyle={{backgroundColor: "#fff",color :"#131313",border :"1px solid #C3C3C3",borderRadius: "4px",
+            containerStyle={{backgroundColor: "var(--surface)",color :"var(--text)",border :"1px solid #C3C3C3",borderRadius: "4px",
             fontSize: 16,height:44, marginRight:10, width: "76px",}}/>   
 
             <Button text={"지원하기"} onPress={_handleSupport}
@@ -814,11 +814,11 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
         <IconButton onPress={_handleFilter} icon={'filter'} iconcolor={'#F75100'} width={'90px'}  height={'44px'} radius={'4px'} bgcolor={'#fff'} color={'#F75100'} text={'필터'} containerStyle={{
           fontSize:16, fontWeight:500,
           border :"1px solid #F75100",
-          background: "#fff"
+          background: "var(--surface)"
         }}/>
         <IconButton icon={'reset'}  iconcolor={'#131313'} onPress={()=>{}} width={'90px'}  height={'44px'} radius={'4px'} bgcolor={'#fff'} color={'#131313'} text={'초기화'} containerStyle={{
           fontSize:16, fontWeight:500,
-          background: "#fff", marginLeft:10,
+          background: "var(--surface)", marginLeft:10,
           border :"1px solid #C3C3C3"}}/>
 
       </FlexstartRow>

@@ -25,11 +25,11 @@ const Row = styled.div`
   width: 100%;
   box-sizing: border-box;
   padding: 14px 20px;
-  background: #fff;
-  border-bottom: 1px solid #F2F2F2;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  &:active { background: #FAFAFA; }
+  &:active { background: var(--bg-soft); }
 `;
 
 const Body = styled.div`
@@ -46,7 +46,7 @@ const TopLine = styled.div`
 const Name = styled.div`
   font-size: 16px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

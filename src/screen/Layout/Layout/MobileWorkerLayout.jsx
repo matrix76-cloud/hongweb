@@ -15,7 +15,7 @@ const HeaderWrapper = styled.div`
   left: 0;
   right: 0;
   z-index: 999;
-  background: #fff;
+  background: var(--surface);
   display: flex;
   flex-direction:row;
   align-items: center;

@@ -71,7 +71,7 @@ const Poptilt = styled.div`
 const Popcontent = styled.div`
     height:100%;
     width:100%;
-    background:#fff;
+    background:var(--surface);
     font-family: 'Pretendard-Regular';
 `
 
@@ -86,7 +86,7 @@ const PopMainLabel = styled.div`
 
 const SearchLayer = styled.div`
   width:309px; 
-  background:#fff;
+  background:var(--surface);
   height:100%;
   padding : "24px 1px 24px 24px";
   font-family: 'Pretendard-SemiBold',
@@ -113,7 +113,7 @@ const KeywordMain = styled.div`
   font-weight : 700;
   font-size:20px;
   line-height:26px;
-  color :#131313;
+  color :var(--text);
 `
 const SearchDBKeyword = styled.div`
  

@@ -14,8 +14,8 @@ const Container = styled.div`
   height: 50px;
   font-family: 'Pretendard-Regular';
   font-size: 16px;
-  background : #F9F9F9;
-  color :#131313;
+  background : var(--bg-soft);
+  color :var(--text);
 
 
 

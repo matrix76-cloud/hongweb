@@ -25,7 +25,7 @@ const Sheet = styled.div`
   box-sizing: border-box;
   max-height: 92vh;
   overflow-y: auto;
-  background: #fff;
+  background: var(--surface);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   padding: 18px 16px calc(16px + env(safe-area-inset-bottom, 0px));
@@ -40,7 +40,7 @@ const Head = styled.div`
 const Title = styled.b`
   flex: 1;
   font-size: 17px;
-  color: #131313;
+  color: var(--text);
 `;
 
 const Close = styled.button`
@@ -57,7 +57,7 @@ const Label = styled.div`
   margin: 16px 0 8px;
   font-size: 15px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
 `;
 
 const Times = styled.div`
@@ -74,7 +74,7 @@ const TimeChip = styled.button`
   border-radius: 10px;
   font-size: 15px;
   cursor: pointer;
-  border: ${({ $on }) => ($on ? "1.5px solid #FF4E19" : "1px solid #E3E3E3")};
+  border: ${({ $on }) => ($on ? "1.5px solid #FF4E19" : "1px solid var(--border)")};
   background: ${({ $on }) => ($on ? "#FFF5F0" : "#fff")};
   color: ${({ $on }) => ($on ? "#FF4E19" : "#131313")};
   font-weight: ${({ $on }) => ($on ? 700 : 500)};
@@ -85,7 +85,7 @@ const Memo = styled.textarea`
   box-sizing: border-box;
   min-height: 76px;
   padding: 12px;
-  border: 1px solid #E3E3E3;
+  border: 1px solid var(--border);
   border-radius: 10px;
   font-family: inherit;
   font-size: 15px;

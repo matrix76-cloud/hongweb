@@ -38,7 +38,7 @@ const Sheet = styled.div`
   right: 0;
   bottom: 0;
   z-index: 1201;
-  background: #fff;
+  background: var(--surface);
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.12);
   animation: ${slideup} 0.26s cubic-bezier(0.22, 1, 0.36, 1);
@@ -65,11 +65,27 @@ const Header = styled.div`
   padding: 12px 20px 14px;
   flex-shrink: 0;
 `;
+/* 제목 앞 아이콘 (형 리뷰 2026-08-13) */
+const TitleWrap = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+`;
+const TitleIcon = styled.span`
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--text);
+`;
 const Title = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 19px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 const CloseButton = styled.div`
   width: 32px;
@@ -110,7 +126,7 @@ const Option = styled.div`
   border-radius: 12px;
   cursor: pointer;
   user-select: none;
-  background: #fff;
+  background: var(--surface);
   border: 1px solid ${({ $on }) => ($on ? '#FF4E19' : '#E6E6E6')};
   box-shadow: ${({ $on }) => ($on ? 'inset 0 0 0 1px #FF4E19' : 'none')};
   transition: border-color 0.15s ease, transform 0.12s ease;
@@ -136,8 +152,8 @@ const CheckSlot = styled.span`
 const Footer = styled.div`
   flex-shrink: 0;
   padding: 12px 20px calc(14px + env(safe-area-inset-bottom));
-  border-top: 1px solid #F0F0F0;
-  background: #fff;
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface);
 `;
 const ApplyButton = styled.div`
   height: 54px;
@@ -163,13 +179,16 @@ export const FilterOption = ({ label, selected, onClick }) => (
   </Option>
 );
 
-const MobileFilterSheet = ({ title, onClose, onApply, children, minheight, applytext = '적용하기' }) => (
+const MobileFilterSheet = ({ title, icon, onClose, onApply, children, minheight, applytext = '적용하기' }) => (
   <>
     <Dim onClick={onClose} />
     <Sheet role="dialog" aria-label={title}>
       <Grabber />
       <Header>
-        <Title>{title}</Title>
+        <TitleWrap>
+          {icon && <TitleIcon>{icon}</TitleIcon>}
+          <Title>{title}</Title>
+        </TitleWrap>
         <CloseButton onClick={onClose}>
           <img src={imageDB.close} alt="닫기" style={{ width: 20, height: 20 }} />
         </CloseButton>

@@ -382,3 +382,11 @@ const fcm = require('./fcm');
 exports.onNotificationCreate = fcm.onNotificationCreate;
 exports.sendTestPush = fcm.sendTestPush;
 exports.notificationCleanup = fcm.notificationCleanup;
+
+/* 이메일 인증코드 로그인 · 이메일 찾기 (형 지시 2026-08-12)
+   비밀번호 없이 코드로 들어온다. 마스킹은 서버에서 한다. */
+const emailAuth = require('./emailAuth');
+exports.sendLoginCode = emailAuth.sendLoginCode;
+exports.verifyLoginCode = emailAuth.verifyLoginCode;
+exports.findMaskedEmail = emailAuth.findMaskedEmail;
+exports.withdrawAccount = emailAuth.withdrawAccount;

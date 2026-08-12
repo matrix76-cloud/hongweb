@@ -20,7 +20,7 @@ import ButtonEx from "../../../common/ButtonEx";
 const Container = styled.div`
   width:95%;
   margin:0 auto;
-  color : #131313;
+  color : var(--text);
 
 `
 const style = {
@@ -71,7 +71,7 @@ const Box = styled.div`
   align-items: center;
   width: 95%;
   margin: 10px auto;
-  background: #fff;
+  background: var(--surface);
   border-radius: 20px;
 
 
@@ -82,7 +82,7 @@ const JuminFirstInput = styled.input`
   border: none;
   border-bottom: 1px solid #131313;
   border-radius: 0px;
-  background: #fff;
+  background: var(--surface);
   width: 55%;
   font-size:16px;
   padding :12px 0px;
@@ -95,7 +95,7 @@ const JuminInputstyle ={
   border: 'none',
   borderBottom: '1px solid #131313',
   borderRadius: '0px',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '10px',
   fontSize:'16px',
   padding :'12px'
@@ -104,7 +104,7 @@ const JuminInputstyle ={
 }
 const Inputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '90%',
   borderRadius:'5px',
   fontSize:'16px',

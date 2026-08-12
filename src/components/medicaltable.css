@@ -1,7 +1,7 @@
 
 .custom-table tbody tr td:first-child {
     text-align: left;
-    background-color: #FAFAFA;
+    background-color: var(--bg-soft);
     font-weight: 600;
     min-width: 10px;
     max-width: 10px;

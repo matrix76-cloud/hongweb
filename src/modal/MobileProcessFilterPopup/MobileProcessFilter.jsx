@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FILTERITEMPROCESS } from '../../utility/screen';
+import { PiCheckCircleBold } from 'react-icons/pi';
 import MobileFilterSheet, { FilterOption, OptionGrid } from '../common/MobileFilterSheet';
 
 const WorkItems = [
@@ -19,7 +20,7 @@ export default function MobileProcessFilter({ filterhistory, callback }) {
   };
 
   return (
-    <MobileFilterSheet title={'홍여사 진행 상태 선택'} onClose={handleClose} onApply={handleApply} minheight={120}>
+    <MobileFilterSheet title={'홍여사 진행 상태 선택'} icon={<PiCheckCircleBold size={19}/>} onClose={handleClose} onApply={handleApply} minheight={120}>
       <OptionGrid>
         {WorkItems.map((item) => (
           <FilterOption

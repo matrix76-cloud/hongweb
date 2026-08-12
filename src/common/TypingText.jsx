@@ -10,7 +10,7 @@ const ResultContent = {
   outline:"none",
   resize :"none",
   border:"none",
-  backgroundColor:"#f9f9f9"
+  backgroundColor:"var(--bg-soft)"
 }
 const MobileResultContent = {
   width: '90%',
@@ -22,7 +22,7 @@ const MobileResultContent = {
   outline:"none",
   resize :"none",
   border:"none",
-  backgroundColor:"#f9f9f9"
+  backgroundColor:"var(--bg-soft)"
 }
 
 const TypingText = ({ text, speed, mobile }) => {

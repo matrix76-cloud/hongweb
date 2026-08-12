@@ -2,7 +2,7 @@
    가로 스크롤을 없애고 남는 폭을 버튼들이 나눠 갖는다. */
 .new-div {
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--surface);
     color: black;
     display: flex;
     flex-direction: row;

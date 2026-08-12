@@ -218,7 +218,7 @@ const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #FFFFFF;
+  background-color: var(--surface);
   box-shadow: 0 1px 0 rgba(0,0,0,0.06);
   box-sizing: border-box;
   z-index: 999;
@@ -247,7 +247,7 @@ const TitleArea = styled.div`
 const Title = styled.div`
   font-size: ${() => getFontSize(18)}px !important;
   font-family: 'Pretendard-SemiBold';
-  color: #131313;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

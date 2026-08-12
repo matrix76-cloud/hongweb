@@ -48,7 +48,7 @@ const EventBox = styled.div`
   
 `
 const txtWrap = {
-  backgroundColor:'#fafafa',
+  backgroundColor:'var(--bg-soft)',
   padding: '18px 20px 24px',
   lineHeight:2
 }
@@ -110,7 +110,7 @@ const SubText = styled.div`
 `
 const Inputstyle ={
   border: '1px solid #C3C3C3',
-  background: '#fff',
+  background: 'var(--surface)',
   width: '90%',
   borderRadius:'5px',
   fontSize:'16px',

@@ -49,7 +49,7 @@ const FullItem = styled.div`
 
 const ItemLabel = styled.div`
 
-  color :#131313;
+  color :var(--text);
   font-weight : 700;
   font-size :14px;
   line-height:18.2px;

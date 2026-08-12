@@ -47,7 +47,7 @@ import MobileContactDoc from "../../modal/MobileContactDocPopup/MobileContactDoc
 import MobilePayPopup from "../../modal/MobilePayPopup/MobilePayPopup";
 
 const Container = styled.div`
-    background-color : #fff;
+    background-color : var(--surface);
     height:900px;
     padding-top:50px;
 `
@@ -63,7 +63,7 @@ const ReadAlertLayout = styled.div`
   justify-content: flex-start;
   align-items: center;
   width: 100%;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid var(--border-soft);
   margin-right:5px;
 
   padding-left:20%;
@@ -71,7 +71,7 @@ const ReadAlertLayout = styled.div`
 
 `
 const ReadAlertText = styled.div`
-  color:#131313;
+  color:var(--text);
   font-size:16px;
 `
 
@@ -79,14 +79,14 @@ const ReadAlertText = styled.div`
 const InfoBox = styled.div`
   font-size: 14px;
   margin: 15px 0px 5px;
-  border:  1px solid #ededed;
+  border:  1px solid var(--border-soft);
   margin: 10px auto;
   width: 85%;
   padding: 10px;
   text-align: left;
   line-height: 2;
   border-radius: 10px;
-  color: #131313;
+  color: var(--text);
 
 `
 
@@ -99,11 +99,11 @@ const ItemLeftlayer = styled.div`
   width:${({width}) => width};
 `
 const ItemLeftBox = styled.div`
-background: #fff;
+background: var(--surface);
 border-radius: 10px;
 padding: 20px;
 margin: 5px 10px 0px;
-color: #131313;
+color: var(--text);
 display: flex;
 flex-direction: column;
 width: ${({width}) => width};
@@ -123,7 +123,7 @@ const ItemRightLayer = styled.div`
   margin-bottom: 5px;
 `;
 const ItemRightBox = styled.div`
-  background: #FFF;
+  background: var(--surface);
   border-top-right-radius: 0px;
   border-top-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -148,8 +148,8 @@ const Enter = styled.div`
   width: 100%;
   box-sizing: border-box;
   z-index: 4;
-  background-color: #fff;
-  border-bottom: 1px solid #ededed;
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -168,7 +168,7 @@ const EnterButton = styled.div`
 const StoreName = styled.div`
   font-size: 16px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -182,7 +182,7 @@ const StoreAddr = styled.div`
 `
 const StorePrice = styled.div`
   font-size: 14px;
-  color: #131313;
+  color: var(--text);
 `
 
 const StoreIntroduce = styled.div`
@@ -209,13 +209,13 @@ const OwnerTag = styled.div`
   align-items: center;
 `
 const BottomLine = styled.div`
-  background-color: #fff;
+  background-color: var(--surface);
   position: fixed;
   width: 100%;
   left: 0;
   bottom: 0;
   box-sizing: border-box;
-  border-top: 1px solid #ededed;
+  border-top: 1px solid var(--border-soft);
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
   z-index: 5;
 `;
@@ -238,15 +238,15 @@ const InputChat = styled.textarea`
   height: 42px;
   box-sizing: border-box;
   resize: none;
-  border: 1px solid #E3E3E3;
+  border: 1px solid var(--border);
   border-radius: 10px;
   outline: 0;
   font-family: "Pretendard-Regular";
   font-size: 16px;
   line-height: 1.4;
   padding: 10px 12px;
-  color: #131313;
-  background: #FAFAFA;
+  color: var(--text);
+  background: var(--bg-soft);
 `;
 
 const ShowContainer = styled.div`
@@ -319,7 +319,7 @@ const ItemBoxA = styled.div`
   border-top-left-radius: 4px;
   padding: 10px 13px;
   margin: 2px 8px 0px 4px;
-  color: #131313;
+  color: var(--text);
   display: inline-block;
   max-width: 72%;
   width: fit-content;
@@ -337,7 +337,7 @@ const ItemBoxB = styled.div`
   border-top-right-radius: 4px;
   padding: 10px 13px;
   margin: 2px 8px 0px;
-  color: #131313;
+  color: var(--text);
   display: inline-block;
   max-width: 72%;
   width: fit-content;
@@ -409,7 +409,7 @@ const MenuDim = styled.div`
 const MenuSheet = styled.div`
   width: 100%;
   box-sizing: border-box;
-  background: #fff;
+  background: var(--surface);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
@@ -426,7 +426,7 @@ const MenuItem = styled.button`
   font-size: 16px;
   color: ${({$danger}) => ($danger ? '#c02020' : '#131313')};
   cursor: pointer;
-  &:active { background: #FAFAFA; }
+  &:active { background: var(--bg-soft); }
 `;
 
 /* 삭제 버튼 — 말풍선을 누르면 나타난다 */
@@ -441,8 +441,8 @@ const DeleteBtn = styled.button`
   align-items: center;
   gap: 4px;
   padding: 5px 10px;
-  background: #fff;
-  border: 1px solid #E3E3E3;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 13px;
   color: ${({$danger}) => ($danger ? '#c02020' : '#71717a')};
@@ -473,7 +473,7 @@ const ScheduleHead = styled.div`
 const ScheduleBody = styled.div`
   font-size: 15px;
   line-height: 1.6;
-  color: #131313;
+  color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
 `;
@@ -487,7 +487,7 @@ const DeletedBox = styled.div`
   padding: 10px 13px;
   border: 1px solid #E8E8EA;
   border-radius: 14px;
-  background: #fff;
+  background: var(--surface);
   color: #A3A3A3;
   font-size: 15px;
   line-height: 1.5;
@@ -1043,7 +1043,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
 
       <Row margin={'0px auto;'} width={'100%'} height={'100%'} >
-        <Column style={{background:"#fff", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid #ededed"}}>
+        <Column style={{background:"var(--surface)", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid var(--border-soft)"}}>
           <Enter>
             {/* 일감 아이콘이 비면 빈 사각형만 남아서, 대화 상대 프로필을 앞에 둔다.
                 사진이 없으면 사람 아이콘으로 떨어진다 (형 지시 2026-08-12) */}

@@ -14,14 +14,14 @@
   border: none !important;
 }
 .rbc-off-range-bg {
-  background: #fff !important;
+  background: var(--surface) !important;
 }
 .rbc-today{
-  background-color: #fff !important;
+  background-color: var(--surface) !important;
 }
 
 .rbc-header {
-  background-color: #fff !important;
+  background-color: var(--surface) !important;
   border: none !important;
 }
 

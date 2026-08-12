@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { WORKNAME } from '../../utility/work';
+import { PiBroomBold } from 'react-icons/pi';
 import MobileFilterSheet, { FilterOption, OptionGrid } from '../common/MobileFilterSheet';
 
 /* 가격 구간 — 예전부터 여기서 export 해가는 곳이 있어 그대로 둔다 */
@@ -45,7 +46,7 @@ export default function MobileServiceFilter({ filterhistory, callback }) {
   };
 
   return (
-    <MobileFilterSheet title={'홍여사 서비스 선택'} onClose={handleClose} onApply={handleApply} minheight={420}>
+    <MobileFilterSheet title={'홍여사 서비스 선택'} icon={<PiBroomBold size={19}/>} onClose={handleClose} onApply={handleApply} minheight={420}>
       <OptionGrid>
         {WorkItems.map((name) => (
           <FilterOption key={name} label={name} selected={filterary.includes(name)} onClick={() => toggle(name)} />

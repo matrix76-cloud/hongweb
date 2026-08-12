@@ -100,7 +100,7 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
       loading == true ? ( <LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
         width={"100px"} height={'100px'}
         />) :( <Column>
-          <div style={{marginTop: 70, color :'#131313', fontSize:16, width:'90%', marginLeft:5}}>고객님이 작성하신 요구 사항은 다음과 같습니다</div>
+          <div style={{marginTop: 70, color :'var(--text)', fontSize:16, width:'90%', marginLeft:5}}>고객님이 작성하신 요구 사항은 다음과 같습니다</div>
           <MobileWorkReport messages={messages} WORK_ID = {WORK_ID} WORKTYPE={worktype} WORK_STATUS={workstatus}/>
         </Column>)
     } 

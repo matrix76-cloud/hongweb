@@ -78,7 +78,7 @@ const IconCloseView = styled.div`
 const MainData = styled.div`
   display :flex;
   flex-direction:row;
-  background-color : #fff;
+  background-color : var(--surface);
   flex-wrap : wrap;
   margin: 0 auto;
   width:90%;
@@ -95,14 +95,14 @@ const HeaderPopupline = styled.div`
 const InfoBox = styled.div`
   font-size: 14px;
   margin: 15px 0px 5px;
-  background: #f9f9f9;
+  background: var(--bg-soft);
   margin: 10px auto;
   width: 85%;
   padding: 10px;
   text-align: left;
   line-height: 2;
   border-radius: 10px;
-  color: #131313;
+  color: var(--text);
 
 `
 
@@ -213,7 +213,7 @@ btn3callback}) {
               <HeaderPopupline/>
             </Row>
             <BetweenRow style={{width:"70%", margin: "20px auto", }}>
-                <div style={{fontSize:"18px", fontWeight:900, color:"#131313", fontFamily:'Pretendard-SemiBold'}}>홍여사 계약 진행</div>
+                <div style={{fontSize:"18px", fontWeight:900, color:"var(--text)", fontFamily:'Pretendard-SemiBold'}}>홍여사 계약 진행</div>
                 <IconCloseView onClick={handleClose} >
                 <img src={imageDB.close} style={{width:"22px", height:"22px"}}/>
                 </IconCloseView>
@@ -226,7 +226,7 @@ btn3callback}) {
                   text={"계약서 작성"}
                   onPress={_handleapply}
                   containerStyle={{
-                    color: "#131313",
+                    color: "var(--text)",
                     background: "#ededed",
                     width: "250px",
                     height: "30px",
@@ -277,7 +277,7 @@ btn3callback}) {
                   text={"계약서 다운로드"}
                   onPress={_handledownload}
                   containerStyle={{
-                    color: "#131313",
+                    color: "var(--text)",
                     background: "#ededed",
                     width: "100px",
                     height: "30px",

@@ -24,11 +24,11 @@ import { ALLROOM, ALLWORK } from "../../../store/menu/MenuSlice";
 
 const PCHeader = styled.div`
   text-align: center;
-  background-color: #fff;
+  background-color: var(--surface);
   display: flex;
   flex-direction: column;
   z-index: 2;
-  border :1px solid #ededed;
+  border :1px solid var(--border-soft);
   height:80px;
 
 `;

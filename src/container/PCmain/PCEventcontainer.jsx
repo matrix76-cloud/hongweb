@@ -42,7 +42,7 @@ const EventBox = styled.div`
   
 `
 const txtWrap = {
-  backgroundColor:'#fafafa',
+  backgroundColor:'var(--bg-soft)',
   padding: '18px 20px 24px',
   lineHeight:2
 }
@@ -111,7 +111,7 @@ const PCEventcontainer =({containerStyle}) =>  {
 
   return (
     <Container style={containerStyle}>
-      <Column margin={'0px auto;'} width={'70%'} style={{background:"#fff"}} >
+      <Column margin={'0px auto;'} width={'70%'} style={{background:"var(--surface)"}} >
         <EventTitle>이벤트</EventTitle>
         <FlexstartRow style={{flexWrap:"wrap", width:'90%'}}>
           {

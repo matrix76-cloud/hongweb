@@ -110,7 +110,7 @@ const Poptilt = styled.div`
 const Popcontent = styled.div`
     height:77%;
     width:100%;
-    background:#fff;
+    background:var(--surface);
     font-family: 'Pretendard-Regular';
 `
 
@@ -125,7 +125,7 @@ const PopMainLabel = styled.div`
 
 const SearchLayer = styled.div`
   width:309px; 
-  background:#fff;
+  background:var(--surface);
   height:100%;
   font-family: 'Pretendard-SemiBold',
 
@@ -140,7 +140,7 @@ const SearchContent={
 
 const ResultLayer = styled.div`
   width:771px;
-  background:#FFF;
+  background:var(--surface);
   height:100%;
 `
 const ResultContent = {
@@ -153,7 +153,7 @@ const ResultContent = {
   outline:"none",
   resize :"none",
   border:"none",
-  backgroundColor:"#f9f9f9"
+  backgroundColor:"var(--bg-soft)"
 }
 
 const ResultContent1 = {
@@ -166,7 +166,7 @@ const ResultContent1 = {
   outline:"none",
   resize :"none",
   border:"none",
-  backgroundColor:"#f9f9f9"
+  backgroundColor:"var(--bg-soft)"
 }
 
 const ResultContent2 = {
@@ -187,7 +187,7 @@ const InputContent = {
   margin:'5px 10px',
   border :'none',
   borderRadius: '5px',
-  backgroundColor :'#fff',
+  backgroundColor :'var(--surface)',
   fontFamily: 'Pretendard-Light'
 }
 
@@ -223,7 +223,7 @@ const MemoInfoblink = styled.div`
     top: -100px;
     color: #242323;
     background-color: #f5f3f3;
-    border: 1px solid #ededed;
+    border: 1px solid var(--border-soft);
     padding: 5px;
     font-size: 12px;
     -webkit-border-radius: 20px;
@@ -262,7 +262,7 @@ const KeywordMain = styled.div`
   font-weight : 700;
   font-size:20px;
   line-height:26px;
-  color :#131313;
+  color :var(--text);
   padding:15px;
 `
 const SearchItem = styled.div`

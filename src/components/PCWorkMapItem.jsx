@@ -69,7 +69,7 @@ const Tag = styled.div`
   align-items:center;
 `
 const DisableTag = styled.div`
-  background: #F3F3F3;
+  background: var(--bg);
   color: #A3A3A3;
   padding: 4px 8px;
   border-radius: 5px;
@@ -232,7 +232,7 @@ const PCWorkMapItem = React.forwardRef(({containerStyle, width, workdata, onPres
           </FlexstartColumn>
 
           <BetweenRow style={{height:"100%", width:"34%"}}>
-            <div style={{background:"#F9F9F9", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
+            <div style={{background:"var(--bg-soft)", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
             <img src={Seekimage(workdata.WORKTYPE)} style={{width:64}}/>
             </div>
           </BetweenRow>
@@ -256,7 +256,7 @@ const PCWorkMapItem = React.forwardRef(({containerStyle, width, workdata, onPres
         </BetweenRow>
         <FlexEndRow>
           <Button text={"상세보기"} onPress={_handleworkselect}
-            containerStyle={{backgroundColor: "#fff", color :"rgb(36 36 36)",borderRadius: "10px",border:"none", textDecoration:"underline",
+            containerStyle={{backgroundColor: "var(--surface)", color :"rgb(36 36 36)",borderRadius: "10px",border:"none", textDecoration:"underline",
             fontSize: 16,height:26,width: "100px", gap:4,marginLeft:150}}/>
         </FlexEndRow>
 

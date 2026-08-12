@@ -10,7 +10,9 @@ import { PiSignOutBold, PiUserMinusBold } from "react-icons/pi";
 import localforage from 'localforage';
 import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
 import { WithdrawUser, Update_userinfobyusersid } from "../../service/UserService";
+import { signOutAll, withdrawAccount } from "../../service/AuthService";
 import { PiCameraBold } from "react-icons/pi";
+import { PiMoonBold } from "react-icons/pi";
 import { PiBroom } from "react-icons/pi";
 import { BiClinic } from "react-icons/bi";
 import { VscCloseAll } from "react-icons/vsc";
@@ -37,12 +39,12 @@ import NicknameEditor from "../../components/NicknameEditor";
 
 const Container = styled.div`
   padding-top:55px;
-  background-color : #f9f9f9;
+  background-color : var(--bg-soft);
 
 `
 const BoxItem = styled.div`
 
-  background: #fff;
+  background: var(--surface);
   color: rgb(0, 0, 0);
   display: flex;
   flex-direction : column;
@@ -57,7 +59,7 @@ const Name = styled.div`
   padding-left:5px;
 `
 const ProfileConfigBtn = styled.div`
-  background: #f9f9f9;
+  background: var(--bg-soft);
   padding: 10px;
   font-family: 'Pretendard-SemiBold';
   font-size: 12px;
@@ -65,7 +67,7 @@ const ProfileConfigBtn = styled.div`
 /* 홍여사 등록 유도 배너 (형 리뷰 2026-08-12 — UI 정돈) */
 const RegistHong = styled.div`
   box-sizing: border-box;
-  border: 1px solid #ECECEC;
+  border: 1px solid var(--border-soft);
   background: #FFFBF8;
   margin: 16px 0 4px;
   padding: 16px;
@@ -116,7 +118,7 @@ const Label = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 17px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   padding: 20px 12px 10px;
 `
 const SubLabel = styled.div`
@@ -137,14 +139,14 @@ const SubLabel = styled.div`
     color: #4a4a4a;
   }
 
-  &:active { background: #FAFAFA; }
+  &:active { background: var(--bg-soft); }
 `
 
 const SubLabelContent = styled.div`
   font-family: 'Pretendard-Regular';
   font-size: 16px;
   font-weight: 500;
-  color: #131313;
+  color: var(--text);
   padding: 0 0 0 12px;
 `
 
@@ -158,6 +160,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
   const [refresh, setRefresh] = useState(1);
   const [dialog, setDialog] = useState(null);   // 로그아웃·탈퇴 확인창
   const [img, setImg] = useState('');           // 방금 고른 프로필 사진
+  const [nickediting, setNickediting] = useState(false);  // 대화명 편집 중이면 옆 버튼을 접는다
   const fileInput = useRef();
 
   useLayoutEffect(() => {
@@ -183,6 +186,14 @@ const MobileConfigcontainer =({containerStyle}) =>  {
   }
   const _handleSearchRange = () =>{
     navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.SEARCHRANGE}});
+  }
+  /* 실시간 알림설정 (형 리뷰 2026-08-12) */
+  const _handleNotiSetting = () =>{
+    navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.NOTISETTING}});
+  }
+  /* 준비중이던 메뉴들을 실제 화면으로 (형 리뷰 2026-08-13 "모두 처리 해줘") */
+  const _handleConfigMove = (NAME) =>{
+    navigate("/Mobileconfigcontent", {state :{NAME}});
   }
   const _handleClosedWork = () =>{
     navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.CLOSEDWORK}});
@@ -243,6 +254,8 @@ const MobileConfigcontainer =({containerStyle}) =>  {
       confirmText: '로그아웃',
       onConfirm: async () =>{
         setDialog(null);
+        // 저장된 계정만 비우면 Firebase 쪽 세션이 남아 다른 계정으로 못 바꾼다 (형 지시 2026-08-13)
+        await signOutAll();
         await localforage.setItem('userconfig', {});
         navigate('/');
       },
@@ -271,7 +284,11 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           return;
         }
         setDialog(null);
+        // 계정 문서는 탈퇴 표시만 남기고, 로그인 계정(Auth)은 서버에서 지운다.
+        // 안 지우면 같은 이메일로 다시 가입할 수 없다 (형 지시 2026-08-13)
         await WithdrawUser({ USERS_ID: user.users_id });
+        try { await withdrawAccount(); } catch (err) { console.error('withdraw auth', err); }
+        await signOutAll();
         await localforage.setItem('userconfig', {});
         navigate('/');
       },
@@ -288,13 +305,14 @@ const MobileConfigcontainer =({containerStyle}) =>  {
     <Container style={containerStyle}>
         <BoxItem>
           <Row style={{justifyContent:"space-between", width:"100%"}}>
-            <Row style={{alignItems:"center", gap:12}}>
+            <Row style={{alignItems:"center", gap:12, flex:1, minWidth:0}}>
               {/* 눌러서 사진 교체 (형 지시 2026-08-12) */}
               <AvatarBtn onClick={()=>{ fileInput.current?.click(); }}>
                 <ChatprofileImage source={img || user.userimg} size={52} />
                 <CameraBadge><PiCameraBold size={13} color="#fff" /></CameraBadge>
               </AvatarBtn>
-              <Name>{user.nickname}</Name>
+              {/* 대화명이 아예 안 보이던 자리 — 편집기를 다시 물렸다 (형 리뷰 2026-08-12) */}
+              <NicknameEditor size={17} hint={false} onEditingChange={setNickediting} />
             </Row>
 
             <input
@@ -304,7 +322,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
               onChange={_handleprofileimage}
               style={{ display: "none" }}
             />
-            <ProfileConfigBtn onClick={_handleProfileConfig}>프로필 보기</ProfileConfigBtn>
+            {nickediting == false && <ProfileConfigBtn onClick={_handleProfileConfig}>프로필 보기</ProfileConfigBtn>}
       
           </Row>
           
@@ -312,7 +330,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           <RegistHong>
             <Row style={{justifyContent:"flex-start", alignItems:"center", gap:14, width:"100%"}}>
               <img src={imageDB.logo2} style={{width:44, height:44, objectFit:"contain", flexShrink:0}}/>
-              <div style={{fontSize:15, lineHeight:1.5, color:"#131313", fontWeight:500}}>
+              <div style={{fontSize:15, lineHeight:1.5, color:"var(--text)", fontWeight:500}}>
                 홍여사로 등록하면<br/>모든 일감에 지원할 수 있어요
               </div>
             </Row>
@@ -344,7 +362,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
 
-            <SubLabel onClick={()=>_handleNotReady("찜한 일감")}>
+            <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.FAVORITEWORK)}>
               <Row>
                 <PiHeartBold/>
                 <SubLabelContent>찜한 일감 </SubLabelContent>
@@ -362,18 +380,27 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             </SubLabel>
 
 
-            <SubLabel onClick={()=>_handleNotReady("실시간 알림설정")}>
+            <SubLabel onClick={_handleNotiSetting}>
               <Row>
                 <PiBellBold/>
                 <SubLabelContent>실시간 알림설정 </SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
+
+          {/* 화면 설정 — 알림설정 바로 아래가 자연스럽다 (형 요청 2026-08-13) */}
+          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.THEMESETTING)}>
+            <Row>
+              <PiMoonBold/>
+              <SubLabelContent>화면 설정</SubLabelContent>
+            </Row>
+            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
+          </SubLabel>
         </BoxItem>
 
         <BoxItem>
           <Label>나의 거래</Label>
-          <SubLabel onClick={()=>_handleNotReady("체결중인 거래")}>
+          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.DEALOPEN)}>
             <Row>
               <PiHandshakeBold/>
               <SubLabelContent>체결중인 거래 </SubLabelContent>
@@ -381,7 +408,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
           </SubLabel>
           
-          <SubLabel onClick={()=>_handleNotReady("체결완료된 거래")}>
+          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.DEALDONE)}>
             <Row>
               <PiSealCheckBold/>
               <SubLabelContent>체결완료된 거래</SubLabelContent>
@@ -393,7 +420,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
         <BoxItem>
           <Label>결제 입금관리</Label>
 
-          <SubLabel onClick={()=>_handleNotReady("결제관리")}>
+          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.PAY)}>
             <Row>
               <PiCreditCardBold/>
               <SubLabelContent>결제관리</SubLabelContent>
@@ -401,7 +428,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
           </SubLabel>
 
-          <SubLabel onClick={()=>_handleNotReady("입금관리")}>
+          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.DEPOSIT)}>
             <Row>
               <PiWalletBold/>
               <SubLabelContent>입금관리</SubLabelContent>
@@ -413,30 +440,10 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
 
         <BoxItem>
-          <Label>홍여사 소식</Label>
-
-          <SubLabel onClick={()=>_handleNotReady("홍여사 알림")}>
-            <Row>
-              <PiBellRingingBold/>
-              <SubLabelContent>홍여사 알림</SubLabelContent>
-            </Row>
-            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
-          </SubLabel>
-
-          <SubLabel onClick={()=>_handleNotReady("공지 사항")}>
-            <Row>
-              <PiMegaphoneBold/>
-              <SubLabelContent>공지 사항</SubLabelContent>
-            </Row>
-            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
-          </SubLabel>
-        </BoxItem>
-
-        <BoxItem>
            <Label>기타</Label>
 
 
-           <SubLabel onClick={()=>_handleNotReady("고객센터")}>
+           <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.SUPPORT)}>
             <Row>
               <PiHeadsetBold/>
               <SubLabelContent>고객센터</SubLabelContent>
@@ -444,7 +451,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
           </SubLabel>
 
-          <SubLabel onClick={()=>_handleNotReady("자주묻는 질문")}>
+          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.FAQ)}>
             <Row>
               <PiQuestionBold/>
               <SubLabelContent>자주묻는 질문</SubLabelContent>
@@ -453,7 +460,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           </SubLabel>
 
 
-          <SubLabel onClick={()=>_handleNotReady("홍여사 알아보기")}>
+          <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.ABOUT)}>
             <Row>
               <PiInfoBold/>
               <SubLabelContent>홍여사 알아보기</SubLabelContent>

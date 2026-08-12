@@ -14,7 +14,7 @@ const Wrap = styled.div`
 const Label = styled.div`
   font-size: 15px;
   font-weight: 600;
-  color: #131313;
+  color: var(--text);
   margin-bottom: 8px;
 `;
 
@@ -28,7 +28,7 @@ const MapBox = styled.div`
   width: 100%;
   height: 220px;
   border-radius: 12px;
-  border: 1px solid #E3E3E3;
+  border: 1px solid var(--border);
   overflow: hidden;
 `;
 

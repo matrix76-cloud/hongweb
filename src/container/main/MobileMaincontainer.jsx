@@ -13,7 +13,9 @@ import { DataContext } from "../../context/Data";
 import { DeleteWorkByUSER_ID, ReadWork } from "../../service/WorkService";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import Loading from "../../components/Loading";
-import { FILTERITEMPROCESS, FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
+import { FILTERITEMDISTANCE, FILTERITEMPERIOD, FILTERITEMPROCESS, FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
+import { distanceFunc } from "../../utility/region";
+import { WORKSTATUS } from "../../utility/status";
 import Position from "../../components/Position";
 import { REFRESHTYPE, WORKNAME, WORKPOLICY } from "../../utility/work";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,6 +41,7 @@ import LottieAnimation from "../../common/LottieAnimation";
 import Empty from "../../components/Empty";
 import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
 import { RESET } from "../../store/menu/MenuSlice";
+import { ReadSupportersByWork } from "../../service/ChatService";
 import { LoadingMainAnimationStyle } from "../../screen/css/common";
 
 const Container = styled.div`
@@ -53,7 +56,8 @@ const Container = styled.div`
 `
 const SubContainer = styled.div`
   margin: 0 auto;
-  background: #f3f3f3;
+  /* 회색 바탕 위에 흰 카드라 얼룩덜룩했다 — 바탕을 흰색으로 (형 리뷰 2026-08-12) */
+  background: var(--surface);
   padding-top: 30px;
   padding-left: 15px;
   padding-right: 15px;
@@ -90,7 +94,7 @@ const BoxImg = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 100px;
-  background: #F9F9F9;
+  background: var(--bg-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,7 +103,7 @@ const BoxImg = styled.div`
 const BoxLabel = styled.div`
   font-size: 14px;
   font-weight: 600;
-  color: #131313;
+  color: var(--text);
   line-height: 1.3;
   text-align: center;
   word-break: keep-all;
@@ -112,7 +116,7 @@ const FilterBox = styled.div`
   justify-content: center;
   flex-direction: row;
   background: ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('#fff')};
-  border: 1px solid ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('#E3E3E3')};
+  border: 1px solid ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('var(--border)')};
   border-radius: 8px;
   height: 38px;
   cursor: pointer;
@@ -124,6 +128,28 @@ const FilterBox = styled.div`
 
   &:active { transform: scale(0.97); }
   transition: transform .12s ease;
+`
+
+/* 걸린 조건 요약 줄 (형 리뷰 2026-08-13) */
+const AppliedRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 20px 10px;
+  font-size: 14px;
+  color: #71717a;
+  b { color: #FF4E19; font-weight: 700; }
+`
+const ClearFilters = styled.button`
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: #71717a;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 2px;
 `
 
 /* 진행 여부 — 칩 대신 필터 줄 바로 아래 체크박스 (형 지시 2026-08-12) */
@@ -165,8 +191,8 @@ const StickyPos = styled.div`
   position: sticky;
   top: 0;
   z-index: 4;
-  background: #fff;
-  border-bottom: 1px solid #F0F0F0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
   padding-top: 12px;
 `
 
@@ -181,15 +207,15 @@ const Bannerstyle={
 const GuideCard = styled.div`
   width: 100%;
   box-sizing: border-box;
-  background: #FAFAFA;
-  border: 1px solid #EFEFEF;
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
   border-radius: 12px;
   padding: 18px 20px;
 `
 const GuideTitle = styled.div`
   font-size: 17px;
   font-weight: 700;
-  color: #131313;
+  color: var(--text);
   margin-bottom: 12px;
 `
 const GuideStep = styled.div`
@@ -211,7 +237,7 @@ const GuideNo = styled.span`
 
 const Inputstyle ={
 
-  background: '#FFF',
+  background: 'var(--surface)',
   width: '75%',
   borderRadius:'5px',
   fontSize: '16px',
@@ -315,6 +341,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
   // const [bannerimg, setBannerimg] = useState([]);
   const [workitems, setWorkitems] = useState([]);
   const [displayitems, setDisplayitems] = useState([]);
+  /* 일감별 지원자 — 카드에 프로필을 겹쳐 보여주려고 한 번만 읽어둔다 (형 리뷰 2026-08-13) */
+  const [supporters, setSupporters] = useState({});
   const [currentloading, setCurrentloading] = useState(false);
   const [menu, setMenu] = useState('');
 
@@ -463,6 +491,10 @@ const MobileMaincontainer =({containerStyle}) =>  {
    * useSelector menu 가 변경됨을 감지 함에 따라 호출되는  Hook 함수
    * 데이타를 서버로 부터 불러와서 FilterwokrItems 함수로 걸러진값을 workitems 에 설정 해준다
    */
+
+  useEffect(()=>{
+    ReadSupportersByWork().then(setSupporters).catch(()=>{});
+  }, [])
 
   useEffect(()=>{
     console.log("TCL: MobileMaincontainer -> useEffect", user);
@@ -682,71 +714,50 @@ const MobileMaincontainer =({containerStyle}) =>  {
   
   }
   const MobileServiceFilterCallback = (filterary)=>{
-     console.log("TCL: MobileServiceFilterCallback -> MobileServiceFilterCallback", workitems)
-
-    if(filterary.length != 0){
-      setServicefilter(filterary);
-    }
-
     setServicepopup(false);
-
-    const displayitems = workfilterapply(workitems);
-    setDisplayitems(displayitems);
-
+    if(!filterary || filterary.length == 0){ setRefresh((r)=> r+1); return; }   // 그냥 닫음 = 취소
+    setServicefilter(filterary);
+    setDisplayitems(workfilterapply(workitems, { service: filterary }));
     setRefresh((refresh) => refresh +1);
-
   }
   const MobilePriceFilterCallback = (filterary)=>{
-
-    if(filterary.length != 0){
-      setPricefilter(filterary);
-    }
-
     setPricepoupup(false);
+    if(!filterary || filterary.length == 0){ setRefresh((r)=> r+1); return; }   // 그냥 닫음 = 취소
+    setPricefilter(filterary);
+    setDisplayitems(workfilterapply(workitems, { price: filterary }));
     setRefresh((refresh) => refresh +1);
-
   }
   const MobilePeriodFilterCallback = (filterary)=>{
-
-    if(filterary.length != 0){
-      setPeriodfilter(filterary);
-    }
-
     setPeriodpopup(false);
+    if(!filterary || filterary.length == 0){ setRefresh((r)=> r+1); return; }   // 그냥 닫음 = 취소
+    setPeriodfilter(filterary);
+    setDisplayitems(workfilterapply(workitems, { period: filterary }));
     setRefresh((refresh) => refresh +1);
-
   }
   const MobileDistanceFilterCallback = (filterary)=>{
-
-    if(filterary.length != 0){
-      setDistancefilter(filterary);
-    }
-
     setDistancepopup(false);
+    if(!filterary || filterary.length == 0){ setRefresh((r)=> r+1); return; }   // 그냥 닫음 = 취소
+    setDistancefilter(filterary);
+    setDisplayitems(workfilterapply(workitems, { distance: filterary }));
     setRefresh((refresh) => refresh +1);
-
   }
   /**
    * 진행 여부 체크박스 토글.
    * 값 자체는 기존 processfilter 배열을 그대로 쓴다 — 목록 거르는 쪽 로직은 손대지 않았다.
    */
   const _handleprocesscheck = (name)=>{
-    setProcessfilter((prev)=>{
-      const next = prev.includes(name) ? prev.filter((x)=> x != name) : [...prev, name];
-      return next;
-    });
+    const next = processfilter.includes(name) ? processfilter.filter((x)=> x != name) : [...processfilter, name];
+    setProcessfilter(next);
+    setDisplayitems(workfilterapply(workitems, { process: next }));
     setRefresh((refresh) => refresh +1);
   }
 
   const MobileProcessFilterCallback = (filterary)=>{
-
-    if(filterary.length != 0){
-      setProcessfilter(filterary);
-    }
-
     setProcesspopup(false);
+    if(!filterary || filterary.length == 0){ setRefresh((r)=> r+1); return; }
+    setProcessfilter(filterary);
+    setDisplayitems(workfilterapply(workitems, { process: filterary }));
     setRefresh((refresh) => refresh +1);
-
   }
   function filterenablecheck(name){
 
@@ -792,76 +803,131 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
   }
 
-  function getfilters(name){
-
-    if(name == FILTERNAME.SERVICE){
-      if(servicefilter.length >0){
-        return "+" +servicefilter.length;
-      }else{
-        return "";
-      }
-    }else if(name == FILTERNAME.PRICE){
-      if(pricefilter.length >0){
-        return "+" +pricefilter.length;
-      }else{
-        return "";
-      }
-    }else if(name == FILTERNAME.PERIOD){
-      if(periodfilter.length >0){
-        return "+" +periodfilter.length;
-      }else{
-        return "";
-      }
-    }else if(name == FILTERNAME.DISTNACE){
-      if(distancefilter.length >0){
-        return "+" +distancefilter.length;
-      }else{
-        return "";
-      }
-    }else if(name == FILTERNAME.PROCESS){
-      if(processfilter.length >0){
-        return "+" +processfilter.length;
-      }else{
-        return "";
-      }
-    }else{
-      return "";
-    }
-
+  /**
+   * 필터 버튼에 지금 무엇이 걸려 있는지 보여준다 (형 리뷰 2026-08-13 "필터 들어갔는지 표시").
+   * 전에는 주황색으로만 바뀌고 "+1" 만 붙어서, 무엇을 골랐는지는 다시 열어봐야 알았다.
+   * 이제 고른 값을 그대로 쓰고, 여러 개면 첫 값 뒤에 +N 을 붙인다.
+   */
+  function filterlabel(name){
+    const map = {
+      [FILTERNAME.SERVICE] : servicefilter,
+      [FILTERNAME.PRICE]   : pricefilter,
+      [FILTERNAME.PERIOD]  : periodfilter,
+      [FILTERNAME.DISTNACE]: distancefilter,
+      [FILTERNAME.PROCESS] : processfilter,
+    };
+    const picked = map[name] || [];
+    if(picked.length == 0) return name;
+    return picked.length == 1 ? picked[0] : `${picked[0]} +${picked.length - 1}`;
   }
-  function workfilterapply(items){
-    let itemsTmp = [];
 
-    if(items.length == 0){
-      return itemsTmp;
+  /** 지금 걸려 있는 조건 수 */
+  function filtercount(){
+    return [servicefilter, pricefilter, periodfilter, distancefilter].filter((x)=> x.length > 0).length;
+  }
+
+  /** 조건을 모두 푼다 */
+  function clearfilters(){
+    setServicefilter([]);
+    setPricefilter([]);
+    setPeriodfilter([]);
+    setDistancefilter([]);
+    setDisplayitems(workfilterapply(workitems, { service: [], price: [], period: [], distance: [] }));
+    setRefresh((refresh) => refresh +1);
+  }
+  /* ── 가격 구간 문자열을 숫자 범위로 ── */
+  const PRICE_RANGES = {
+    '3만원 이하'   : [0, 30000],
+    '3만원 ~ 4만원': [30000, 40000],
+    '4만원 ~ 5만원': [40000, 50000],
+    '5만원 ~ 6만원': [50000, 60000],
+    '6만원 ~ 8만원': [60000, 80000],
+    '8만원 이상'   : [80000, Infinity],
+  };
+  const priceOf = (work)=>{
+    const list = work.WORK_INFO || [];
+    const i = list.findIndex((x)=> x && x.requesttype == '금액');
+    if(i == -1) return null;
+    const num = Number(String(list[i].result ?? '').replace(/[^0-9.-]/g, ''));
+    return Number.isFinite(num) ? num : null;
+  };
+  const distanceKmOf = (work)=>{
+    const list = work.WORK_INFO || [];
+    const i = list.findIndex((x)=> x && x.requesttype == '지역');
+    if(i == -1) return null;
+    const km = distanceFunc(user.latitude, user.longitude, list[i].latitude, list[i].longitude);
+    return Number.isFinite(km) ? km : null;
+  };
+
+  /**
+   * 목록 필터 (형 리뷰 2026-08-12 "필터가 동작하지 않음").
+   *
+   * 예전 코드는 서비스만 반쯤 보고, 가격은 WORK_INFO[2] 라는 고정 자리를 구간 문자열과
+   * 그대로 비교해서 절대 걸리지 않았다. 기간·거리·진행 여부는 아예 보지도 않았다.
+   * 여기서 다섯 가지를 모두 적용한다.
+   *
+   * 방금 고른 값은 state 에 아직 안 들어가 있으므로 override 로 받는다.
+   */
+  function workfilterapply(items, override = {}){
+    const service  = override.service  ?? servicefilter;
+    const price    = override.price    ?? pricefilter;
+    const period   = override.period   ?? periodfilter;
+    const distance = override.distance ?? distancefilter;
+    const process  = override.process  ?? processfilter;
+
+    let list = items || [];
+    if(list.length == 0) return [];
+
+    // 서비스 종류
+    if(service.length > 0){
+      list = list.filter((d)=> service.includes(d.WORKTYPE));
     }
 
-    let itemsservicefilter = [];
-    items.map((data)=>{
-      if(servicefilter.includes(data.WORKTYPE)){
-        itemsservicefilter.push(data);
-        console.log("TCL: workservicefilterapply -> data", data)
+    // 견적가 구간
+    if(price.length > 0){
+      const ranges = price.map((k)=> PRICE_RANGES[k]).filter(Boolean);
+      if(ranges.length){
+        list = list.filter((d)=>{
+          const p = priceOf(d);
+          if(p == null) return false;
+          return ranges.some(([lo, hi])=> p >= lo && p <= hi);
+        });
       }
-    })
-
-    if(servicefilter.length == 0){
-      itemsservicefilter = items;
     }
 
-    let itemspricefilter = [];
-    itemsservicefilter.map((data)=>{
-      if(pricefilter.includes(data.WORK_INFO[2].result)){
-        itemspricefilter.push(data);
-        console.log("TCL: workservicefilterapply -> data", data)
+    // 기간 — 올라온 지 며칠 안 된 것만. "전체기간"은 거르지 않는다
+    if(period.length > 0 && !period.includes(FILTERITEMPERIOD.ONE)){
+      const days = Math.max(...period.map((k)=>{
+        const m = String(k).match(/D\+(\d+)/);
+        return m ? parseInt(m[1], 10) : 0;
+      }));
+      if(days > 0){
+        const limit = Date.now() - days * 24 * 60 * 60 * 1000;
+        list = list.filter((d)=> (d.CREATEDT || 0) >= limit);
       }
-    })
-
-    if(pricefilter.length == 0){
-      itemspricefilter = itemsservicefilter;
     }
 
-    return itemspricefilter;
+    // 거리 — "3km 내외" 면 3km 안쪽
+    if(distance.length > 0){
+      const km = Math.max(...distance.map((k)=>{
+        const m = String(k).match(/(\d+)\s*km/);
+        return m ? parseInt(m[1], 10) : 0;
+      }));
+      if(km > 0){
+        list = list.filter((d)=>{
+          const v = distanceKmOf(d);
+          return v == null ? false : v <= km;
+        });
+      }
+    }
 
+    // 진행 여부 — 둘 다 켜져 있으면 거르지 않는다
+    if(process.length == 1){
+      const wantOpen = process[0] == FILTERITEMPROCESS.OPEN;
+      list = list.filter((d)=> (d.WORK_STATUS == WORKSTATUS.OPEN) == wantOpen);
+    }
+
+    return list;
   }
 
   
@@ -879,10 +945,12 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
 
 
-              <Label label={'홍여사 서비스'} />
+              {/* 이 격자는 누르면 그 종류의 일 등록으로 가는 진입점이다.
+                  "홍여사 서비스"는 뭘 하라는 건지 안 알려줘서 행동을 부르는 말로 바꿨다 (형 리뷰 2026-08-12) */}
+              <Label label={'무슨 일을 맡기실까요?'} containerStyle={{background:'var(--surface)'}} />
 
 
-              <Column style={{width:"100%", padding:"0 24px", boxSizing:"border-box"}}>
+              <Column style={{width:"100%", padding:"0 14px", boxSizing:"border-box"}}>
                 <CategoryGrid>
                   {
                     WorkItems.map((data, index)=>(
@@ -919,8 +987,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
                 }
                 {
                   index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} $clickstatus={filterenablecheck(data.name)}>
-                  <FilterBoxText $clickstatus={filterenablecheck(data.name)}>{data.name}
-                  {getfilters(data.name)}   
+                  <FilterBoxText $clickstatus={filterenablecheck(data.name)}>
+                  {filterlabel(data.name)}
                   </FilterBoxText>
                 </FilterBox>
                 }
@@ -930,6 +998,16 @@ const MobileMaincontainer =({containerStyle}) =>  {
               ))
             }
           </div>
+
+          {/* 지금 걸린 조건 요약 — 스크롤을 내려도 뭘 걸었는지 알 수 있게 (형 리뷰 2026-08-13) */}
+          {
+            filtercount() > 0 && (
+              <AppliedRow>
+                <span>조건 <b>{filtercount()}</b>개 적용중</span>
+                <ClearFilters onClick={clearfilters}>모두 해제</ClearFilters>
+              </AppliedRow>
+            )
+          }
 
           {/* 진행 여부 — 칩 대신 체크박스로 바로 아래에 (형 지시 2026-08-12) */}
           <ProcessRow>
@@ -956,7 +1034,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
             {
               displayitems.map((item, index)=>(
                 <MobileWorkItem key={index}  index={index} width={'100%'} 
-                workdata={item} onPress={()=>{_handleSelectWork(item.WORK_ID, item.WORKTYPE)}}/>  
+                workdata={item} supporters={supporters[item.WORK_ID] || []}
+                onPress={()=>{_handleSelectWork(item.WORK_ID, item.WORKTYPE)}}/>  
               ))
             }
             </FlexstartRow>

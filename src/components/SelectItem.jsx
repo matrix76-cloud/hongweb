@@ -38,7 +38,7 @@ const SelectBox = (props) => {
           outline: 0,
           outline: 0,
           padding: 10,
-          border: "1px solid #ededed",
+          border: "1px solid var(--border-soft)",
           color: "#788391",
           width : props.width,
         }}

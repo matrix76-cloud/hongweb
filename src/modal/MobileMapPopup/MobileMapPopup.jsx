@@ -96,8 +96,8 @@ const IconCloseView = styled.div`
 
 const Poptilt = styled.div`
   box-sizing: border-box;
-  background: #fff;
-  border-bottom: 1px solid #F0F0F0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
   height: 56px;
   width: 100%;
   padding: 0 8px 0 18px;
@@ -108,7 +108,7 @@ const Poptilt = styled.div`
 const Popcontent = styled.div`
     flex: 1;
     width: 100%;
-    background: #fff;
+    background: var(--surface);
     font-family: 'Pretendard-Regular';
     overflow: hidden;
     position: relative;
@@ -118,7 +118,7 @@ const PopMainLabel = styled.div`
   font-size: 17px;
   font-weight: 700;
   line-height: 1.3;
-  color: #131313;
+  color: var(--text);
 `
 
 
@@ -260,7 +260,7 @@ const MobileMapPopup = ({ search,callback, top, left, height, width, name,ykiho,
       >
         <Fade in={open}>
           <Box sx={[style, style.top={top},style.left={left}, style.height={height}, style.width={width}] }>
-            <Column style={{height:340, width:'100%', background:"#fff", justifyContent:"unset", borderRadius:16, overflow:"hidden"}}>
+            <Column style={{height:340, width:'100%', background:"var(--surface)", justifyContent:"unset", borderRadius:16, overflow:"hidden"}}>
               <Poptilt>
                 <BetweenRow style={{width:"100%"}}>
                   <PopMainLabel>{'지역 정보'}</PopMainLabel>

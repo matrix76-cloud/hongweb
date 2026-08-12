@@ -107,6 +107,20 @@ export const distanceFunc = (lat1, lon1, lat2, lon2) => {
 export const  deg2rad = (deg)=> {
 	return deg * (Math.PI/180);
 }
+
+/**
+ * 거리를 사람이 읽는 말로. (형 리뷰 2026-08-12 "미터 단위 일때는 미터로, km 을 고집하지 말기")
+ *
+ * distanceFunc 는 km 를 돌려준다. 그런데 카드들이 그 값을 한 번 더 1000 으로 나눠 쓰고 있어서
+ * 2km 가 "0.002km" 로 찍히고 있었다. 여기 한 곳에서 단위를 정리한다.
+ */
+export const distanceLabel = (km) => {
+	if (!Number.isFinite(km)) return '';
+	const m = km * 1000;
+	if (m < 10) return '10m 이내';
+	if (m < 1000) return `${Math.round(m / 10) * 10}m`;
+	return `${(Math.round(km * 10) / 10).toFixed(1)}km`;
+}
 export const AddressSummmary =(address)=>{
 
 	if(address == '' || address == undefined){
@@ -122,8 +136,20 @@ export const AddressSummmary =(address)=>{
  * 주소에서 "시/군/구 + 읍면동" 부분만 뽑는다.
  * 앞에 "대한민국"이 붙은 예전 데이터와 없는 데이터를 모두 흡수한다. (2026-08-12)
  */
+/**
+ * 주소를 짧게. "대한민국 경기도 남양주시 다산동" -> "남양주시 다산동"
+ *
+ * 시/도(경기도·서울특별시…)는 뗀다. 어차피 내 주변 일감이라 같은 도(道)이고,
+ * 앞에 붙으면 줄이 길어져 옆 글자를 밀어낸다. (형 리뷰 2026-08-12 "앞에 경기 는 없어도 됨")
+ */
+const SIDO = /(특별시|광역시|특별자치시|특별자치도|[가-힣]*도)$/;
+
 export const shortRegion = (address) => {
   const parts = String(address || '').trim().split(/\s+/).filter(Boolean);
-  const body = parts[0] === '대한민국' ? parts.slice(1) : parts;
-  return body.slice(0, 3).join(' ');
+  let body = parts[0] === '대한민국' ? parts.slice(1) : parts;
+  // 첫 마디가 시/도면 뗀다. 단 그것뿐이면(뒤가 없으면) 그대로 둔다
+  if (body.length > 1 && (SIDO.test(body[0]) || body[0] === '서울' || body[0] === '경기')) {
+    body = body.slice(1);
+  }
+  return body.slice(0, 2).join(' ');
 };

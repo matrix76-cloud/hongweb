@@ -88,12 +88,12 @@ const Poptilt = styled.div`
 `
 const Popcontent = styled.div`
     width:100%;
-    background:#fff;
+    background:var(--surface);
 `
 const Popbottom = styled.div`
     height:68px;
     width:100%;
-    background:#fafafa;
+    background:var(--bg-soft);
     display:flex;
 `
 const PopMainLabel = styled.div`
@@ -108,7 +108,7 @@ const PopMainSubLabel = styled.div`
   font-weight: 500;
   padding-left: 20px;
   line-height: 26px;
-  color :#131313;
+  color :var(--text);
 `
 
 const BoxItem = styled.div`
@@ -123,7 +123,7 @@ const BoxItem = styled.div`
 
 `
 const BoxImg = styled.div`
-  background: #f9f9f9;
+  background: var(--bg-soft);
   border-radius: 100px;
   border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
   padding: 10px;
@@ -136,7 +136,7 @@ const BoxText = styled.div`
 `
 
 const CheckButton = styled.div`
-  color: #131313;
+  color: var(--text);
   border: ${({$clickstatus}) => $clickstatus == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
   font-weight: 600;
   border-radius: 4px;
@@ -292,7 +292,7 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                 </BetweenRow>
               </Poptilt>
               <Popcontent>
-                <FlexstartRow style={{width:"100%", borderBottom: '1px solid #ededed',height: 80}}>
+                <FlexstartRow style={{width:"100%", borderBottom: '1px solid var(--border-soft)',height: 80}}>
                   <PopMainSubLabel>타입</PopMainSubLabel>
                   <FlexstartRow style={{marginLeft:20}}>
                     <CheckButton $clickstatus={filtertype == FILTERITMETYPE.HONG} onClick={()=>{_handleItemtype(FILTERITMETYPE.HONG)}}>
@@ -311,7 +311,7 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                   </FlexstartRow>
                 </FlexstartRow>
 
-                <FlexstartRow style={{width:"100%", borderBottom: '1px solid #ededed',height: 160}}>
+                <FlexstartRow style={{width:"100%", borderBottom: '1px solid var(--border-soft)',height: 160}}>
                   <PopMainSubLabel>종류</PopMainSubLabel>
                   {
                     filtertype == FILTERITMETYPE.HONG ? ( 
@@ -343,7 +343,7 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                 
                 </FlexstartRow>
 
-                <FlexstartRow style={{width:"100%", borderBottom: '1px solid #ededed',height: 160}}>
+                <FlexstartRow style={{width:"100%", borderBottom: '1px solid var(--border-soft)',height: 160}}>
                   <PopMainSubLabel>금액</PopMainSubLabel>
                   <FlexstartRow style={{marginLeft:20, flexWrap:"wrap", width:"80%"}}>
                     {

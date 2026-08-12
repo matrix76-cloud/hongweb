@@ -15,7 +15,7 @@
 
 .site-mobile-footer2{
   height: 76px;
-  background: #fff;
+  background: var(--surface);
   width: 100%;
   bottom: 0%;
   position: fixed;
@@ -66,7 +66,7 @@
 .buttonDisableText{
   font-size:13px;
   font-weight:500;
-  color :#131313;
+  color :var(--text);
   margin-top:4px;
 }
 
@@ -139,22 +139,22 @@
 .spotlight-animation {
 
 
-  background-color:#FFF;
+  background-color:var(--surface);
   animation: highlightColorChange 1s infinite;
 }
 
 @keyframes highlightColorChange {
   0% {
 
-      background-color : #FFF;
+      background-color : var(--surface);
   }
   50% {
    
-      background-color : #fff;
+      background-color : var(--surface);
   }
   100% {
 
-      background-color : #FFF;
+      background-color : var(--surface);
   }
 }
 
@@ -204,7 +204,7 @@
 .border-footeranimation {
 
   border: 2px solid #FF2121;
-  background-color: #fff;
+  background-color: var(--surface);
   animation: borderColorChange 2s infinite;
 }
 
@@ -220,7 +220,7 @@
       border:  #f10e0eb3;
   }
   75% {
-    border:  #EDEDED;
+    border:  var(--border-soft);
   }
   100% {
 

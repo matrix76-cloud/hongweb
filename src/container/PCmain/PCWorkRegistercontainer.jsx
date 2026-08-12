@@ -21,7 +21,7 @@ import { GoPlus } from "react-icons/go";
 
 
 const Container = styled.div`
-    background :#f3f3f3;
+    background :var(--bg);
     height:650px;
     display:flex;
     flex-direction:column;
@@ -60,7 +60,7 @@ const Box = styled.div`
 
 `
 const BoxImg = styled.div`
-  background: #f9f9f9;
+  background: var(--bg-soft);
   border-radius: 100px;
   border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
   padding: 10px;
@@ -216,7 +216,7 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
     <>
       <Container style={containerStyle}>
 
-        <FlexstartRow style={{background:"#fff", height:'80px', paddingLeft:'15%'}}>
+        <FlexstartRow style={{background:"var(--surface)", height:'80px', paddingLeft:'15%'}}>
           {
                menu != '' ? (<>
                 <img src={Seekimage(menu)} style={{width:40, height:40, marginRight:20}}/>
