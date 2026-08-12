@@ -66,8 +66,13 @@
 .buttonDisableText{
   font-size:13px;
   font-weight:500;
-  color :#9b9b9b;
+  color :#131313;
   margin-top:4px;
+}
+
+/* 선택 안 된 탭 아이콘 — 에셋이 회색 PNG 라 검정으로 눌러준다 (형 리뷰 2026-08-12) */
+.tabIconOff{
+  filter: brightness(0);
 }
 
 

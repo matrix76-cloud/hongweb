@@ -18,6 +18,14 @@ import Position from "../../components/Position";
 import { WORKNAME } from "../../utility/work";
 import { useSelector } from "react-redux";
 import { Column } from "../../common/Column";
+import { getFixedPosition } from "../../utility/devLocation";
+
+// 개발 중에는 위치를 다산동으로 고정한다 (utility/devLocation)
+const getCurrentPositionOrFixed = (onOk, onErr, opts) => {
+  const fixed = getFixedPosition();
+  if (fixed) { onOk(fixed); return; }
+  navigator.geolocation.getCurrentPosition(onOk, onErr, opts);
+};
 
 
 const Container = styled.div`
@@ -83,7 +91,7 @@ const PCMaincontainer =({containerStyle}) =>  {
   useEffect(()=>{
     const now = moment();
     async function FetchLocation(){
-      navigator.geolocation.getCurrentPosition(
+      getCurrentPositionOrFixed(
         (pos) => {
           const { latitude, longitude } = pos.coords;
 

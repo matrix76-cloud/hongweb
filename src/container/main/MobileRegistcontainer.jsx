@@ -124,11 +124,17 @@ const ItemLeftBox = styled.div`
 `;
 
 
+/* 선택 칩.
+   폭을 48% 로 못박아두면 "중고거래대행" 같은 긴 항목이 체크 아이콘을 밀어내고 잘렸다.
+   flex-basis 48% + min-width:min-content 로 바꿔서, 글자가 길면 칩이 스스로 넓어지고
+   한 줄에 둘이 안 들어가면 그 칩만 다음 줄을 통째로 쓴다. (형 리뷰 2026-08-12) */
 const SelectLayer = styled.div`
   box-sizing: border-box;
-  width: 48%;
+  flex: 0 1 48%;
+  min-width: min-content;
+  max-width: 100%;
   margin: 5px 0px;
-  padding: 0 10px;
+  padding: 8px 10px;
   border: ${({check}) => check == true ? ('1.5px solid #FF4E19') : ('1px solid #E3E3E3')};
   background: ${({check}) => check == true ? ('#FFF5F0') : ('#fff')};
   color: ${({check}) => check == true ? ('#FF4E19') : ('#131313')};
@@ -139,7 +145,7 @@ const SelectLayer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 46px;
+  min-height: 46px;
   cursor: pointer;
   transition: all .12s ease;
   word-break: keep-all;

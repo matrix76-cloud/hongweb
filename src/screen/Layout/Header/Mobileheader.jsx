@@ -4,18 +4,16 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { imageDB } from "../../../utility/imageData";
 import { UserContext } from "../../../context/User";
-import { Badge } from "@mui/material";
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import Image from "../../../common/Image";
 import { GoPlus } from "react-icons/go";
 import { MOBILEMAINMENU } from "../../../utility/screen";
-import { HeaderAddress } from "../../../utility/region";
+import { regionLabel } from "../../../utility/geo";
 import { FaChevronRight } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useSleep } from "../../../utility/common";
 import localforage from 'localforage';
 import MobileSuccessPopup from "../../../modal/MobileSuccessPopup/MobileSuccessPopup";
-import MobileGpsPopup from "../../../modal/MobileGpsPopup/MobileGpsPopup";
+import MobileLocationSheet from "../../../modal/MobileLocationSheet/MobileLocationSheet";
 const Container = styled.div``;
 
 const LogoText = styled.div`
@@ -42,12 +40,11 @@ const Mobileheader = ({callback, registbtn, name}) => {
   const [registbutton, setReigstbutton] = useState(false);
   const [address_name, setAddress_name] = useState(user.address_name);
 
-  const [gpspopup, setGpspopup] = useState(false);
+  const [locationsheet, setLocationsheet] = useState(false);
 
   useEffect(() => {
     setAddress_name(address_name);
     setReigstbutton(registbutton);
-    setGpspopup(gpspopup);
   }, [refresh]);
 
 
@@ -74,22 +71,23 @@ const Mobileheader = ({callback, registbtn, name}) => {
 
 
 
-  const _handlemapreconfig = () =>{
-    navigation("/Mobilemapreconfig");   
-
-  }
-
-  const  _handlemapgps = () =>{
-    setGpspopup(true);
+  // 위치 영역 전체가 시트 진입점 (seekone 방식) — 재검색·지도지정은 시트 안에서 고른다
+  const _handlelocation = () =>{
+    setLocationsheet(true);
     setRefresh((refresh) => refresh +1);
   }
-  const gpspopupcallback = () =>{
-    setGpspopup(false);
-    setRefresh((refresh) => refresh +1); 
-  }
 
-  const _handleChat = () =>{
-    navigation("/Mobilechat");   
+  // 시트에서 '현재 위치로 재검색' 성공 → 지역·좌표를 갱신하고 저장
+  const _handlerelocated = ({ label, lat, lng }) =>{
+    user.address_name = label;
+    user.latitude = lat;
+    user.longitude = lng;
+    localforage.setItem('userconfig', user).catch(function(err){
+      console.error('Error saving userconfig:', err);
+    });
+    dispatch(user);
+    setAddress_name(label);
+    setRefresh((refresh) => refresh +1);
   }
 
   const _handleAI = async() =>{
@@ -147,12 +145,23 @@ useEffect(() => {
         display:"flex", justifyContent:"flex-start", alignItems:"center",fontFamily:"Pretendard-SemiBold",
         fontWeight:400}}>
           <img src={imageDB.logo} style={{width:28, height:28}}/>
-          <img src={imageDB.mappin} style={{width:20, height:20, marginLeft:5}} onClick={_handlemapgps}/>
-          <div style={{ marginRight:10}}>{HeaderAddress(address_name)}</div>
-          <FaChevronRight onClick={_handlemapreconfig}/>
+
+          {/* 핀·지역·화살표가 한 덩어리로 위치 시트를 연다 (seekone 방식) */}
+          <div onClick={_handlelocation}
+            style={{display:"flex", alignItems:"center", marginLeft:5, cursor:"pointer"}}>
+            <img src={imageDB.mappin} style={{width:20, height:20}}/>
+            <div style={{ margin:"0 6px 0 2px"}}>{regionLabel(address_name)}</div>
+            <FaChevronRight />
+          </div>
 
           {
-            gpspopup == true && <MobileGpsPopup callback={gpspopupcallback} />
+            locationsheet == true && (
+              <MobileLocationSheet
+                open={locationsheet}
+                onClose={()=>{ setLocationsheet(false); setRefresh((refresh)=> refresh +1); }}
+                onRelocated={_handlerelocated}
+              />
+            )
           }
 
         </div>
@@ -160,9 +169,8 @@ useEffect(() => {
      
         <div style={{display:"flex", flexDirection:"row", alignItems:"center",paddingRight:20}} >
 
+        {/* 채팅 아이콘·알림 배지 제거 — 하단 탭에 채팅이 이미 있고 배지 숫자는 가짜였다 (형 리뷰 2026-08-12) */}
         <img src={imageDB.search} width={24} onClick={_handleAI} style={{paddingRight:10}}/>
-        <IoChatbubbleEllipsesOutline size={22}  onClick={_handleChat}/>
-          <Badge badgeContent={4} color="warning" style={{paddingBottom:15}} className="alertblink" ></Badge>
         </div>
     
 

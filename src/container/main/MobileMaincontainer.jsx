@@ -25,7 +25,6 @@ import { GoNoEntry } from "react-icons/go";
 import "./MobileMaincontainer.css";
 import MobileStoreInfo from "../../components/MobileStoreInfo";
 import Swipe from "../../common/Swipe";
-import SlickSliderComponent from "../../common/Swipe";
 import { useSleep } from "../../utility/common";
 import { FILTERNAME } from "../../utility/fitler";
 
@@ -140,6 +139,39 @@ const Bannerstyle={
   margin: '20px 0px',
 }
 
+/* 관광지 배너 자리에 들어간 이용 안내 (형 리뷰 2026-08-12)
+   CORE 의 ①~③ 흐름을 그대로 세 줄로 보여준다. */
+const GuideCard = styled.div`
+  width: 100%;
+  box-sizing: border-box;
+  background: #FAFAFA;
+  border: 1px solid #EFEFEF;
+  border-radius: 12px;
+  padding: 18px 20px;
+`
+const GuideTitle = styled.div`
+  font-size: 17px;
+  font-weight: 700;
+  color: #131313;
+  margin-bottom: 12px;
+`
+const GuideStep = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #4B4B4B;
+  & + & {
+    margin-top: 9px;
+  }
+`
+const GuideNo = styled.span`
+  flex-shrink: 0;
+  color: #FF4E19;
+  font-weight: 700;
+`
+
 const Inputstyle ={
 
   background: '#FFF',
@@ -218,16 +250,6 @@ const FilterItems=[
   {name :FILTERNAME.PERIOD, img:imageDB.house, img2:imageDB.house},
   {name :FILTERNAME.DISTNACE, img:imageDB.house, img2:imageDB.house},
   {name :FILTERNAME.PROCESS, img:imageDB.house, img2:imageDB.house},
-]
-
-const BannerItems =[
-  imageDB.mobilebanner1,
-  imageDB.mobilebanner2,
-  imageDB.mobilebanner3,
-  imageDB.mobilebanner4,
-  imageDB.mobilebanner5,
-  imageDB.mobilebanner6,
-  imageDB.mobilebanner7,
 ]
 
 /**
@@ -807,8 +829,13 @@ const MobileMaincontainer =({containerStyle}) =>  {
               </Column>
 
 
-              <Column style={{width:"100%", margin: "20px auto 0px"}}>
-              <SlickSliderComponent width={width} images={BannerItems} />
+              <Column style={{width:"100%", padding:"0 24px", margin:"24px auto 0px", boxSizing:"border-box"}}>
+                <GuideCard>
+                  <GuideTitle>일손이 필요하세요?</GuideTitle>
+                  <GuideStep><GuideNo>1</GuideNo><span>위에서 필요한 일을 골라 등록하세요.</span></GuideStep>
+                  <GuideStep><GuideNo>2</GuideNo><span>가까운 홍여사들이 지원합니다.</span></GuideStep>
+                  <GuideStep><GuideNo>3</GuideNo><span>마음에 드는 분을 골라 연결됩니다.</span></GuideStep>
+                </GuideCard>
               </Column>
 
           </Column>

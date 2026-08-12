@@ -19,6 +19,14 @@ import randomLocation from 'random-location'
 import { distanceFunc } from "../../utility/region";
 import { CHECKDISTANCE, INCLUDEDISTANCE, PROFILEIMAGE } from "../../utility/screen";
 import { fi } from "date-fns/locale";
+import { getFixedPosition } from "../../utility/devLocation";
+
+// 개발 중에는 위치를 다산동으로 고정한다 (utility/devLocation)
+const getCurrentPositionOrFixed = (onOk, onErr, opts) => {
+  const fixed = getFixedPosition();
+  if (fixed) { onOk(fixed); return; }
+  navigator.geolocation.getCurrentPosition(onOk, onErr, opts);
+};
 
 
 
@@ -160,7 +168,7 @@ const MobileSplashcontainer =({containerStyle}) =>  {
   
   const StartProcess =() =>{
     console.log("TCL: StartProcess")
-    navigator.geolocation.getCurrentPosition(
+    getCurrentPositionOrFixed(
       (pos) => {
         const { latitude, longitude } = pos.coords;
         setLocation({ latitude, longitude });

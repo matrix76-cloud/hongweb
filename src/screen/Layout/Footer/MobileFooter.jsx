@@ -5,8 +5,9 @@ import { IoChatbubbleEllipses, IoChatbubbleEllipsesOutline } from "react-icons/i
 import { imageDB } from '../../../utility/imageData';
 import { MOBILEMAINMENU } from "../../../utility/screen";
 
+// 선택된 탭만 포인트색, 나머지는 회색이 아니라 검정 (형 리뷰 2026-08-12)
 const ON_COLOR = '#FF4E19';
-const OFF_COLOR = '#9b9b9b';
+const OFF_COLOR = '#131313';
 
 /**
  * 하단 탭 — 홈 / 지도 / 채팅 / 내 정보
@@ -45,7 +46,8 @@ const MobileFooter = ({ type, unreadCount = 0 }) => {
                         ? <IoChatbubbleEllipses size={24} color={ON_COLOR} />
                         : <IoChatbubbleEllipsesOutline size={24} color={OFF_COLOR} />
                     ) : (
-                      <img src={imageDB[active ? tab.on : tab.off]} width={24} alt={tab.label} />
+                      <img src={imageDB[active ? tab.on : tab.off]} width={24} alt={tab.label}
+                        className={active ? undefined : "tabIconOff"} />
                     )}
 
                     {tab.key === MOBILEMAINMENU.CHATMENU && unreadCount > 0 && (

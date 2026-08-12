@@ -31,6 +31,7 @@ import MobileContentpage from "./page/main/MobileContentpage";
 import MobileGatepage from "./page/main/MobileGatepage";
 import MobileLadyLicenseAuthpage from "./page/main/MobileLadyLicenseAuthpage";
 import MobileMainpage from "./page/main/MobileMainpage";
+import MobileMapPickpage from "./page/main/MobileMapPickpage";
 import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
 import MobileMappage from "./page/main/Mobilemappage";
 import MobilePhonepage from "./page/main/MobilePhonepage";
@@ -101,6 +102,7 @@ const App = () => {
       <Route path="/Mobilesearch" element={<MobileSearchpage />} />
       <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
       <Route path="/Mobilemapreconfig" element={<MobileMapReconfigpage />} />
+      <Route path="/Mobilemappick" element={<MobileMapPickpage />} />
 
       {/* ④ 연결 */}
       <Route path="/Mobilechat" element={<MobileChatpage />} />

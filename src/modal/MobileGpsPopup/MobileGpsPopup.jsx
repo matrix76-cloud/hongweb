@@ -23,6 +23,14 @@ import localforage from 'localforage';
 import { ALLREFRESH, ALLWORK, CARRYLOAD, RESET } from '../../store/menu/MenuSlice';
 import { useDispatch } from 'react-redux';
 import { useSleep } from '../../utility/common';
+import { getFixedPosition } from "../../utility/devLocation";
+
+// 개발 중에는 위치를 다산동으로 고정한다 (utility/devLocation)
+const getCurrentPositionOrFixed = (onOk, onErr, opts) => {
+  const fixed = getFixedPosition();
+  if (fixed) { onOk(fixed); return; }
+  navigator.geolocation.getCurrentPosition(onOk, onErr, opts);
+};
 
 
 const Fade = React.forwardRef(function Fade(props, ref) {
@@ -136,7 +144,7 @@ export default function MobileGpsPopup({callback}) {
    */
   React.useEffect(()=>{
     reduxdispatch(RESET());
-    navigator.geolocation.getCurrentPosition(
+    getCurrentPositionOrFixed(
     (pos) => {
       const { latitude, longitude } = pos.coords;
       setLocation({ latitude, longitude });
