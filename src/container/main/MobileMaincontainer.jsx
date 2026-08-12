@@ -13,7 +13,7 @@ import { DataContext } from "../../context/Data";
 import { DeleteWorkByUSER_ID, ReadWork } from "../../service/WorkService";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import Loading from "../../components/Loading";
-import { FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
+import { FILTERITEMPROCESS, FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
 import { REFRESHTYPE, WORKNAME, WORKPOLICY } from "../../utility/work";
 import { useDispatch, useSelector } from "react-redux";
@@ -106,25 +106,56 @@ const BoxLabel = styled.div`
 `
 
 const FilterBox = styled.div`
+  box-sizing: border-box;
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('#fff') };
-  border:  ${({$clickstatus}) => $clickstatus == true ? (null) :('1px solid #C3C3C3') };
-  margin-right: 3px;
-  border-radius: 4px;
-  padding: 0px 15px;
-  height:30px;
-  flex: 0 0 auto; /* 아이템의 기본 크기 유지 */
+  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('#fff')};
+  border: 1px solid ${({$clickstatus}) => $clickstatus == true ? ('#FF4E19') : ('#E3E3E3')};
+  border-radius: 8px;
+  height: 38px;
+  cursor: pointer;
 
+  /* 초기화 아이콘만 고정폭, 나머지 4개가 남는 폭을 균등하게 나눈다 */
+  flex: ${({$fixed}) => ($fixed ? '0 0 38px' : '1 1 0')};
+  min-width: 0;
+  padding: 0 4px;
+
+  &:active { transform: scale(0.97); }
+  transition: transform .12s ease;
+`
+
+/* 진행 여부 — 칩 대신 필터 줄 바로 아래 체크박스 (형 지시 2026-08-12) */
+const ProcessRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 2px 2px;
+`
+const ProcessLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: ${({$on}) => ($on ? 600 : 500)};
+  color: ${({$on}) => ($on ? '#131313' : '#71717a')};
+  cursor: pointer;
+  user-select: none;
+`
+const ProcessCheck = styled.input`
+  width: 18px;
+  height: 18px;
+  accent-color: #FF4E19;
+  cursor: pointer;
 `
 const FilterBoxText = styled.div`
-color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') :('#131313') };
-font-size:14px;
-margin-left:5px;
-font-weight:600;
-
+  color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') : ('#131313')};
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const StickyPos = styled.div`
@@ -250,7 +281,7 @@ const FilterItems=[
   {name :FILTERNAME.PRICE, img:imageDB.house, img2:imageDB.house},
   {name :FILTERNAME.PERIOD, img:imageDB.house, img2:imageDB.house},
   {name :FILTERNAME.DISTNACE, img:imageDB.house, img2:imageDB.house},
-  {name :FILTERNAME.PROCESS, img:imageDB.house, img2:imageDB.house},
+  // 진행여부는 칩에서 빼고 바로 아래 체크박스로 뺐다 — 거리순까지 한 줄에 들어와야 한다 (형 지시 2026-08-12)
 ]
 
 /**
@@ -672,6 +703,18 @@ const MobileMaincontainer =({containerStyle}) =>  {
     setRefresh((refresh) => refresh +1);
 
   }
+  /**
+   * 진행 여부 체크박스 토글.
+   * 값 자체는 기존 processfilter 배열을 그대로 쓴다 — 목록 거르는 쪽 로직은 손대지 않았다.
+   */
+  const _handleprocesscheck = (name)=>{
+    setProcessfilter((prev)=>{
+      const next = prev.includes(name) ? prev.filter((x)=> x != name) : [...prev, name];
+      return next;
+    });
+    setRefresh((refresh) => refresh +1);
+  }
+
   const MobileProcessFilterCallback = (filterary)=>{
 
     if(filterary.length != 0){
@@ -847,7 +890,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
               FilterItems.map((data, index)=>(
                 <Fragment key={data.name}>
                 {
-                  index == 0 && <FilterBox style={{padding:"0px 10px"}} onClick={()=>{_handlefiltermenuclick(data.name)}} $clickstatus={filterenablecheck(data.name)}>
+                  index == 0 && <FilterBox $fixed onClick={()=>{_handlefiltermenuclick(data.name)}} $clickstatus={filterenablecheck(data.name)}>
                     <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
                 </FilterBox>
                 }
@@ -863,7 +906,20 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
               ))
             }
-          </div> 
+          </div>
+
+          {/* 진행 여부 — 칩 대신 체크박스로 바로 아래에 (형 지시 2026-08-12) */}
+          <ProcessRow>
+            {[FILTERITEMPROCESS.OPEN, FILTERITEMPROCESS.CLOSE].map((name)=>{
+              const on = processfilter.includes(name);
+              return (
+                <ProcessLabel key={name} $on={on}>
+                  <ProcessCheck type="checkbox" checked={on} onChange={()=>{_handleprocesscheck(name)}} />
+                  {name == FILTERITEMPROCESS.OPEN ? '진행중 거래' : '마감된 거래'}
+                </ProcessLabel>
+              );
+            })}
+          </ProcessRow>
           </StickyPos>
           <Column>
 

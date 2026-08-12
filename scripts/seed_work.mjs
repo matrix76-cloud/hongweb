@@ -22,10 +22,16 @@ const argOf = (k, d) => {
   return i !== -1 && argv[i + 1] ? parseFloat(argv[i + 1]) : d;
 };
 const BASE = { lat: argOf('--lat', 37.6115), lng: argOf('--lng', 127.1560) };
-const near = (i) => ({
-  lat: BASE.lat + (Math.sin(i * 2.7) * 0.018),
-  lng: BASE.lng + (Math.cos(i * 1.9) * 0.022),
-});
+// 0.3km ~ 4.5km 사이에 고르게 흩뿌린다.
+// 예전엔 반경이 너무 촘촘해 카드마다 "거리 0.002km" 로 똑같이 나왔다 (형 지적 2026-08-12)
+const near = (i) => {
+  const km = 0.3 + ((i * 1.7) % 4.2);              // 0.3~4.5km
+  const angle = (i * 137.5) * (Math.PI / 180);     // 황금각으로 방향 분산
+  return {
+    lat: BASE.lat + (km / 111) * Math.cos(angle),
+    lng: BASE.lng + (km / (111 * Math.cos(BASE.lat * Math.PI / 180))) * Math.sin(angle),
+  };
+};
 const ADDRS = [
   '경기도 남양주시 다산동', '경기도 남양주시 지금동', '경기도 남양주시 도농동',
   '경기도 남양주시 별내동', '경기도 남양주시 화도읍', '경기도 남양주시 진접읍',

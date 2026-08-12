@@ -192,12 +192,22 @@ const MobileWorkItem = ({ containerStyle, width, workdata, onPress, index, selec
     return parseFloat(Math.round((dist / 1000) * 1000) / 1000);
   };
 
-  const Price = () => findResult('금액')?.result ?? '';
-
-  const Keyword = () => {
-    const skip = ['지역', '금액', '주기', REQUESTINFO.COMMENT];
-    return workdata.WORK_INFO.filter((d) => !skip.includes(d.requesttype));
+  // 금액 표기 정규화 — 예전 데이터는 "50000", 새 데이터는 "150,000" 처럼 섞여 있다
+  const Price = () => {
+    const raw = findResult('금액')?.result;
+    if (raw === undefined || raw === null || raw === '') return '';
+    const num = Number(String(raw).replace(/[^0-9.-]/g, ''));
+    if (!Number.isFinite(num) || num === 0) return String(raw);
+    return num.toLocaleString('ko-KR');
   };
+
+  // 조건 칩 — 자유 텍스트(요구사항·내용·요청메모)는 칩으로 쓰지 않는다.
+  // 예전 데이터에 '내용' 50건, '요청메모' 6건이 있어 긴 문장이 칩에 들어가 있었다 (2026-08-12)
+  const FREE_TEXT = ['지역', '금액', '요구사항', '내용', '요청메모', REQUESTINFO.COMMENT];
+  const Keyword = () =>
+    (workdata.WORK_INFO || [])
+      .filter((d) => d && d.result && !FREE_TEXT.includes(d.requesttype))
+      .filter((d) => String(d.result).length <= 14);
 
   const distance = Distance();
 
@@ -232,7 +242,9 @@ const MobileWorkItem = ({ containerStyle, width, workdata, onPress, index, selec
       <MetaRow>
         <span>{distance != null ? `거리 ${distance}km` : ''}</span>
         <span>
-          등록일자 <TimeAgo date={getFullTime(workdata.CREATEDT)} formatter={formatter} />
+          {workdata.CREATEDT
+            ? <>등록일자 <TimeAgo date={getFullTime(workdata.CREATEDT)} formatter={formatter} /></>
+            : null}
         </span>
       </MetaRow>
 

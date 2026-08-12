@@ -1,20 +1,18 @@
+/* 필터 줄 — 거리순까지 한 화면에 들어와야 한다 (형 지시 2026-08-12).
+   가로 스크롤을 없애고 남는 폭을 버튼들이 나눠 갖는다. */
 .new-div {
+    box-sizing: border-box;
     background-color: #fff;
     color: black;
-    transition: opacity 0.5s ease-in-out;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
-    overscroll-behavior-x: contain;
-    width: 90%;
-    margin : 0 auto;
-    overflow-x: scroll;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    gap: 6px;
+    width: 100%;
+    margin: 0 auto;
     z-index: 2;
-    padding: 0px 15px 20px;
-
+    padding: 0 20px 14px;
   }
   input::placeholder{
     color : #C3C3C3;
