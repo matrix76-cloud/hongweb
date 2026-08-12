@@ -71,7 +71,7 @@ const MobileMappage =() =>  {
  
   return (
 
-    <MobileMapLayout name={KeywordAddress(address_name)} type={MOBILEMAINMENU.REGIONMENU} image=''>
+    <MobileMapLayout name={KeywordAddress(address_name)} type={MOBILEMAINMENU.MAPMENU} image=''>
         <MobileMapcontainer  ID={location.state.ID} TYPE={location.state.TYPE}  />
     </MobileMapLayout>
   );

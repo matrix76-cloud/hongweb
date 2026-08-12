@@ -20,7 +20,7 @@ const MobileMapLayout = (props) => {
       <main>
         {props.children}
       </main>
-
+      <MobileFooter type={props.type}/>
     </div>
   );
 };

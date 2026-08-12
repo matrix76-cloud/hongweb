@@ -190,7 +190,8 @@ export const CONFIGMOVE = {
     PROFILEBADGE: "활동뱃지",
     WORKERINFO: "홍여사등록",
     WORKERAUTH: "신분증인증",
-    EVENTVIEW: "이벤트보기",
+    MYWORK: "등록한 일감",
+    CLOSEDWORK: "마감한 일감",
     LAWPOLICY:"이용약관",
     LAWPRIVACY :"개인정보 처리지침",
     LAWGPS :"위치정보기반 수집동의 규정"

@@ -420,3 +420,26 @@ export const findWorkAndFunctionCallFromCurrentPosition = async({currentlatitude
 
 
 }
+
+/**
+ * 내가 올린 일감 — 내 정보 > 등록한 일감 / 마감한 일감
+ * status 를 주면 그 상태만(0=진행중, 1=마감), 안 주면 전부.
+ */
+export const ReadWorkByUSERS_ID = async({USERS_ID, status})=>{
+  const workRef = collection(db, "WORK");
+  let workitems = [];
+  try {
+    const q = query(workRef, where("USERS_ID", "==", USERS_ID));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if(status === undefined || data.WORK_STATUS === status){
+        workitems.push(data);
+      }
+    });
+    workitems.sort((a, b) => (b.CREATEDT || 0) - (a.CREATEDT || 0));
+  } catch (e) {
+    console.log("ReadWorkByUSERS_ID error", e.message);
+  }
+  return workitems;
+}

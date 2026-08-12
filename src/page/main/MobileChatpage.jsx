@@ -46,7 +46,7 @@ const MobileChatpage =() =>  {
  
   return (
 
-    <MobilePrevLayout2 name={'채팅'} type={MOBILEMAINMENU.CHATMENU}>
+    <MobilePrevLayout2 name={'채팅'} type={MOBILEMAINMENU.CHATMENU} footer={true}>
         <MobileChatcontainer/>
     </MobilePrevLayout2>
   );

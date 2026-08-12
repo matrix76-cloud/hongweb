@@ -77,22 +77,38 @@ const RegistLayerContent = styled.div`
 `
 const Label = styled.div`
   font-family: 'Pretendard-SemiBold';
-  font-size: 16px;
-  padding: 20px 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #131313;
+  padding: 20px 12px 10px;
 `
 const SubLabel = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 60px;
-  padding-left: 10px;
+  height: 58px;
+  padding-left: 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  /* 좌측 메뉴 아이콘 — 기본 16px 라 너무 작았다 (형 지시 2026-08-12) */
+  > div > svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: #4a4a4a;
+  }
+
+  &:active { background: #FAFAFA; }
 `
 
 const SubLabelContent = styled.div`
-  font-family: 'Pretendard-Light';
+  font-family: 'Pretendard-Regular';
   font-size: 16px;
-  padding: 20px 10px;
+  font-weight: 500;
+  color: #131313;
+  padding: 0 0 0 12px;
 `
 
 
@@ -121,6 +137,17 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
   },[refresh])
 
+
+  const _handleMyWork = () =>{
+    navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.MYWORK}});
+  }
+  const _handleClosedWork = () =>{
+    navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.CLOSEDWORK}});
+  }
+  // 아직 만들지 않은 메뉴 — 눌러도 아무 반응 없는 것보다 상태를 알려준다
+  const _handleNotReady = (label) =>{
+    alert(`${label}은 준비 중입니다`);
+  }
 
   const _handleEventView = () =>{
     navigate("/Mobileconfigcontent",{state :{NAME :CONFIGMOVE.EVENTVIEW, TYPE : ""}});
@@ -160,15 +187,6 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             <ProfileConfigBtn onClick={_handleProfileConfig}>프로필 설정</ProfileConfigBtn>
       
           </Row>
-
-
-          <SubLabel onClick={_handleEventView}>
-            <Row>
-              <SlEvent/>
-              <SubLabelContent >출석 체크</SubLabelContent>
-            </Row>
-            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
-          </SubLabel>
           
 
           <RegistHong>
@@ -190,21 +208,14 @@ const MobileConfigcontainer =({containerStyle}) =>  {
         <BoxItem>
           <Label>홍여사 활동내역</Label>
           
-            <SubLabel>
+            <SubLabel onClick={_handleMyWork}>
               <Row>
                 <PiBroom/>
                 <SubLabelContent>등록한 일감 </SubLabelContent>
               </Row>     
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
-            <SubLabel>
-              <Row>
-                <BiClinic/>
-                <SubLabelContent>등록한 공간대여</SubLabelContent>
-              </Row>
-              <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
-            </SubLabel>
-            <SubLabel>
+            <SubLabel onClick={_handleClosedWork}>
               <Row>
                 <VscCloseAll/>
                 <SubLabelContent>마감한 일감 </SubLabelContent>
@@ -212,25 +223,16 @@ const MobileConfigcontainer =({containerStyle}) =>  {
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
 
-            <SubLabel>
+            <SubLabel onClick={()=>_handleNotReady("찜한 일감")}>
               <Row>
                 <CiHeart/>
                 <SubLabelContent>찜한 일감 </SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
-          
-
-            <SubLabel>
-              <Row>
-                <CiMedicalClipboard/>
-                <SubLabelContent>등록한 게시물 </SubLabelContent>
-              </Row>
-              <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
-            </SubLabel>
 
 
-            <SubLabel>
+            <SubLabel onClick={()=>_handleNotReady("나의 범위설정")}>
               <Row>
                 <CiBellOn/>
                 <SubLabelContent>나의 범위설정 </SubLabelContent>
@@ -239,7 +241,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             </SubLabel>
 
 
-            <SubLabel>
+            <SubLabel onClick={()=>_handleNotReady("실시간 알림설정")}>
               <Row>
                 <CiBellOn/>
                 <SubLabelContent>실시간 알림설정 </SubLabelContent>
@@ -250,15 +252,15 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
         <BoxItem>
           <Label>나의 거래</Label>
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("체결중인 거래")}>
             <Row>
               <GrTransaction/>
-              <SubLabelContent>체결중인 거레 </SubLabelContent>
+              <SubLabelContent>체결중인 거래 </SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
           </SubLabel>
           
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("체결완료된 거래")}>
             <Row>
               <GrTransaction/>
               <SubLabelContent>체결완료된 거래</SubLabelContent>
@@ -268,17 +270,17 @@ const MobileConfigcontainer =({containerStyle}) =>  {
         </BoxItem>
 
         <BoxItem>
-          <Label>결재 입금관리</Label>
+          <Label>결제 입금관리</Label>
 
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("결제관리")}>
             <Row>
               <CiCreditCard1/>
-              <SubLabelContent>결재관리</SubLabelContent>
+              <SubLabelContent>결제관리</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
           </SubLabel>
 
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("입금관리")}>
             <Row>
               <CiBank/>
               <SubLabelContent>입금관리</SubLabelContent>
@@ -288,26 +290,11 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
         </BoxItem>
 
-        <BoxItem>
-          <Label>홍여사 이벤트</Label>
-
-          <SubLabel onClick={_handleEventView}>
-            <Row>
-              <SlEvent/>
-              <SubLabelContent >이벤트 보기</SubLabelContent>
-            </Row>
-            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
-          </SubLabel>
-
-
-
-        </BoxItem>
-
 
         <BoxItem>
           <Label>홍여사 소식</Label>
 
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("홍여사 알림")}>
             <Row>
               <CiBellOn/>
               <SubLabelContent>홍여사 알림</SubLabelContent>
@@ -315,7 +302,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
           </SubLabel>
 
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("공지 사항")}>
             <Row>
               <CiMedicalClipboard/>
               <SubLabelContent>공지 사항</SubLabelContent>
@@ -328,15 +315,15 @@ const MobileConfigcontainer =({containerStyle}) =>  {
            <Label>기타</Label>
 
 
-           <SubLabel>
+           <SubLabel onClick={()=>_handleNotReady("고객센터")}>
             <Row>
               <BiClinic/>
-              <SubLabelContent>고객센타</SubLabelContent>
+              <SubLabelContent>고객센터</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
           </SubLabel>
 
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("자주묻는 질문")}>
             <Row>
               <AiOutlineQuestionCircle/>
               <SubLabelContent>자주묻는 질문</SubLabelContent>
@@ -345,20 +332,10 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           </SubLabel>
 
 
-          <SubLabel>
+          <SubLabel onClick={()=>_handleNotReady("홍여사 알아보기")}>
             <Row>
               <VscWorkspaceUnknown/>
               <SubLabelContent>홍여사 알아보기</SubLabelContent>
-            </Row>
-            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
-          </SubLabel>
-
-
-
-          <SubLabel>
-            <Row>
-              <VscWorkspaceUnknown/>
-              <SubLabelContent>공간대여 알아보기</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
           </SubLabel>

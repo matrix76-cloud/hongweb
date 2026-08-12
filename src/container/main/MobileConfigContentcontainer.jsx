@@ -12,11 +12,12 @@ import MobileUseLaw from "../../components/MobileUseLaw";
 import MobilePrivacyLaw from "../../components/MobilePrivacyLaw";
 import MobileGpsLaw from "../../components/MobileGpsLaw";
 
-import MobileEventView from "../../components/config/event/MobileEventView";
 import MobileWorkerInfo from "../../components/config/regist/MobileWorkerInfo";
 import MobileProfileConfig from "../../components/config/profile/MobileProfileConfig";
 import MobileProfileBadge from "../../components/config/profile/MobileProfileBadge";
 import MobileProfileName from "../../components/config/profile/MobileProfileName";
+import MobileMyWork from "../../components/config/activity/MobileMyWork";
+import { WORKSTATUS } from "../../utility/status";
 
 
 
@@ -126,7 +127,10 @@ const MobileConfigContentcontainer =({containerStyle, name}) =>  {
 
 
         {
-          name == CONFIGMOVE.EVENTVIEW && <MobileEventView/>
+          name == CONFIGMOVE.MYWORK && <MobileMyWork status={WORKSTATUS.OPEN}/>
+        }
+        {
+          name == CONFIGMOVE.CLOSEDWORK && <MobileMyWork status={WORKSTATUS.CLOSE}/>
         }
 
         {
