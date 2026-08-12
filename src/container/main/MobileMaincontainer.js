@@ -40,7 +40,6 @@ import LottieAnimation from "../../common/LottieAnimation";
 import Empty from "../../components/Empty";
 import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
 import { RESET } from "../../store/menu/MenuSlice";
-import { ReadRoom } from "../../service/RoomService";
 import { LoadingMainAnimationStyle } from "../../screen/css/common";
 
 const Container = styled.div`

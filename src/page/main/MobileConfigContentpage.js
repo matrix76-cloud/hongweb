@@ -3,7 +3,6 @@ import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation
 import styled from 'styled-components';
 import Maincontainer from "../../container/main/Maincontainer";
 import Mapcontainer from "../../container/main/Mapcontainer";
-import MobileCommunityContentcontainer from "../../container/main/MobileCommunityContentcontainer";
 import MobileMapcontainer from "../../container/main/Mobilemapcontainer";
 import MobileWorkcontainer from "../../container/main/Mobileworkcontainer";
 import PCMaincontainer from "../../container/PCmain/PCMaincontainer";

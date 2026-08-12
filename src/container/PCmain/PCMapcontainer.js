@@ -24,7 +24,6 @@ import { useSleep } from "../../utility/common";
 import { REQUESTINFO } from "../../utility/work";
 import { FILTERITMETYPE, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
-import { ReadRoom } from "../../service/RoomService";
 import PCRoomMapItem from "../../components/PCRoomMapItem";
 
 import { IoMdTennisball } from "react-icons/io";
@@ -723,17 +722,10 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
       const workdatas = await ReadWork();
 
-      const roomdatas = await ReadRoom();
-
       let items = [];
 
       workdatas.map((data, index) =>{
         data["TYPE"] = FILTERITMETYPE.HONG;
-        items.push(data);
-      })
-
-      roomdatas.map((data, index) =>{
-        data["TYPE"] = FILTERITMETYPE.ROOM;
         items.push(data);
       })
       console.log("TCL: FetchData -> items", items);

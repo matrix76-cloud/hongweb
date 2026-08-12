@@ -26,7 +26,6 @@ import "./table.css";
 import { Requestlargemessages, Requestmediummessages, Requestroommessages, Requestsmallmessages, ROOMSIZE } from "../../utility/room";
 
 import { CreateWork, CreateWorkInfo } from "../../service/WorkService";
-import { CreateRoom, CreateRoomInfo } from "../../service/RoomService";
 import ImageUploadComponent from "../../components/ImageUpload";
 import Label from "../../common/Label";
 import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
@@ -1097,37 +1096,13 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     });
 
-    if(type ==ROOMSIZE.SMALLER || type == ROOMSIZE.SMALL 
-      || type == ROOMSIZE.MEDIUM
-      || type == ROOMSIZE.LARGE
-      || type == ROOMSIZE.EXLARGE
-      ){
+    const USERS_ID= user.users_id;
+    const WORK_INFO = workinfo;
+    const WORKTYPE = type;
 
-      const USERS_ID= user.users_id;
-      const ROOM_INFO = workinfo;
-      const ROOMTYPE = type;
+    const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO});
 
-      const room = await CreateRoomInfo({USERS_ID, ROOMTYPE, ROOM_INFO});
-
-      setRegistRoomSuccess(true);
-      
-  
-
-
-
-    }else{
-
-      const USERS_ID= user.users_id;
-      const WORK_INFO = workinfo;
-      const WORKTYPE = type;
-  
-  
-      const work = await CreateWork({USERS_ID,WORKTYPE, WORK_INFO});
-
-      setRegistWorkSuccess(true);
-
-   
-    }
+    setRegistWorkSuccess(true);
 
 
 

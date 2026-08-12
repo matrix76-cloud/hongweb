@@ -17,7 +17,6 @@ import LottieAnimation from '../../common/LottieAnimation';
 import { UserContext } from '../../context/User';
 import { DataContext } from '../../context/Data';
 import { findWorkAndFunctionCallFromCurrentPosition } from '../../service/WorkService';
-import { findRoomAndFunctionCallFromCurrentPosition } from '../../service/RoomService';
 
 
 import localforage from 'localforage';
@@ -171,7 +170,6 @@ export default function MobileGpsPopup({callback}) {
           const currentlongitude = longitude;
           const checkdistance = CHECKDISTANCE;
           const workfunctioncall = await findWorkAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
-          const roomfunctioncall= await findRoomAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
 
           return new Promise((resolve, reject) => {
             setTimeout(resolve, 1000);

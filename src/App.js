@@ -1,78 +1,52 @@
-import React, { Component, useContext, useEffect, useLayoutEffect, useState } from "react";
-import { HashRouter, Route, Switch, Redirect, BrowserRouter, Routes, useLocation, useNavigate, Navigate } from "react-router-dom";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "./context/User";
 import { useMediaQuery } from "react-responsive";
+
+// sub
 import Configpage from "./page/main/Configpage";
 import Mainpage from "./page/main/Mainpage";
 import Mappage from "./page/main/Mappage";
-import Roompage from "./page/main/Roompage";
 import Workpage from "./page/main/Workpage";
-import PCAttendanceEventpage from "./page/PCmain/PCAttendanceEventpage";
+import Splashpage from "./page/sub/Splash/Splashpage";
+
+// PC
 import PCCenterpage from "./page/PCmain/PCCenterpage";
-import PCCommunitypage from "./page/PCmain/PCCommunitypage";
-import PCCommunityreadpage from "./page/PCmain/PCCommunityreadpage";
-import PCCommunitywritepage from "./page/PCmain/PCCommunitywriepage";
-import PCEventdetailpage from "./page/PCmain/PCEventdetailpage";
-import PCEventpage from "./page/PCmain/PCEventpage";
+import PCChatpage from "./page/PCmain/PCChatpage";
 import PCHongguidepage from "./page/PCmain/PCHongguidepage";
 import PCLoginpage from "./page/PCmain/PCLoginpage";
 import PCMainpage from "./page/PCmain/PCMainpage";
 import PCMappage from "./page/PCmain/PCMappage";
 import PCPolicypage from "./page/PCmain/PCPolicypage";
 import PCProfilepage from "./page/PCmain/PCProfilepage";
-import PCRegistserpage from "./page/PCmain/PCWorkregisterpage";
-import PCRoomguidepage from "./page/PCmain/PCRoomguidepage";
-import PCRoompage from "./page/PCmain/PCRoompage";
-import PCRoomPricepage from "./page/PCmain/PCRoomPricepage";
-import PCRulletEventpage from "./page/PCmain/PCRulletEventpage";
-import PCSplashpage from "./page/PCmain/PCSplashpage";
-import Splashpage from "./page/sub/Splash/Splashpage";
-import PCWorkregistserpage from "./page/PCmain/PCWorkregisterpage";
-import PCRoomregisterpage from "./page/PCmain/PCRoomregisterpage";
-import PCWorkregistpage from "./page/PCmain/PCRegistpage";
 import PCRegistpage from "./page/PCmain/PCRegistpage";
+import PCSplashpage from "./page/PCmain/PCSplashpage";
+import PCWorkregistserpage from "./page/PCmain/PCWorkregisterpage";
 
-
-import {Provider as MyProvider, useDispatch} from 'react-redux';
-import PCChatpage from "./page/PCmain/PCChatpage";
-import MobileSplashpage from "./page/main/MobileSplashpage";
-import MobileMainpage from "./page/main/MobileMainpage";
-import MobileRoomppage from "./page/main/MobileRoompage";
-import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
-import MobileRoomregistserpage from "./page/main/MobileRoomregisterpage";
-import MobileRegistpage from "./page/main/MobileRegistpage";
-import MobileMappage from "./page/main/Mobilemappage";
-import MobileSearchpage from "./page/main/MobileSearchpage";
-import MobileSearchHistorypage from "./page/main/MobileSearchHistorypage";
-import MobileGatepage from "./page/main/MobileGatepage";
-
-import MobilePolicypage from "./page/main/MobilePolicypage";
-import MobilePhonepage from "./page/main/MobilePhonepage";
-import PCLifepage from "./page/PCmain/PCLifepage";
-import MobileCommunityppage from "./page/main/MobileCommunitypage";
-import MobileWorkpage from "./page/main/Mobileworkpage";
+// Mobile
 import MobileChatpage from "./page/main/MobileChatpage";
-import MobileContentpage from "./page/main/MobileContentpage";
-
-import localforage from 'localforage';
-import MobileCommunityContentpage from "./page/main/MobileCommunityContentpage";
-import MobileRoomWorkpage from "./page/main/MobileRoomworkpage";
-import { ALLWORK } from "./store/menu/MenuSlice";
-import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
-import MobileCommunityBoardpage from "./page/main/MobileCommunityBoardpage";
-import MobileConfigpage from "./page/main/MobileConfigpage";
-
-import MobileLifeTourDetailPicturepage from "./page/main/MobileLifeTourDetailPicturepage";
-import MobileLifeTourAutoPicturepage from "./page/main/MobileLifeTourAutoPicturepage";
 import MobileConfigContentpage from "./page/main/MobileConfigContentpage";
-import MobileEventdetailpage from "./page/main/MobileEventdetailpage";
+import MobileConfigpage from "./page/main/MobileConfigpage";
+import MobileContentpage from "./page/main/MobileContentpage";
+import MobileGatepage from "./page/main/MobileGatepage";
 import MobileLadyLicenseAuthpage from "./page/main/MobileLadyLicenseAuthpage";
+import MobileMainpage from "./page/main/MobileMainpage";
+import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
+import MobileMappage from "./page/main/Mobilemappage";
+import MobilePhonepage from "./page/main/MobilePhonepage";
+import MobilePolicypage from "./page/main/MobilePolicypage";
+import MobileRegistpage from "./page/main/MobileRegistpage";
+import MobileSearchHistorypage from "./page/main/MobileSearchHistorypage";
+import MobileSearchpage from "./page/main/MobileSearchpage";
+import MobileSplashpage from "./page/main/MobileSplashpage";
+import MobileWorkpage from "./page/main/Mobileworkpage";
+import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
 
+import { Provider as MyProvider, useDispatch } from 'react-redux';
+import localforage from 'localforage';
+import { ALLWORK } from "./store/menu/MenuSlice";
 
-
-const App =() =>  {
-
-
+const App = () => {
 
   const { user, dispatch } = useContext(UserContext);
   const location = useLocation();
@@ -89,111 +63,70 @@ const App =() =>  {
     return () => {};
   }, []);
 
-  useEffect(()=>{
-    async function FetchData(){
-    } 
+  useEffect(() => {
+    async function FetchData() {
+    }
     FetchData();
-
   }, [])
-  useEffect(()=>{
-
-  },[refresh])
 
   useEffect(() => {
-
-    // localforage.getItem('userconfig')
-    // .then(function(value) {
-    //   console.log("TCL: listener -> App userconfig", value)
-    //   user.address_name = value.address_name;
-    //   user.users_id = value.users_id;
-    //   user.latitude = value.latitude;
-    //   user.longitude = value.longitude;
-    //   user.userimg = value.userimg;
-    
-    //   dispatch(user);
-
-      
-    // })
-    // .catch(function(err) {
-
-    // });
-
-
-
-  }, []);
-
-
+  }, [refresh])
 
   return (
-   
+
     <Routes>
 
       <Route
           path="/"
-          element={isMobile ?  (<MobileSplashpage />) :   (<PCSplashpage />)} 
+          element={isMobile ? (<MobileSplashpage />) : (<PCSplashpage />)}
         />
 
+      {/* 가입 / 인증 */}
       <Route path="/Mobilegate" element={<MobileGatepage />} />
       <Route path="/Mobilepolicy" element={<MobilePolicypage />} />
       <Route path="/Mobilephone" element={<MobilePhonepage />} />
-      <Route path="/Mobilemain" element={<MobileMainpage />} />
-      <Route path="/Mobileroom" element={<MobileRoomppage />} />
-      <Route path="/Mobilecommunity" element={<MobileCommunityppage />} />
-      <Route path="/Mobilecommunitycontent" element={<MobileCommunityContentpage />} />
-      <Route path="/Mobilecommunityboard" element={<MobileCommunityBoardpage />} />
-      <Route path="/Mobileworkregister" element={<MobileWorkregistserpage />} />
-      <Route path="/Mobileroomregister" element={<MobileRoomregistserpage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
-      <Route path="/Mobilemap" element={<MobileMappage />} />
+      <Route path="/Mobileladylicense" element={<MobileLadyLicenseAuthpage />} />
+
+      {/* ① 일 올리기 · 리스트 */}
+      <Route path="/Mobilemain" element={<MobileMainpage />} />
+      <Route path="/Mobileworkregister" element={<MobileWorkregistserpage />} />
       <Route path="/Mobilework" element={<MobileWorkpage />} />
-      <Route path="/Mobileworkroom" element={<MobileRoomWorkpage />} />
-      <Route path="/Mobilechat" element={<MobileChatpage />} />
       <Route path="/Mobilecontent" element={<MobileContentpage />} />
+
+      {/* 찾기 */}
+      <Route path="/Mobilemap" element={<MobileMappage />} />
       <Route path="/Mobilesearch" element={<MobileSearchpage />} />
       <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
       <Route path="/Mobilemapreconfig" element={<MobileMapReconfigpage />} />
-      <Route path="/Mobileconfig" element={<MobileConfigpage />} />
-      <Route path="/Mobiletourdetailpicture" element={<MobileLifeTourDetailPicturepage />} />
-      <Route path="/Mobiletourautopicture" element={<MobileLifeTourAutoPicturepage />} />
-      <Route path ="/Mobileconfigcontent" element={<MobileConfigContentpage />} />
-      <Route path ="/Mobileeventdetail" element={<MobileEventdetailpage />} />
-      <Route path ="/Mobileladylicense" element={<MobileLadyLicenseAuthpage />} />
 
+      {/* ④ 연결 */}
+      <Route path="/Mobilechat" element={<MobileChatpage />} />
+
+      {/* 내 정보 */}
+      <Route path="/Mobileconfig" element={<MobileConfigpage />} />
+      <Route path="/Mobileconfigcontent" element={<MobileConfigContentpage />} />
+
+      {/* PC */}
       <Route path="/PCmain" element={<PCMainpage />} />
       <Route path="/PCmap" element={<PCMappage />} />
       <Route path="/PCchat" element={<PCChatpage />} />
-      <Route path="/PCcommunity" element={<PCCommunitypage />} />
-      <Route path="/PCcommunitywrite" element={<PCCommunitywritepage />} />
-      <Route path="/PCcommunityread" element={<PCCommunityreadpage />} />
       <Route path="/PChongguide" element={<PCHongguidepage />} />
-      <Route path="/PCroomguide" element={<PCRoomguidepage />} />
       <Route path="/PClogin" element={<PCLoginpage />} />
       <Route path="/PCprofile" element={<PCProfilepage />} />
       <Route path="/PCcenter" element={<PCCenterpage />} />
-      <Route path="/PCevent" element={<PCEventpage />} />
-      <Route path="/PClife" element={<PCLifepage />} />
-      <Route path="/PCeventdetail" element={<PCEventdetailpage />} />
-      <Route path="/PCattendanceevent" element={<PCAttendanceEventpage />} />
-      <Route path="/PCrulletevent" element={<PCRulletEventpage />} />
       <Route path="/PCpolicy" element={<PCPolicypage />} />
-      <Route path="/PCroom" element={<PCRoompage />} />
-      <Route path="/PCroomprice" element={<PCRoomPricepage />} />
       <Route path="/PCworkregister" element={<PCWorkregistserpage />} />
       <Route path="/PCregist" element={<PCRegistpage />} />
-      <Route path="/PCroomregister" element={<PCRoomregisterpage />} />
- 
+
       <Route path="/main" element={<Mainpage />} />
       <Route path="/work" element={<Workpage />} />
       <Route path="/map" element={<Mappage />} />
-      <Route path="/room" element={<Roompage />} />
       <Route path="/config" element={<Configpage />} />
 
     </Routes>
 
   );
-
-
- 
 }
 
 export default App;

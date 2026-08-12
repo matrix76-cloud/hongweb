@@ -4,12 +4,9 @@ import styled from 'styled-components';
 import LottieAnimation from "../../common/LottieAnimation";
 import { DataContext } from "../../context/Data";
 import { UserContext } from "../../context/User";
-import { ReadCommunitySummary } from "../../service/CommunityService";
-import { DefaultReadRoom, findRoomAndFunctionCallFromCurrentPosition, findRoomFromCurrentPosition, ReadAllRoom, ReadRoom } from "../../service/RoomService";
 import { DefaultReadWork, findWorkAndFunctionCallFromCurrentPosition, findWorkFromCurrentPosition, ReadAllWork, ReadWork } from "../../service/WorkService";
 import { useSleep } from "../../utility/common";
 import { imageDB } from "../../utility/imageData";
-import { ReadCampingRegion, ReadHospitalRegion, ReadHospitalRegion1, ReadPerformanceCinema, ReadPerformanceEvent, ReadTourCountry, ReadTourFestival, ReadTourPicture, ReadTourRegion } from "../../service/LifeService";
 import { LINKTYPE, MOVE } from "../../utility/link";
 import { Create_userdevice, readuserbydeviceid, Read_userdevice, updatealluserbydeviceid, Update_tokendevice, update_userdevice, Update_usertoken } from "../../service/UserService";
 
@@ -190,7 +187,6 @@ const MobileSplashcontainer =({containerStyle}) =>  {
             const currentlongitude = longitude;
             const checkdistance = CHECKDISTANCE;
             const workfunctioncall = await findWorkAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
-            const roomfunctioncall= await findRoomAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
 
             FinalProcess();
 
@@ -235,10 +231,8 @@ const MobileSplashcontainer =({containerStyle}) =>  {
     const checkdistance = INCLUDEDISTANCE;
 
     const workitems = await ReadWork({latitude, longitude,checkdistance});
-    const roomitems = await ReadRoom({latitude, longitude,checkdistance});
 
     data.workitems = workitems;
-    data.roomitems = roomitems;
     datadispatch(data);
 
 

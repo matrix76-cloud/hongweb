@@ -13,10 +13,8 @@ import { WORKNAME } from "../../utility/work";
 import Button from "../../common/Button";
 import randomLocation from 'random-location'
 import { ROOMSTATUS, WORKSTATUS } from "../../utility/status";
-import { CreateCommunitySummaryBackup, ReadCommunity } from "../../service/CommunityService";
 import { extractTextFromHTML } from "../../utility/common";
 import { ROOMENABLE, ROOMSIZE, ROOMTYPE } from "../../utility/room";
-import { CreateRoom } from "../../service/RoomService";
 
 
 const Container = styled.div`
@@ -117,33 +115,6 @@ const PCHongguidecontainer =({containerStyle}) =>  {
     })
   }
 
-  const _handleroomdataimport = async()=>{
-
-    roominfoitems.map(async(data, index)=>{
-
-      const P = {
-        latitude: 37.600707323623,
-        longitude: 127.168332976283
-      }
-
-      const R = 2000 // meters
-
-      const USER_ID = USER_TMP_ID;
-
-
-      const randomPoint = randomLocation.randomCirclePoint(P, R)
-      
-      data["LATITUDE"] = randomPoint.latitude;
-      data["LONGITUDE"] = randomPoint.longitude;
-      console.log("TCL: _handleroomdataimport -> data[", data)
-  
-
-      const ROOM_INFO = data;
-
-      const work = await CreateRoom({USER_ID,ROOM_INFO});
-
-    })
-  }
 
 
   return (
@@ -154,7 +125,6 @@ const PCHongguidecontainer =({containerStyle}) =>  {
         <Button onPress={_handledataimport} height={'40px'} width={'300px'} radius={'5px'} bgcolor={'#ededed'} color={'#222'} text={'홈 데이타 import'}/>
 
 
-        <Button onPress={_handleroomdataimport} height={'40px'} width={'300px'} radius={'5px'} bgcolor={'#ededed'} color={'#222'} text={'창고 데이타 import'}/>
 
 
         </div>

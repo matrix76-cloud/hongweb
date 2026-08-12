@@ -24,7 +24,6 @@ import { useSleep } from "../../utility/common";
 import { REFRESHTYPE, REQUESTINFO, WORKNAME } from "../../utility/work";
 import { FILTERITMETYPE, PCMAINMENU } from "../../utility/screen";
 import Position from "../../components/Position";
-import { ReadRoom } from "../../service/RoomService";
 import PCRoomMapItem from "../../components/PCRoomMapItem";
 import { ROOMSIZE } from "../../utility/room";
 import LottieAnimation from "../../common/LottieAnimation";
@@ -710,17 +709,11 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
       const longitude = user.longitude;
 
       const workdatas = await ReadWork({latitude, longitude});
-      const roomdatas = await ReadRoom({latitude, longitude});
 
       let items = [];
 
       workdatas.map((data, index) =>{
         data["TYPE"] = FILTERITMETYPE.HONG;
-        items.push(data);
-      })
-
-      roomdatas.map((data, index) =>{
-        data["TYPE"] = FILTERITMETYPE.ROOM;
         items.push(data);
       })
       console.log("TCL: FetchData -> items", items);
@@ -752,17 +745,11 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
       const longitude = user.longitude;
 
       const workdatas = await ReadWork({latitude, longitude});
-      const roomdatas = await ReadRoom({latitude, longitude});
 
       let items = [];
 
       workdatas.map((data, index) =>{
         data["TYPE"] = FILTERITMETYPE.HONG;
-        items.push(data);
-      })
-
-      roomdatas.map((data, index) =>{
-        data["TYPE"] = FILTERITMETYPE.ROOM;
         items.push(data);
       })
       console.log("TCL: FetchData -> items", items);

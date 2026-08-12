@@ -26,7 +26,6 @@ import "./table.css";
 import { Requestlargemessages, Requestmediummessages, Requestsmallmessages, ROOMSIZE } from "../../utility/room";
 
 import { CreateWork } from "../../service/WorkService";
-import { CreateRoom } from "../../service/RoomService";
 import ImageUploadComponent from "../../components/ImageUpload";
 import Label from "../../common/Label";
 
@@ -854,30 +853,14 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
 
     });
 
-    if(type =="Small" || type =="Medium" || type == "Large"){
+    const USER_ID="01062149756";
+    const WORK_INFO = workinfo;
+    const WORKTYPE = type;
 
-      const USER_ID="01062149756";
-      const ROOM_INFO = workinfo;
-      const ROOMTYPE = type;
+    const work = await CreateWork({USER_ID,WORKTYPE, WORK_INFO});
+    alert("성공적으로 등록 되었습니다");
 
-      const work = await CreateRoom({USER_ID, ROOMTYPE, ROOM_INFO});
-      alert("성공적으로 등록 되었습니다");
-  
-      navigate("/PCroom");
-
-
-    }else{
-
-      const USER_ID="01062149756";
-      const WORK_INFO = workinfo;
-      const WORKTYPE = type;
-  
-  
-      const work = await CreateWork({USER_ID,WORKTYPE, WORK_INFO});
-      alert("성공적으로 등록 되었습니다");
-  
-      navigate("/PCmain");
-    }
+    navigate("/PCmain");
 
 
 

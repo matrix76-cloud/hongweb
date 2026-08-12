@@ -28,7 +28,6 @@ import { distanceFunc, KeywordAddress } from "../../utility/region";
 import { DefaultReadWork, findWorkAndFunctionCallFromCurrentPosition, ReadAllWork, ReadWork } from "../../service/WorkService";
 import Axios from "axios";
 import LottieAnimation from "../../common/LottieAnimation";
-import { findRoomAndFunctionCallFromCurrentPosition, ReadRoom } from "../../service/RoomService";
 import { CHECKDISTANCE } from "../../utility/screen";
 
 const Container = styled.div`
@@ -248,10 +247,8 @@ const MobileMapReconfigcontainer =({containerStyle}) =>  {
 
           dispatch(user);
           const workitems = await ReadWork({latitude, longitude});
-          const roomitems = await ReadRoom({latitude, longitude});
       
           data.workitems = workitems;
-          data.roomitems = roomitems;
           datadispatch(data);
 
           setLoading(false);
@@ -296,7 +293,6 @@ const MobileMapReconfigcontainer =({containerStyle}) =>  {
         const currentlongitude = coords.getLng();
         const checkdistance = CHECKDISTANCE;
         const workfunctioncall = await findWorkAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
-        const roomfunctioncall= await findRoomAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
   
 
       
