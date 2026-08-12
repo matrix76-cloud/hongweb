@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-import { REFRESH, REFRESHTYPE, RESETTYPE, WORKNAME } from "../../utility/work";
+import { REFRESHTYPE, RESETTYPE, WORKNAME } from "../../utility/work";
 import { ROOMSIZE } from "../../utility/room";
 import { CONVENIENCEMENU, MEDICALMENU, PERFORMANCEMENU, TOURISTMENU } from "../../utility/life";
 
