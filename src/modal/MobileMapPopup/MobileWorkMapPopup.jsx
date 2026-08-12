@@ -31,6 +31,7 @@ import koreanStrings from "react-timeago/lib/language-strings/ko";
 import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
 
 import LottieAnimation from "../../common/LottieAnimation";
+import { ensureKakao } from "../../utility/kakaoReady";
 
 
 const formatter = buildFormatter(koreanStrings); 
@@ -82,45 +83,51 @@ const style = {
 };
 const IconCloseView = styled.div`
   display: flex;
-  justify-content: flex-end;
-  align-items:center;
-  margin-right:10px;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  cursor: pointer;
+  &:active { background: #F4F4F4; }
 `;
 
 
 
 const Poptilt = styled.div`
-  background-color: #FF7125;
-  height: 38px;
-  position: relative;
-  width :100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  box-sizing: border-box;
+  background: #fff;
+  border-bottom: 1px solid #F0F0F0;
+  height: 56px;
+  width: 100%;
+  padding: 0 8px 0 18px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 `
 const Popcontent = styled.div`
-    height:77%;
-    width:100%;
-    background:#fff;
+    flex: 1;
+    width: 100%;
+    background: #fff;
     font-family: 'Pretendard-Regular';
-    overflow:auto;
+    overflow: hidden;
+    position: relative;
 `
 
 const PopMainLabel = styled.div`
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
-  padding-left: 10px;
-  line-height: 60px;
-  color :#fff;
-
+  line-height: 1.3;
+  color: #131313;
 `
 
 
 const mapstyle = {
   position: "absolute",
+  inset: 0,
   overflow: "hidden",
-  width:'100%',
-  height:'280px'
+  width: '100%',
+  height: '100%',
 };
 
 // kakao 는 전역(window.kakao)을 참조 시점에 읽는다.
@@ -153,7 +160,9 @@ const MobileWorkMapPopup = ({ search,callback, top, left, height, width, name,yk
   }, []);
 
   async function MapViewPaint(){
-    await useSleep(1000);
+    // SDK 준비 대기 — autoload=false 라 로드 완료 전엔 kakao.maps 가 비어 있다
+    if(!(await ensureKakao())) return;
+    await useSleep(300);
 
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
@@ -213,11 +222,11 @@ const MobileWorkMapPopup = ({ search,callback, top, left, height, width, name,yk
       >
         <Fade in={open}>
           <Box sx={[style, style.top={top},style.left={left}, style.height={height}, style.width={width}] }>
-            <Column style={{height:300, width:'100%',background:"#fff", justifyContent:"unset"}}>
+            <Column style={{height:340, width:'100%', background:"#fff", justifyContent:"unset", borderRadius:16, overflow:"hidden"}}>
               <Poptilt>
                 <BetweenRow style={{width:"100%"}}>
                   <PopMainLabel>{'지역 정보'}</PopMainLabel>
-                  <IconCloseView onClick={handleClose}><IoCloseSharp size={24} color={'#fff'}/></IconCloseView>
+                  <IconCloseView onClick={handleClose}><IoCloseSharp size={24} color={'#131313'}/></IconCloseView>
                 </BetweenRow>
               </Poptilt>
               <Popcontent>
