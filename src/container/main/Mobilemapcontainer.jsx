@@ -67,7 +67,7 @@ const GuideTextStyle={
   fontSize :12,
 }
 const GuideButtonStyle={
-  background: '#21A2FF',
+  background: '#FF4E19',
   color: '#fff',
   padding: '5px 10px',
   marginRight:10,
@@ -93,7 +93,7 @@ const ButtonLayer = styled.div`
 
 const MapBox = styled.div`
 border: 1px solid #cbcbcb;
-background: ${({$enable})=> $enable == true ? ("#21A2FF") : ("#fff")};
+background: ${({$enable})=> $enable == true ? ("#FF4E19") : ("#fff")};
 display: flex;
 flex-direction: column;
 justify-content: center;
@@ -103,7 +103,7 @@ padding : 0px 5px;
 
 const MapBoxControl = styled.div`
   border: 1px solid #cbcbcb;
-  background: ${({$enable})=> $enable == true ? ("#21A2FF") : ("#fff")};
+  background: ${({$enable})=> $enable == true ? ("#FF4E19") : ("#fff")};
   display: flex;
   flex-direction: column;
   justify-content: center;

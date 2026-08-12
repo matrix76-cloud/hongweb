@@ -102,8 +102,8 @@ const MobileConfigheader = ({callback, image,name}) => {
         <div style={{ display:"flex", fontWeight:700, fontSize:'16px', color:"#131313", alignItems:"center"}}>
           <div style={{paddingLeft:10}}>{name}</div>
         </div>
+        {/* 로그아웃은 내 정보 아래 '계정' 으로 내렸다 (형 지시 2026-08-12) */}
         {successpopup == true &&<MobileLogoutSuccessPopup callback={successcallback} content={'성공적으로 로그 아웃 되었습니다'} />}
-        <ProfileConfigBtn onClick={_handlelogout}>로그아웃</ProfileConfigBtn>
         </>  
 
 

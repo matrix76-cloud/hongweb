@@ -130,6 +130,7 @@ const FilterBox = styled.div`
 const ProcessRow = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;   /* 우측 정렬 (형 지시 2026-08-12) */
   gap: 20px;
   padding: 0 20px 12px;   /* 필터 버튼과 좌우 정렬을 맞춘다 */
 `
@@ -469,7 +470,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
     
     setRefresh((refresh) => refresh +1);
     async function FetchData(){
-      let serverworkitems = data.workitems;
+      // DataProvider 초기값이 {} 라 첫 렌더에선 workitems 가 undefined 다 (2026-08-12)
+      let serverworkitems = data.workitems || [];
 
       if(serverworkitems.length == 0){
         const latitude = user.latitude;
@@ -519,7 +521,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
   useEffect(()=>{
     console.log("TCL: MobileMaincontainer -> useEffect 3");
     async function FetchData(){
-      let serverworkitems = data.workitems;
+      let serverworkitems = data.workitems || [];
       console.log("TCL: FetchData -> serverworkitems", serverworkitems);
 
       if(serverworkitems.length == 0){

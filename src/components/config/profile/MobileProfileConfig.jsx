@@ -18,8 +18,7 @@ import { TbRelationOneToOne } from "react-icons/tb";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { uploadImage } from "../../../service/UploadService";
 import { Update_userinfobyusersid } from "../../../service/UserService";
-import ProfileAvatarEditor from "../../ProfileAvatarEditor";
-import { uploadImageFile } from "../../../service/UploadService";
+import ChatprofileImage from "../../ChatprofileImage";
 
 const Container = styled.div`
   padding-bottom:30px;
@@ -40,6 +39,47 @@ const BoxItem = styled.div`
   font-size:12px;
 `
 
+const NameRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+`;
+const NameEditRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+const NameInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
+  border: 1.5px solid #FF4E19;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: inherit;
+  outline: none;
+`;
+const NameSaveBtn = styled.button`
+  flex: none;
+  height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: #FF4E19;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  &:disabled { opacity: .6; }
+`;
+const NameHint = styled.div`
+  font-size: 13px;
+  color: #A3A3A3;
+  margin-top: 6px;
+`;
 const Name = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 20px;
@@ -120,7 +160,6 @@ const MobileProfileConfig =({containerStyle}) =>  {
  * @param 파라미터 설명
  */
 
- const fileInput = useRef();
 
 
   const { dispatch, user } = useContext(UserContext);
@@ -150,23 +189,6 @@ const MobileProfileConfig =({containerStyle}) =>  {
       FetchData();
   }, [])
 
-  /* 프로필 사진 — 압축해서 Storage 에 올리고 URL 만 저장한다.
-     예전에는 base64 를 그대로 Firestore 문서에 넣어 1MB 제한에 걸렸다. (형 리뷰 2026-08-12) */
-  const uploadProfile = async (file) => {
-    return uploadImageFile({ file, folder: 'profile' });
-  };
-
-  const onProfileUploaded = async (url) => {
-    setImg(url);
-    user.userimg = url;
-    dispatch(user);
-
-    const USERINFO = user;
-    const USERS_ID = user.users_id;
-    await Update_userinfobyusersid({ USERINFO, USERS_ID });
-    setRefresh((refresh) => refresh + 1);
-  };
-
   const _handleNameMove = () =>{
     navigate("/Mobileconfigcontent",{state :{NAME :CONFIGMOVE.PROFILENAME, TYPE : ""}});
   }
@@ -183,15 +205,12 @@ const MobileProfileConfig =({containerStyle}) =>  {
     <BoxItem style={{padding:"30px 10px"}}>
 
       <Column style={{justifyContent:"space-between", width:"100%"}}>
-        <Row style={{justifyContent:"flex-start", alignItems:"center", gap:16, width:"90%"}}>
-          <ProfileAvatarEditor src={img} size={92} uploader={uploadProfile} onUploaded={onProfileUploaded} />
-          <Name>{user.nickname}</Name>
+        {/* 대화명은 사진 옆에서 바로 고친다 — 예전엔 별도 화면으로 한 번 더 들어가야 했다 (형 리뷰 2026-08-12) */}
+        <Row style={{justifyContent:"flex-start", alignItems:"center", gap:16, width:"90%", marginBottom:20}}>
+          {/* 보기 전용 — 사진 교체와 대화명 변경은 내 정보 상단에서 한다 (형 리뷰 2026-08-12) */}
+          <ChatprofileImage source={img} size={92} />
+          <Name>{user.nickname || '대화명 없음'}</Name>
         </Row>
-
-
-        <ButtonEx text={'대화명 설정'} width={'85'}  onPress={_handleNameMove}
-        containerStyle={{marginTop:20, marginBottom:20, height:34}}
-         bgcolor={'#A3A3A3'} color={'#fff'} />
 
         <TemperatureLine>
            <div>홍여사 온도 <FaTemperatureHigh size={12} color={'#FF4E19'}/>

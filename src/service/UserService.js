@@ -609,3 +609,37 @@ export const Update_userimg_by_usersid = async({USERS_ID, profileImg}) =>{
     return false;
   }
 }
+
+/**
+ * 회원 탈퇴. (형 지시 2026-08-12)
+ *
+ * 문서를 지우지 않고 탈퇴 표시를 남긴다.
+ * 이 사람이 올린 일감·주고받은 대화가 상대 쪽에 남아 있어서, 문서를 지우면 그쪽 화면이 깨진다.
+ * 대신 개인정보는 비운다.
+ */
+export const WithdrawUser = async ({ USERS_ID }) => {
+  try {
+    const snap = await getDocs(query(collection(db, "USERS"), where("USERS_ID", "==", USERS_ID)));
+    if (snap.empty) return false;
+
+    const target = snap.docs[0];
+    const info = target.data().USERINFO || {};
+
+    await updateDoc(target.ref, {
+      WITHDRAWN: true,
+      WITHDRAWN_AT: Date.now(),
+      DEVICEID: "",
+      USERINFO: {
+        ...info,
+        nickname: "탈퇴한 사용자",
+        userimg: "",
+        phone: "",
+        token: "",
+      },
+    });
+    return true;
+  } catch (e) {
+    console.log("TCL: WithdrawUser -> error", e.message);
+    return false;
+  }
+};

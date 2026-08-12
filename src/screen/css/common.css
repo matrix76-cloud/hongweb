@@ -330,22 +330,22 @@ th:first-child, td:first-child {
 
 .customoverlay {position:relative;bottom:80px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;width: 90px;}
 .customoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
-.customoverlay a {background:#21A2FF;display:block;height:86px;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:12px;overflow:hidden;}
+.customoverlay a {background:#FF4E19;display:block;height:86px;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:12px;overflow:hidden;}
 
-.customoverlay .title {display:block;text-align:center;background:#21A2FF;font-size:12px;color:#fff;}
+.customoverlay .title {display:block;text-align:center;background:#FF4E19;font-size:12px;color:#fff;}
 .customoverlay .titleclose {display:block;text-align:center;background:#A3A3A3;font-size:12px;color:#fff;}
-.customoverlay .price {display:block;text-align:center;background:#fff;font-size:14px;color:#1E92E5;height:25px;display:flex;justify-content: center;align-items: center;}
+.customoverlay .price {display:block;text-align:center;background:#fff;font-size:14px;color:#FF4E19;height:25px;display:flex;justify-content: center;align-items: center;}
 .customoverlay .priceclose {display:block;text-align:center;background:#fff;font-size:14px;color:#131313;height:25px;display:flex;justify-content: center;align-items: center;font-weight: 400;}
 .customoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
 
 
 .mapcustomoverlay {position:relative;bottom:80px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;width: 60px;}
 .mapcustomoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
-.mapcustomoverlay a {background:#21A2FF;display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:12px;overflow:hidden;}
+.mapcustomoverlay a {background:#FF4E19;display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:12px;overflow:hidden;}
 
-.mapcustomoverlay .title {display:block;text-align:center;background:#21A2FF;font-size:10px;color:#fff;}
+.mapcustomoverlay .title {display:block;text-align:center;background:#FF4E19;font-size:10px;color:#fff;}
 .mapcustomoverlay .titleclose {display:block;text-align:center;background:#A3A3A3;font-size:10px;color:#fff;}
-.mapcustomoverlay .price {display:block;text-align:center;background:#fff;font-size:10px;color:#1E92E5;height:28px;display:flex;justify-content: center;align-items: center;}
+.mapcustomoverlay .price {display:block;text-align:center;background:#fff;font-size:10px;color:#FF4E19;height:28px;display:flex;justify-content: center;align-items: center;}
 .mapcustomoverlay .priceclose {display:block;text-align:center;background:#fff;font-size:10px;color:#131313;height:25px;display:flex;justify-content: center;align-items: center;}
 .mapcustomoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
 

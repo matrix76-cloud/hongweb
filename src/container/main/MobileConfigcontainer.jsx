@@ -1,4 +1,4 @@
-import React, { Component, useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { Component, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { HashRouter, Route, BrowserRouter, Routes, useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import { Row } from "../../common/Row";
@@ -6,6 +6,11 @@ import { UserContext } from "../../context/User";
 import { imageDB } from "../../utility/imageData";
 
 import { RiArrowRightSLine } from "react-icons/ri";
+import { PiSignOutBold, PiUserMinusBold } from "react-icons/pi";
+import localforage from 'localforage';
+import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
+import { WithdrawUser, Update_userinfobyusersid } from "../../service/UserService";
+import { PiCameraBold } from "react-icons/pi";
 import { PiBroom } from "react-icons/pi";
 import { BiClinic } from "react-icons/bi";
 import { VscCloseAll } from "react-icons/vsc";
@@ -25,6 +30,7 @@ import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { CONFIGMOVE } from "../../utility/screen";
 import { PiBellBold, PiBellRingingBold, PiCheckCircleBold, PiClipboardTextBold, PiCreditCardBold, PiFileTextBold, PiHandshakeBold, PiHeadsetBold, PiHeartBold, PiInfoBold, PiLockKeyBold, PiMapPinBold, PiMegaphoneBold, PiNavigationArrowBold, PiQuestionBold, PiSealCheckBold, PiWalletBold } from "react-icons/pi";
 import ChatprofileImage from "../../components/ChatprofileImage";
+import NicknameEditor from "../../components/NicknameEditor";
 
 
 
@@ -86,6 +92,26 @@ const RegistLayerContent = styled.div`
   font-size: 16px;
   font-weight: 700;
 `
+/* 프로필 사진 + 카메라 배지 */
+const AvatarBtn = styled.div`
+  position: relative;
+  flex: none;
+  cursor: pointer;
+`
+const CameraBadge = styled.div`
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #131313;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
 const Label = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 17px;
@@ -130,6 +156,9 @@ const MobileConfigcontainer =({containerStyle}) =>  {
   const location = useLocation();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
+  const [dialog, setDialog] = useState(null);   // 로그아웃·탈퇴 확인창
+  const [img, setImg] = useState('');           // 방금 고른 프로필 사진
+  const fileInput = useRef();
 
   useLayoutEffect(() => {
   }, []);
@@ -181,6 +210,71 @@ const MobileConfigcontainer =({containerStyle}) =>  {
     navigate("/Mobileconfigcontent",{state :{NAME :CONFIGMOVE.WORKERINFO, TYPE : ""}});
   }
 
+  /** 프로필 사진 교체 */
+  const _handleprofileimage = async (e) =>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+
+    const dataurl = await new Promise((resolve)=>{
+      const reader = new FileReader();
+      reader.onload = ()=> resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+
+    setImg(dataurl);
+    user.userimg = dataurl;
+    dispatch(user);
+
+    const USERINFO = user;
+    const USERS_ID = user.users_id;
+    await Update_userinfobyusersid({USERINFO, USERS_ID});
+    await localforage.setItem('userconfig', user);
+    setRefresh((refresh)=> refresh +1);
+  }
+
+  /** 로그아웃 — 저장된 계정을 비우고 처음 화면으로 */
+  const _handlelogout = () =>{
+    setDialog({
+      title: '로그아웃',
+      message: '로그아웃 할까요?',
+      confirmText: '로그아웃',
+      onConfirm: async () =>{
+        setDialog(null);
+        await localforage.setItem('userconfig', {});
+        navigate('/');
+      },
+    });
+  }
+
+  /**
+   * 탈퇴 — 실수로 누르지 못하게 "탈퇴" 를 직접 입력받는다 (형 지시 2026-08-12).
+   * 계정 문서는 지우지 않고 탈퇴 표시만 남긴다. 상대에게 남은 대화·일감이 깨지지 않게.
+   */
+  const _handlewithdraw = () =>{
+    setDialog({
+      title: '탈퇴하기',
+      message: '탈퇴하면 홍여사 활동내역을 다시 볼 수 없습니다.\n계속하려면 아래에 "탈퇴" 라고 적어주세요.',
+      input: { placeholder: '탈퇴' },
+      confirmText: '탈퇴',
+      danger: true,
+      onConfirm: async (word) =>{
+        if(word !== '탈퇴'){
+          setDialog({
+            title: '다시 확인해주세요',
+            message: '"탈퇴" 라고 정확히 적어야 진행됩니다.',
+            alertonly: true,
+            onConfirm: ()=> setDialog(null),
+          });
+          return;
+        }
+        setDialog(null);
+        await WithdrawUser({ USERS_ID: user.users_id });
+        await localforage.setItem('userconfig', {});
+        navigate('/');
+      },
+    });
+  }
+
   const _handleProfileConfig = () =>{
     navigate("/Mobileconfigcontent",{state :{NAME :CONFIGMOVE.PROFILECONFIG, TYPE : ""}});  
   }
@@ -192,10 +286,22 @@ const MobileConfigcontainer =({containerStyle}) =>  {
         <BoxItem>
           <Row style={{justifyContent:"space-between", width:"100%"}}>
             <Row style={{alignItems:"center", gap:12}}>
-              <ChatprofileImage source={user.userimg} size={44} />
+              {/* 눌러서 사진 교체 (형 지시 2026-08-12) */}
+              <AvatarBtn onClick={()=>{ fileInput.current?.click(); }}>
+                <ChatprofileImage source={img || user.userimg} size={52} />
+                <CameraBadge><PiCameraBold size={13} color="#fff" /></CameraBadge>
+              </AvatarBtn>
               <Name>{user.nickname}</Name>
-            </Row>   
-            <ProfileConfigBtn onClick={_handleProfileConfig}>프로필 설정</ProfileConfigBtn>
+            </Row>
+
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInput}
+              onChange={_handleprofileimage}
+              style={{ display: "none" }}
+            />
+            <ProfileConfigBtn onClick={_handleProfileConfig}>프로필 보기</ProfileConfigBtn>
       
           </Row>
           
@@ -383,6 +489,37 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           </SubLabel>
      
         </BoxItem>
+
+        {/* 계정 — 헤더에 있던 로그아웃을 여기로 내리고 탈퇴를 붙였다 (형 지시 2026-08-12) */}
+        <BoxItem>
+          <Label>계정</Label>
+
+          <SubLabel onClick={_handlelogout}>
+            <Row>
+              <PiSignOutBold/>
+              <SubLabelContent>로그아웃</SubLabelContent>
+            </Row>
+            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
+          </SubLabel>
+
+          <SubLabel onClick={_handlewithdraw}>
+            <Row>
+              <PiUserMinusBold/>
+              <SubLabelContent style={{color:"#c02020"}}>탈퇴하기</SubLabelContent>
+            </Row>
+            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
+          </SubLabel>
+        </BoxItem>
+
+        {
+          dialog && (
+            <MobileConfirmPopup
+              {...dialog}
+              onCancel={()=>{ setDialog(null); }}
+            />
+          )
+        }
+
         <div style={{height:80}}></div>
 
     </Container>

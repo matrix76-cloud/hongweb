@@ -1,5 +1,5 @@
 
-import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, {Fragment, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import Button from "../common/Button";
@@ -14,6 +14,7 @@ import { Readuserbyusersid } from "../service/UserService";
 import { ReadWorkByIndividually } from "../service/WorkService";
 import { imageDB, Seekimage } from "../utility/imageData";
 import { REQUESTINFO } from "../utility/work_";
+import { workOf } from "../utility/chat";
 import WorkLocationMap from "./WorkLocationMap";
 
 
@@ -43,6 +44,23 @@ const LoadingAnimationStyle={
   top: "40%",
   left: "35%"
 }
+
+/* 하단 고정 액션 바 — 스크롤과 무관하게 지원 버튼이 항상 보인다 (형 리뷰 2026-08-12) */
+const ActionBar = styled.div`
+  z-index: 900;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid #ededed;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+`
 
 const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STATUS}) =>  {
 
@@ -217,11 +235,11 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
       {
         currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
           width={"100px"} height={'100px'}/>) :(<>
-          <table class="workreport-table" style={{  margin: '10px auto', borderTop: "1px solid #434343"}}>      
+          <table className="workreport-table" style={{  margin: '10px auto', borderTop: "1px solid #434343"}}>      
           <tbody>
             {
-              messages.map((data)=>(
-                <>
+              (messages || []).map((data, index)=>(
+                <Fragment key={index}>
                 {
                 data.type =='response' &&
                 <tr>
@@ -240,7 +258,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
                 </td>
                 </tr>
                 }
-                </>                  
+                </Fragment>
               ))
             }
           </tbody>

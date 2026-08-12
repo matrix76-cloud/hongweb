@@ -6,6 +6,7 @@ import { COMMUNITYSTATUS, WORKSTATUS } from '../utility/status';
 import randomLocation from 'random-location'
 import { useSleep } from '../utility/common';
 import Axios from 'axios';
+import { CHATCONTENTTYPE } from "../utility/screen";
 const authService = getAuth(firebaseApp);
 
 
@@ -403,4 +404,32 @@ export const ReadBlocked = async ({ USERS_ID }) => {
     console.log("TCL: ReadBlocked -> error", e.message);
     return [];
   }
+};
+
+/**
+ * 대화명을 바꾸면 참여 중인 모든 대화방에 안내를 남긴다. (형 리뷰 2026-08-12)
+ * 상대가 "누구지?" 하지 않도록 바뀐 사실을 그 자리에서 알려준다.
+ */
+export const NoticeNicknameChanged = async ({ USERS_ID, beforeName, afterName }) => {
+  if (!USERS_ID || !afterName || beforeName === afterName) return 0;
+
+  const rooms = await ReadChat({ USERS_ID });
+  if (!Array.isArray(rooms) || rooms.length === 0) return 0;
+
+  const msg = beforeName
+    ? `${beforeName}님이 대화명을 ${afterName}(으)로 변경하였습니다`
+    : `대화명을 ${afterName}(으)로 변경하였습니다`;
+
+  await Promise.all(
+    rooms.map((room) =>
+      CreateMessage({
+        CHAT_ID: room.CHAT_ID,
+        msg,
+        users_id: USERS_ID,
+        read: [USERS_ID],
+        CHAT_CONTENT_TYPE: CHATCONTENTTYPE.ENTER,   // 시스템 안내로 가운데 표시된다
+      }).catch(() => null),
+    ),
+  );
+  return rooms.length;
 };

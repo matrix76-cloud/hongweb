@@ -52,3 +52,33 @@
 .chatCalendar .react-calendar__month-view__days__day--neighboringMonth {
   color: #D4D4D4;
 }
+
+/* react-calendar 기본색이 파란 계열이라 남는 곳까지 전부 덮는다 (형 지적 2026-08-12) */
+.chatCalendar .react-calendar__tile:enabled:hover,
+.chatCalendar .react-calendar__tile:enabled:focus,
+.chatCalendar .react-calendar__tile--hasActive,
+.chatCalendar .react-calendar__tile--hasActive:enabled:hover,
+.chatCalendar .react-calendar__tile--hasActive:enabled:focus {
+  background: #FFF0EA;
+  color: #131313;
+}
+
+.chatCalendar .react-calendar__navigation button:enabled:hover,
+.chatCalendar .react-calendar__navigation button:enabled:focus,
+.chatCalendar .react-calendar__navigation button:disabled {
+  background: #fff;
+}
+
+.chatCalendar .react-calendar__month-view__days__day--weekend {
+  color: #E05353;
+}
+
+.chatCalendar .react-calendar__tile--active.react-calendar__month-view__days__day--weekend {
+  color: #fff;
+}
+
+/* 오늘 날짜 기본 노랑도 톤에 안 맞는다 */
+.chatCalendar .react-calendar__tile--now:enabled:hover,
+.chatCalendar .react-calendar__tile--now:enabled:focus {
+  background: #EDEDEF;
+}
