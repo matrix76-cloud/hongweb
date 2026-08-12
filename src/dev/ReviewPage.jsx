@@ -1,16 +1,17 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DOMAINS, STATUS_LABEL, STATUS_COLOR } from './reviewData';
+import { captureFrame, describeTarget } from './reviewCapture';
 
 /**
  * 개발 전용 리뷰 허브 (/review · DEV 게이트)
  *
- *   좌 = 실제 화면(iframe) + 핀 찍기
+ *   좌 = 실제 화면(iframe) + 핀 찍기 + 스샷 캡처
  *   우상 = 도메인 탭 → 화면 버튼 (2단계)
  *   우중 = 그 화면의 기획 사양(spec)
- *   우하 = 기록 스레드
+ *   우하 = 기록 스레드 (핀 위치 · 첨부 스샷)
  *
- * 기록은 _docs/review_thread.json 에 파일로 저장된다 (vite-plugin-review-notes).
- * 형이 핀 찍고 메모 남기면 카스가 읽고 조치한 뒤 답글을 단다.
+ * 기록은 _docs/review_thread.json, 스샷은 _docs/review_images/ 에 파일로 저장된다.
+ * 형이 핀 찍고 캡처해서 메모 남기면 카스가 읽고 조치한 뒤 답글을 단다.
  */
 
 const C = {
@@ -19,7 +20,7 @@ const C = {
 };
 const FONT = "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif";
 
-const ALL = DOMAINS.flatMap((d) => d.screens.map((s) => ({ ...s, domain: d.key, domainLabel: d.label })));
+const ALL = DOMAINS.flatMap((d) => d.screens.map((s) => ({ ...s, domain: d.key })));
 
 const btn = (on) => ({
   fontSize: 14, fontWeight: on ? 700 : 500, padding: '7px 13px', borderRadius: 8, cursor: 'pointer',
@@ -30,14 +31,21 @@ const btn = (on) => ({
 
 export default function ReviewPage() {
   const [thread, setThread] = useState({});
-  const [domain, setDomain] = useState(DOMAINS[1].key);   // 기본 = ① 일 올리기
+  const [domain, setDomain] = useState(DOMAINS[1].key);
   const [curId, setCurId] = useState(DOMAINS[1].screens[0].id);
   const [pinMode, setPinMode] = useState(false);
   const [pins, setPins] = useState([]);
   const [viewPins, setViewPins] = useState(null);
+  const [attachImgs, setAttachImgs] = useState([]);
   const [text, setText] = useState('');
   const [replyTo, setReplyTo] = useState(null);
+  const [busy, setBusy] = useState('');
+  const [sharing, setSharing] = useState(false);
+  const [zoom, setZoom] = useState(null);
+
   const frameRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
 
   const cur = ALL.find((s) => s.id === curId) || ALL[0];
   const entries = thread[curId] || [];
@@ -47,11 +55,38 @@ export default function ReviewPage() {
     fetch('/__review_thread').then((r) => r.json()).then(setThread).catch(() => setThread({}));
 
   useEffect(() => { load(); }, []);
-  useEffect(() => { setPins([]); setViewPins(null); setPinMode(false); setReplyTo(null); }, [curId]);
+  useEffect(() => {
+    setPins([]); setViewPins(null); setPinMode(false); setReplyTo(null); setAttachImgs([]);
+  }, [curId]);
+
+  // ── 화면공유 ──
+  const stopShare = useCallback(() => {
+    const s = streamRef.current;
+    if (s) s.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    setSharing(false);
+  }, []);
+
+  const startShare = useCallback(async () => {
+    if (!navigator.mediaDevices?.getDisplayMedia) return null;
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { frameRate: 30 }, audio: false, preferCurrentTab: true, selfBrowserSurface: 'include',
+      });
+      streamRef.current = stream;
+      setSharing(true);
+      const v = videoRef.current;
+      if (v) { v.srcObject = stream; try { await v.play(); } catch { /* noop */ } }
+      const track = stream.getVideoTracks()[0];
+      if (track) track.addEventListener('ended', stopShare);
+      return stream;
+    } catch { return null; }
+  }, [stopShare]);
+
+  useEffect(() => () => stopShare(), [stopShare]);
 
   const countOf = (id) => (thread[id] || []).length;
 
-  // 미답변 = 형 글에 답글이 없는 것
   const unanswered = useMemo(() => {
     let n = 0;
     for (const items of Object.values(thread)) {
@@ -63,22 +98,54 @@ export default function ReviewPage() {
 
   const addPin = (e) => {
     const box = e.currentTarget.getBoundingClientRect();
+    const target = describeTarget(frameRef.current, e.clientX, e.clientY);
     setPins((p) => [...p, {
       x: ((e.clientX - box.left) / box.width) * 100,
       y: ((e.clientY - box.top) / box.height) * 100,
       label: String(p.length + 1),
+      ...(target ? { target } : {}),
     }]);
+  };
+
+  // 핀 박아 캡처 → 첨부에 추가
+  const captureWithPins = async () => {
+    if (busy) return;
+    if (!streamRef.current) {
+      const s = await startShare();
+      if (!s) console.info('[review] 화면공유 거부 — html2canvas 로 캡처합니다(지도 배경은 빠질 수 있음).');
+    }
+    setBusy('캡처 중...');
+    setPinMode(false);
+    await new Promise((r) => setTimeout(r, 280));
+    let dataUrl = '';
+    try {
+      dataUrl = await captureFrame({
+        iframeEl: frameRef.current,
+        videoEl: videoRef.current,
+        hasStream: !!streamRef.current,
+        pins,
+      });
+    } catch { /* noop */ }
+    if (dataUrl) setAttachImgs((p) => [...p, dataUrl]);
+    setBusy('');
   };
 
   const post = async () => {
     const t = text.trim();
-    if (!t && !pins.length) return;
+    if (!t && !pins.length && !attachImgs.length) return;
+    setBusy('저장 중...');
     await fetch('/__review_thread', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: curId, by: '형', text: t, pins: pins.length ? pins : undefined, replyTo: replyTo || undefined }),
+      body: JSON.stringify({
+        id: curId, by: '형', text: t,
+        pins: pins.length ? pins : undefined,
+        images: attachImgs.length ? attachImgs : undefined,
+        replyTo: replyTo || undefined,
+      }),
     });
-    setText(''); setPins([]); setPinMode(false); setReplyTo(null);
+    setText(''); setPins([]); setAttachImgs([]); setPinMode(false); setReplyTo(null);
+    setBusy('');
     load();
   };
 
@@ -97,34 +164,35 @@ export default function ReviewPage() {
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.ink, fontFamily: FONT, padding: '16px 20px' }}>
 
-      {/* 헤더 */}
+      {/* 화면공유 수신용 (화면에 안 보임) */}
+      <video ref={videoRef} muted playsInline style={{ position: 'fixed', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
         <h1 style={{ margin: 0, fontSize: 21, fontWeight: 800 }}>홍여사 리뷰</h1>
         <span style={{ fontSize: 14, color: C.gray }}>
           화면 {ALL.length}개 · <b style={{ color: C.brand }}>미답변 {unanswered}</b>
         </span>
+        {sharing && <span style={{ fontSize: 13, fontWeight: 700, color: '#1a7f37' }}>화면공유 중 — 지도까지 캡처됩니다</span>}
+        {busy && <span style={{ fontSize: 14, color: C.brand, fontWeight: 700 }}>{busy}</span>}
       </div>
 
       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
-        {/* ── 좌: 실제 화면 + 핀 ── */}
+        {/* ── 좌: 실제 화면 ── */}
         <div style={{ flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap', width: 390 }}>
             <button style={btn(pinMode)} onClick={() => { setPinMode((v) => !v); setViewPins(null); }}>
-              {pinMode ? '핀 찍는 중 — 화면 클릭' : '핀 찍기'}
+              {pinMode ? '핀 찍는 중' : '핀 찍기'}
             </button>
+            <button style={btn(false)} onClick={captureWithPins} disabled={!cur.path}>스샷 찍기</button>
             {pins.length > 0 && (
               <>
                 <span style={{ fontSize: 14, color: C.brand, fontWeight: 700 }}>핀 {pins.length}</span>
-                <button style={{ ...btn(false), padding: '6px 10px' }} onClick={() => setPins([])}>지우기</button>
+                <button style={{ ...btn(false), padding: '6px 9px' }} onClick={() => setPins([])}>핀 지우기</button>
               </>
             )}
-            {viewPins && <button style={{ ...btn(false), padding: '6px 10px' }} onClick={() => setViewPins(null)}>핀 보기 끄기</button>}
-            <div style={{ flex: 1 }} />
-            {cur.path && (
-              <button style={{ ...btn(false), padding: '6px 10px' }}
-                onClick={() => frameRef.current && (frameRef.current.src = cur.path)}>새로고침</button>
-            )}
+            {viewPins && <button style={{ ...btn(false), padding: '6px 9px' }} onClick={() => setViewPins(null)}>보기 끄기</button>}
+            {sharing && <button style={{ ...btn(false), padding: '6px 9px' }} onClick={stopShare}>공유 중지</button>}
           </div>
 
           <div style={{ position: 'relative', width: 390, height: 780, border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
@@ -149,7 +217,7 @@ export default function ReviewPage() {
               }} />
 
             {shownPins.map((p, i) => (
-              <div key={i} style={{
+              <div key={i} title={p.target ? `${p.target.tag} ${p.target.text}` : ''} style={{
                 position: 'absolute', left: `${p.x}%`, top: `${p.y}%`, transform: 'translate(-50%,-50%)',
                 width: 26, height: 26, borderRadius: 13, background: C.brand, color: '#fff',
                 fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -157,12 +225,28 @@ export default function ReviewPage() {
               }}>{p.label || i + 1}</div>
             ))}
           </div>
+
+          {/* 첨부 예정 스샷 */}
+          {attachImgs.length > 0 && (
+            <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap', width: 390 }}>
+              {attachImgs.map((src, i) => (
+                <div key={i} style={{ position: 'relative' }}>
+                  <img src={src} alt="" onClick={() => setZoom(src)}
+                    style={{ width: 84, height: 168, objectFit: 'cover', objectPosition: 'top', borderRadius: 8, border: `1px solid ${C.line}`, cursor: 'zoom-in' }} />
+                  <button onClick={() => setAttachImgs((p) => p.filter((_, k) => k !== i))}
+                    style={{
+                      position: 'absolute', top: -7, right: -7, width: 22, height: 22, borderRadius: 11,
+                      border: '1px solid #fff', background: '#131313', color: '#fff', fontSize: 13, cursor: 'pointer', lineHeight: 1,
+                    }}>×</button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── 우 ── */}
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-          {/* 1단계: 도메인 */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {DOMAINS.map((d) => {
               const on = d.key === domain;
@@ -170,22 +254,18 @@ export default function ReviewPage() {
               return (
                 <button key={d.key} style={btn(on)}
                   onClick={() => { setDomain(d.key); setCurId(d.screens[0].id); }}>
-                  {d.label}
-                  {n > 0 && <span style={{ marginLeft: 6, fontSize: 13, opacity: .85 }}>{n}</span>}
+                  {d.label}{n > 0 && <span style={{ marginLeft: 6, fontSize: 13, opacity: .85 }}>{n}</span>}
                 </button>
               );
             })}
           </div>
 
-          {/* 2단계: 화면 */}
           <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 12, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {curDomain.screens.map((s) => {
               const on = s.id === curId;
               const n = countOf(s.id);
               return (
-                <button key={s.id} onClick={() => setCurId(s.id)} style={{
-                  ...btn(on), display: 'flex', alignItems: 'center', gap: 6,
-                }}>
+                <button key={s.id} onClick={() => setCurId(s.id)} style={{ ...btn(on), display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ fontSize: 13, opacity: .6 }}>{s.no}</span>
                   {s.name}
                   <span style={{ fontSize: 13, fontWeight: 700, color: on ? 'rgba(255,255,255,.9)' : STATUS_COLOR[s.status] }}>
@@ -203,7 +283,6 @@ export default function ReviewPage() {
             })}
           </div>
 
-          {/* 기획 사양 */}
           <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 10 }}>
               <div style={{ fontSize: 18, fontWeight: 700 }}>{cur.no} {cur.name}</div>
@@ -216,15 +295,13 @@ export default function ReviewPage() {
               : (cur.spec || []).map((line, i) => {
                 const key = line.startsWith('★');
                 return (
-                  <div key={i} style={{
-                    fontSize: 15, lineHeight: 1.7, marginBottom: 5,
-                    color: key ? C.ink : C.gray, fontWeight: key ? 600 : 400,
-                  }}>{line}</div>
+                  <div key={i} style={{ fontSize: 15, lineHeight: 1.7, marginBottom: 5, color: key ? C.ink : C.gray, fontWeight: key ? 600 : 400 }}>
+                    {line}
+                  </div>
                 );
               })}
           </div>
 
-          {/* 스레드 */}
           <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, minHeight: 240 }}>
             {roots.length === 0 && (
               <div style={{ fontSize: 15, color: C.gray2, padding: '10px 0 16px' }}>아직 기록이 없습니다.</div>
@@ -243,6 +320,15 @@ export default function ReviewPage() {
                   <button onClick={() => del(e.pid)} style={{ fontSize: 13, color: C.gray2, background: 'none', border: 'none', cursor: 'pointer' }}>삭제</button>
                 </div>
                 <div style={{ fontSize: 15, lineHeight: 1.65, whiteSpace: 'pre-wrap' }}>{e.text}</div>
+
+                {e.imgs?.length > 0 && (
+                  <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {e.imgs.map((src, i) => (
+                      <img key={i} src={src} alt="" onClick={() => setZoom(src)}
+                        style={{ width: 96, height: 190, objectFit: 'cover', objectPosition: 'top', borderRadius: 8, border: `1px solid ${C.line}`, cursor: 'zoom-in' }} />
+                    ))}
+                  </div>
+                )}
 
                 {e.pins?.length > 0 && (
                   <button onClick={() => { setViewPins(e.pins); setPinMode(false); }} style={{
@@ -264,11 +350,10 @@ export default function ReviewPage() {
             ))}
 
             <div style={{ marginTop: 14, borderTop: `1px solid ${C.line}`, paddingTop: 14 }}>
-              {(pins.length > 0 || replyTo) && (
+              {(pins.length > 0 || attachImgs.length > 0 || replyTo) && (
                 <div style={{ fontSize: 14, color: C.brand, fontWeight: 600, marginBottom: 6 }}>
-                  {replyTo ? '답글로 달립니다' : ''}
-                  {replyTo && pins.length > 0 ? ' · ' : ''}
-                  {pins.length > 0 ? `핀 ${pins.length}개 함께 저장` : ''}
+                  {[replyTo ? '답글로 달림' : '', pins.length ? `핀 ${pins.length}개` : '', attachImgs.length ? `스샷 ${attachImgs.length}장` : '']
+                    .filter(Boolean).join(' · ')} 함께 저장
                 </div>
               )}
               <div style={{ display: 'flex', gap: 8 }}>
@@ -290,6 +375,16 @@ export default function ReviewPage() {
           </div>
         </div>
       </div>
+
+      {/* 이미지 확대 */}
+      {zoom && (
+        <div onClick={() => setZoom(null)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,.72)', zIndex: 100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out', padding: 30,
+        }}>
+          <img src={zoom} alt="" style={{ maxWidth: '92vw', maxHeight: '92vh', borderRadius: 10 }} />
+        </div>
+      )}
     </div>
   );
 }

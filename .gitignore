@@ -78,3 +78,4 @@ functions/node_modules_/
 /build/
 /dist/
 .DS_Store
+_docs/review_images/
