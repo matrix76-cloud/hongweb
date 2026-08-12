@@ -1,281 +1,266 @@
-import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
 import styled from 'styled-components';
-import { BetweenRow, FlexstartRow, Row } from "../common/Row";
 import { UserContext } from "../context/User";
-import { CommaFormatted } from "../utility/money";
 import { distanceFunc } from "../utility/region";
-import { CiHeart } from "react-icons/ci";
 import { imageDB, Seekgrayimage, Seekimage } from "../utility/imageData";
-import { BetweenColumn, Column, FlexstartColumn } from "../common/Column";
-import { FiEye } from "react-icons/fi";
-import { getDateOrTime } from "../utility/date";
-
 import TimeAgo from 'react-timeago';
 import koreanStrings from "react-timeago/lib/language-strings/ko";
 import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
-import { getFullTime, WriteTimeCurrentTimeDiff } from "../utility/date";
-import { REQUESTINFO, WORKNAME } from "../utility/work_";
-const formatter = buildFormatter(koreanStrings); 
+import { getFullTime } from "../utility/date";
+import { REQUESTINFO } from "../utility/work_";
+
+const formatter = buildFormatter(koreanStrings);
+
+/* 피그마 node 715:22647 (block) 기준
+   카드 342x262 · padding 20 · gap 12 · radius 16 · border 1px #E3E3E3 */
 
 const Container = styled.div`
-  background: ${({selected}) => selected == true ?('#ededed'):('#fff')};
-  width: ${({width}) => width};
-  margin-bottom: 20px;
-  border: ${({selected}) => selected == true ?('2px solid #817b79'):('2px solid #F5F5F5')};
-  border-radius: 20px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  padding :20px;
-
-
-
-`
-
-const KeywordBox = styled.div`
+  box-sizing: border-box;
+  width: ${({ width }) => width || '100%'};
+  background: ${({ selected }) => (selected ? '#F9F9F9' : '#FFFFFF')};
+  border: 1px solid ${({ selected }) => (selected ? '#A3A3A3' : '#E3E3E3')};
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+`;
+
+const TopRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const TopCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1 0 0;
+  min-width: 0;
+`;
+
+const StatusTag = styled.div`
+  display: inline-flex;
   align-items: center;
-  height: 24px;
-  background: #FFF5E5;
-  border-radius: 5px;
-  margin-right: 5px;
-  padding: 4px 6px;
-  margin-top: 10px;
-  font-size:12px;
-`
-
-const TagItem = styled.div`
-
-`
-const Tag = styled.div`
-  background: #FF7125;
-  color: #FFF;
+  justify-content: center;
   padding: 4px 8px;
-  border-radius: 5px;
-  width:81px;
-  display:flex;
-  font-size:14px;
-  justify-content:center;
-  align-items:center;
-  font-weight:400;
-  font-family:"Pretendard-Light";
-`
-const DisableTag = styled.div`
-  background: #F3F3F3;
-  color: #A3A3A3;
-  padding: 4px 8px;
-  border-radius: 5px;
-  width:81px;
-  display:flex;
-  font-size:14px;
-  justify-content:center;
-  align-items:center;
-  font-family:"Pretendard-Light";
-`
-const style = {
-  display: "flex"
-};
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.3;
+  background: ${({ done }) => (done ? '#F3F3F3' : '#FFF5F5')};
+  color: ${({ done }) => (done ? '#A3A3A3' : '#FF2121')};
+`;
 
-const WorkType = styled.div`
+const TitleCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  color: #131313;
+  line-height: 1.3;
+`;
 
-`
-const WorkTypeText = styled.div`
+const Title = styled.div`
   font-size: 18px;
-  font-family:Pretendard-Regular;
-  font-weight:700;
-  color :#131313;
-  line-height:23.4px;
-`
+  font-weight: 600;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
-const MobileWorkItem =({containerStyle, width, workdata, onPress, index, selected}) =>  {
+const PriceRow = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  white-space: nowrap;
+`;
 
-  const { dispatch, user } = useContext(UserContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(1);
+const PriceValue = styled.span`
+  font-size: 18px;
+  font-weight: 700;
+`;
 
+const PriceUnit = styled.span`
+  font-size: 16px;
+  font-weight: 400;
+`;
 
+const IconCircle = styled.div`
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 100px;
+  background: #F9F9F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`;
 
-  useLayoutEffect(() => {
-  }, []);
+const MetaRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.3;
+  color: #A3A3A3;
+  white-space: nowrap;
+`;
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    return () => {};
-  }, []);
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: #E3E3E3;
+`;
 
-  useEffect(()=>{
+const Bottom = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+`;
 
-    async function FetchData(){
-    } 
-    FetchData();
-  }, [])
-  useEffect(()=>{
+const BottomRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
 
-  },[refresh])
+const ViewCount = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 1.3;
+  color: #131313;
+`;
 
-  const _handleworkselect = ()=>{
-    console.log("TCL: _handleworkselect -> y", index);
-    onPress(index);
+const ProgressCount = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.3;
 
-  }
+  .label { color: #A3A3A3; font-weight: 400; }
+  .value { color: #131313; font-weight: 500; }
+`;
 
-  function Distance() {
-    const lat1 = user.latitude;
-    const lon1 = user.longitude;
-    const FindIndex = workdata.WORK_INFO.findIndex(x=>x.requesttype == '지역');
-    const lat2 = workdata.WORK_INFO[FindIndex].latitude;;
-    const lon2 = workdata.WORK_INFO[FindIndex].longitude;;
-    const dist = distanceFunc(lat1, lon1, lat2, lon2);
-    return parseFloat(Math.round(dist /1000 * 1000) / 1000);
-  }
+const TagWrap = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+`;
 
-  function Price(){
-    const FindIndex = workdata.WORK_INFO.findIndex(x=>x.requesttype == '금액');
-    return workdata.WORK_INFO[FindIndex].result;
-  }
-  function Comment(){
-    const FindIndex = workdata.WORK_INFO.findIndex(x=>x.requesttype == REQUESTINFO.COMMENT);
-    return workdata.WORK_INFO[FindIndex].result;
-  }
+const Chip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #FFF5E5;
+  color: #1A1A1A;
+  font-size: 13px;
+  line-height: 1.3;
+`;
 
-  function Region(){
-    const FindIndex = workdata.WORK_INFO.findIndex(x=>x.requesttype == '지역');
-    let region  = workdata.WORK_INFO[FindIndex].result;
-    let regions = [];
-    regions = region.split(' ');
+const MobileWorkItem = ({ containerStyle, width, workdata, onPress, index, selected }) => {
+  const { user } = useContext(UserContext);
 
-    return regions[1]+' ' + regions[2]+' '+ regions[3];
-  }
+  const done = workdata.WORK_STATUS !== 0;
 
-  function Keyword(){
-    let keyworditems = [];
-    workdata.WORK_INFO.map((data)=>{
-      if(data.requesttype != '지역' && data.requesttype != '금액'
-      && data.requesttype != REQUESTINFO.COMMENT
-      && data.requesttype != '주기'){
+  const findResult = (type) => {
+    const i = workdata.WORK_INFO.findIndex((x) => x.requesttype === type);
+    return i === -1 ? null : workdata.WORK_INFO[i];
+  };
 
-        if(data.requesttype == '도움주실분 성별'){
-          data.result ='도움성별 ';
+  const Distance = () => {
+    const region = findResult('지역');
+    if (!region) return null;
+    const dist = distanceFunc(user.latitude, user.longitude, region.latitude, region.longitude);
+    return parseFloat(Math.round((dist / 1000) * 1000) / 1000);
+  };
 
-          if(data.result == '여성'){
-            data.result +='여성';
-          }else if(data.result == '남성'){
-            data.result +='남성';    
-          }else{
-            data.result +='상관없음';  
-          }
-        }
+  const Price = () => findResult('금액')?.result ?? '';
 
-        if(data.requesttype == '도움주실분 연령대'){
-          let guide ='도움연령대 ';
+  const Keyword = () => {
+    const skip = ['지역', '금액', '주기', REQUESTINFO.COMMENT];
+    return workdata.WORK_INFO.filter((d) => !skip.includes(d.requesttype));
+  };
 
-          if(data.result == '상관없음'){
-            data.result = "";
-            data.result += guide;
-            data.result +='상관없음';
-          }else if(data.result == '10대'){
-            data.result = "";
-            data.result += guide;
-            data.result +='10대';    
-          }else if(data.result == '20대'){
-            data.result = "";
-            data.result += guide;
-            data.result +='20대';    
-          }else if(data.result == '30대'){
-            data.result = "";
-            data.result += guide;
-            data.result +='30대';    
-          }else if(data.result == '40대'){
-            data.result = "";
-            data.result += guide;
-            data.result +='40대';    
-          }else if(data.result == '50대'){
-            data.result = "";
-            data.result += guide;
-            data.result +='50대';    
-          }else if(data.result == '60대'){
-            data.result = "";
-            data.result += guide;
-            data.result +='60대';    
-          }
-        }
-        keyworditems.push(data);
-      }
-    })
-    return keyworditems;
-  }
- 
+  const distance = Distance();
+
   return (
+    <Container
+      style={containerStyle}
+      width={width}
+      selected={selected}
+      onClick={() => onPress(index)}
+    >
+      <TopRow>
+        <TopCol>
+          <StatusTag done={done}>{done ? '마감된 거래' : '진행중 거래'}</StatusTag>
+          <TitleCol>
+            <Title>{workdata.WORKTYPE}</Title>
+            <PriceRow>
+              <PriceValue>{Price()}</PriceValue>
+              <PriceUnit>원</PriceUnit>
+            </PriceRow>
+          </TitleCol>
+        </TopCol>
 
-    <Container style={containerStyle} width={width} onClick={_handleworkselect} selected={selected}   >
+        <IconCircle>
+          <img
+            src={done ? Seekgrayimage(workdata.WORKTYPE) : Seekimage(workdata.WORKTYPE)}
+            alt={workdata.WORKTYPE}
+            style={{ width: 64, height: 64, objectFit: 'contain' }}
+          />
+        </IconCircle>
+      </TopRow>
 
+      <MetaRow>
+        <span>{distance != null ? `거리 ${distance}km` : ''}</span>
+        <span>
+          등록일자 <TimeAgo date={getFullTime(workdata.CREATEDT)} formatter={formatter} />
+        </span>
+      </MetaRow>
 
-      <Column style={{height:"40%", background:"#fff",width:"100%"}}>
-        <Row style={{height:"86px", background:"#fff",width:"100%"}}>
-          <FlexstartColumn style={{height:"100%",width:"70%"}}>
-            {
-              workdata.WORK_STATUS== 0 ? (<TagItem>
-                  <Tag>진행중 거래</Tag></TagItem>):(<TagItem><DisableTag>마감된 거래</DisableTag></TagItem>)
-            }
-            <FlexstartColumn style={{marginTop:14,height:46}}>
-              <WorkType><WorkTypeText>{workdata.WORKTYPE}</WorkTypeText></WorkType>
-              <div><WorkTypeText>{Price()} 
-    
-              </WorkTypeText></div>
-            </FlexstartColumn>
-          </FlexstartColumn>
+      <Divider />
 
-          <BetweenRow style={{height:"100%", width:"30%"}}>
-            <div style={{background:"#F9F9F9", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
-            {workdata.WORK_STATUS== 0 ? 
-              (<img src={Seekimage(workdata.WORKTYPE)} style={{width:52}}/>) : (<img src={Seekgrayimage(workdata.WORKTYPE)} style={{width:52}}/>)
-            }
-            </div>
-          </BetweenRow>
-      
-        </Row>
-      </Column>
-      <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px", color:"#A3A3A3", fontSize:14}}>
-        {Comment().slice(0, 25)}
-        {Comment().length > 25 ? "..." : null}
-      </BetweenRow>
+      <Bottom>
+        <BottomRow>
+          <ViewCount>
+            <img src={imageDB.eyesolid} alt="조회수" style={{ width: 16, height: 16, objectFit: 'contain' }} />
+            <span>{workdata.VIEW_COUNT ?? 0}</span>
+          </ViewCount>
+          <ProgressCount>
+            <span className="label">진행중인 건수</span>
+            <span className="value">{workdata.APPLY_COUNT ?? 0}건</span>
+          </ProgressCount>
+        </BottomRow>
 
-      <div style={{border :"1.5px dashed #ededed", width:"100%"}}></div>
-
-  
-      <Column style={{height:"60%", background:"#fff",width:"100%",justifyContent: "start"}}>
-
-        <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px 0px", color:"#A3A3A3", fontSize:12}} >
-        <div>{Region()} / 거리 {Distance()}km </div>
-        <div><TimeAgo date={getFullTime(workdata.CREATEDT)}formatter={formatter}/></div>
-        </BetweenRow>
-        <BetweenRow style={{height:"18px",width:"100%",margin:"14px 0px 0px"}}>
-          <Row><img src={imageDB.eyesolid} style={{width:16, height:12}}/>
-          <span style={{fontSize:14,paddingLeft:5}}></span>20</Row>
-          <Row><span style={{color :"#A3A3A3", paddingRight:10,fontSize:12}}>진행중인 건수</span><span style={{fontFamily:"Pretendard-Bold"}}>5건</span></Row> 
-        </BetweenRow>
-
-        <FlexstartRow style={{width:"100%", flexWrap:"wrap"}}>
-          {
-          Keyword().map((data, index)=>(
-            <KeywordBox>
-              {data.result.slice(0, 12)}
-              {data.result.length > 12 ? "..." : null}
-            
-            </KeywordBox>
-          ))
-          }   
-        </FlexstartRow>
-
-      </Column>
+        <TagWrap>
+          {Keyword().map((data, i) => (
+            <Chip key={i}>
+              {String(data.result).slice(0, 12)}
+              {String(data.result).length > 12 ? '...' : null}
+            </Chip>
+          ))}
+        </TagWrap>
+      </Bottom>
     </Container>
   );
-
-}
+};
 
 export default MobileWorkItem;
-

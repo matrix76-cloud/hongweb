@@ -510,71 +510,14 @@ const MobileMaincontainer =({containerStyle}) =>  {
     setRefresh((refresh) => refresh +1);
   }
 
-  const _handlebasicmenuclick = async(checkmenu) =>{
-
-    console.log("TCL: _handlemenuclick -> checkmenu", checkmenu);
-    if(menu == checkmenu){
-      setMenu("");
-   
-    }else{
-      setMenu(checkmenu);
-    }
-
-    let totalset = 0;
-
-    if(checkmenu == WORKNAME.HOMECLEAN){
-      setTotalset(WORKPOLICY.HOMECLEAN);
-      totalset = WORKPOLICY.HOMECLEAN;
-    }else if(checkmenu == WORKNAME.BUSINESSCLEAN){
-      setTotalset(WORKPOLICY.BUSINESSCLEAN);
-      totalset = WORKPOLICY.BUSINESSCLEAN;
-    }else if(checkmenu == WORKNAME.MOVECLEAN){
-      setTotalset(WORKPOLICY.MOVECLEAN);
-      totalset = WORKPOLICY.MOVECLEAN;
-    }else if(checkmenu == WORKNAME.FOODPREPARE){
-      setTotalset(WORKPOLICY.FOODPREPARE);
-      totalset = WORKPOLICY.FOODPREPARE;
-    }else if(checkmenu == WORKNAME.GOOUTSCHOOL){
-      setTotalset(WORKPOLICY.GOOUTSCHOOL);
-      totalset = WORKPOLICY.GOOUTSCHOOL;
-    }else if(checkmenu == WORKNAME.BABYCARE){
-      setTotalset(WORKPOLICY.BABYCARE);
-      totalset = WORKPOLICY.BABYCARE;
-    }else if(checkmenu == WORKNAME.LESSON){
-      setTotalset(WORKPOLICY.LESSON);
-      totalset = WORKPOLICY.LESSON;
-    }else if(checkmenu == WORKNAME.PATIENTCARE){
-      setTotalset(WORKPOLICY.PATIENTCARE);
-      totalset = WORKPOLICY.PATIENTCARE;
-    }else if(checkmenu == WORKNAME.GOHOSPITAL){
-      setTotalset(WORKPOLICY.GOHOSPITAL);
-      totalset = WORKPOLICY.GOHOSPITAL;
-    }else if(checkmenu == WORKNAME.RECIPETRANSMIT){
-      setTotalset(WORKPOLICY.RECIPETRANSMIT);
-      totalset = WORKPOLICY.RECIPETRANSMIT;
-    }else if(checkmenu == WORKNAME.GOSCHOOLEVENT){
-      setTotalset(WORKPOLICY.GOSCHOOLEVENT);
-      totalset = WORKPOLICY.GOSCHOOLEVENT;
-    }else if(checkmenu == WORKNAME.GODOGHOSPITAL){
-      setTotalset(WORKPOLICY.GODOGHOSPITAL);
-      totalset = WORKPOLICY.GODOGHOSPITAL;
-    }else if(checkmenu == WORKNAME.GODOGWALK){
-      setTotalset(WORKPOLICY.GODOGWALK);
-      totalset = WORKPOLICY.GODOGWALK;
-    }else if(checkmenu == WORKNAME.CARRYLOAD){
-      setTotalset(WORKPOLICY.CARRYLOAD);
-      totalset = WORKPOLICY.CARRYLOAD;
-    }else if(checkmenu == WORKNAME.ERRAND){
-      setTotalset(WORKPOLICY.ERRAND);
-      totalset = WORKPOLICY.ERRAND;
-    }else if(checkmenu == WORKNAME.SHOPPING){
-      setTotalset(WORKPOLICY.SHOPPING);
-      totalset = WORKPOLICY.SHOPPING;
-    }
-    setRefresh((refresh) => refresh +1);
-
-    navigate("/Mobileregist",{state :{WORKTYPE :checkmenu, WORKTOTAL : totalset}});
-
+  /**
+   * 상단 카테고리 = ① 일 올리기 진입점.
+   * 카테고리를 고르면 해당 종류의 일 등록 화면으로 바로 간다. (CORE.md)
+   */
+  const _handlebasicmenuclick = (checkmenu) => {
+    const key = Object.keys(WORKNAME).find((k) => WORKNAME[k] === checkmenu);
+    const totalset = WORKPOLICY[key] ?? 0;
+    navigate("/Mobileregist", { state: { WORKTYPE: checkmenu, WORKTOTAL: totalset } });
   }
 
   const _handlefiltermenuclick = async(checkmenu) =>{
@@ -821,7 +764,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
 
 
-              <Label label={'구인 서비스'} />
+              <Label label={'홍여사 서비스'} />
 
 
               <Column style={{width:"95%",margin: "0 auto"}} >   
@@ -830,7 +773,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
                     WorkItems.map((data, index)=>(
                       <Box onClick={()=>{_handlebasicmenuclick(data.name)}} >
                         <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
-                        <div style={{ fontSize:12, color:"#131313", fontFamily:"Pretendard-SemiBold"}}>{data.name}</div>
+                        <div style={{ fontSize:14, color:"#131313", fontFamily:"Pretendard-SemiBold", marginTop:6, textAlign:"center", lineHeight:1.3}}>{data.name}</div>
                       </Box>
                     ))
                   }
@@ -870,7 +813,6 @@ const MobileMaincontainer =({containerStyle}) =>  {
           </StickyPos>
           <Column>
 
-          <Label label={'구직 서비스'} />
         {
             displayitems.length > 0  ?
             (<SubContainer>
