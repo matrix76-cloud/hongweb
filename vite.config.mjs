@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [react(), reviewNotes()],
 
   server: {
-    port: 3000,
+    port: 3001,
+    strictPort: true,
     open: false,
   },
 
