@@ -18,6 +18,7 @@ import MobileProfileBadge from "../../components/config/profile/MobileProfileBad
 import MobileProfileName from "../../components/config/profile/MobileProfileName";
 import MobileMyWork from "../../components/config/activity/MobileMyWork";
 import { WORKSTATUS } from "../../utility/status";
+import MobileSearchRange from "../../components/config/activity/MobileSearchRange";
 
 
 
@@ -126,6 +127,9 @@ const MobileConfigContentcontainer =({containerStyle, name}) =>  {
     <Container style={containerStyle}>
 
 
+        {
+          name == CONFIGMOVE.SEARCHRANGE && <MobileSearchRange/>
+        }
         {
           name == CONFIGMOVE.MYWORK && <MobileMyWork status={WORKSTATUS.OPEN}/>
         }

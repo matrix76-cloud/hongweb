@@ -606,9 +606,6 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
         if(overlayData.STATUS == WORKSTATUS.OPEN){
           content.innerHTML =
           '  <a>' +
-          '    <div>' +
-          '    <img src="'+ Seekimage(overlayData.OVERLAYTYPE) +'"style="width:32px;"/>' +
-          '    </div>' +
           '    <div class="title">'+overlayData.OVERLAYTYPE +'</div>' +
           '    <div class="price">'+overlayData.PRICE +'</div>' +
           '  </a>' +
@@ -616,9 +613,6 @@ const PCMapcontainer =({containerStyle, ID, TYPE}) =>  {
         }else{
           content.innerHTML =
           '  <a style="background:#A3A3A3">' +
-          '    <div>' +
-          '    <img src="'+ Seekimage(overlayData.OVERLAYTYPE) +'"style="width:32px;"/>' +
-          '    </div>' +
           '    <div class="titleclose">'+overlayData.OVERLAYTYPE +'(마감)</div>' +
           '    <div class="priceclose">'+overlayData.PRICE +'</div>' +
           '  </a>' +

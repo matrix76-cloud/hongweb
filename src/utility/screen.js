@@ -192,6 +192,7 @@ export const CONFIGMOVE = {
     WORKERINFO: "홍여사등록",
     WORKERAUTH: "신분증인증",
     MYWORK: "등록한 일감",
+    SEARCHRANGE: "나의 범위설정",
     CLOSEDWORK: "마감한 일감",
     LAWPOLICY:"이용약관",
     LAWPRIVACY :"개인정보 처리지침",

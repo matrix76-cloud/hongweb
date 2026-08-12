@@ -601,6 +601,22 @@ const MobileMaincontainer =({containerStyle}) =>  {
    * 상단 카테고리 = ① 일 올리기 진입점.
    * 카테고리를 고르면 해당 종류의 일 등록 화면으로 바로 간다. (CORE.md)
    */
+  /* 내 정보에서 범위를 바꾸면 홈 목록도 바로 다시 읽는다 (형 지시 2026-08-12) */
+  useEffect(() => {
+    const onRangeChanged = async () => {
+      const latitude = user.latitude;
+      const longitude = user.longitude;
+      const serverworkitems = await ReadWork({ latitude, longitude });
+      data.workitems = serverworkitems;
+      datadispatch(data);
+      setWorkitems(serverworkitems);
+      setDisplayitems(serverworkitems);
+      setRefresh((refresh) => refresh + 1);
+    };
+    window.addEventListener('searchrange:changed', onRangeChanged);
+    return () => window.removeEventListener('searchrange:changed', onRangeChanged);
+  }, [user.latitude, user.longitude]);
+
   const _handlebasicmenuclick = (checkmenu) => {
     const key = Object.keys(WORKNAME).find((k) => WORKNAME[k] === checkmenu);
     const totalset = WORKPOLICY[key] ?? 0;

@@ -6,6 +6,7 @@ import { COMMUNITYSTATUS, WORKSTATUS } from '../utility/status';
 import randomLocation from 'random-location'
 import { useSleep } from '../utility/common';
 import Axios from 'axios';
+import { getSearchRange } from '../utility/searchRange';
 const authService = getAuth(firebaseApp);
 
 
@@ -141,7 +142,9 @@ export const ReadAllWork = async()=>{
   }
 }
 
-export const ReadWork = async({latitude, longitude, checkdistance =5})=>{
+export const ReadWork = async({latitude, longitude, checkdistance})=>{
+  // 범위를 넘기지 않으면 사용자가 설정한 값을 쓴다 (내 정보 > 나의 범위설정)
+  const limitKm = Number(checkdistance) > 0 ? Number(checkdistance) : getSearchRange();
   const workRef = collection(db, "WORK");
 
   let workitems = [];
@@ -166,7 +169,7 @@ export const ReadWork = async({latitude, longitude, checkdistance =5})=>{
       const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,latitude,longitude );
       
 
-      if(distance < checkdistance){
+      if(distance < limitKm){
         workitems.push(doc.data());
       }
   

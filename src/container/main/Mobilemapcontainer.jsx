@@ -626,9 +626,6 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
         if(overlayData.STATUS == WORKSTATUS.OPEN){
           content.innerHTML =
           '  <a>' +
-          '    <div>' +
-          '    <img src="'+ Seekimage(overlayData.OVERLAYTYPE) +'"style="width:24px;"/>' +
-          '    </div>' +
           '    <div class="title">'+overlayData.OVERLAYTYPE +'</div>' +
           '    <div class="price">'+overlayData.PRICE +'</div>' +
           '  </a>' +
@@ -636,9 +633,6 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
         }else{
           content.innerHTML =
           '  <a style="background:#A3A3A3">' +
-          '    <div>' +
-          '    <img src="'+ Seekgrayimage(overlayData.OVERLAYTYPE) +'"style="width:24px;"/>' +
-          '    </div>' +
           '    <div class="titleclose">'+overlayData.OVERLAYTYPE +'(마감)</div>' +
           '    <div class="priceclose">'+overlayData.PRICE +'</div>' +
           '  </a>' +

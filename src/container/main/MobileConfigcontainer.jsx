@@ -181,6 +181,9 @@ const MobileConfigcontainer =({containerStyle}) =>  {
   const _handleMyWork = () =>{
     navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.MYWORK}});
   }
+  const _handleSearchRange = () =>{
+    navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.SEARCHRANGE}});
+  }
   const _handleClosedWork = () =>{
     navigate("/Mobileconfigcontent", {state :{NAME : CONFIGMOVE.CLOSEDWORK}});
   }
@@ -350,7 +353,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             </SubLabel>
 
 
-            <SubLabel onClick={()=>_handleNotReady("나의 범위설정")}>
+            <SubLabel onClick={_handleSearchRange}>
               <Row>
                 <PiMapPinBold/>
                 <SubLabelContent>나의 범위설정 </SubLabelContent>
