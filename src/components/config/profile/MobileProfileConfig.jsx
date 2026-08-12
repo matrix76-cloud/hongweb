@@ -35,8 +35,9 @@ const BoxItem = styled.div`
   width: 85%;
   margin: 10px auto;
   border-radius: 10px;
-  padding: 10px;
-  font-size:12px;
+  padding: 14px;
+  font-size: 15px;
+  line-height: 1.6;
 `
 
 const NameRow = styled.div`
@@ -92,7 +93,7 @@ const TemperatureLine = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  font-size: 16px;
+  font-size: 17px;
   color: #131313;
   font-family: 'Pretendard-SemiBold';
 `
@@ -112,7 +113,8 @@ const PointBoxInner = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
   margin-top: 5px;
  
 
@@ -127,7 +129,8 @@ const SubLabel = styled.div`
 `
 const SubLabelContent = styled.div`
   font-family: 'Pretendard-SemiBold';
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 600;
   padding: 20px 0px;
 `
 const Point = styled.div`
@@ -213,12 +216,12 @@ const MobileProfileConfig =({containerStyle}) =>  {
         </Row>
 
         <TemperatureLine>
-           <div>홍여사 온도 <FaTemperatureHigh size={12} color={'#FF4E19'}/>
-           <span style={{fontSize:13, color:"#71717a"}}>홍여사는 기본온도가 36도에요</span>
+           <div>홍여사 온도 <FaTemperatureHigh size={16} color={'#FF4E19'}/>
+           <span style={{fontSize:14, color:"#71717a", marginLeft:6}}>기본온도는 36도예요</span>
            </div>
            <div>
             <div style={{display:"flex"}}>
-              <Text containerStyle={{fontFamily:"Pretendard-Bold"}} value={ parseInt(temperature *100 / 100) + '도'} size={16} color={'#FF4E19'} ></Text>
+              <Text containerStyle={{fontFamily:"Pretendard-Bold"}} value={ parseInt(temperature *100 / 100) + '도'} size={20} color={'#FF4E19'} ></Text>
             </div>
           </div>  
         </TemperatureLine>
@@ -235,7 +238,7 @@ const MobileProfileConfig =({containerStyle}) =>  {
                   <div style={{display:"flex"}}>
                   <div>거래지수</div>
                   </div>
-                  <div style={{lineHeight:1.6, marginTop:6, fontSize:14, color:"#71717a"}}>거래 내역을 토대로 지수를 산출해요</div>
+                  <div style={{lineHeight:1.6, marginTop:6, fontSize:15, color:"#71717a"}}>거래 내역을 토대로 지수를 산출해요</div>
                 </PointBoxInner>
                 <Point>
                   1
@@ -247,7 +250,7 @@ const MobileProfileConfig =({containerStyle}) =>  {
                 <div style={{display:"flex"}}>
                   호감지수
                   </div>
-                <div style={{lineHeight:1.6, marginTop:6, fontSize:14, color:"#71717a"}}>호감 표현이 많을 수록 지수가 높아져요</div>
+                <div style={{lineHeight:1.6, marginTop:6, fontSize:15, color:"#71717a"}}>호감 표현이 많을수록 지수가 높아져요</div>
                 </PointBoxInner>
                 <Point>
                   2

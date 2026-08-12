@@ -643,3 +643,47 @@ export const WithdrawUser = async ({ USERS_ID }) => {
     return false;
   }
 };
+
+/**
+ * 대화명 변경 — 하루 한 번만 (형 지시 2026-08-12).
+ * 마지막 변경 시각을 USERS 문서에 남긴다. 기기를 바꿔도 우회되지 않게 서버에 둔다.
+ *   { ok: true }                     저장 완료
+ *   { ok: false, nextAt: number }    아직 못 바꿈 (다음 가능 시각)
+ */
+export const Update_nickname_by_usersid = async({USERS_ID, nickname}) =>{
+  const userRef = collection(db, "USERS");
+  const rows = query(userRef, where("USERS_ID", "==", USERS_ID));
+  const DAY = 24 * 60 * 60 * 1000;
+
+  try{
+    const querySnapshot = await getDocs(rows);
+    if(querySnapshot.empty) return { ok:false, reason:'no-user' };
+
+    const target = querySnapshot.docs[0];
+    const last = Number(target.data().NICKNAME_CHANGED_AT || 0);
+    const now = Date.now();
+
+    if(last && now - last < DAY){
+      return { ok:false, nextAt: last + DAY };
+    }
+
+    await updateDoc(target.ref, { NICKNAME : nickname, NICKNAME_CHANGED_AT : now });
+    return { ok:true };
+  }catch(e){
+    console.log("Update_nickname_by_usersid error", e.message);
+    return { ok:false, reason:e.message };
+  }
+}
+
+/** 다음 변경 가능 시각 조회 (없으면 0 = 지금 바로 가능) */
+export const Read_nickname_next_at = async({USERS_ID}) =>{
+  try{
+    const userRef = collection(db, "USERS");
+    const querySnapshot = await getDocs(query(userRef, where("USERS_ID", "==", USERS_ID)));
+    if(querySnapshot.empty) return 0;
+    const last = Number(querySnapshot.docs[0].data().NICKNAME_CHANGED_AT || 0);
+    return last ? last + 24 * 60 * 60 * 1000 : 0;
+  }catch{
+    return 0;
+  }
+}
