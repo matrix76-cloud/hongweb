@@ -15,6 +15,10 @@ import { DataContext } from "../../context/Data";
 import { useSleep } from "../../utility/common";
 import Chatgate from "../../components/Chatgate";
 import ChatprofileImage from "../../components/ChatprofileImage";
+import { IoCallOutline, IoMapOutline } from "react-icons/io5";
+import MobileWorkMapPopup from "../../modal/MobileMapPopup/MobileWorkMapPopup";
+import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
+import MobileSchedulePopup from "../../modal/MobileSchedulePopup/MobileSchedulePopup";
 import { distanceFunc, shortRegion } from "../../utility/region";
 import { CommaFormatted } from "../../utility/money";
 import MobileContact from "../../modal/MobileContactPopup/MobileContactPopup";
@@ -26,8 +30,9 @@ import {
   SlUserUnfollow,
   SlOptionsVertical,
   SlTrash,
+  SlCalender,
 } from "react-icons/sl";
-import { CreateMessage, MarkRead, DeleteMessage, ExitChat, ReportChat, BlockUser } from "../../service/ChatService";
+import { CreateMessage, MarkRead, DeleteMessageForMe, DeleteMessageForAll, ExitChat, ReportChat, BlockUser } from "../../service/ChatService";
 import { workOf, msgTimeOf } from "../../utility/chat";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../api/config";
@@ -191,7 +196,7 @@ const Content = styled.div`
 const SupportTag = styled.div`
   font-size: 13px;
   color: #A3A3A3;
-  margin-right: 6px;
+  margin-left: 6px;
   display: flex;
   align-items: center;
 `
@@ -199,7 +204,7 @@ const SupportTag = styled.div`
 const OwnerTag = styled.div`
   font-size: 13px;
   color: #A3A3A3;
-  margin-right: 6px;
+  margin-left: 6px;
   display: flex;
   align-items: center;
 `
@@ -353,6 +358,33 @@ const ItemLayerBdate = styled.div`
   white-space: nowrap;
 `;
 
+/* 주소 옆 '지도로 보기' */
+const MapLink = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+  color: #FF4E19;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+`;
+
+const VoiceToast = styled.div`
+  position: fixed;
+  bottom: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1300;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.8);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+`;
+
 const MoreBtn = styled.button`
   flex: none;
   width: 32px;
@@ -397,20 +429,68 @@ const MenuItem = styled.button`
   &:active { background: #FAFAFA; }
 `;
 
-/* 내 글 삭제 버튼 — 말풍선을 누르면 나타난다 */
+/* 삭제 버튼 — 말풍선을 누르면 나타난다 */
+const DeleteRow = styled.div`
+  display: flex;
+  gap: 6px;
+  align-self: flex-end;
+  margin: 4px 10px 0 0;
+`;
 const DeleteBtn = styled.button`
   display: flex;
   align-items: center;
   gap: 4px;
-  margin: 4px 10px 0 0;
   padding: 5px 10px;
-  align-self: flex-end;
   background: #fff;
   border: 1px solid #E3E3E3;
   border-radius: 8px;
   font-size: 13px;
-  color: #c02020;
+  color: ${({$danger}) => ($danger ? '#c02020' : '#71717a')};
   cursor: pointer;
+`;
+
+/* 일정 카드 */
+const ScheduleCard = styled.div`
+  display: inline-block;
+  width: fit-content;
+  max-width: 72%;
+  margin: 2px 8px 0;
+  padding: 12px 14px;
+  border: 1px solid #FFD9CC;
+  border-radius: 14px;
+  background: #FFF8F5;
+  cursor: pointer;
+`;
+const ScheduleHead = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FF4E19;
+  margin-bottom: 6px;
+`;
+const ScheduleBody = styled.div`
+  font-size: 15px;
+  line-height: 1.6;
+  color: #131313;
+  white-space: pre-wrap;
+  word-break: break-word;
+`;
+
+/* 지워진 글 자리 */
+const DeletedBox = styled.div`
+  display: inline-block;
+  max-width: 72%;
+  width: fit-content;
+  margin: 2px 8px 0;
+  padding: 10px 13px;
+  border: 1px solid #E8E8EA;
+  border-radius: 14px;
+  background: #fff;
+  color: #A3A3A3;
+  font-size: 15px;
+  line-height: 1.5;
 `;
 
 /* 날짜 구분선 */
@@ -442,6 +522,10 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
   const [contactwritepopup, setContactwritepopup] = useState(false);
   const [paypopup, setPaypopup] = useState(false);
   const [roommenu, setRoommenu] = useState(false);   // 나가기·신고·차단 메뉴
+  const [voicenotice, setVoicenotice] = useState(false); // 보이스톡 준비중 안내
+  const [dialog, setDialog] = useState(null);            // 확인·입력·알림 창 (브라우저 기본창 대신)
+  const [mappopup, setMappopup] = useState(false);       // 일감 위치 지도
+  const [schedulepopup, setSchedulepopup] = useState(false); // 일정 잡기
   const [pickedmsg, setPickedmsg] = useState(null);  // 삭제하려고 고른 내 글
   const [downloadpopup, setDownloadpopup] = useState(false);
 
@@ -483,8 +567,10 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const list = [];
       querySnapshot.forEach((doc) => {
-        list.push(doc.data());
-
+        const m = doc.data();
+        // '나만 삭제' 한 글은 내 화면에서만 뺀다 (형 지시 2026-08-12)
+        if (Array.isArray(m.DELETED_FOR) && m.DELETED_FOR.includes(user.users_id)) return;
+        list.push(m);
       });
 
       // 자신이 read 사용자에 없다면 자신을 read로 업데이트 하자
@@ -673,46 +759,125 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
     
   }
 
+  /** 일정 보내기 — 대화에 카드로 남는다 */
+  const _handlesendschedule = async ({ label, time, memo }) =>{
+    setSchedulepopup(false);
+    const text = [label, time, memo].filter(Boolean).join('\n');
+    await CreateMessage({
+      CHAT_ID: chatid,
+      msg: text,
+      users_id: user.users_id,
+      read: [user.users_id],
+      CHAT_CONTENT_TYPE: CHATCONTENTTYPE.SCHEDULE,
+    });
+  }
+
+  /**
+   * 일감 위치. 등록할 때 고른 지역(CUSTOMERREGION)에 좌표가 들어있다.
+   * 없으면 지도 버튼을 감춘다. (형 지시 2026-08-12)
+   */
+  const regionPoint = (() =>{
+    const list = workOf(ITEM).WORK_INFO || [];
+    const d = list.find((x)=> x && x.requesttype === REQUESTINFO.CUSTOMERREGION && x.latitude);
+    return d ? { lat: d.latitude, lng: d.longitude, addr: d.result } : null;
+  })();
+
+  const _handlemapview = () =>{
+    if(!regionPoint) return;
+    setMappopup(true);
+  }
+
+  /**
+   * 보이스톡 — 버튼만 있고 통화는 아직 없다.
+   * 붙일 때는 RN 네이티브 화면 + Agora 로 가는 게 낫다(마이크 권한·백그라운드 유지). TODO.md 참고.
+   */
+  const _handlevoice = () =>{
+    setVoicenotice(true);
+    setTimeout(()=>{ setVoicenotice(false); }, 2000);
+  }
+
   // 결제 (의뢰한 사람만 누를 수 있다)
   const _handlepay = () =>{
     setPaypopup(true);
     setRefresh((refresh) => refresh +1 );
   }
 
-  /** 내가 쓴 글 지우기 — 남의 글은 서비스에서 막는다 */
-  const _handledeletemessage = async (data) =>{
-    if(!data || data.USERS_ID != user.users_id) return;
-    if(!window.confirm('이 글을 지울까요?')) return;
-    await DeleteMessage({ CHAT_ID: chatid, MESSAGE_ID: data.MESSAGE_ID, USERS_ID: user.users_id });
+  /** 나만 삭제 — 내 화면에서만 사라진다. 상대에게는 그대로 남는다 */
+  const _handledeleteforme = async (data) =>{
+    if(!data) return;
+    await DeleteMessageForMe({ CHAT_ID: chatid, MESSAGE_ID: data.MESSAGE_ID, USERS_ID: user.users_id });
     setPickedmsg(null);
   }
 
+  /** 모두에게 삭제 — 내 글만. 양쪽에 "삭제된 메시지입니다" 로 남는다 */
+  const _handledeleteforall = (data) =>{
+    if(!data || data.USERS_ID != user.users_id) return;
+    setDialog({
+      title: '모두에게 삭제',
+      message: '상대 화면에는 "삭제된 메시지입니다" 로 남습니다.',
+      confirmText: '삭제',
+      danger: true,
+      onConfirm: async () =>{
+        setDialog(null);
+        await DeleteMessageForAll({ CHAT_ID: chatid, MESSAGE_ID: data.MESSAGE_ID, USERS_ID: user.users_id });
+        setPickedmsg(null);
+      },
+    });
+  }
+
   /** 대화방 나가기 — 방은 지우지 않는다. 상대에게는 대화가 남아야 한다 */
-  const _handleexit = async () =>{
-    if(!window.confirm('대화방을 나가면 목록에서 사라집니다. 나갈까요?')) return;
-    await ExitChat({ CHAT_ID: chatid, USERS_ID: user.users_id, nickname: user.nickname });
+  const _handleexit = () =>{
     setRoommenu(false);
-    navigate('/Mobilechat');
+    setDialog({
+      title: '대화방 나가기',
+      message: '나가면 이 대화가 목록에서 사라집니다.\n상대에게는 대화가 그대로 남습니다.',
+      confirmText: '나가기',
+      danger: true,
+      onConfirm: async () =>{
+        setDialog(null);
+        await ExitChat({ CHAT_ID: chatid, USERS_ID: user.users_id, nickname: user.nickname });
+        navigate('/Mobilechat');
+      },
+    });
   }
 
   /** 신고 — 사유를 받아 REPORT 로 쌓는다 */
-  const _handlereport = async () =>{
-    const reason = window.prompt('어떤 점을 신고하시나요? (욕설 · 사기 · 광고 등)');
-    if(!reason) return;
-    const TARGET_ID = OWNER == true ? ITEM.SUPPORTER_ID : ITEM.OWNER_ID;
-    await ReportChat({ CHAT_ID: chatid, USERS_ID: user.users_id, TARGET_ID, REASON: reason });
+  const _handlereport = () =>{
     setRoommenu(false);
-    window.alert('신고가 접수되었습니다.');
+    setDialog({
+      title: '신고하기',
+      message: '어떤 점이 문제였는지 알려주세요.',
+      input: { placeholder: '욕설 · 사기 · 광고 등' },
+      confirmText: '신고',
+      onConfirm: async (reason) =>{
+        const TARGET_ID = OWNER == true ? ITEM.SUPPORTER_ID : ITEM.OWNER_ID;
+        await ReportChat({ CHAT_ID: chatid, USERS_ID: user.users_id, TARGET_ID, REASON: reason });
+        setDialog({
+          title: '신고가 접수되었습니다',
+          message: '확인 후 조치하겠습니다.',
+          alertonly: true,
+          onConfirm: ()=> setDialog(null),
+        });
+      },
+    });
   }
 
   /** 차단 — 차단하면 그 사람 방은 내 목록에서 빠진다 */
-  const _handleblock = async () =>{
-    if(!window.confirm('이 사람을 차단할까요? 대화방이 목록에서 사라집니다.')) return;
-    const TARGET_ID = OWNER == true ? ITEM.SUPPORTER_ID : ITEM.OWNER_ID;
-    await BlockUser({ USERS_ID: user.users_id, TARGET_ID });
-    await ExitChat({ CHAT_ID: chatid, USERS_ID: user.users_id, nickname: user.nickname });
+  const _handleblock = () =>{
     setRoommenu(false);
-    navigate('/Mobilechat');
+    setDialog({
+      title: '차단하기',
+      message: '차단하면 이 사람과의 대화가 목록에서 사라집니다.',
+      confirmText: '차단',
+      danger: true,
+      onConfirm: async () =>{
+        setDialog(null);
+        const TARGET_ID = OWNER == true ? ITEM.SUPPORTER_ID : ITEM.OWNER_ID;
+        await BlockUser({ USERS_ID: user.users_id, TARGET_ID });
+        await ExitChat({ CHAT_ID: chatid, USERS_ID: user.users_id, nickname: user.nickname });
+        navigate('/Mobilechat');
+      },
+    });
   }
 
   // 메인 다이랄로그 열기 위해 사용
@@ -812,6 +977,41 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       }
 
       {
+        mappopup == true && regionPoint && (
+          <MobileWorkMapPopup
+            callback={()=>{ setMappopup(false); }}
+            latitude={regionPoint.lat}
+            longitude={regionPoint.lng}
+            top={'25%'} left={'8%'} height={'300px'} width={'84%'}
+            name={workOf(ITEM).WORKTYPE}
+            markerimg={Seekimage(workOf(ITEM).WORKTYPE)}
+          />
+        )
+      }
+
+      {
+        schedulepopup == true && (
+          <MobileSchedulePopup
+            onClose={()=>{ setSchedulepopup(false); }}
+            onSubmit={_handlesendschedule}
+          />
+        )
+      }
+
+      {
+        voicenotice == true && <VoiceToast>음성통화는 준비 중입니다</VoiceToast>
+      }
+
+      {
+        dialog && (
+          <MobileConfirmPopup
+            {...dialog}
+            onCancel={()=>{ setDialog(null); }}
+          />
+        )
+      }
+
+      {
         roommenu == true && (
           <MenuDim onClick={()=>{ setRoommenu(false); }}>
             <MenuSheet onClick={(e)=> e.stopPropagation()}>
@@ -845,20 +1045,28 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       <Row margin={'0px auto;'} width={'100%'} height={'100%'} >
         <Column style={{background:"#fff", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid #ededed"}}>
           <Enter>
-            <img src={Seekimage(workOf(ITEM).WORKTYPE)} style={{width:44, height:44, flex:"none", objectFit:"contain"}}/>
+            {/* 일감 아이콘이 비면 빈 사각형만 남아서, 대화 상대 프로필을 앞에 둔다.
+                사진이 없으면 사람 아이콘으로 떨어진다 (형 지시 2026-08-12) */}
+            <ChatprofileImage source={LEFTIMAGE} size={44} />
 
             <div style={{flex:1, minWidth:0}}>
               <FlexstartRow style={{alignItems:"center"}}>
+                <StoreName>{LEFTNAME || '이름 없음'}</StoreName>
                 {
                   OWNER == true ? (<OwnerTag>의뢰</OwnerTag>):(<SupportTag>지원</SupportTag>)
                 }
-                <StoreName>{workOf(ITEM).WORKTYPE}</StoreName>
               </FlexstartRow>
 
-              {/* 거리는 같은 좌표를 두 번 넣어 늘 0 이었다. 주소와 가격만 보여준다 (형 지시 2026-08-12) */}
+              {/* 거리는 같은 좌표를 두 번 넣어 늘 0 이었다. 일감 종류·지역·가격만 보여준다 (형 지시 2026-08-12) */}
               <StoreAddr>
-                {shortRegion(ITEM.OWNER.USERINFO.address_name)}
+                {workOf(ITEM).WORKTYPE ? `${workOf(ITEM).WORKTYPE} · ` : ''}
+                {shortRegion(regionPoint?.addr || ITEM.OWNER.USERINFO.address_name)}
                 {findPrice() ? ` · ${findPrice()}` : ''}
+                {regionPoint && (
+                  <MapLink onClick={_handlemapview}>
+                    <IoMapOutline size={14} /> 지도로 보기
+                  </MapLink>
+                )}
               </StoreAddr>
             </div>
 
@@ -881,6 +1089,11 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                     }}
                   />
                 )}
+
+                {/* 보이스톡 — 자리만 잡아둔 상태. 실제 통화는 아직 안 붙였다 (형 지시 2026-08-12) */}
+                <MoreBtn onClick={_handlevoice} aria-label="음성통화">
+                  <IoCallOutline size={19} color="#131313" />
+                </MoreBtn>
 
                 {/* 나가기 · 신고 · 차단 */}
                 <MoreBtn onClick={()=>{ setRoommenu(true); }} aria-label="더보기">
@@ -920,13 +1133,20 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
                               <ItemLayerAcontent>
                                 {
-                                  data.CHAT_CONTENT_TYPE == CHATCONTENTTYPE.IMAGE ? (<img src={data.TEXT}
+                                  data.DELETED_ALL == true ? (
+                                    <DeletedBox>삭제된 메시지입니다</DeletedBox>
+                                  ) : data.CHAT_CONTENT_TYPE == CHATCONTENTTYPE.IMAGE ? (<img src={data.TEXT}
+                                    onClick={()=>{ setPickedmsg(pickedmsg == data.MESSAGE_ID ? null : data.MESSAGE_ID); }}
                                     style={{width: '70%',
                                     height: '250px',
                                     padding: '10px',
                                     borderRadius: '20px'  
                                     }}
-                                  />):( <ItemBoxA>{data.TEXT}</ItemBoxA>)
+                                  />):(
+                                    <ItemBoxA onClick={()=>{ setPickedmsg(pickedmsg == data.MESSAGE_ID ? null : data.MESSAGE_ID); }}>
+                                      {data.TEXT}
+                                    </ItemBoxA>
+                                  )
                                 }
                               
                                 <ItemLayerAdate>{getTime(msgTimeOf(data))}</ItemLayerAdate>
@@ -946,7 +1166,9 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                             <ItemLayerBdate>{getTime(msgTimeOf(data))}</ItemLayerBdate>
                           </ItemLayerBBox>
                           {
-                            data.CHAT_CONTENT_TYPE == CHATCONTENTTYPE.IMAGE  ? (<img src={data.TEXT}
+                            data.DELETED_ALL == true ? (
+                              <DeletedBox>삭제된 메시지입니다</DeletedBox>
+                            ) : data.CHAT_CONTENT_TYPE == CHATCONTENTTYPE.IMAGE  ? (<img src={data.TEXT}
                               onClick={()=>{ setPickedmsg(pickedmsg == data.MESSAGE_ID ? null : data.MESSAGE_ID); }}
                               style={{width: '70%',
                               height: '250px',
@@ -963,11 +1185,18 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                       )
                       }
 
-                      {/* 내 글만 지울 수 있다 (형 지시 2026-08-12) */}
-                      {pickedmsg == data.MESSAGE_ID && data.USERS_ID == user.users_id && (
-                        <DeleteBtn onClick={()=>{ _handledeletemessage(data); }}>
-                          <SlTrash size={13} /> 삭제
-                        </DeleteBtn>
+                      {/* 삭제 — 나만 / 모두에게 (형 지시 2026-08-12) */}
+                      {pickedmsg == data.MESSAGE_ID && data.DELETED_ALL != true && (
+                        <DeleteRow>
+                          <DeleteBtn onClick={()=>{ _handledeleteforme(data); }}>
+                            <SlTrash size={13} /> 나만 삭제
+                          </DeleteBtn>
+                          {data.USERS_ID == user.users_id && (
+                            <DeleteBtn $danger onClick={()=>{ _handledeleteforall(data); }}>
+                              <SlTrash size={13} /> 모두에게 삭제
+                            </DeleteBtn>
+                          )}
+                        </DeleteRow>
                       )}
                     </>
                   }
@@ -984,6 +1213,10 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
             <ChatbtnLayer>
               <ChatIconLayer>
                 <SlPaperClip size={20} color={"#000"} onClick={handleUploadClick} />
+              </ChatIconLayer>
+              {/* 일정 잡기 — 날짜 고르고 내용 적어 보낸다 (형 지시 2026-08-12) */}
+              <ChatIconLayer>
+                <SlCalender size={20} color={"#000"} onClick={()=>{ setSchedulepopup(true); }} />
               </ChatIconLayer>
 
               <InputChat

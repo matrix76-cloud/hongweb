@@ -23,6 +23,7 @@ import { VscWorkspaceUnknown } from "react-icons/vsc";
 import { MdOutlinePolicy } from "react-icons/md";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { CONFIGMOVE } from "../../utility/screen";
+import { PiBellBold, PiBellRingingBold, PiCheckCircleBold, PiClipboardTextBold, PiCreditCardBold, PiFileTextBold, PiHandshakeBold, PiHeadsetBold, PiHeartBold, PiInfoBold, PiLockKeyBold, PiMapPinBold, PiMegaphoneBold, PiNavigationArrowBold, PiQuestionBold, PiSealCheckBold, PiWalletBold } from "react-icons/pi";
 
 
 
@@ -54,26 +55,35 @@ const ProfileConfigBtn = styled.div`
   font-family: 'Pretendard-SemiBold';
   font-size: 12px;
 `
+/* 홍여사 등록 유도 배너 (형 리뷰 2026-08-12 — UI 정돈) */
 const RegistHong = styled.div`
-  border: 1px solid rgb(237, 237, 237);
-  height: 70%;
-  margin: 10px 0px;
-  border-radius: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ECECEC;
+  background: #FFFBF8;
+  margin: 16px 0 4px;
+  padding: 16px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 `
 const RegistLayer = styled.div`
-  height: 45px;
-  background: #ff71255c;
-  margin: 10px;
+  height: 50px;
+  background: #FF4E19;
   border-radius: 10px;
-  display:flex;
-  flex-direction : row;
-  justify-content : center;
-  align-items:center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  &:active { transform: scale(0.98); }
+  transition: transform .12s ease;
 `
 const RegistLayerContent = styled.div`
-  color: #ff7125;
-  font-weight: 900;
-  font-family: 'Pretendard-Bold';
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
 `
 const Label = styled.div`
   font-family: 'Pretendard-SemiBold';
@@ -190,14 +200,15 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           
 
           <RegistHong>
-            <Row style={{justifyContent:"space-between", width:"90%", padding:"20px 10px 10px"}}>
-              <img src={imageDB.logo2} style={{width:"48px"}}/>
-              <div style={{fontFamily:"Pretendard-Light", fontSize:12, marginLeft:20}}>홍여사 일꾼 등록을 하면 모든 일감에 지원할수가 있습니다</div>
+            <Row style={{justifyContent:"flex-start", alignItems:"center", gap:14, width:"100%"}}>
+              <img src={imageDB.logo2} style={{width:44, height:44, objectFit:"contain", flexShrink:0}}/>
+              <div style={{fontSize:15, lineHeight:1.5, color:"#131313", fontWeight:500}}>
+                홍여사로 등록하면<br/>모든 일감에 지원할 수 있어요
+              </div>
             </Row>
-            <RegistLayer  onClick={_handleWorkerInfo}>
-                <RegistLayerContent>홍여사 일꾼 등록하러 가기
-                </RegistLayerContent>
-                <RiArrowRightSLine size={20} color={'#ff7125'}/>
+            <RegistLayer onClick={_handleWorkerInfo}>
+                <RegistLayerContent>홍여사 등록하러 가기</RegistLayerContent>
+                <RiArrowRightSLine size={20} color={'#fff'}/>
             </RegistLayer>
           </RegistHong>
         
@@ -210,14 +221,14 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           
             <SubLabel onClick={_handleMyWork}>
               <Row>
-                <PiBroom/>
+                <PiClipboardTextBold/>
                 <SubLabelContent>등록한 일감 </SubLabelContent>
               </Row>     
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
             <SubLabel onClick={_handleClosedWork}>
               <Row>
-                <VscCloseAll/>
+                <PiCheckCircleBold/>
                 <SubLabelContent>마감한 일감 </SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
@@ -225,7 +236,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
             <SubLabel onClick={()=>_handleNotReady("찜한 일감")}>
               <Row>
-                <CiHeart/>
+                <PiHeartBold/>
                 <SubLabelContent>찜한 일감 </SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
@@ -234,7 +245,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
             <SubLabel onClick={()=>_handleNotReady("나의 범위설정")}>
               <Row>
-                <CiBellOn/>
+                <PiMapPinBold/>
                 <SubLabelContent>나의 범위설정 </SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
@@ -243,7 +254,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
             <SubLabel onClick={()=>_handleNotReady("실시간 알림설정")}>
               <Row>
-                <CiBellOn/>
+                <PiBellBold/>
                 <SubLabelContent>실시간 알림설정 </SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
@@ -254,7 +265,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           <Label>나의 거래</Label>
           <SubLabel onClick={()=>_handleNotReady("체결중인 거래")}>
             <Row>
-              <GrTransaction/>
+              <PiHandshakeBold/>
               <SubLabelContent>체결중인 거래 </SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
@@ -262,7 +273,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           
           <SubLabel onClick={()=>_handleNotReady("체결완료된 거래")}>
             <Row>
-              <GrTransaction/>
+              <PiSealCheckBold/>
               <SubLabelContent>체결완료된 거래</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -274,7 +285,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={()=>_handleNotReady("결제관리")}>
             <Row>
-              <CiCreditCard1/>
+              <PiCreditCardBold/>
               <SubLabelContent>결제관리</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -282,7 +293,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={()=>_handleNotReady("입금관리")}>
             <Row>
-              <CiBank/>
+              <PiWalletBold/>
               <SubLabelContent>입금관리</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -296,7 +307,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={()=>_handleNotReady("홍여사 알림")}>
             <Row>
-              <CiBellOn/>
+              <PiBellRingingBold/>
               <SubLabelContent>홍여사 알림</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -304,7 +315,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={()=>_handleNotReady("공지 사항")}>
             <Row>
-              <CiMedicalClipboard/>
+              <PiMegaphoneBold/>
               <SubLabelContent>공지 사항</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -317,7 +328,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
            <SubLabel onClick={()=>_handleNotReady("고객센터")}>
             <Row>
-              <BiClinic/>
+              <PiHeadsetBold/>
               <SubLabelContent>고객센터</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -325,7 +336,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={()=>_handleNotReady("자주묻는 질문")}>
             <Row>
-              <AiOutlineQuestionCircle/>
+              <PiQuestionBold/>
               <SubLabelContent>자주묻는 질문</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -334,7 +345,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={()=>_handleNotReady("홍여사 알아보기")}>
             <Row>
-              <VscWorkspaceUnknown/>
+              <PiInfoBold/>
               <SubLabelContent>홍여사 알아보기</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -347,7 +358,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={_handleUselaw}>
             <Row>
-              <MdOutlinePolicy/>
+              <PiFileTextBold/>
               <SubLabelContent>이용약관</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -355,7 +366,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={_handlePrivacylaw}>
             <Row>
-              <MdOutlinePolicy/>
+              <PiLockKeyBold/>
               <SubLabelContent>개인정보 처리지침</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
@@ -364,7 +375,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
 
           <SubLabel onClick={_handleGpsLaw}>
             <Row>
-              <MdOutlinePolicy/>
+              <PiNavigationArrowBold/>
               <SubLabelContent>위치정보기반 수집동의 규정</SubLabelContent>
             </Row>
             <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    

@@ -165,7 +165,8 @@ export const CHATCONTENTTYPE ={
     EXIT : "퇴장",
     TEXT : "대화",
     IMAGE :"이미지",
-    FILE : "파일"
+    FILE : "파일",
+    SCHEDULE : "일정",   // 대화방에서 날짜를 잡아 보내는 카드 (형 지시 2026-08-12)
 }
 
 

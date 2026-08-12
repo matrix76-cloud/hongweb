@@ -317,15 +317,6 @@ const MobileProfileConfig =({containerStyle}) =>  {
     </BoxItem>
 
     <BoxItem>
-     
-
-          <SubLabel onClick={_handleBadge}>
-            <Row>
-           
-              <SubLabelContent>홍여사 활동뱃지</SubLabelContent>
-            </Row>
-            <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
-          </SubLabel>
 
     </BoxItem>
 

@@ -259,7 +259,54 @@ export const UnreadTotalOf = (rooms, USERS_ID) =>
    대화방 관리 — 삭제 · 나가기 · 신고 · 차단 (형 지시 2026-08-12)
    ──────────────────────────────────────────────────────────── */
 
-/** 내가 쓴 메시지 지우기. 남의 글은 못 지운다. */
+/**
+ * 나만 삭제 — 문서는 그대로 두고 "나에게만 안 보이게" 표시한다.
+ * 상대 화면에는 그대로 남는다. 내 글이든 상대 글이든 가능하다.
+ */
+export const DeleteMessageForMe = async ({ CHAT_ID, MESSAGE_ID, USERS_ID }) => {
+  try {
+    const ref = doc(db, `CHAT/${CHAT_ID}/messages`, MESSAGE_ID);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return false;
+
+    const hidden = snap.data().DELETED_FOR || [];
+    if (!hidden.includes(USERS_ID)) hidden.push(USERS_ID);
+
+    await updateDoc(ref, { DELETED_FOR: hidden });
+    return true;
+  } catch (e) {
+    console.log("TCL: DeleteMessageForMe -> error", e.message);
+    return false;
+  }
+};
+
+/**
+ * 모두에게 삭제 — 내 글만 가능.
+ * 문서는 남기고 내용만 비운다. 양쪽 화면에 "삭제된 메시지입니다" 로 보인다.
+ */
+export const DeleteMessageForAll = async ({ CHAT_ID, MESSAGE_ID, USERS_ID }) => {
+  try {
+    const ref = doc(db, `CHAT/${CHAT_ID}/messages`, MESSAGE_ID);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return false;
+    if (snap.data().USERS_ID !== USERS_ID) return false;
+
+    await updateDoc(ref, { DELETED_ALL: true, TEXT: "" });
+
+    // 목록에 옛 내용이 남지 않게 마지막 대화도 같이 손본다
+    const chatRef = doc(db, "CHAT", CHAT_ID);
+    const room = await getDoc(chatRef);
+    if (room.exists() && room.data().LASTMESSAGE === snap.data().TEXT) {
+      await updateDoc(chatRef, { LASTMESSAGE: "삭제된 메시지입니다" });
+    }
+    return true;
+  } catch (e) {
+    console.log("TCL: DeleteMessageForAll -> error", e.message);
+    return false;
+  }
+};
+
+/** 내가 쓴 메시지를 문서째 지운다 (지금은 안 쓴다 — 위 두 가지로 대신한다) */
 export const DeleteMessage = async ({ CHAT_ID, MESSAGE_ID, USERS_ID }) => {
   try {
     const ref = doc(db, `CHAT/${CHAT_ID}/messages`, MESSAGE_ID);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { IoPerson } from "react-icons/io5";
 
@@ -29,12 +29,18 @@ const Img = styled.img`
 `;
 
 const ChatprofileImage = ({ containerStyle, source, size = 46 }) => {
-  const ok = !!source && String(source).trim() !== "";
+  const [failed, setFailed] = useState(false);
+
+  // 주소가 바뀌면 다시 시도한다
+  useEffect(() => { setFailed(false); }, [source]);
+
+  // 주소가 없거나 못 불러오면 사람 아이콘으로 떨어진다 (형 지시 2026-08-12)
+  const ok = !!source && String(source).trim() !== "" && !failed;
 
   return (
     <Circle style={containerStyle} $size={size}>
       {ok
-        ? <Img src={source} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+        ? <Img src={source} alt="" onError={() => setFailed(true)} />
         : <IoPerson size={Math.round(size * 0.5)} color="#BDBDC2" />}
     </Circle>
   );
