@@ -109,7 +109,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
 
 
        if(chatitems != -1){
-        const FindIndex = chatitems.findIndex(x=>x.WORK_INFO.WORK_ID == WORK_ID);
+        const FindIndex = chatitems.findIndex(x=>workOf(x).WORK_ID == WORK_ID);
         if(FindIndex != -1){
          if(chatitems[FindIndex].SUPPORTER_ID == USERS_ID){
            setSupporterwork(true);

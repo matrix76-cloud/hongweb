@@ -15,6 +15,7 @@ import "./Chatgate.css";
 import { getFullTime } from "../utility/date";
 import { ChatAddress } from "../utility/region";
 import ChatprofileImage from "./ChatprofileImage";
+import { workOf } from "../utility/chat";
 
 const formatter = buildFormatter(koreanStrings); 
 
@@ -186,9 +187,9 @@ const Chatgate =({containerStyle,item}) =>  {
     if(item.LASTMESSAGE){
       setContent(item.LASTMESSAGE);
     }else if(user.users_id == item.OWNER.USERINFO.users_id){
-      setContent(item.WORK_INFO.WORKTYPE + "에" +" "+ nick +"님 이 지원하였습니다");
+      setContent(workOf(item).WORKTYPE + "에" +" "+ nick +"님 이 지원하였습니다");
     }else{
-      setContent(item.WORK_INFO.WORKTYPE + "에 지원하였습니다");
+      setContent(workOf(item).WORKTYPE + "에 지원하였습니다");
     }
 
     setInfo(item.LASTMESSAGE_AT || item.CREATEDT);

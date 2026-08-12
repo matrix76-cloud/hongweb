@@ -73,7 +73,7 @@ const buildInfo = (i, price, chips) => {
   };
   chips.forEach((c, k) => push(CHIP_TYPES[k % CHIP_TYPES.length], c));
   push('금액', price);
-  push('지역', `대한민국 ${r(ADDRS, i)}`, { latitude: lat, longitude: lng });
+  push('지역', `${r(ADDRS, i)}`, { latitude: lat, longitude: lng });
   push('요구사항', '시드 데이터입니다. 실제 요청이 아닙니다.');
   return info;
 };

@@ -45,7 +45,8 @@ export const CreateChat = async({OWNER, OWNER_ID, SUPPORTER, SUPPORTER_ID,WORK_I
            OWNER_ID :OWNER_ID,
            SUPPORTER : SUPPORTER,
            SUPPORTER_ID :SUPPORTER_ID,
-           WORK_INFO : WORK_INFO,
+           // 실제 DB 에 쌓인 176개 방이 모두 INFO 를 쓴다. 새 방도 같은 이름으로 맞춘다. (형 리뷰 2026-08-12)
+           INFO : WORK_INFO,
            CREATEDT : Date.now(),
            // 목록에서 마지막 대화를 바로 보여주기 위한 필드 (형 리뷰 2026-08-12)
            PARTICIPANTS : [OWNER_ID, SUPPORTER_ID],
@@ -170,7 +171,9 @@ export const CreateMessage = async ({ CHAT_ID, msg, users_id,read,CHAT_CONTENT_T
   const newMessage = {
     MESSAGE_ID: id,
     TEXT: msg,
-    CREATEDAT: Date.now(),
+    // 기존 메시지는 전부 CREATEDT 로 저장돼 있는데 여기서만 CREATEDAT 로 썼다.
+    // 대화방이 orderBy("CREATEDT") 로 읽으므로 이 필드가 없으면 그 메시지는 화면에 아예 안 나온다.
+    CREATEDT: Date.now(),
     USERS_ID: users_id,
     READ:read,
     CHAT_CONTENT_TYPE: CHAT_CONTENT_TYPE

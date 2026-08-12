@@ -44,7 +44,8 @@ const style = {
 /**
  * 카카오맵을 연동 하기 위해서 kakao 변수를 선언 해둔다
  */
-const { kakao } = window;
+// kakao 는 전역(window.kakao)을 참조 시점에 읽는다.
+// 최상단에서 구조분해하면 SDK 로드 전 undefined 로 굳는다 (Vite=ES모듈, 2026-08-12)
 
 
 /**

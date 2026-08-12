@@ -351,7 +351,8 @@ const DayBtn = styled.div`
 `
 
 
-const { kakao } = window;
+// kakao 는 전역(window.kakao)을 참조 시점에 읽는다.
+// 최상단에서 구조분해하면 SDK 로드 전 undefined 로 굳는다 (Vite=ES모듈, 2026-08-12)
 
 const mapstyle = {
   width:'270px',

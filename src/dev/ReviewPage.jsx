@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DOMAINS, STATUS_LABEL, STATUS_COLOR } from './reviewData';
 import { captureFrame, describeTarget } from './reviewCapture';
+import { seedChatRooms, clearSeededChats } from './seedChat';
 
 /**
  * 개발 전용 리뷰 허브 (/review · DEV 게이트)
@@ -47,6 +48,7 @@ export default function ReviewPage() {
   const [busy, setBusy] = useState('');
   const [sharing, setSharing] = useState(false);
   const [zoom, setZoom] = useState(null);
+  const [seedmsg, setSeedmsg] = useState('');
 
   const frameRef = useRef(null);
   const videoRef = useRef(null);
@@ -162,6 +164,39 @@ export default function ReviewPage() {
     load();
   };
 
+  // ── 채팅 시드 ──
+  const makeSeed = async () => {
+    if (busy) return;
+    setBusy('시드 만드는 중...');
+    setSeedmsg('');
+    try {
+      const made = await seedChatRooms(5);
+      setSeedmsg(
+        `대화방 ${made.length}개를 만들었습니다.\n` +
+        made.map((m) => `  · ${m.with} 님 — ${m.work} (대화 ${m.messages}개)`).join('\n') +
+        '\n좌측 화면에서 채팅 탭을 눌러 확인하세요.'
+      );
+    } catch (e) {
+      setSeedmsg(`시드 실패: ${e.message}`);
+    }
+    setBusy('');
+    if (frameRef.current) frameRef.current.src = frameRef.current.src;
+  };
+
+  const dropSeed = async () => {
+    if (busy) return;
+    setBusy('시드 지우는 중...');
+    setSeedmsg('');
+    try {
+      const n = await clearSeededChats();
+      setSeedmsg(`시드로 만든 대화방 ${n}개를 지웠습니다.`);
+    } catch (e) {
+      setSeedmsg(`삭제 실패: ${e.message}`);
+    }
+    setBusy('');
+    if (frameRef.current) frameRef.current.src = frameRef.current.src;
+  };
+
   const shownPins = viewPins || pins;
   const roots = entries.filter((e) => !e.replyTo);
   const repliesOf = (pid) => entries.filter((e) => e.replyTo === pid);
@@ -179,7 +214,19 @@ export default function ReviewPage() {
         </span>
         {sharing && <span style={{ fontSize: 13, fontWeight: 700, color: '#1a7f37' }}>화면공유 중 — 지도까지 캡처됩니다</span>}
         {busy && <span style={{ fontSize: 14, color: C.brand, fontWeight: 700 }}>{busy}</span>}
+
+        <div style={{ flex: 1 }} />
+        {/* 채팅 화면을 보려면 대화방이 있어야 하는데 방은 지원하기를 눌러야 생긴다.
+            지금 앱에 로그인된 계정으로 방과 대화를 만들어 넣는다. (형 요청 2026-08-12) */}
+        <button style={{ ...btn(false), padding: '6px 11px' }} onClick={makeSeed} disabled={!!busy}>채팅 시드 5개</button>
+        <button style={{ ...btn(false), padding: '6px 11px' }} onClick={dropSeed} disabled={!!busy}>시드 삭제</button>
       </div>
+
+      {seedmsg && (
+        <div style={{ marginBottom: 12, fontSize: 14, color: C.ink, background: '#fff', border: `1px solid ${C.line}`, borderRadius: 8, padding: '10px 12px', whiteSpace: 'pre-wrap' }}>
+          {seedmsg}
+        </div>
+      )}
 
       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 

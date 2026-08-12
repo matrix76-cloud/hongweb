@@ -1,37 +1,18 @@
-import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import styled from 'styled-components';
-import { UserContext } from "../context/User";
-import { imageDB } from "../utility/imageData";
+import React from "react";
+import { IoDocumentTextOutline } from "react-icons/io5";
+import EmptyState from "./EmptyState";
 
-
-
-const Container = styled.div`
-  height :${({height}) => height}px;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom:50px;
-
-`
-const style = {
-  display: "flex"
-};
-
-const Empty =({containerStyle, content, height}) =>  {
- 
-  return (
-
-    <Container style={containerStyle} height={height} >
-       <img src={imageDB.Empty} style={{height:60, width:60}}/>
-       <div style={{fontSize:14, marginTop:10}}>{content}</div>
-   
-    </Container>
-  );
-
-}
+/**
+ * 목록이 비었을 때. 공통 EmptyState 로 통일했다. (형 지시 2026-08-12)
+ * 기존 호출부(content·height)는 그대로 쓰면 된다.
+ */
+const Empty = ({ containerStyle, content, height }) => (
+  <EmptyState
+    containerStyle={containerStyle}
+    icon={IoDocumentTextOutline}
+    content={content}
+    height={height}
+  />
+);
 
 export default Empty;
-

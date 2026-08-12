@@ -11,11 +11,24 @@
     <!-- 폰트: Pretendard 가변폰트 자체 호스팅 (CDN dynamic-subset 은 윈도우에서 폴백 깨짐) -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/PretendardVariable.woff2" crossorigin />
 
-    <!-- 카카오맵 SDK -->
+    <!-- 카카오맵 SDK
+         autoload=false + kakao.maps.load() 로 로드한다.
+         Vite 는 ES 모듈(defer)이라 CRA 때와 스크립트 실행 순서가 달라서,
+         동기 로드로는 모듈 최상단의 const { kakao } = window 가 undefined 로 굳는다.
+         load() 콜백 안에서 kakaoReady 를 세워 화면들이 그때 지도를 그리게 한다. -->
     <script
       type="text/javascript"
-      src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0942e57cbcf43ba9177ad09d6784ef42&libraries=services,clusterer"
+      src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f3884aa215c7467194b2bdaa264ec201&libraries=services,clusterer&autoload=false"
     ></script>
+    <script type="text/javascript">
+      window.__kakaoReady = new Promise(function (resolve) {
+        if (window.kakao && window.kakao.maps && window.kakao.maps.load) {
+          window.kakao.maps.load(function () { resolve(window.kakao); });
+        } else {
+          resolve(null);
+        }
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

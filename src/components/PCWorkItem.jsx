@@ -149,7 +149,7 @@ const PCWorkItem =({containerStyle, width, workdata, onPress, index, selected}) 
     let regions = [];
     regions = region.split(' ');
 
-    return regions[1]+' ' + regions[2]+' '+ regions[3];
+    return shortRegion(region);
   }
 
   function Keyword(){

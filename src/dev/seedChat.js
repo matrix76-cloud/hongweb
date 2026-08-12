@@ -1,0 +1,198 @@
+/**
+ * 채팅 시드 (개발 전용) — 리뷰페이지에서 버튼으로 실행한다. (형 요청 2026-08-12)
+ *
+ * 채팅 화면을 보려면 대화방이 있어야 하는데, 방은 "지원하기"를 눌러야만 생긴다.
+ * 화면 확인용으로 실제 사용자·실제 일감을 물린 방과 대화를 만들어 넣는다.
+ *
+ * 어느 계정에 붙일지는 묻지 않는다 — 지금 앱에 로그인된 계정(localforage userconfig)에 붙인다.
+ * 만든 문서에는 SEEDED:true 를 남겨서 언제든 지울 수 있다.
+ */
+import localforage from 'localforage';
+import {
+  collection, doc, getDocs, limit, query, setDoc, where, writeBatch, orderBy,
+} from 'firebase/firestore';
+import { db } from '../api/config';
+
+// 일감 종류와 무관하게 자연스럽게 읽히는 대화 묶음. 방마다 하나를 골라 쓴다.
+const SCRIPTS = [
+  [
+    ['owner', '안녕하세요, 올린 일감 보고 연락 주셨네요.'],
+    ['supporter', '네 안녕하세요. 이 일 제가 도와드릴 수 있을 것 같아서요.'],
+    ['owner', '혹시 이런 일 해보신 적 있으세요?'],
+    ['supporter', '3년 정도 했습니다. 비슷한 집도 여러 번 해봤어요.'],
+    ['owner', '좋네요. 시간은 오전 10시쯤 가능하실까요?'],
+    ['supporter', '네 그 시간 괜찮습니다.'],
+    ['owner', '그럼 그때 뵐게요. 주소는 등록해둔 그대로예요.'],
+  ],
+  [
+    ['supporter', '안녕하세요, 일감 보고 지원했습니다.'],
+    ['owner', '네 반갑습니다. 언제부터 가능하세요?'],
+    ['supporter', '이번 주 목요일부터 가능합니다.'],
+    ['owner', '금액은 올린 그대로 생각하시면 될까요?'],
+    ['supporter', '네 괜찮습니다. 다만 주차가 어려우면 미리 알려주세요.'],
+    ['owner', '건물 앞에 자리 있어요. 걱정 안 하셔도 됩니다.'],
+  ],
+  [
+    ['owner', '안녕하세요. 프로필 보고 연락드려요.'],
+    ['supporter', '네 안녕하세요.'],
+    ['owner', '이번 주말도 혹시 되실까요?'],
+    ['supporter', '토요일은 선약이 있고 일요일은 괜찮습니다.'],
+    ['owner', '그럼 일요일로 할게요.'],
+    ['supporter', '네 시간 정해지면 알려주세요.'],
+    ['owner', '오후 2시 어떠세요?'],
+    ['supporter', '좋습니다. 그때 뵙겠습니다.'],
+  ],
+  [
+    ['supporter', '안녕하세요, 아직 사람 구하시나요?'],
+    ['owner', '네 아직 구하고 있어요.'],
+    ['supporter', '그럼 제가 하고 싶습니다. 필요한 준비물 있을까요?'],
+    ['owner', '따로 없어요. 몸만 오시면 됩니다.'],
+  ],
+  [
+    ['owner', '지원 감사합니다. 몇 가지만 여쭤볼게요.'],
+    ['supporter', '네 편하게 물어보세요.'],
+    ['owner', '혹시 근처에 사시나요?'],
+    ['supporter', '차로 15분 거리예요. 이동은 문제없습니다.'],
+    ['owner', '알겠습니다. 조율해서 다시 연락드릴게요.'],
+  ],
+];
+
+const pick = (arr, n) => {
+  const copy = [...arr];
+  const out = [];
+  while (copy.length && out.length < n) out.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+  return out;
+};
+
+/** 지금 앱에 로그인된 사용자 */
+const loadMe = async () => {
+  const cfg = await localforage.getItem('userconfig');
+  if (!cfg || !cfg.users_id) throw new Error('로그인된 계정이 없습니다. 앱에서 먼저 로그인해 주세요.');
+  return cfg;
+};
+
+/** 상대로 쓸 실제 사용자 — 닉네임이 있는 사람만 */
+const loadPartners = async (myId, n) => {
+  const snap = await getDocs(query(collection(db, 'USERS'), orderBy('LASTLOGINDT', 'desc'), limit(60)));
+  const users = [];
+  snap.forEach((d) => {
+    const x = d.data();
+    if (x.USERS_ID === myId) return;
+    if (!x.USERINFO || !x.USERINFO.nickname) return;
+    users.push(x);
+  });
+  if (!users.length) throw new Error('상대로 쓸 사용자를 찾지 못했습니다.');
+  return pick(users, n);
+};
+
+/** 방에 물릴 실제 일감 */
+const loadWorks = async (n) => {
+  const snap = await getDocs(query(collection(db, 'WORK'), limit(40)));
+  const works = [];
+  snap.forEach((d) => works.push(d.data()));
+  if (!works.length) throw new Error('일감을 찾지 못했습니다.');
+  return pick(works, n);
+};
+
+/**
+ * 대화방 N개와 대화를 만든다.
+ * 절반은 내가 일감 주인(지원을 받은 쪽), 절반은 내가 지원한 쪽으로 섞는다.
+ */
+export const seedChatRooms = async (count = 5) => {
+  const me = await loadMe();
+  const partners = await loadPartners(me.users_id, count);
+  const works = await loadWorks(count);
+
+  const now = Date.now();
+  const made = [];
+
+  for (let i = 0; i < partners.length; i++) {
+    const partner = partners[i];
+    const work = works[i % works.length];
+    const iAmOwner = i % 2 === 0;
+
+    const chatRef = doc(collection(db, 'CHAT'));
+    const CHAT_ID = chatRef.id;
+
+    // 내 쪽 문서는 앱이 들고 있는 형태(users_id + USERINFO)로 맞춘다
+    const meDoc = { USERS_ID: me.users_id, USERINFO: {
+      nickname: me.nickname || me.USERINFO?.nickname || '나',
+      userimg: me.userimg || me.USERINFO?.userimg || '',
+      address_name: me.address_name || me.USERINFO?.address_name || '',
+      phone: me.phone || me.USERINFO?.phone || '',
+      latitude: me.latitude ?? null,
+      longitude: me.longitude ?? null,
+      users_id: me.users_id,
+    } };
+
+    const OWNER = iAmOwner ? meDoc : partner;
+    const SUPPORTER = iAmOwner ? partner : meDoc;
+    const OWNER_ID = OWNER.USERS_ID;
+    const SUPPORTER_ID = SUPPORTER.USERS_ID;
+
+    // 방마다 다른 대화. 시작 시각을 하루씩 벌려 목록 정렬이 눈에 보이게 한다.
+    const script = SCRIPTS[i % SCRIPTS.length];
+    const base = now - (i + 1) * 1000 * 60 * 60 * 20;
+
+    const batch = writeBatch(db);
+    let lastText = '';
+    let lastAt = base;
+
+    script.forEach((line, k) => {
+      const [role, text] = line;
+      const writer = role === 'owner' ? OWNER_ID : SUPPORTER_ID;
+      const at = base + k * 1000 * 60 * (3 + (k % 4));
+      const msgRef = doc(collection(db, `CHAT/${CHAT_ID}/messages`));
+      batch.set(msgRef, {
+        MESSAGE_ID: msgRef.id,
+        TEXT: text,
+        CREATEDT: at,
+        USERS_ID: writer,
+        // 내가 쓴 건 읽음, 상대가 쓴 마지막 몇 개는 안읽음으로 남겨 뱃지를 확인할 수 있게 한다
+        READ: writer === me.users_id ? [me.users_id] : (k < script.length - 2 ? [OWNER_ID, SUPPORTER_ID] : [writer]),
+        CHAT_CONTENT_TYPE: 'TEXT',
+        SEEDED: true,
+      });
+      lastText = text;
+      lastAt = at;
+    });
+
+    // 상대가 마지막에 남긴 안읽음 수
+    const unreadForMe = script.slice(-2).filter(([role]) =>
+      (role === 'owner' ? OWNER_ID : SUPPORTER_ID) !== me.users_id).length;
+
+    batch.set(chatRef, {
+      CHAT_ID,
+      OWNER, OWNER_ID,
+      SUPPORTER, SUPPORTER_ID,
+      INFO: work,                       // 실제 DB 스키마와 동일하게 INFO 로 넣는다
+      TYPE: '도움요청',
+      CREATEDT: base,
+      PARTICIPANTS: [OWNER_ID, SUPPORTER_ID],
+      LASTMESSAGE: lastText,
+      LASTMESSAGE_AT: lastAt,
+      UNREAD: { [OWNER_ID]: 0, [SUPPORTER_ID]: 0, [me.users_id]: unreadForMe },
+      SEEDED: true,
+    });
+
+    await batch.commit();
+    made.push({ CHAT_ID, with: partner.USERINFO.nickname, work: work.WORKTYPE, messages: script.length });
+  }
+
+  return made;
+};
+
+/** 시드로 만든 방만 지운다 */
+export const clearSeededChats = async () => {
+  const snap = await getDocs(query(collection(db, 'CHAT'), where('SEEDED', '==', true)));
+  let rooms = 0;
+  for (const d of snap.docs) {
+    const msgs = await getDocs(collection(db, `CHAT/${d.id}/messages`));
+    const batch = writeBatch(db);
+    msgs.forEach((m) => batch.delete(m.ref));
+    batch.delete(d.ref);
+    await batch.commit();
+    rooms++;
+  }
+  return rooms;
+};

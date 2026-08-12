@@ -25,6 +25,7 @@ import {
   SlUserUnfollow,
 } from "react-icons/sl";
 import { CreateMessage, MarkRead } from "../../service/ChatService";
+import { workOf, msgTimeOf } from "../../utility/chat";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../api/config";
 import { getDateFullTime, getTime, getDate } from "../../utility/date";
@@ -388,7 +389,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
   useEffect(() => {
     const q = query(
       collection(db, `CHAT/${chatid}/messages`),
-      orderBy("CREATEDAT", "asc")
+      orderBy("CREATEDT", "asc")
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const list = [];
@@ -638,9 +639,9 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
 
   const findPrice = () =>{
-    const FindIndex = ITEM.WORK_INFO.WORK_INFO.findIndex(x=>x.requesttype == REQUESTINFO.MONEY);
+    const FindIndex = workOf(ITEM).WORK_INFO.findIndex(x=>x.requesttype == REQUESTINFO.MONEY);
 
-    return ITEM.WORK_INFO.WORK_INFO[FindIndex].result;
+    return workOf(ITEM).WORK_INFO[FindIndex].result;
   }
 
   const imguploadwarningcallback = () =>{
@@ -655,7 +656,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       }
       {
         contactpopup == true && <MobileContact 
-        WORK_ID ={ITEM.WORK_INFO.WORK_ID}
+        WORK_ID ={workOf(ITEM).WORK_ID}
         OWNER_ID={ITEM.OWNER_ID}
         SUPPORTER_ID ={ITEM.SUPPORTER_ID}
         CHAT_ID={ITEM.CHAT_ID}
@@ -667,8 +668,8 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
       {
         contactsignpopup == true && <MobileContactSign callback={MobileContactsignCallback} 
-        messages={ITEM.WORK_INFO.WORK_INFO} 
-        WORK_ID ={ITEM.WORK_INFO.WORK_ID}
+        messages={workOf(ITEM).WORK_INFO} 
+        WORK_ID ={workOf(ITEM).WORK_ID}
         OWNER_ID={ITEM.OWNER_ID}
         SUPPORTER_ID ={ITEM.SUPPORTER_ID}
         OWNER ={OWNER}
@@ -681,8 +682,8 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
       {
         downloadpopup == true && <MobileContactDoc callback={MobileContactdownloadCallback} 
-        messages={ITEM.WORK_INFO.WORK_INFO} 
-        WORK_ID ={ITEM.WORK_INFO.WORK_ID}
+        messages={workOf(ITEM).WORK_INFO} 
+        WORK_ID ={workOf(ITEM).WORK_ID}
         OWNER_ID={ITEM.OWNER_ID}
         SUPPORTER_ID ={ITEM.SUPPORTER_ID}
         OWNER ={OWNER}
@@ -696,7 +697,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
         <Column style={{background:"#fff", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid #ededed"}}>
           <Enter onClick={()=>{}}>
             <Row style={{paddingLeft:20}}>
-              <img src={Seekimage(ITEM.WORK_INFO.WORKTYPE)} style={{width:"60px", height:"60px"}}/>
+              <img src={Seekimage(workOf(ITEM).WORKTYPE)} style={{width:"60px", height:"60px"}}/>
             </Row>
             <Row style={{width:"100%", justifyContent:"flex-start"}}>
             <div style={{display:"flex", flexDirection:"column", paddingLeft:"10px",lineHeight:1.9, width:"70%"}}>
@@ -705,7 +706,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
               {
                 OWNER == true ? (   <OwnerTag>의뢰</OwnerTag>):(   <SupportTag>지원</SupportTag>)
               }
-              <StoreName>{ITEM.WORK_INFO.WORKTYPE}</StoreName>
+              <StoreName>{workOf(ITEM).WORKTYPE}</StoreName>
               </FlexstartRow>
 
               <StoreAddr>{ITEM.OWNER.USERINFO.address_name} {parseInt(distanceFunc(user.latitude, user.longitude, user.latitude, user.longitude) /1000)}km</StoreAddr>
@@ -794,8 +795,8 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                                 }
                               
                                 <ItemLayerAdate>
-                                  <div> {getDate(data.CREATEDAT)}</div>
-                                  <div> {getTime(data.CREATEDAT)}</div>
+                                  <div> {getDate(msgTimeOf(data))}</div>
+                                  <div> {getTime(msgTimeOf(data))}</div>
                                 </ItemLayerAdate>
                               </ItemLayerAcontent>
                             </FlexstartColumn>
@@ -811,8 +812,8 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                             }
                           */}
                             <ItemLayerBdate>
-                              <div> {getDate(data.CREATEDAT)}</div>
-                              <div> {getTime(data.CREATEDAT)}</div>
+                              <div> {getDate(msgTimeOf(data))}</div>
+                              <div> {getTime(msgTimeOf(data))}</div>
                              
                               </ItemLayerBdate>
                           </ItemLayerBBox>

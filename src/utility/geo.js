@@ -14,22 +14,33 @@ export const DEFAULT_REGION_LABEL = "남양주시 다산동";
 // 특별·광역시(시도가 곧 '시') — 이 경우만 시도를 앞에 붙인다. 도(경기/강원…)는 2depth 에 이미 '시'가 들어있다.
 const METRO = /^(서울|부산|대구|인천|광주|대전|울산|세종)/;
 
-// index.html 의 카카오 SDK 로드 대기
-const waitKakao = () =>
-  new Promise((resolve, reject) => {
-    const ok = () => window.kakao && window.kakao.maps && window.kakao.maps.services;
-    if (ok()) return resolve(window.kakao);
+/**
+ * 카카오 SDK 로드 대기.
+ * index.html 이 autoload=false 로 받고 kakao.maps.load() 를 돌린 뒤 window.__kakaoReady 를 세운다.
+ * 그 약속을 먼저 기다리고, 없으면 폴링으로 버틴다.
+ */
+export const waitKakao = () => {
+  const ok = () => window.kakao && window.kakao.maps && window.kakao.maps.services;
+  if (ok()) return Promise.resolve(window.kakao);
+
+  const poll = new Promise((resolve, reject) => {
     let waited = 0;
     const timer = setInterval(() => {
       if (ok()) {
         clearInterval(timer);
         resolve(window.kakao);
-      } else if ((waited += 100) >= 5000) {
+      } else if ((waited += 100) >= 8000) {
         clearInterval(timer);
         reject(new Error("kakao-sdk-timeout"));
       }
     }, 100);
   });
+
+  if (window.__kakaoReady && typeof window.__kakaoReady.then === 'function') {
+    return window.__kakaoReady.then(() => (ok() ? window.kakao : poll));
+  }
+  return poll;
+};
 
 /**
  * 좌표 → 지역 라벨 "시 구 동"

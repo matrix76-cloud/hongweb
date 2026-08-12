@@ -117,3 +117,13 @@ export const AddressSummmary =(address)=>{
 
 	return addr[0] + ' '+ addr[1];
 }
+
+/**
+ * 주소에서 "시/군/구 + 읍면동" 부분만 뽑는다.
+ * 앞에 "대한민국"이 붙은 예전 데이터와 없는 데이터를 모두 흡수한다. (2026-08-12)
+ */
+export const shortRegion = (address) => {
+  const parts = String(address || '').trim().split(/\s+/).filter(Boolean);
+  const body = parts[0] === '대한민국' ? parts.slice(1) : parts;
+  return body.slice(0, 3).join(' ');
+};

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/User";
 import { ReadWorkByUSERS_ID } from "../../../service/WorkService";
+import { shortRegion } from "../../../utility/region";
 import { Seekimage, Seekgrayimage } from "../../../utility/imageData";
 import { WORKSTATUS } from "../../../utility/status";
 import TimeAgo from 'react-timeago';
@@ -131,9 +132,7 @@ const MobileMyWork = ({ status }) => {
 
   const regionOf = (w) => {
     const i = (w.WORK_INFO || []).findIndex((x) => x.requesttype === '지역');
-    if (i === -1) return '';
-    const parts = String(w.WORK_INFO[i].result || '').split(' ');
-    return parts.slice(1, 4).join(' ');
+    return i === -1 ? '' : shortRegion(w.WORK_INFO[i].result);
   };
 
   if (items === null) {

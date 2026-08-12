@@ -5,7 +5,7 @@ import { MdPlace, MdMyLocation, MdSearch } from "react-icons/md";
 import localforage from "localforage";
 import { UserContext } from "../../context/User";
 import { DataContext } from "../../context/Data";
-import { coordToRegion, getCurrentCoords } from "../../utility/geo";
+import { coordToRegion, getCurrentCoords, waitKakao } from "../../utility/geo";
 import { ReadWork } from "../../service/WorkService";
 
 /**
@@ -156,15 +156,9 @@ const MobileMapPickcontainer = ({ containerStyle }) => {
 
   useEffect(() => {
     let cancelled = false;
-    const kakao = window.kakao;
-
-    if (!kakao || !kakao.maps || !kakao.maps.services) {
-      setFailed(true);
-      return () => { cancelled = true; };
-    }
 
     // 지도 초기화 후 idle 마다 중심 좌표를 역지오코딩한다
-    const setupMap = (map) => {
+    const setupMap = (kakao, map) => {
       let timer = null;
       const resolveCenter = () => {
         const c = map.getCenter();
@@ -181,23 +175,28 @@ const MobileMapPickcontainer = ({ containerStyle }) => {
       resolveCenter();
     };
 
-    const createMap = ({ lat, lng }) => {
+    const createMap = (kakao, { lat, lng }) => {
       if (cancelled || !mapEl.current || mapRef.current) return;
       const map = new kakao.maps.Map(mapEl.current, {
         center: new kakao.maps.LatLng(lat, lng),
         level: 4,
       });
       mapRef.current = map;
-      setupMap(map);
+      setupMap(kakao, map);
     };
 
-    // GPS 우선. 실패하면 저장된 좌표 → 기본 좌표 순으로 폴백한다
-    getCurrentCoords()
-      .then(createMap)
-      .catch(() => {
-        const saved = user.latitude != null ? { lat: user.latitude, lng: user.longitude } : BASE;
-        createMap(saved);
-      });
+    // SDK 는 index.html 에서 autoload=false 로 받으므로 준비될 때까지 기다린다.
+    // 그다음 GPS 우선, 실패하면 저장된 좌표 → 기본 좌표 순으로 폴백한다.
+    waitKakao()
+      .then((kakao) => {
+        getCurrentCoords()
+          .then((coords) => createMap(kakao, coords))
+          .catch(() => {
+            const saved = user.latitude != null ? { lat: user.latitude, lng: user.longitude } : BASE;
+            createMap(kakao, saved);
+          });
+      })
+      .catch(() => { if (!cancelled) setFailed(true); });
 
     return () => { cancelled = true; };
   }, []);

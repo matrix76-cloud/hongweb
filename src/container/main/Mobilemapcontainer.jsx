@@ -30,6 +30,7 @@ import LottieAnimation from "../../common/LottieAnimation";
 import { useDispatch, useSelector } from "react-redux";
 import { RESET } from "../../store/menu/MenuSlice";
 import MobileServiceFilter from "../../modal/MobileServiceFilterPopup/MobileServiceFilter";
+import { ensureKakao } from "../../utility/kakaoReady";
 
 const Container = styled.div`
     max-height:1000px;
@@ -140,7 +141,8 @@ const FilterButton = styled.div`
 /**
  * 카카오맵을 연동 하기 위해서 kakao 변수를 선언 해둔다
  */
-const { kakao } = window;
+// kakao 는 전역(window.kakao)을 참조 시점에 읽는다.
+// 최상단에서 구조분해하면 SDK 로드 전 undefined 로 굳는다 (Vite=ES모듈, 2026-08-12)
 
 const DetailLevel = 1;
 const DetailMeter =300;
@@ -477,7 +479,9 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
    * 리스트에서 위치 이동을 위해 refs 배열에 값을 세팅해준다
    * ! 하이라이트 표시 는 css로 적용
    */
-  function ListmapDraw(datas){
+  async function ListmapDraw(datas){
+
+    if(!(await ensureKakao())) return;
 
     setLoading(true);
     setRefresh((refresh) =>refresh +1);
