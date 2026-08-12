@@ -18,6 +18,8 @@ import { TbRelationOneToOne } from "react-icons/tb";
 import { RiArrowRightSLine } from "react-icons/ri";
 import { uploadImage } from "../../../service/UploadService";
 import { Update_userinfobyusersid } from "../../../service/UserService";
+import ProfileAvatarEditor from "../../ProfileAvatarEditor";
+import { uploadImageFile } from "../../../service/UploadService";
 
 const Container = styled.div`
   padding-bottom:30px;
@@ -40,8 +42,9 @@ const BoxItem = styled.div`
 
 const Name = styled.div`
   font-family: 'Pretendard-SemiBold';
-  font-size: 16px;
-  padding-left:5px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #131313;
 `
 const TemperatureLine = styled.div`
   display: flex;
@@ -49,7 +52,7 @@ const TemperatureLine = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  font-size: 14px;
+  font-size: 16px;
   color: #131313;
   font-family: 'Pretendard-SemiBold';
 `
@@ -147,54 +150,22 @@ const MobileProfileConfig =({containerStyle}) =>  {
       FetchData();
   }, [])
 
-  const handleUploadClick = (e) => {
-    fileInput.current.click();
+  /* 프로필 사진 — 압축해서 Storage 에 올리고 URL 만 저장한다.
+     예전에는 base64 를 그대로 Firestore 문서에 넣어 1MB 제한에 걸렸다. (형 리뷰 2026-08-12) */
+  const uploadProfile = async (file) => {
+    return uploadImageFile({ file, folder: 'profile' });
   };
 
-  const ImageUpload = async (data, data2) => {
-    const uri = data;
-    const email = data2;
-    const URL = await uploadImage({ uri, email });
-    return URL;
+  const onProfileUploaded = async (url) => {
+    setImg(url);
+    user.userimg = url;
+    dispatch(user);
+
+    const USERINFO = user;
+    const USERS_ID = user.users_id;
+    await Update_userinfobyusersid({ USERINFO, USERS_ID });
+    setRefresh((refresh) => refresh + 1);
   };
-
-    
-  const handlefileuploadChange = async (e) => {
-    let filename = "";
-    const file = e.target.files[0];
-    filename = file.name;
-
-    var p1 = new Promise(function (resolve, reject) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        let img = reader.result;
-        resolve(img);
-      };
-    });
-    const getRandom = () => Math.random();
-    const email = getRandom();
-
-    p1.then(async (result) => {
-      const uri = result;
-      setImg(uri);
-
-      user.userimg = uri;
-      dispatch(user);
-
-      const USERINFO = user;
-      const USERS_ID = user.users_id;
-  
-      await Update_userinfobyusersid({USERINFO, USERS_ID});
-      console.log("TCL: _handleSave -> user", user);
-      setRefresh((refresh) => refresh +1);
-
-
-
-    });
-  };
-
-  
 
   const _handleNameMove = () =>{
     navigate("/Mobileconfigcontent",{state :{NAME :CONFIGMOVE.PROFILENAME, TYPE : ""}});
@@ -212,17 +183,10 @@ const MobileProfileConfig =({containerStyle}) =>  {
     <BoxItem style={{padding:"30px 10px"}}>
 
       <Column style={{justifyContent:"space-between", width:"100%"}}>
-        <Row style={{justifyContent:"flex-start", width:"90%"}}>
-          <img src={img}  onClick={handleUploadClick} style={{width:"82px", borderRadius:"50px"}}/>
+        <Row style={{justifyContent:"flex-start", alignItems:"center", gap:16, width:"90%"}}>
+          <ProfileAvatarEditor src={img} size={92} uploader={uploadProfile} onUploaded={onProfileUploaded} />
           <Name>{user.nickname}</Name>
-        </Row>  
-
-        <input
-        type="file"
-        ref={fileInput}
-        onChange={handlefileuploadChange}
-        style={{ display: "none" }}
-        />
+        </Row>
 
 
         <ButtonEx text={'대화명 설정'} width={'85'}  onPress={_handleNameMove}
@@ -231,7 +195,7 @@ const MobileProfileConfig =({containerStyle}) =>  {
 
         <TemperatureLine>
            <div>홍여사 온도 <FaTemperatureHigh size={12} color={'#FF4E19'}/>
-           <span style={{fontSize:10, fontFamily:"Pretendard-Light"}}>홍여사는 기본온도가 36도에요</span>
+           <span style={{fontSize:13, color:"#71717a"}}>홍여사는 기본온도가 36도에요</span>
            </div>
            <div>
             <div style={{display:"flex"}}>
@@ -252,7 +216,7 @@ const MobileProfileConfig =({containerStyle}) =>  {
                   <div style={{display:"flex"}}>
                   <div>거래지수</div>
                   </div>
-                  <div style={{lineHeight:1.8,marginTop:5}}>거래 내역을 토대로 지수를 산출해요</div>
+                  <div style={{lineHeight:1.6, marginTop:6, fontSize:14, color:"#71717a"}}>거래 내역을 토대로 지수를 산출해요</div>
                 </PointBoxInner>
                 <Point>
                   1
@@ -264,7 +228,7 @@ const MobileProfileConfig =({containerStyle}) =>  {
                 <div style={{display:"flex"}}>
                   호감지수
                   </div>
-                <div style={{lineHeight:1.8,marginTop:5}}>호감 표현이 많을 수록 지수가 높아져요</div>
+                <div style={{lineHeight:1.6, marginTop:6, fontSize:14, color:"#71717a"}}>호감 표현이 많을 수록 지수가 높아져요</div>
                 </PointBoxInner>
                 <Point>
                   2

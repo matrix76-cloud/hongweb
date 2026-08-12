@@ -24,6 +24,7 @@ import { MdOutlinePolicy } from "react-icons/md";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { CONFIGMOVE } from "../../utility/screen";
 import { PiBellBold, PiBellRingingBold, PiCheckCircleBold, PiClipboardTextBold, PiCreditCardBold, PiFileTextBold, PiHandshakeBold, PiHeadsetBold, PiHeartBold, PiInfoBold, PiLockKeyBold, PiMapPinBold, PiMegaphoneBold, PiNavigationArrowBold, PiQuestionBold, PiSealCheckBold, PiWalletBold } from "react-icons/pi";
+import ChatprofileImage from "../../components/ChatprofileImage";
 
 
 
@@ -190,8 +191,8 @@ const MobileConfigcontainer =({containerStyle}) =>  {
     <Container style={containerStyle}>
         <BoxItem>
           <Row style={{justifyContent:"space-between", width:"100%"}}>
-            <Row>
-              <img src={user.userimg} style={{width:"32px", borderRadius:"30px"}}/>
+            <Row style={{alignItems:"center", gap:12}}>
+              <ChatprofileImage source={user.userimg} size={44} />
               <Name>{user.nickname}</Name>
             </Row>   
             <ProfileConfigBtn onClick={_handleProfileConfig}>프로필 설정</ProfileConfigBtn>
