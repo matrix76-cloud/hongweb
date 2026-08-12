@@ -10,7 +10,7 @@ import { Column, FlexstartColumn } from "../../common/Column";
 import Button from "../../common/Button";
 import { AroundRow, BetweenRow, Row } from "../../common/Row";
 import Fade from "react-reveal/Fade";
-import { Requestbabycaremessages, Requestbusinesscleanmessages, Requestcarryloadmessages, Requestcleanmessages, Requestdoghospitalmessages, Requestdogwalkmessages, Requesterrandmessages, Requestfoodpreparemessages, Requestgohospitalmessages, Requestgooutschoolmessages, REQUESTINFO, Requestlessonmessages, Requestmovecleanmessages, Requestpatientcaremessages, Requestrecipetranmitmessages, Requestschooleventmessages, Requestshoppingmessages, WORKNAME, WORKPOLICY } from "../../utility/work";
+import { Requestbabycaremessages, Requestbusinesscleanmessages, Requestcarryloadmessages, Requestcleanmessages, Requestdoghospitalmessages, Requestdogwalkmessages, Requesterrandmessages, Requestfoodpreparemessages, Requestgohospitalmessages, Requestgooutschoolmessages, REQUESTINFO, Requestlessonmessages, Requestmovecleanmessages, Requestpatientcaremessages, Requestschooleventmessages, Requestshoppingmessages, WORKNAME, WORKPOLICY } from "../../utility/work";
 import { useSleep } from "../../utility/common";
 import { imageDB, Seekimage } from "../../utility/imageData";
 import Text from "../../common/Text";
@@ -334,8 +334,6 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
     msgs = Requestpatientcaremessages;
   }else if(type == WORKNAME.GOHOSPITAL){ 
     msgs = Requestgohospitalmessages;
-  }else if(type == WORKNAME.RECIPETRANSMIT){ 
-    msgs = Requestrecipetranmitmessages;
   }else if(type == WORKNAME.GOSCHOOLEVENT){ 
     msgs = Requestschooleventmessages;
   }else if(type == WORKNAME.SHOPPING){ 
@@ -402,8 +400,6 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
         msgs = Requestpatientcaremessages;
       }else if(type == WORKNAME.GOHOSPITAL){ 
         msgs = Requestgohospitalmessages;
-      }else if(type == WORKNAME.RECIPETRANSMIT){ 
-        msgs = Requestrecipetranmitmessages;
       }else if(type == WORKNAME.GOSCHOOLEVENT){ 
         msgs = Requestschooleventmessages;
       }else if(type == WORKNAME.CARRYLOAD){ 

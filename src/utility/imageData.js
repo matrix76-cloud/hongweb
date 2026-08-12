@@ -1,5 +1,5 @@
 import { ROOMSIZE } from "./room";
-import { WORKNAME } from "./work_";
+import { WORKNAME, normalizeWorkName } from "./work_";
 
 // 이미지 에셋 (Vite: require -> import)
 import _img_download from "../assets/imageset/download.png";
@@ -460,6 +460,7 @@ export const imageDB = {
 
 
 export const Seekimage = (category) =>{
+  category = normalizeWorkName(category);
   if(category == WORKNAME.ALLWORK){
     return imageDB.pclogo;
   }
@@ -483,8 +484,6 @@ export const Seekimage = (category) =>{
     return imageDB.carry;
   }else if(category == WORKNAME.GOHOSPITAL){
     return imageDB.hospital;
-  }else if(category == WORKNAME.RECIPETRANSMIT){
-    return imageDB.recipe;
   }else if(category == WORKNAME.GOSCHOOLEVENT){
     return imageDB.schoolevent;
   }else if(category == WORKNAME.SHOPPING){
@@ -508,6 +507,7 @@ export const Seekimage = (category) =>{
   }
 }
 export const Seekgrayimage = (category) =>{
+  category = normalizeWorkName(category);
   if(category == WORKNAME.ALLWORK){
     return imageDB.pclogo;
   }
@@ -531,8 +531,6 @@ export const Seekgrayimage = (category) =>{
     return imageDB.carrygray;
   }else if(category == WORKNAME.GOHOSPITAL){
     return imageDB.hospitalgray;
-  }else if(category == WORKNAME.RECIPETRANSMIT){
-    return imageDB.recipegray;
   }else if(category == WORKNAME.GOSCHOOLEVENT){
     return imageDB.schooleventgray;
   }else if(category == WORKNAME.SHOPPING){

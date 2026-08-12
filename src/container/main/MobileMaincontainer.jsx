@@ -69,21 +69,41 @@ const style = {
 };
 
 
+const CategoryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  row-gap: 18px;
+  column-gap: 6px;
+  width: 100%;
+  padding: 4px 0 8px;
+`
 const Box = styled.div`
-  align-items: center;
   display: flex;
-  justify-content: center;
-  flex-direction:column;
-  width: 25%;
-  border-radius: 15px;
-
-
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  &:active { transform: scale(0.96); }
+  transition: transform .12s ease;
 `
 const BoxImg = styled.div`
-  border-radius: 30px;
-  background: ${({clickstatus}) => clickstatus == true ? ('#34313124') :('#fff') };
-  padding: 10px;
-  display :flex;
+  width: 64px;
+  height: 64px;
+  border-radius: 100px;
+  background: #F9F9F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`
+const BoxLabel = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+  color: #131313;
+  line-height: 1.3;
+  text-align: center;
+  word-break: keep-all;
 `
 
 const FilterBox = styled.div`
@@ -166,23 +186,29 @@ const SearchElementStyle ={
 const { kakao } = window;
 
 
+// 홍여사 서비스 — 청소 / 집안일 / 아이 / 돌봄 / 반려 순으로 묶어 배열한다.
+// 누르면 그 종류의 일 등록으로 바로 간다(①일 올리기 진입점). 필터가 아니다. — CORE.md
 const WorkItems=[
-  {name : WORKNAME.HOMECLEAN, img:imageDB.house, img2:imageDB.housegray},
-  {name :WORKNAME.BUSINESSCLEAN, img:imageDB.business, img2:imageDB.businessgray},
-  {name :WORKNAME.MOVECLEAN, img:imageDB.move, img2:imageDB.movegray},
-  {name :WORKNAME.FOODPREPARE, img:imageDB.cook, img2:imageDB.cookgray},
-  {name :WORKNAME.ERRAND, img:imageDB.help, img2:imageDB.helpgray},
-  {name :WORKNAME.GOOUTSCHOOL, img:imageDB.gooutschool, img2:imageDB.gooutschoolgray},
-  {name :WORKNAME.BABYCARE, img:imageDB.babycare, img2:imageDB.babycaregray},
-  {name :WORKNAME.LESSON, img:imageDB.lesson, img2:imageDB.lessongray},
-  {name :WORKNAME.PATIENTCARE, img:imageDB.patientcare, img2:imageDB.patientcaregray},
-  {name :WORKNAME.CARRYLOAD, img:imageDB.carry, img2:imageDB.carrygray},
-  {name :WORKNAME.GOHOSPITAL, img:imageDB.hospital, img2:imageDB.hospitalgray},
-  {name :WORKNAME.RECIPETRANSMIT, img:imageDB.recipe, img2:imageDB.recipegray},
-  {name :WORKNAME.GOSCHOOLEVENT, img:imageDB.schoolevent, img2:imageDB.schooleventgray},
-  {name :WORKNAME.SHOPPING, img:imageDB.shopping, img2:imageDB.shoppinggray},
-  {name :WORKNAME.GODOGHOSPITAL, img:imageDB.doghospital, img2:imageDB.doghospitalgray},
-  {name :WORKNAME.GODOGWALK, img:imageDB.dog, img2:imageDB.doggray},
+  // 청소
+  {name : WORKNAME.HOMECLEAN,      img:imageDB.house,        img2:imageDB.housegray},
+  {name : WORKNAME.BUSINESSCLEAN,  img:imageDB.business,     img2:imageDB.businessgray},
+  {name : WORKNAME.MOVECLEAN,      img:imageDB.move,         img2:imageDB.movegray},
+  // 집안일
+  {name : WORKNAME.FOODPREPARE,    img:imageDB.cook,         img2:imageDB.cookgray},
+  {name : WORKNAME.SHOPPING,       img:imageDB.shopping,     img2:imageDB.shoppinggray},
+  {name : WORKNAME.CARRYLOAD,      img:imageDB.carry,        img2:imageDB.carrygray},
+  {name : WORKNAME.ERRAND,         img:imageDB.help,         img2:imageDB.helpgray},
+  // 아이
+  {name : WORKNAME.BABYCARE,       img:imageDB.babycare,     img2:imageDB.babycaregray},
+  {name : WORKNAME.GOOUTSCHOOL,    img:imageDB.gooutschool,  img2:imageDB.gooutschoolgray},
+  {name : WORKNAME.LESSON,         img:imageDB.lesson,       img2:imageDB.lessongray},
+  {name : WORKNAME.GOSCHOOLEVENT,  img:imageDB.schoolevent,  img2:imageDB.schooleventgray},
+  // 돌봄
+  {name : WORKNAME.PATIENTCARE,    img:imageDB.patientcare,  img2:imageDB.patientcaregray},
+  {name : WORKNAME.GOHOSPITAL,     img:imageDB.hospital,     img2:imageDB.hospitalgray},
+  // 반려
+  {name : WORKNAME.GODOGWALK,      img:imageDB.dog,          img2:imageDB.doggray},
+  {name : WORKNAME.GODOGHOSPITAL,  img:imageDB.doghospital,  img2:imageDB.doghospitalgray},
 ]
 
 const FilterItems=[
@@ -767,17 +793,17 @@ const MobileMaincontainer =({containerStyle}) =>  {
               <Label label={'홍여사 서비스'} />
 
 
-              <Column style={{width:"95%",margin: "0 auto"}} >   
-                <BetweenRow style={{flexWrap:"wrap", width:"100"}}>
+              <Column style={{width:"100%", padding:"0 24px", boxSizing:"border-box"}}>
+                <CategoryGrid>
                   {
                     WorkItems.map((data, index)=>(
-                      <Box onClick={()=>{_handlebasicmenuclick(data.name)}} >
-                        <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
-                        <div style={{ fontSize:14, color:"#131313", fontFamily:"Pretendard-SemiBold", marginTop:6, textAlign:"center", lineHeight:1.3}}>{data.name}</div>
+                      <Box key={index} onClick={()=>{_handlebasicmenuclick(data.name)}}>
+                        <BoxImg><img src={data.img} alt={data.name} style={{width:48, height:48, objectFit:"contain"}}/></BoxImg>
+                        <BoxLabel>{data.name}</BoxLabel>
                       </Box>
                     ))
                   }
-                </BetweenRow>
+                </CategoryGrid>
               </Column>
 
 

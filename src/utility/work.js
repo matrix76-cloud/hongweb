@@ -1,24 +1,46 @@
 
 export const WORKNAME={
     ALLWORK : '전체보기',
+    // 청소
     HOMECLEAN : '집 청소',
-    BUSINESSCLEAN : '사무실청소',
-    MOVECLEAN : '이사청소',
-    FOODPREPARE : '식사준비',
-    ERRAND : '도와주기',
-    GOOUTSCHOOL : '등원하원',
-    BABYCARE : '아이돌봄',
-    LESSON : '아이레슨',
-    PATIENTCARE : '간병하기',
-    CARRYLOAD : '집안수리',
-    GOHOSPITAL : '병원가기',
-    RECIPETRANSMIT : '요리비법',
-    GOSCHOOLEVENT : '학교행사',
+    BUSINESSCLEAN : '사무실 청소',
+    MOVECLEAN : '이사 청소',
+    // 집안일
+    FOODPREPARE : '식사 준비',
     SHOPPING : '장봐주기',
-    GODOGHOSPITAL : '애견돌봄',
+    CARRYLOAD : '짐 나르기',
+    ERRAND : '심부름',
+    // 아이
+    BABYCARE : '아이돌봄',
+    GOOUTSCHOOL : '등원하원',
+    LESSON : '아이레슨',
+    GOSCHOOLEVENT : '학교행사',
+    // 돌봄
+    PATIENTCARE : '간병하기',
+    GOHOSPITAL : '병원가기',
+    // 반려
     GODOGWALK : '애견산책',
-    ROOM :"공간대여"
+    GODOGHOSPITAL : '애견 병원',
+}
 
+// 구 표기 -> 현재 표기. 이름을 정비하기 전에 저장된 일감(WORKTYPE)을 흡수한다.
+// null = 폐지된 항목(요리비법 — 사람을 구하는 일이 아니라 콘텐츠였다. CORE.md)
+export const LEGACY_WORKNAME = {
+    '사무실청소': '사무실 청소',
+    '이사청소': '이사 청소',
+    '식사준비': '식사 준비',
+    '집안수리': '짐 나르기',
+    '도와주기': '심부름',
+    '애견돌봄': '애견 병원',
+    '요리비법': null,
+}
+
+export const normalizeWorkName = (name) => {
+    if (!name) return name;
+    if (Object.prototype.hasOwnProperty.call(LEGACY_WORKNAME, name)) {
+        return LEGACY_WORKNAME[name] || name;
+    }
+    return name;
 }
 
 export const REFRESHTYPE= "REFRESH";
@@ -36,7 +58,6 @@ export const WORKPOLICY ={
     PATIENTCARE :11,
     CARRYLOAD : 9,
     GOHOSPITAL :11,
-    RECIPETRANSMIT : 11,
     GOSCHOOLEVENT: 9,
     SHOPPING: 9,
     GODOGHOSPITAL: 9,

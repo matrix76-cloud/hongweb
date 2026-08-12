@@ -100,7 +100,6 @@ const WorkItems=[
   {name :WORKNAME.PATIENTCARE, img:imageDB.patientcare},
   {name :WORKNAME.CARRYLOAD, img:imageDB.carry},
   {name :WORKNAME.GOHOSPITAL, img:imageDB.hospital},
-  {name :WORKNAME.RECIPETRANSMIT, img:imageDB.recipe},
   {name :WORKNAME.GOSCHOOLEVENT, img:imageDB.schoolevent},
   {name :WORKNAME.SHOPPING, img:imageDB.shopping},
   {name :WORKNAME.GODOGHOSPITAL, img:imageDB.doghospital},
@@ -163,8 +162,6 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
       setTotalset(WORKPOLICY.PATIENTCARE);
     }else if(menu == WORKNAME.GOHOSPITAL){
       setTotalset(WORKPOLICY.GOHOSPITAL);
-    }else if(menu == WORKNAME.RECIPETRANSMIT){
-      setTotalset(WORKPOLICY.RECIPETRANSMIT);
     }else if(menu == WORKNAME.GOSCHOOLEVENT){
       setTotalset(WORKPOLICY.GOSCHOOLEVENT);
     }else if(menu == WORKNAME.GODOGHOSPITAL){
@@ -203,8 +200,6 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
       return WORKPOLICY.CARRYLOAD;
     }else if(menu == WORKNAME.GOHOSPITAL){
       return WORKPOLICY.GOHOSPITAL;
-    }else if(menu == WORKNAME.RECIPETRANSMIT){
-      return WORKPOLICY.RECIPETRANSMIT;
     }else if(menu == WORKNAME.GOSCHOOLEVENT){
       return WORKPOLICY.GOSCHOOLEVENT;
     }else if(menu == WORKNAME.SHOPPING){
