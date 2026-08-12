@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import reviewNotes from './vite-plugin-review-notes.mjs';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), reviewNotes()],
 
   server: {
     port: 3000,

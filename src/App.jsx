@@ -42,6 +42,8 @@ import MobileSplashpage from "./page/main/MobileSplashpage";
 import MobileWorkpage from "./page/main/Mobileworkpage";
 import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
 
+import ReviewPage from "./dev/ReviewPage";
+
 import { Provider as MyProvider, useDispatch } from 'react-redux';
 import localforage from 'localforage';
 import { ALLWORK } from "./store/menu/MenuSlice";
@@ -124,6 +126,9 @@ const App = () => {
       <Route path="/work" element={<Workpage />} />
       <Route path="/map" element={<Mappage />} />
       <Route path="/config" element={<Configpage />} />
+
+      {/* 개발 전용 — 형/카스 화면 리뷰 (프로덕션 빌드에서는 백엔드 플러그인이 빠진다) */}
+      {import.meta.env.DEV && <Route path="/review" element={<ReviewPage />} />}
 
     </Routes>
 
