@@ -156,6 +156,13 @@ export const ReadWork = async({latitude, longitude, checkdistance =5})=>{
 
       const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
 
+      // 지역 정보가 없는 문서는 건너뛴다.
+      // 예전에 등록 도중 끊긴 문서가 다수 있는데, 이걸 거르지 않으면
+      // WORK_INFO[-1].latitude 에서 예외가 나 조회 전체가 실패했다. (2026-08-12)
+      if(FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined){
+        return;
+      }
+
       const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,latitude,longitude );
       
 
@@ -303,6 +310,17 @@ export const DefaultReadWork = async({currentlatitude, currentlongitude})=>{
   
   
         const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
+
+        if(FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined){
+          return;
+        }
+
+      // 지역 정보가 없는 문서는 건너뛴다.
+      // 예전에 등록 도중 끊긴 문서가 다수 있는데, 이걸 거르지 않으면
+      // WORK_INFO[-1].latitude 에서 예외가 나 조회 전체가 실패했다. (2026-08-12)
+      if(FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined){
+        return;
+      }
         const P = {
           latitude: currentlatitude,
           longitude: currentlongitude
@@ -364,6 +382,17 @@ export const findWorkAndFunctionCallFromCurrentPosition = async({currentlatitude
         let WORK_INFONEW = data.WORK_INFO;
     
         const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
+
+        if(FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined){
+          return;
+        }
+
+      // 지역 정보가 없는 문서는 건너뛴다.
+      // 예전에 등록 도중 끊긴 문서가 다수 있는데, 이걸 거르지 않으면
+      // WORK_INFO[-1].latitude 에서 예외가 나 조회 전체가 실패했다. (2026-08-12)
+      if(FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined){
+        return;
+      }
     
         const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,currentlatitude,currentlongitude );
     

@@ -13,7 +13,6 @@ import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
 
 import "./Chatgate.css";
 import { getFullTime } from "../utility/date";
-import { ReadChat } from "../service/ChatService";
 import { ChatAddress } from "../utility/region";
 import ChatprofileImage from "./ChatprofileImage";
 
@@ -86,6 +85,22 @@ const SupportTag = styled.div`
 
 `
 
+// 안읽음 수 — 대화방에 들어가면 0 이 된다
+const UnreadBadge = styled.div`
+  flex: none;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #FF4E19;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  box-sizing: border-box;
+`
+
 const OwnerTag = styled.div`
   color: #131313;
   padding: 2px 10px;
@@ -125,6 +140,8 @@ const Chatgate =({containerStyle,item}) =>  {
   const [content, setContent] = useState('');
   const [owner, setOwner] = useState(false);
 
+  const unread = (item.UNREAD && item.UNREAD[user.users_id]) || 0;
+
 
   const _handleShowcontrol = ()=>{
     setShowcontrol(true);
@@ -145,48 +162,39 @@ const Chatgate =({containerStyle,item}) =>  {
     setOwner(owner);
   }, [refresh]);
 
+  /**
+   * 목록 한 줄을 구성한다.
+   * 예전엔 여기서 ReadChat 을 다시 불러 전체 방을 또 읽었고, 그 결과가 -1 이면
+   * chatItems[chatItems.length-1] 를 건드려 터졌다. 방 정보(item)만으로 그린다. (형 리뷰 2026-08-12)
+   */
   useEffect(()=>{
-    async function FetchData(){
 
-      let  name = "";
-      if(item.SUPPORTER_ID == user.users_id){
-       
-        name = item.OWNER.USERINFO.nickname;
-        setName(name);
-        setImg(item.OWNER.USERINFO.userimg);
-        setOwner(false);
-    
-      }else{
-  
-        name = item.SUPPORTER.USERINFO.nickname;
-        setName(name);
-        setImg(item.SUPPORTER.USERINFO.userimg);
-        setOwner(true);
-      }
-
-      const USERS_ID =user.users_id;
-      const chatItems = await ReadChat({USERS_ID});
-
-      if(chatItems != -1){
-        // 먼저 주인인지 검사한다
-        if(user.users_id == item.OWNER.USERINFO.users_id){
-          setContent(item.WORK_INFO.WORKTYPE + "에" +" "+ name +"님 이 지원하였습니다");
-        }else{
-
-          // 주인이 아니라면
-          setContent(item.WORK_INFO.WORKTYPE + "에 지원하였습니다");
-        }
-        
-      }else{
-        setContent(chatItems[chatItems.length -1].message);
-      }
-
-      setRefresh((refresh) => refresh +1);
-      
+    let nick = "";
+    if(item.SUPPORTER_ID == user.users_id){
+      nick = item.OWNER.USERINFO.nickname;
+      setName(nick);
+      setImg(item.OWNER.USERINFO.userimg);
+      setOwner(false);
+    }else{
+      nick = item.SUPPORTER.USERINFO.nickname;
+      setName(nick);
+      setImg(item.SUPPORTER.USERINFO.userimg);
+      setOwner(true);
     }
-    FetchData();
 
-  },[])
+    // 주고받은 대화가 있으면 마지막 대화를, 없으면 어떻게 시작된 방인지 보여준다
+    if(item.LASTMESSAGE){
+      setContent(item.LASTMESSAGE);
+    }else if(user.users_id == item.OWNER.USERINFO.users_id){
+      setContent(item.WORK_INFO.WORKTYPE + "에" +" "+ nick +"님 이 지원하였습니다");
+    }else{
+      setContent(item.WORK_INFO.WORKTYPE + "에 지원하였습니다");
+    }
+
+    setInfo(item.LASTMESSAGE_AT || item.CREATEDT);
+    setRefresh((refresh) => refresh +1);
+
+  },[item])
 
 
 
@@ -242,9 +250,12 @@ const Chatgate =({containerStyle,item}) =>  {
           </Info>
         </BetweenRow>
         <Content>
-          <div style={{width: "270px",paddingTop: '5px'}}>
+          <div style={{width: "270px",paddingTop: '5px', overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>
           {content}
           </div>
+          {
+            unread > 0 && <UnreadBadge>{unread > 99 ? '99+' : unread}</UnreadBadge>
+          }
         </Content>
 
     

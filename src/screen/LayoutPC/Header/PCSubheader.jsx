@@ -84,7 +84,7 @@ const EventDesc = styled.div`
 
 const MainMenuText = styled.div`
   font-size: 20px;
-  color: ${({clickstatus}) => clickstatus == true ? ('#ff2a75') :('#131313') };
+  color: ${({$clickstatus}) => $clickstatus == true ? ('#ff2a75') :('#131313') };
   font-weight: 400;
 `
 
@@ -280,7 +280,7 @@ const PCSubheader = ({callback, name, registmapbtn}) => {
           <OneHeaderMainMenu onClick={()=>{}}>
             <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}>
      
-              <div clickstatus={true}>
+              <div $clickstatus={true}>
                 <img src={imageDB.pclogo} width={118} height={34} style={{borderRadius:50}} />
               </div>
             </Row>
@@ -298,23 +298,23 @@ const PCSubheader = ({callback, name, registmapbtn}) => {
               </div>
             </Row>
 
-            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.COMMUNITYMENU)}}><MainMenuText clickstatus={PCMAINMENU.COMMUNITYMENU == mainmenustatus}>{PCMAINMENU.COMMUNITYMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.RANKINGMENU)}}><MainMenuText clickstatus={PCMAINMENU.RANKINGMENU == mainmenustatus}>{PCMAINMENU.RANKINGMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row>  */}
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText $clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText $clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.COMMUNITYMENU)}}><MainMenuText $clickstatus={PCMAINMENU.COMMUNITYMENU == mainmenustatus}>{PCMAINMENU.COMMUNITYMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.RANKINGMENU)}}><MainMenuText $clickstatus={PCMAINMENU.RANKINGMENU == mainmenustatus}>{PCMAINMENU.RANKINGMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText $clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row>  */}
 
-            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMGUIDE)}}><MainMenuText clickstatus={PCMAINMENU.ROOMGUIDE == mainmenustatus}>{PCMAINMENU.ROOMGUIDE}</MainMenuText></Row>  */}
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMGUIDE)}}><MainMenuText $clickstatus={PCMAINMENU.ROOMGUIDE == mainmenustatus}>{PCMAINMENU.ROOMGUIDE}</MainMenuText></Row>  */}
           </OneHeaderMainMenu>
 
           <OneHeaderOptionMenu>
-            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row>  */}
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
-            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.COMMUNITYMENU)}}><MainMenuText clickstatus={PCMAINMENU.COMMUNITYMENU == mainmenustatus}>{PCMAINMENU.COMMUNITYMENU}</MainMenuText></Row>  */}
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.CHATMENU)}}><MainMenuText clickstatus={PCMAINMENU.CHATMENU == mainmenustatus}>{PCMAINMENU.CHATMENU}</MainMenuText></Row> 
-            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.LIVEINFORMATIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.LIVEINFORMATIONMENU == mainmenustatus}>{PCMAINMENU.LIVEINFORMATIONMENU}</MainMenuText></Row>  */}
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row> 
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText $clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row>  */}
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText $clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText $clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.COMMUNITYMENU)}}><MainMenuText $clickstatus={PCMAINMENU.COMMUNITYMENU == mainmenustatus}>{PCMAINMENU.COMMUNITYMENU}</MainMenuText></Row>  */}
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.CHATMENU)}}><MainMenuText $clickstatus={PCMAINMENU.CHATMENU == mainmenustatus}>{PCMAINMENU.CHATMENU}</MainMenuText></Row> 
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.LIVEINFORMATIONMENU)}}><MainMenuText $clickstatus={PCMAINMENU.LIVEINFORMATIONMENU == mainmenustatus}>{PCMAINMENU.LIVEINFORMATIONMENU}</MainMenuText></Row>  */}
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText $clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row> 
 
         
 

@@ -65,7 +65,7 @@ const StoreBusinessInfoText = styled.span`
 
 
 
-const MobileStoreInfo  = ({containerStyle, height})=>{
+const MobileStoreInfo  = ({containerStyle, height = 200})=>{
 
     const navigation = useNavigate();
 
@@ -135,7 +135,4 @@ MobileStoreInfo.propTypes = {
     containerStyle : PropTypes.object,
 }
 
-MobileStoreInfo.defaultProps ={
-    height : 200,
-}
 export default MobileStoreInfo;

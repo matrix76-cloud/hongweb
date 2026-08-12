@@ -15,7 +15,7 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    border : ${({enable}) => enable == true ? ('1px solid #F75100'):('1px solid #C3C3C3')};
+    border : ${({$enable}) => $enable == true ? ('1px solid #F75100'):('1px solid #C3C3C3')};
 
 `
 const style = {
@@ -27,7 +27,7 @@ const Button =({containerStyle, text, height,width, radius, bgcolor, color, onPr
   return (
 
     <Container 
-    onClick={onPress} enable={enable}
+    onClick={onPress} $enable={enable}
     style={containerStyle} height={height} width={width} radius={radius} bgcolor={bgcolor} color={color}>
         <div>{text}</div>
     </Container>

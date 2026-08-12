@@ -43,7 +43,7 @@ const Categorymenu =(props) =>  {
     <Container onClick={()=>{props.callback(props.menu)}}>
  
         <div
-          className={(isHovering == true || props.clickstatus ==true) ? "CategoryMenuHovered" : ""}
+          className={(isHovering == true || props.$clickstatus ==true) ? "CategoryMenuHovered" : ""}
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
         >

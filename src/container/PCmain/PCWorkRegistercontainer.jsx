@@ -62,7 +62,7 @@ const Box = styled.div`
 const BoxImg = styled.div`
   background: #f9f9f9;
   border-radius: 100px;
-  border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
+  border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
   padding: 10px;
 `
 const RegistButton = styled.div`
@@ -236,7 +236,7 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
             {
               WorkItems.map((data, index)=>(
                 <Box onClick={()=>{_handlemenuclick(data.name)}} >
-                  <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
+                  <BoxImg $clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
                   <div style={{ fontSize:14, marginTop:10}}>{data.name}</div>
                 </Box>
               ))

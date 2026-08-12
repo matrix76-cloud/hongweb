@@ -59,11 +59,11 @@ const Box = styled.div`
 const BoxImg = styled.div`
   background: #f9f9f9;
   border-radius: 100px;
-  border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
+  border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
   padding: 10px;
 `
 const BoxText = styled.div`
-  color: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#000') };
+  color: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('#000') };
   font-size:14px;
   margin-top:10px;
 
@@ -170,8 +170,8 @@ const MobileWorkregistercontainer =({containerStyle}) =>  {
             {
               WorkItems.map((data, index)=>(
                 <Box onClick={()=>{_handlemenuclick(data.name)}}>
-                  <BoxImg  clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
-                  <BoxText clickstatus={menu == data.name}>{data.name}</BoxText>
+                  <BoxImg  $clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
+                  <BoxText $clickstatus={menu == data.name}>{data.name}</BoxText>
                 </Box>
               ))
             }

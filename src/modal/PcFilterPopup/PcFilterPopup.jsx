@@ -125,11 +125,11 @@ const BoxItem = styled.div`
 const BoxImg = styled.div`
   background: #f9f9f9;
   border-radius: 100px;
-  border: ${({clickstatus}) => clickstatus == true ? ('3px solid #FF7125') :('') };
+  border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
   padding: 10px;
 `
 const BoxText = styled.div`
-  color: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#000') };
+  color: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('#000') };
   font-size:14px;
   margin-top:10px;
 
@@ -137,7 +137,7 @@ const BoxText = styled.div`
 
 const CheckButton = styled.div`
   color: #131313;
-  border: ${({clickstatus}) => clickstatus == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
+  border: ${({$clickstatus}) => $clickstatus == true ? ('1px solid #F75100') :('1px solid #C3C3C3') };
   font-weight: 600;
   border-radius: 4px;
   margin-left: 10px;
@@ -295,13 +295,13 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                 <FlexstartRow style={{width:"100%", borderBottom: '1px solid #ededed',height: 80}}>
                   <PopMainSubLabel>타입</PopMainSubLabel>
                   <FlexstartRow style={{marginLeft:20}}>
-                    <CheckButton clickstatus={filtertype == FILTERITMETYPE.HONG} onClick={()=>{_handleItemtype(FILTERITMETYPE.HONG)}}>
+                    <CheckButton $clickstatus={filtertype == FILTERITMETYPE.HONG} onClick={()=>{_handleItemtype(FILTERITMETYPE.HONG)}}>
                     <span style={{fontSize:16}}>{FILTERITMETYPE.HONG}</span>
                     {
                       filtertype == FILTERITMETYPE.HONG ? (<img src={imageDB.enablecheck} style={{width:16, height:16,marginLeft:5}}/>):(<img src={imageDB.check_d} style={{width:16, height:16,marginLeft:5}}/>)
                     }
                     </CheckButton>
-                    <CheckButton  clickstatus={filtertype == FILTERITMETYPE.ROOM}  onClick={()=>{_handleItemtype(FILTERITMETYPE.ROOM)}}>
+                    <CheckButton  $clickstatus={filtertype == FILTERITMETYPE.ROOM}  onClick={()=>{_handleItemtype(FILTERITMETYPE.ROOM)}}>
                     <span style={{fontSize:16}}>{FILTERITMETYPE.ROOM}</span>
                     
                     {
@@ -322,8 +322,8 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                     {
                       WorkItems.map((data, index)=>(
                         <BoxItem onClick={()=>{_handlemenuclick(data.name)}} >
-                            <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
-                            <BoxText clickstatus={menu == data.name}>{data.name}</BoxText>
+                            <BoxImg $clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
+                            <BoxText $clickstatus={menu == data.name}>{data.name}</BoxText>
                           </BoxItem>
                       ))
                     }
@@ -332,8 +332,8 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                       {
                         RoomItems.map((data, index)=>(
                           <BoxItem onClick={()=>{_handlemenuclick(data.name)}} >
-                          <BoxImg clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
-                          <BoxText clickstatus={menu == data.name}>{data.name}</BoxText>
+                          <BoxImg $clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
+                          <BoxText $clickstatus={menu == data.name}>{data.name}</BoxText>
                         </BoxItem>
                         ))
                       }
@@ -348,7 +348,7 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                   <FlexstartRow style={{marginLeft:20, flexWrap:"wrap", width:"80%"}}>
                     {
                       MoneyItems.map((data, index)=>(
-                        <CheckButton  clickstatus={filtermoney == data}  onClick={()=>{_handleItemmoney(data)}}>
+                        <CheckButton  $clickstatus={filtermoney == data}  onClick={()=>{_handleItemmoney(data)}}>
                           <span style={{fontSize:16, marginLeft:5}}>{data}</span>
                           
                           {
@@ -366,7 +366,7 @@ export default function PcFilterPopup({type, callback, top, left, height, width 
                   <FlexstartRow style={{marginLeft:20, flexWrap:"wrap", width:"80%"}}>
                     {
                       PeroidItems.map((data, index)=>(
-                        <CheckButton  clickstatus={filterperiod == data}  onClick={()=>{_handleItemperiod(data)}}>{data}
+                        <CheckButton  $clickstatus={filterperiod == data}  onClick={()=>{_handleItemperiod(data)}}>{data}
                         
                         {
                           filterperiod == data ? (<img src={imageDB.enablecheck} style={{width:16, height:16,marginLeft:5}}/>):(<img src={imageDB.check_d} style={{width:16, height:16,marginLeft:5}}/>)

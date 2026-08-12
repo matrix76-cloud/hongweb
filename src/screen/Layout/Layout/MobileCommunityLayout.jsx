@@ -1,5 +1,6 @@
 import React from "react";
 import MobilePrevheader from "../Header/MobilePrevheader";
+import MobileTitleheader from "../Header/MobileTitleheader";
 import MobileFooter from "../Footer/MobileFooter";
 
 /**
@@ -8,11 +9,16 @@ import MobileFooter from "../Footer/MobileFooter";
  *
  * footer={true} 를 주면 하단 탭이 유지된다.
  * 하단 탭 화면(홈/지도/채팅/내 정보)에서는 탭이 항상 보여야 한다 — 형 지시 2026-08-12.
+ *
+ * titleonly={true} 를 주면 뒤로가기 대신 좌측 정렬 제목만 나온다.
+ * 하단 탭이 있는 최상위 화면은 뒤로 갈 곳이 탭이라 화살표가 필요 없다 — 형 지시 2026-08-12.
  */
 const MobileCommunityLayout = (props) => {
   return (
     <div>
-      <MobilePrevheader name={props.name} />
+      {props.titleonly
+        ? <MobileTitleheader name={props.name} />
+        : <MobilePrevheader name={props.name} />}
       <main style={props.footer ? { paddingBottom: 86 } : undefined}>
         {props.children}
       </main>

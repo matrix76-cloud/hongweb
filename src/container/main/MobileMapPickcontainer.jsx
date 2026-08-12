@@ -127,7 +127,7 @@ const GhostBtn = styled.button`
   justify-content: center;
   gap: 6px;
   cursor: pointer;
-  opacity: ${({enable}) => (enable ? 1 : 0.5)};
+  opacity: ${({$enable}) => ($enable ? 1 : 0.5)};
 `;
 
 const PrimaryBtn = styled.button`
@@ -140,7 +140,7 @@ const PrimaryBtn = styled.button`
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  opacity: ${({enable}) => (enable ? 1 : 0.5)};
+  opacity: ${({$enable}) => ($enable ? 1 : 0.5)};
 `;
 
 const MobileMapPickcontainer = ({ containerStyle }) => {
@@ -286,10 +286,10 @@ const MobileMapPickcontainer = ({ containerStyle }) => {
       </MapArea>
 
       <BottomBar>
-        <GhostBtn enable={!!label} disabled={!label || saving} onClick={() => save(true)}>
+        <GhostBtn $enable={!!label} disabled={!label || saving} onClick={() => save(true)}>
           <MdSearch size={18} /> 이 위치로 검색
         </GhostBtn>
-        <PrimaryBtn enable={!!label} disabled={!label || saving} onClick={() => save(false)}>
+        <PrimaryBtn $enable={!!label} disabled={!label || saving} onClick={() => save(false)}>
           내 위치로 저장
         </PrimaryBtn>
       </BottomBar>

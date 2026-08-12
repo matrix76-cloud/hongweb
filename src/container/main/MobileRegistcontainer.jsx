@@ -345,7 +345,7 @@ const DayBtn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: ${({enable}) => enable == true ? ('1px solid #F75100') : ('1px solid #C3C3C3')};
+  border: ${({$enable}) => $enable == true ? ('1px solid #F75100') : ('1px solid #C3C3C3')};
   color: #131313;
 
 `

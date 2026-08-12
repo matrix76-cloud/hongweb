@@ -68,8 +68,8 @@ const FilterBox = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#fff') };
-  border:  ${({clickstatus}) => clickstatus == true ? (null) :('1px solid #C3C3C3') };
+  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('#fff') };
+  border:  ${({$clickstatus}) => $clickstatus == true ? (null) :('1px solid #C3C3C3') };
   margin-right: 3px;
   border-radius: 4px;
   padding: 0px 15px;
@@ -78,7 +78,7 @@ const FilterBox = styled.div`
 
 `
 const FilterBoxText = styled.div`
-color: ${({clickstatus}) => clickstatus == true ? ('#FFF') :('#131313') };
+color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') :('#131313') };
 font-size:14px;
 margin-left:5px;
 font-weight:600;
@@ -97,7 +97,7 @@ const Box = styled.div`
 `
 const BoxImg = styled.div`
   border-radius: 50px;
-  background: ${({enable}) => enable == true ? ('#fdeda8'):('#ededed')};
+  background: ${({$enable}) => $enable == true ? ('#fdeda8'):('#ededed')};
   padding: 20px;
   display :flex;
 `
@@ -123,8 +123,8 @@ const ReqButton = styled.div`
   width: 90%;
   margin : 0 auto;
   border-radius: 4px;
-  background: ${({enable}) => enable == true ? ('#FF7125') :('#dbdada')};
-  color:  ${({enable}) => enable == true ? ('#fff') :('#999')};
+  background: ${({$enable}) => $enable == true ? ('#FF7125') :('#dbdada')};
+  color:  ${({$enable}) => $enable == true ? ('#fff') :('#999')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -251,7 +251,7 @@ const MobileProfileName =({containerStyle}) =>  {
                   />
                 <RefreshItem onClick={_handleautocreate}><IoIosRefresh/></RefreshItem>
               </div>
-              <ReqButton enable={enable} onClick={_handleSave}>저장</ReqButton>
+              <ReqButton $enable={enable} onClick={_handleSave}>저장</ReqButton>
 
               {
                 success == true &&  <MobileSuccessPopup callback={registsuccesscallback} content={'정상적으로 대화명이 변경되었습니다'} />

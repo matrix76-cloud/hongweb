@@ -24,7 +24,7 @@ import {
   SlLogout,
   SlUserUnfollow,
 } from "react-icons/sl";
-import { CreateMessage } from "../../service/ChatService";
+import { CreateMessage, MarkRead } from "../../service/ChatService";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../api/config";
 import { getDateFullTime, getTime, getDate } from "../../utility/date";
@@ -409,8 +409,11 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
      }
     
 
-     
+
     });
+
+    // 방에 들어왔으니 내 안읽음 수를 0 으로 (목록·뱃지에 반영된다)
+    MarkRead({ CHAT_ID: chatid, USERS_ID: user.users_id });
 
     return () => unsubscribe();
   }, []);

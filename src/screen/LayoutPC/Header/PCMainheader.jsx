@@ -91,8 +91,8 @@ const EventDesc = styled.div`
 
 const MainMenuText = styled.div`
   font-size: 20px;
-  color: ${({clickstatus}) => clickstatus == true ? ('#ff2a75') :('#131313') };
-  font-weight: ${({clickstatus}) => clickstatus == true ? ('600') :('400') };
+  color: ${({$clickstatus}) => $clickstatus == true ? ('#ff2a75') :('#131313') };
+  font-weight: ${({$clickstatus}) => $clickstatus == true ? ('600') :('400') };
 `
 
 const EventMainText ={
@@ -226,7 +226,7 @@ border-bottom: 1px solid #ededed;
 
 `
 const MenuItem = styled.div`
-  color :${({clickstatus}) => clickstatus == true ? ('#FE4C26') : ('fff')}
+  color :${({$clickstatus}) => $clickstatus == true ? ('#FE4C26') : ('fff')}
 
 `
 
@@ -649,12 +649,12 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
           </OneHeaderMainMenu>
           <OneHeaderOptionMenu>
        
-            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row>  */}
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.CHATMENU)}}><MainMenuText clickstatus={PCMAINMENU.CHATMENU == mainmenustatus}>{PCMAINMENU.CHATMENU}</MainMenuText></Row> 
-            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.LIVEINFORMATIONMENU)}}><MainMenuText clickstatus={PCMAINMENU.LIVEINFORMATIONMENU == mainmenustatus}>{PCMAINMENU.LIVEINFORMATIONMENU}</MainMenuText></Row>  */}
-            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row> 
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.HOMEMENU)}}><MainMenuText $clickstatus={PCMAINMENU.HOMEMENU == mainmenustatus}>{PCMAINMENU.HOMEMENU}</MainMenuText></Row>  */}
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.ROOMMENU)}}><MainMenuText $clickstatus={PCMAINMENU.ROOMMENU == mainmenustatus}>{PCMAINMENU.ROOMMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.REGIONMENU)}}><MainMenuText $clickstatus={PCMAINMENU.REGIONMENU == mainmenustatus}>{PCMAINMENU.REGIONMENU}</MainMenuText></Row> 
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.CHATMENU)}}><MainMenuText $clickstatus={PCMAINMENU.CHATMENU == mainmenustatus}>{PCMAINMENU.CHATMENU}</MainMenuText></Row> 
+            {/* <Row onClick={()=>{_handleMenustatus(PCMAINMENU.LIVEINFORMATIONMENU)}}><MainMenuText $clickstatus={PCMAINMENU.LIVEINFORMATIONMENU == mainmenustatus}>{PCMAINMENU.LIVEINFORMATIONMENU}</MainMenuText></Row>  */}
+            <Row onClick={()=>{_handleMenustatus(PCMAINMENU.EVENTMENU)}}><MainMenuText $clickstatus={PCMAINMENU.EVENTMENU == mainmenustatus}>{PCMAINMENU.EVENTMENU}</MainMenuText></Row> 
 
           </OneHeaderOptionMenu>
           <OneHeaderLoginMenu id="infoheader">
@@ -675,7 +675,7 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
               {
                 WorkItems.map((data, index)=>(
                     <Categorymenu callback={_handleCategorystatus} menu={data}
-                    clickstatus={data == categorystatus}>{data}</Categorymenu>
+                    $clickstatus={data == categorystatus}>{data}</Categorymenu>
                 ))
               }
               </BetweenRow>
@@ -687,7 +687,7 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
                 {
                   RoomItems.map((data, index)=>(
                       <Categorymenu callback={_handleCategorystatus} menu={data}
-                      clickstatus={data == categorystatus}>{data}</Categorymenu>
+                      $clickstatus={data == categorystatus}>{data}</Categorymenu>
                   ))
                 }
                 </FlexstartRow>
@@ -711,7 +711,7 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
                 {
                   LifeItems.map((data, index)=>(
                     <Categorymenu  callback={_handleCategorystatus} menu={data} 
-                      clickstatus={data == categorystatus}>
+                      $clickstatus={data == categorystatus}>
                         <div class="dropdown" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                           <span>{data}</span>
                     
@@ -734,7 +734,7 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
                       <div>
                       {
                         TouristItems.map((subdata)=>(
-                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                          <MenuItem $clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
                         ))
                       }
                       </div>
@@ -742,7 +742,7 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
                       <div style={{marginLeft:20}}>
                       {
                         PerformanceItems.map((subdata)=>(
-                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                          <MenuItem $clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
                         ))
                       }
                       </div>
@@ -750,14 +750,14 @@ const PCMainheader = ({name, registbtn,registmapbtn, height}) => {
                       <div style={{marginLeft:30}}>
                       {
                         MedicalItems.map((subdata)=>(
-                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                          <MenuItem $clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
                         ))
                       }
                       </div>
                       <div style={{marginLeft:35}}>
                       {
                         FamilyItems.map((subdata)=>(
-                          <MenuItem clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
+                          <MenuItem $clickstatus={lifemenu == subdata} onClick={()=>{_handleLifeCategory(subdata)}}>{subdata}</MenuItem>
                         ))
                       }
                       </div>

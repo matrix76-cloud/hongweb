@@ -88,8 +88,8 @@ const ReqButton = styled.div`
   width: 90%;
   margin : 0 auto;
   border-radius: 4px;
-  background: ${({enable}) => enable == true ? ('#FF7125') :('#dbdada')};
-  color:  ${({enable}) => enable == true ? ('#fff') :('#999')};
+  background: ${({$enable}) => $enable == true ? ('#FF7125') :('#dbdada')};
+  color:  ${({$enable}) => $enable == true ? ('#fff') :('#999')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -376,7 +376,7 @@ const MobilePhonecontainer =({containerStyle}) =>  {
                       }}
                   />
               </div>
-              <ReqButton enable={reqcodebtnenable} onClick={_handleReqcode}>인증문자 받기 </ReqButton>
+              <ReqButton $enable={reqcodebtnenable} onClick={_handleReqcode}>인증문자 받기 </ReqButton>
 
             </Column>
             {
@@ -411,7 +411,7 @@ const MobilePhonecontainer =({containerStyle}) =>  {
                 </Column>
 
                 <Column style={{width:"100%", marginTop:30}}>   
-                <ReqButton enable={verifycodebtnenable} onClick={_handleCheck}>인증번호 확인 </ReqButton>
+                <ReqButton $enable={verifycodebtnenable} onClick={_handleCheck}>인증번호 확인 </ReqButton>
               </Column>   
 
               </Fragment>

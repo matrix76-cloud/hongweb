@@ -76,17 +76,17 @@ const FlexMenu = styled.div`
 
 const Box = styled.div`
 
-  background: ${({clickstatus}) => clickstatus == true ? ('#fff') :('#fff')};
+  background: ${({$clickstatus}) => $clickstatus == true ? ('#fff') :('#fff')};
   color :  #131313;
   font-size : 13px;
   font-family : 'Pretendard-Regular';
   font-weight:500;
-  border :  ${({clickstatus}) => clickstatus == true ? ('1px solid #F9F9F9') :(null)};
+  border :  ${({$clickstatus}) => $clickstatus == true ? ('1px solid #F9F9F9') :(null)};
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  width:${({clickstatus}) => clickstatus == true ? ('30%') :('30%')};
+  width:${({$clickstatus}) => $clickstatus == true ? ('30%') :('30%')};
   height : 100px;
   margin-right: 2px;
   z-index: 2;

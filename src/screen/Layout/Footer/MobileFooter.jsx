@@ -1,9 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import './Footer.css';
 import { useNavigate } from "react-router-dom";
 import { IoChatbubbleEllipses, IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { imageDB } from '../../../utility/imageData';
 import { MOBILEMAINMENU } from "../../../utility/screen";
+import { UserContext } from "../../../context/User";
+import { SubscribeChatRooms, UnreadTotalOf } from "../../../service/ChatService";
 
 // 선택된 탭만 포인트색, 나머지는 회색이 아니라 검정 (형 리뷰 2026-08-12)
 const ON_COLOR = '#FF4E19';
@@ -20,8 +22,25 @@ const TABS = [
   { key: MOBILEMAINMENU.CONFIGMENU, label: '내 정보', path: '/Mobileconfig', on: 'myinfo_e', off: 'myinfo_d' },
 ];
 
-const MobileFooter = ({ type, unreadCount = 0 }) => {
+const MobileFooter = ({ type, unreadCount }) => {
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+  const [unread, setUnread] = useState(0);
+
+  // 안읽은 대화 수를 실시간으로 받아 채팅 탭에 표시한다.
+  // 전엔 이 값을 아무도 안 넘겨줘서 뱃지가 항상 0 이었다. (형 리뷰 2026-08-12)
+  useEffect(() => {
+    if (unreadCount != null) return;          // 부모가 직접 넘기면 그 값을 쓴다
+    const USERS_ID = user?.users_id;
+    if (!USERS_ID) return;
+
+    const unsubscribe = SubscribeChatRooms({ USERS_ID }, (rooms) => {
+      setUnread(UnreadTotalOf(rooms, USERS_ID));
+    });
+    return () => { if (typeof unsubscribe === 'function') unsubscribe(); };
+  }, [user?.users_id, unreadCount]);
+
+  const badgeCount = unreadCount != null ? unreadCount : unread;
 
   const go = (tab) => {
     if (tab.key === MOBILEMAINMENU.MAPMENU) {
@@ -50,8 +69,8 @@ const MobileFooter = ({ type, unreadCount = 0 }) => {
                         className={active ? undefined : "tabIconOff"} />
                     )}
 
-                    {tab.key === MOBILEMAINMENU.CHATMENU && unreadCount > 0 && (
-                      <div className="footerBadge">{unreadCount > 99 ? '99+' : unreadCount}</div>
+                    {tab.key === MOBILEMAINMENU.CHATMENU && badgeCount > 0 && (
+                      <div className="footerBadge">{badgeCount > 99 ? '99+' : badgeCount}</div>
                     )}
                   </div>
                   <div className={active ? "buttonEnableText" : "buttonDisableText"}>

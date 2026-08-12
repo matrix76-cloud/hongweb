@@ -1,5 +1,5 @@
 import { db, auth, storage, firebaseConfig, firebaseApp } from '../api/config';
-import { collection, getDocs, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy } from 'firebase/firestore';
+import { collection, getDocs, getDoc, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy, onSnapshot, increment } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { COMMUNITYSTATUS, WORKSTATUS } from '../utility/status';
@@ -47,6 +47,11 @@ export const CreateChat = async({OWNER, OWNER_ID, SUPPORTER, SUPPORTER_ID,WORK_I
            SUPPORTER_ID :SUPPORTER_ID,
            WORK_INFO : WORK_INFO,
            CREATEDT : Date.now(),
+           // 목록에서 마지막 대화를 바로 보여주기 위한 필드 (형 리뷰 2026-08-12)
+           PARTICIPANTS : [OWNER_ID, SUPPORTER_ID],
+           LASTMESSAGE : '',
+           LASTMESSAGE_AT : Date.now(),
+           UNREAD : { [OWNER_ID] : 0, [SUPPORTER_ID] : 0 },
        }
        await setDoc(CHATREF, newdata);
     
@@ -159,7 +164,7 @@ export const CreateMessage = async ({ CHAT_ID, msg, users_id,read,CHAT_CONTENT_T
 
   console.log("TCL: CreateMessage -> data", msg,users_id,read)
 
-  
+
   const messageRef = doc(collection(db, `CHAT/${CHAT_ID}/messages`));
   const id = messageRef.id;
   const newMessage = {
@@ -173,7 +178,72 @@ export const CreateMessage = async ({ CHAT_ID, msg, users_id,read,CHAT_CONTENT_T
 
   try {
     await setDoc(messageRef, newMessage);
+    // 목록 화면이 마지막 대화를 보여줄 수 있게 방 문서도 같이 갱신한다.
+    // 상대의 안읽음 수를 1 올린다 — 대화방에 들어가면 MarkRead 로 0 이 된다.
+    await UpdateChatSummary({ CHAT_ID, msg, users_id });
   } catch (e) {
     console.log("error", e.message);
   }
 };
+
+/**
+ * 방 문서의 마지막 대화·시간·안읽음 수 갱신.
+ * 방 문서에 상대가 누구인지 들어있으니 그걸 읽어서 상대 카운트만 올린다.
+ */
+export const UpdateChatSummary = async ({ CHAT_ID, msg, users_id }) => {
+  try {
+    const chatRef = doc(db, "CHAT", CHAT_ID);
+    const snap = await getDoc(chatRef);
+    if (!snap.exists()) return;
+
+    const room = snap.data();
+    const other = room.OWNER_ID === users_id ? room.SUPPORTER_ID : room.OWNER_ID;
+
+    const patch = {
+      LASTMESSAGE: msg || '',
+      LASTMESSAGE_AT: Date.now(),
+    };
+    // 예전에 만들어진 방은 PARTICIPANTS 가 없다 — 이때 채워둔다
+    if (!room.PARTICIPANTS) patch.PARTICIPANTS = [room.OWNER_ID, room.SUPPORTER_ID];
+    if (other) patch[`UNREAD.${other}`] = increment(1);
+
+    await updateDoc(chatRef, patch);
+  } catch (e) {
+    console.log("TCL: UpdateChatSummary -> error", e.message);
+  }
+};
+
+/** 대화방에 들어왔을 때 내 안읽음 수를 0 으로 */
+export const MarkRead = async ({ CHAT_ID, USERS_ID }) => {
+  try {
+    await updateDoc(doc(db, "CHAT", CHAT_ID), { [`UNREAD.${USERS_ID}`]: 0 });
+  } catch (e) {
+    console.log("TCL: MarkRead -> error", e.message);
+  }
+};
+
+/**
+ * 내 대화방 목록 실시간 구독. 새 메시지가 오면 목록이 알아서 갱신된다.
+ * 반환값은 구독 해제 함수 — 화면 언마운트 때 호출할 것.
+ */
+export const SubscribeChatRooms = ({ USERS_ID }, callback) => {
+  const q = query(collection(db, "CHAT"), orderBy("CREATEDT", "desc"));
+
+  return onSnapshot(q, (snapshot) => {
+    const rooms = [];
+    snapshot.forEach((d) => {
+      const room = d.data();
+      if (room.OWNER_ID === USERS_ID || room.SUPPORTER_ID === USERS_ID) rooms.push(room);
+    });
+    // 마지막 대화가 있는 방을 위로 (없으면 만든 시간 기준)
+    rooms.sort((a, b) => (b.LASTMESSAGE_AT || b.CREATEDT || 0) - (a.LASTMESSAGE_AT || a.CREATEDT || 0));
+    callback(rooms);
+  }, (e) => {
+    console.log("TCL: SubscribeChatRooms -> error", e.message);
+    callback([]);
+  });
+};
+
+/** 방 목록에서 내 안읽음 총합 (하단 탭 뱃지용) */
+export const UnreadTotalOf = (rooms, USERS_ID) =>
+  (rooms || []).reduce((sum, r) => sum + ((r.UNREAD && r.UNREAD[USERS_ID]) || 0), 0);

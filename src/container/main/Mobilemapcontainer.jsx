@@ -92,7 +92,7 @@ const ButtonLayer = styled.div`
 
 const MapBox = styled.div`
 border: 1px solid #cbcbcb;
-background: ${({enable})=> enable == true ? ("#21A2FF") : ("#fff")};
+background: ${({$enable})=> $enable == true ? ("#21A2FF") : ("#fff")};
 display: flex;
 flex-direction: column;
 justify-content: center;
@@ -102,7 +102,7 @@ padding : 0px 5px;
 
 const MapBoxControl = styled.div`
   border: 1px solid #cbcbcb;
-  background: ${({enable})=> enable == true ? ("#21A2FF") : ("#fff")};
+  background: ${({$enable})=> $enable == true ? ("#21A2FF") : ("#fff")};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -114,7 +114,7 @@ const MapBoxControl = styled.div`
 
 const MapBoxSpan = styled.div`
   font-size:9px;
-  color: ${({enable})=> enable == true ? ("#fff") : ("#131313")};
+  color: ${({$enable})=> $enable == true ? ("#fff") : ("#131313")};
 `
 const LoadingAnimationStyle={
   zIndex: 11,

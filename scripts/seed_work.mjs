@@ -59,12 +59,22 @@ const SEEDS = [
   ['애견 병원',    '55,000',  ['1회만', '중형견', '1마리']],
 ];
 
+// 앱이 저장하는 WORK_INFO 와 같은 형식으로 만든다.
+// 상세 화면(MobileWorkReport)이 type==='response' 인 항목만 표에 그리기 때문에
+// 이 필드가 없으면 상세가 통째로 비어 보인다. (2026-08-12 형 지적)
+const CHIP_TYPES = ['주기', '요청시간대', '대상', '시간과 금액', '홍여사성별과연령대', '일자'];
+
 const buildInfo = (i, price, chips) => {
   const { lat, lng } = near(i);
-  const info = chips.map((c) => ({ requesttype: '조건', result: c }));
-  info.push({ requesttype: '금액', result: price });
-  info.push({ requesttype: '지역', result: `대한민국 ${r(ADDRS, i)}`, latitude: lat, longitude: lng });
-  info.push({ requesttype: '요구사항', result: '시드 데이터입니다. 실제 요청이 아닙니다.' });
+  const info = [];
+  let idx = 0;
+  const push = (requesttype, result, extra = {}) => {
+    info.push({ type: 'response', responseshow: true, show: true, index: idx++, requesttype, result, ...extra });
+  };
+  chips.forEach((c, k) => push(CHIP_TYPES[k % CHIP_TYPES.length], c));
+  push('금액', price);
+  push('지역', `대한민국 ${r(ADDRS, i)}`, { latitude: lat, longitude: lng });
+  push('요구사항', '시드 데이터입니다. 실제 요청이 아닙니다.');
   return info;
 };
 

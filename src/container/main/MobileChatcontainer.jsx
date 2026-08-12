@@ -8,7 +8,7 @@ import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import { Column, FlexstartColumn } from "../../common/Column";
-import { CHATIMAGETYPE, CHATSELECTFILTER, EventItems, PCCOMMNUNITYMENU } from "../../utility/screen";
+import { CHATIMAGETYPE, EventItems, PCCOMMNUNITYMENU } from "../../utility/screen";
 import Empty from "../../components/Empty";
 import Button from "../../common/Button";
 import { DataContext } from "../../context/Data";
@@ -16,7 +16,7 @@ import { useSleep } from "../../utility/common";
 import Chatgate from "../../components/Chatgate";
 import Emptychat from "../../components/Emptychat";
 import { readuser } from "../../service/UserService";
-import { ReadChat } from "../../service/ChatService";
+import { SubscribeChatRooms } from "../../service/ChatService";
 import LottieAnimation from "../../common/LottieAnimation";
 import { LoadingChatAnimationStyle } from "../../screen/css/common";
 
@@ -38,42 +38,7 @@ const style = {
 };
 
 
-const ReadAlertLayout = styled.div`
-  height: 60px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  border-bottom: 1px solid #ededed;
-  margin-right:5px;
-  padding-left:30px;
-  position: fixed;
-  background: #fff;
-  z-index: 3;
 
-
-`
-const ReadAlertText = styled.div`
-  color:#131313;
-  font-size:14px;
-`
-const FilterLayer = styled.div`
-  border: 1px solid #ededed;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  margin-right: 5px;
-  background-color : ${({enable}) => enable == true ? ("#5b5959"):("#fff")};
-  color : ${({enable}) => enable == true ? ("#fff"):("#131313")};
-  font-family :${({enable}) => enable == true ? ("Pretendard-SemiBold"):("Pretendard")};
-
-
-`
-
-const FilterType = {
-
-}
 
 
 const MobileChatcontainer =({containerStyle}) =>  {
@@ -89,11 +54,6 @@ const MobileChatcontainer =({containerStyle}) =>  {
   const [chatitems, setChatitems] = useState([]);
   const [currentloading, setCurrentloading] = useState(true);
 
-  const [allselect, setAllselect] = useState(true);
-  const [ownerselect, setOwnerselect] = useState(false);
-  const [supporterselect, setSupporterselect] = useState(false);
-  const [unreadselect, setUnreadselect] = useState(false);
-
   useLayoutEffect(() => {
   }, []);
 
@@ -107,11 +67,6 @@ const MobileChatcontainer =({containerStyle}) =>  {
     setUseritems(useritems);
     setChatitems(chatitems);
     setCurrentloading(currentloading);
-    setAllselect(allselect);
-    setOwnerselect(ownerselect);
-    setSupporterselect(supporterselect);
-    setUnreadselect(unreadselect);
-
   },[refresh])
 
   const _handleUnread = (unread) =>{
@@ -129,57 +84,19 @@ const MobileChatcontainer =({containerStyle}) =>  {
     async function FetchData(){
       const users = await readuser();
       setUseritems(users);
-      const USERS_ID = user.users_id;
-
-
-      const chatitems = await ReadChat({USERS_ID});
-    
-
-      if(chatitems != -1){
-        setChatitems(chatitems);
-      }
-
-
-      setCurrentloading(false);
-
-      setRefresh((refresh) => refresh +1);
-
-      console.log("TCL: FetchData -> chatitems", chatitems)
     }
     FetchData();
+
+    // 대화방 목록은 실시간으로 받는다 — 새 메시지가 오면 목록이 알아서 갱신된다 (형 리뷰 2026-08-12)
+    const USERS_ID = user.users_id;
+    const unsubscribe = SubscribeChatRooms({USERS_ID}, (rooms)=>{
+      setChatitems(rooms);
+      setCurrentloading(false);
+      setRefresh((refresh) => refresh +1);
+    });
+
+    return () => { if(typeof unsubscribe === 'function') unsubscribe(); };
   }, [])
-
-  const _handleChatFilter = (filter)=>{
-    if(filter == CHATSELECTFILTER.ALL){
-
-      setAllselect(true);
-      setOwnerselect(false);
-      setSupporterselect(false);
-      setUnreadselect(false);
-
-    }else if(filter == CHATSELECTFILTER.OWNER){
-
-      setAllselect(false);
-      setOwnerselect(true);
-      setSupporterselect(false);
-      setUnreadselect(false);
-
-    }else if(filter == CHATSELECTFILTER.SUPPORT){
-     
-      setAllselect(false);
-      setOwnerselect(false);
-      setSupporterselect(true);
-      setUnreadselect(false);
-
-    }else if(filter == CHATSELECTFILTER.UNREAD){
-      setAllselect(false);
-      setOwnerselect(false);
-      setSupporterselect(false);
-      setUnreadselect(true);
-    }
-
-    setRefresh((refresh) => refresh +1);
-  }
 
 
   return (
@@ -190,26 +107,17 @@ const MobileChatcontainer =({containerStyle}) =>  {
           width={"50px"} height={'50px'}/>):( <Row margin={'0px auto;'} width={'100%'} height={'100%'} >
           <Column style={{background:"#fff", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid #ededed"}}>
     
-            <ReadAlertLayout>
-
-              <FilterLayer onClick={()=>{_handleChatFilter(CHATSELECTFILTER.ALL)}} enable ={allselect}>{CHATSELECTFILTER.ALL}</FilterLayer>
-              <FilterLayer onClick={()=>{_handleChatFilter(CHATSELECTFILTER.OWNER)}}  enable ={ownerselect}>{CHATSELECTFILTER.OWNER}</FilterLayer>
-              <FilterLayer onClick={()=>{_handleChatFilter(CHATSELECTFILTER.SUPPORT)}}  enable ={supporterselect}>{CHATSELECTFILTER.SUPPORT}</FilterLayer>
-              <FilterLayer onClick={()=>{_handleChatFilter(CHATSELECTFILTER.UNREAD)}}  enable ={unreadselect}>{CHATSELECTFILTER.UNREAD}</FilterLayer>
-              
-
-            </ReadAlertLayout>
-            <div style={{marginTop:50}}>
+            {/* 상단 필터(전체·내가 의뢰한·나한테 지원한·안 읽은)는 제거했다 — 형 지시 2026-08-12 */}
+            <div>
             {
               chatitems.length != 0 ?(
               <>
               {
                 chatitems.map((item)=>(
-                  <Chatgate  item={item}/>
-                  
+                  <Chatgate key={item.CHAT_ID} item={item}/>
                 ))
               }
-              </> 
+              </>
               ):(
                 <Emptychat content={'대화내역이 없습니다'} height={300}/>
               )

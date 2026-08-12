@@ -91,8 +91,8 @@ const ReqButton = styled.div`
   width: 90%;
   margin : 20px auto;
   border-radius: 4px;
-  background: ${({enable}) => enable == true ? ('#FF7125') :('#dbdada')};
-  color:  ${({enable}) => enable == true ? ('#fff') :('#999')};
+  background: ${({$enable}) => $enable == true ? ('#FF7125') :('#dbdada')};
+  color:  ${({$enable}) => $enable == true ? ('#fff') :('#999')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -361,7 +361,7 @@ const MobileMapReconfigcontainer =({containerStyle}) =>  {
           <DaumPostcode onComplete={handleComplete} style={{height:"470px"}} />
         </div>
       }
-      <ReqButton enable={true} onClick={_handleaddrregister}>새 주소 등록 </ReqButton>
+      <ReqButton $enable={true} onClick={_handleaddrregister}>새 주소 등록 </ReqButton>
     </Container>
   );
 }

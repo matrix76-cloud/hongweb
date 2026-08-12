@@ -110,8 +110,8 @@ const FilterBox = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: ${({clickstatus}) => clickstatus == true ? ('#FF7125') :('#fff') };
-  border:  ${({clickstatus}) => clickstatus == true ? (null) :('1px solid #C3C3C3') };
+  background: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('#fff') };
+  border:  ${({$clickstatus}) => $clickstatus == true ? (null) :('1px solid #C3C3C3') };
   margin-right: 3px;
   border-radius: 4px;
   padding: 0px 15px;
@@ -120,7 +120,7 @@ const FilterBox = styled.div`
 
 `
 const FilterBoxText = styled.div`
-color: ${({clickstatus}) => clickstatus == true ? ('#FFF') :('#131313') };
+color: ${({$clickstatus}) => $clickstatus == true ? ('#FFF') :('#131313') };
 font-size:14px;
 margin-left:5px;
 font-weight:600;
@@ -844,22 +844,22 @@ const MobileMaincontainer =({containerStyle}) =>  {
           <div className="new-div">
             {
               FilterItems.map((data, index)=>(
-                <>
+                <Fragment key={data.name}>
                 {
-                  index == 0 && <FilterBox style={{padding:"0px 10px"}} onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
+                  index == 0 && <FilterBox style={{padding:"0px 10px"}} onClick={()=>{_handlefiltermenuclick(data.name)}} $clickstatus={filterenablecheck(data.name)}>
                     <img src={imageDB.init} style={{width:'16px', height:"16px"}}/>
                 </FilterBox>
                 }
                 {
-                  index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} clickstatus={filterenablecheck(data.name)}>
-                  <FilterBoxText clickstatus={filterenablecheck(data.name)}>{data.name}
+                  index != 0 && <FilterBox onClick={()=>{_handlefiltermenuclick(data.name)}} $clickstatus={filterenablecheck(data.name)}>
+                  <FilterBoxText $clickstatus={filterenablecheck(data.name)}>{data.name}
                   {getfilters(data.name)}   
                   </FilterBoxText>
                 </FilterBox>
                 }
                 
-                </>
-          
+                </Fragment>
+
               ))
             }
           </div> 

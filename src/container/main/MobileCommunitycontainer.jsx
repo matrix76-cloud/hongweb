@@ -64,17 +64,17 @@ const FlexMenu = styled.div`
 
 const Box = styled.div`
 
-  background: ${({clickstatus}) => clickstatus == true ? ('#fff') :('#fff')};
+  background: ${({$clickstatus}) => $clickstatus == true ? ('#fff') :('#fff')};
   color :  #131313;
   font-size : 13px;
   font-family : 'Pretendard-Regular';
   font-weight:500;
-  border :  ${({clickstatus}) => clickstatus == true ? ('1px solid #F9F9F9') :(null)};
+  border :  ${({$clickstatus}) => $clickstatus == true ? ('1px solid #F9F9F9') :(null)};
   align-items: center;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  width:${({clickstatus}) => clickstatus == true ? ('21.5%') :('21.5%')};
+  width:${({$clickstatus}) => $clickstatus == true ? ('21.5%') :('21.5%')};
   height : 70px;
   margin-right: 2px;
   z-index: 2;
@@ -209,7 +209,7 @@ const MobileCommunitycontainer =({containerStyle}) =>  {
               <FlexMenu>
                 {
                   CommunityItems.map((data, index)=>(
-                    <Box onClick={()=>{_handlemenu(data.name)}} clickstatus={menu == data.name} >
+                    <Box onClick={()=>{_handlemenu(data.name)}} $clickstatus={menu == data.name} >
                       <img src={data.img} width={34}/>
                       <div style={{ marginTop:10, fontSize:11}}>{data.name}</div>
                     </Box>
