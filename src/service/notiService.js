@@ -12,6 +12,7 @@ export const NOTI_TYPE = {
   PICKED: 'picked',      // ③ 내가 픽됨                        -> 홍여사에게
   CHAT: 'chat',          // ④ 새 메시지                        -> 상대에게
   PAY: 'pay',            // ④ 결제/정산                        -> 양쪽
+  VOICECALL: 'voicecall',// ④ 보이스톡 연결 요청                -> 상대에게
   NEARBY: 'nearby',      // ① 내 주변에 새 일감                -> 홍여사에게
   NOTICE: 'notice',      // 공지
 };
@@ -58,6 +59,20 @@ export const notifyPicked = ({ supporterId, workType }) =>
     targetUids: [supporterId],
   });
 
+/**
+ * ④ 보이스톡 연결 요청 -> 상대에게
+ * 통화는 "지금 받아야" 의미가 있으므로 다른 알림과 성격이 다르다.
+ * 알림을 누르면 대화방으로 바로 들어가게 한다.
+ */
+export const notifyVoiceCall = ({ targetId, callerName, chatId }) =>
+  createNotification({
+    type: NOTI_TYPE.VOICECALL,
+    title: '보이스톡 연결 요청',
+    body: `${callerName || '상대방'}님이 통화를 요청했어요`,
+    link: chatId ? `/Mobilecontent?chat=${chatId}` : '/Mobilechat',
+    targetUids: [targetId],
+  });
+
 /** ④ 새 채팅 메시지 -> 상대에게 */
 export const notifyChat = ({ targetId, senderName, text }) =>
   createNotification({
@@ -86,6 +101,12 @@ export const PUSH_CASES = [
     type: NOTI_TYPE.CHAT, label: '④ 새 메시지',
     title: '김영희',
     body: '네 아직 구하고 있어요. 언제 가능하실까요?',
+    link: '/Mobilechat',
+  },
+  {
+    type: NOTI_TYPE.VOICECALL, label: '④ 보이스톡 연결 요청',
+    title: '보이스톡 연결 요청',
+    body: '김영희님이 통화를 요청했어요',
     link: '/Mobilechat',
   },
   {

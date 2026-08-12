@@ -41,12 +41,26 @@ async function tokensForUids(uids) {
 async function pushToTokens({ toks, title, body, data }) {
   if (!toks.length) return { successCount: 0, failureCount: 0 };
 
+  // 보이스톡은 "지금 받아야" 의미가 있다. 잠금화면에서도 즉시 뜨도록 최고 우선순위로 보낸다.
+  const isCall = (data && data.type) === 'voicecall';
+
   const resp = await admin.messaging().sendEachForMulticast({
     tokens: toks.map((t) => t.token),
     notification: { title: title || '구해줘 홍여사', body: body || '' },
     data: Object.fromEntries(Object.entries(data || {}).map(([k, v]) => [k, String(v ?? '')])),
-    android: { priority: 'high', notification: { sound: 'default' } },
-    apns: { payload: { aps: { sound: 'default' } } },
+    android: {
+      priority: 'high',
+      ttl: isCall ? 45 * 1000 : undefined,   // 통화는 45초 안에 못 받으면 의미가 없다
+      notification: {
+        sound: 'default',
+        channelId: isCall ? 'voicecall' : undefined,
+        ...(isCall ? { priority: 'max', visibility: 'public' } : {}),
+      },
+    },
+    apns: {
+      headers: isCall ? { 'apns-priority': '10', 'apns-expiration': String(Math.floor(Date.now() / 1000) + 45) } : undefined,
+      payload: { aps: { sound: 'default', ...(isCall ? { 'interruption-level': 'time-sensitive' } : {}) } },
+    },
     webpush: {
       headers: { Urgency: 'high' },
       notification: { icon: '/logo.png', badge: '/logo.png' },

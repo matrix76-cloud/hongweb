@@ -3,6 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { onForegroundMessage } from "../service/fcmService";
 import { imageDB } from "../utility/imageData";
+import { IoCall, IoCallOutline } from "react-icons/io5";
 
 /**
  * 화면 상단 인앱 푸시 (형 지시 2026-08-12)
@@ -70,6 +71,30 @@ const Body = styled.div`
   overflow: hidden;
 `;
 
+/* 보이스톡은 "지금 받아야" 의미가 있어 다른 알림과 다르게 보여준다 (형 지시 2026-08-12) */
+const CallActions = styled.div`
+  display: flex;
+  gap: 8px;
+  flex: none;
+`;
+
+const CallBtn = styled.button`
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 22px;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ $deny }) => ($deny ? '#E5484D' : '#1a9a4b')};
+  &:active { transform: scale(0.94); }
+  transition: transform .1s ease;
+`;
+
 const Close = styled.button`
   flex: none;
   width: 28px;
@@ -96,7 +121,8 @@ const PushToast = () => {
       unsub = await onForegroundMessage((n) => {
         setNoti(n);
         clearTimeout(timer);
-        timer = setTimeout(() => setNoti(null), 5000);
+        // 통화 요청은 받을 시간을 줘야 하므로 오래 띄운다
+        timer = setTimeout(() => setNoti(null), n.type === 'voicecall' ? 30000 : 5000);
       });
     })();
 
@@ -104,7 +130,7 @@ const PushToast = () => {
     const onPreview = (e) => {
       setNoti(e.detail);
       clearTimeout(timer);
-      timer = setTimeout(() => setNoti(null), 5000);
+      timer = setTimeout(() => setNoti(null), e.detail?.type === 'voicecall' ? 30000 : 5000);
     };
     window.addEventListener('push:preview', onPreview);
 
@@ -122,14 +148,28 @@ const PushToast = () => {
     if (noti.link) navigate(noti.link);
   };
 
+  const isCall = noti.type === 'voicecall';
+
   return (
-    <Bar onClick={go}>
+    <Bar onClick={isCall ? undefined : go}>
       <Logo src={imageDB.logo2} alt="" />
       <Texts>
         <Title>{noti.title}</Title>
         {noti.body && <Body>{noti.body}</Body>}
       </Texts>
-      <Close onClick={(e) => { e.stopPropagation(); setNoti(null); }}>×</Close>
+
+      {isCall ? (
+        <CallActions>
+          <CallBtn title="거절" $deny onClick={(e) => { e.stopPropagation(); setNoti(null); }}>
+            <IoCallOutline style={{ transform: 'rotate(135deg)' }} />
+          </CallBtn>
+          <CallBtn title="받기" onClick={(e) => { e.stopPropagation(); go(); }}>
+            <IoCall />
+          </CallBtn>
+        </CallActions>
+      ) : (
+        <Close onClick={(e) => { e.stopPropagation(); setNoti(null); }}>×</Close>
+      )}
     </Bar>
   );
 };
