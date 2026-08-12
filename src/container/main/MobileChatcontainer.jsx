@@ -20,14 +20,16 @@ import { SubscribeChatRooms } from "../../service/ChatService";
 import LottieAnimation from "../../common/LottieAnimation";
 import { LoadingChatAnimationStyle } from "../../screen/css/common";
 
+/* 높이를 900px 로 못박아둬서 화면보다 길거나 짧았다. 헤더만 비우고 내용만큼 늘어나게 한다.
+   (형 지시 2026-08-12) */
 const Container = styled.div`
     background-color : #fff;
-    height:900px;
-    padding-top:50px;
+    min-height: calc(100vh - 50px);
+    padding-top: 50px;
+    box-sizing: border-box;
 
-    overflow-x: hidden; /* X축 스크롤을 숨깁니다. */
-    overflow-y: scroll; /* Y축 스크롤은 허용 */
-    scrollbar-width: none; /* Firefox용 - 스크롤바 숨기기 */
+    overflow-x: hidden;
+    scrollbar-width: none;
     &::-webkit-scrollbar{
       display: none;
     }
@@ -104,31 +106,19 @@ const MobileChatcontainer =({containerStyle}) =>  {
       {
         currentloading == true ? (<LottieAnimation
            containerStyle={LoadingChatAnimationStyle} animationData={imageDB.loading}
-          width={"50px"} height={'50px'}/>):( <Row margin={'0px auto;'} width={'100%'} height={'100%'} >
-          <Column style={{background:"#fff", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid #ededed"}}>
-    
-            {/* 상단 필터(전체·내가 의뢰한·나한테 지원한·안 읽은)는 제거했다 — 형 지시 2026-08-12 */}
-            <div>
+          width={"50px"} height={'50px'}/>):(
+          /* 상단 필터(전체·내가 의뢰한·나한테 지원한·안 읽은)는 제거했다 — 형 지시 2026-08-12 */
+          <div style={{width:"100%"}}>
             {
               chatitems.length != 0 ?(
-              <>
-              {
                 chatitems.map((item)=>(
                   <Chatgate key={item.CHAT_ID} item={item}/>
                 ))
-              }
-              </>
               ):(
                 <Emptychat content={'대화내역이 없습니다'} height={300}/>
               )
             }
-            </div>
-            
-        
-            
-        </Column>
- 
-      </Row>)
+          </div>)
       }
     
     </Container>

@@ -1,84 +1,43 @@
-import React, {useContext, useEffect, useLayoutEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import styled from 'styled-components';
-import { FlexstartRow } from "../common/Row";
-import { UserContext } from "../context/User";
-import { imageDB } from "../utility/imageData";
-import { CHATIMAGETYPE } from "../utility/screen";
-import "./ProfileImage.css"
+import React from "react";
+import styled from "styled-components";
+import { IoPerson } from "react-icons/io5";
 
+/**
+ * 대화 상대 프로필. (형 지시 2026-08-12 — 다시 만듦)
+ *
+ * 예전엔 50px 통 안에 75px 이미지를 넣고 태그를 absolute 로 띄워서 다 삐져나왔다.
+ * 원형으로 잘라 넣고, 사진이 없으면 앱에서 흔히 쓰는 회색 원 + 사람 아이콘을 보여준다.
+ * 의뢰/지원 구분은 여기서 빼고 목록에서 이름 옆 텍스트로 보여준다.
+ */
+const Circle = styled.div`
+  flex: none;
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
+  border-radius: 50%;
+  background: #F1F1F3;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
+const Img = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+`;
 
-const Container = styled.div`
+const ChatprofileImage = ({ containerStyle, source, size = 46 }) => {
+  const ok = !!source && String(source).trim() !== "";
 
-`
-const style = {
-  display: "flex"
+  return (
+    <Circle style={containerStyle} $size={size}>
+      {ok
+        ? <Img src={source} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+        : <IoPerson size={Math.round(size * 0.5)} color="#BDBDC2" />}
+    </Circle>
+  );
 };
 
-const ImageLayout = styled.div`
-    background: #fff;
-    height: 50px;
-    border-radius: 50px;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    align-items:center;
-    position:absolute;
-   
-`
-const Tag = styled.div`
-  position: relative;
-  height: 30px;
-  border: 1px solid #ededed;
-  width: 30px;
-  top: 25px;
-  background: ${({OWNER}) => OWNER == true ? ('#FF7125') :('#25a3ff')};
-  left: 20px;
-  color : #fff;
-  font-size:12px;
-  display: flex;
-  justify-content:center;
-  align-items:center;
-  border-radius : 5px;
-
-`
-
-
-
-
-
-const ChatprofileImage =({containerStyle, source, OWNER}) =>  {
-
-/** 제목 정리
- ** 설명
- *! 중요한 내용
- * TODO 미진한 부분
- * ? 뤄리 API 설명
- * @param 파라미터 설명
- */
-
-
-  const { dispatch, user } = useContext(UserContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(1);
-
-
- 
-  return (
-
-    <Container style={containerStyle}>
-      <ImageLayout>
-      <img src={source} style={{width:75, height:75}}/>
-      </ImageLayout>
-      <Tag OWNER={OWNER}>
-        {OWNER == true ? (<span>의뢰</span>) :(<span>지원</span>)}
-      </Tag>
-    </Container>
-  );
-
-}
-
 export default ChatprofileImage;
-

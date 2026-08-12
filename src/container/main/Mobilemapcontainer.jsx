@@ -145,9 +145,12 @@ const FilterButton = styled.div`
 // 최상단에서 구조분해하면 SDK 로드 전 undefined 로 굳는다 (Vite=ES모듈, 2026-08-12)
 
 const DetailLevel = 1;
-/* 이 레벨 이하로 확대하면 가격 카드(CustomOverlay), 그보다 넓게 보면 클러스터.
-   일감이 한자리에 뭉쳐 보이던 문제 해소 (형 리뷰 2026-08-12) */
-const CLUSTER_MIN_LEVEL = 4;
+/* 이 레벨부터(=더 축소) 클러스터로 묶는다. 기본 지도 레벨 5 + 2단계. */
+const CLUSTER_MIN_LEVEL = 7;
+
+/* 클러스터용 투명 마커 이미지 (1x1).
+   마커는 묶기 계산에만 쓰고 화면에는 가격 카드 또는 클러스터 뱃지만 보인다. */
+const TRANSPARENT_PIN = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 const DetailMeter =300;
 
 /**
@@ -591,9 +594,12 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     const clusterer = new kakao.maps.MarkerClusterer({
       map: map,
       averageCenter: true,
+      /* 기본 지도 레벨이 5다. 거기서 두 단계 더 축소한 7부터 묶는다 (형 리뷰 2026-08-12).
+         레벨 6 이하(확대)에서는 클러스터 없이 원래대로 가격 카드가 보인다. */
       minLevel: CLUSTER_MIN_LEVEL,
+      minClusterSize: 2,        // 2개 이상만 클러스터. 1개는 원래대로 가격 카드
       disableClickZoom: false,
-      gridSize: 70,
+      gridSize: 90,
       styles: [{
         width: '44px', height: '44px',
         background: '#FF4E19',
@@ -651,13 +657,17 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
           items : overlayData.ITEMS
         };
         customOverlay.customData = customData;
-        // 확대했을 때만 가격 카드를 띄운다 (그 전엔 클러스터/마커)
-        customOverlay.setMap(map.getLevel() <= CLUSTER_MIN_LEVEL ? map : null);
+        // 초기에는 숨겨두고, 클러스터 판정(syncOverlays) 결과에 따라 켠다
+        customOverlay.setMap(null);
 
         overlays.push(customOverlay);
 
-        // 같은 지점을 가리키는 클러스터용 마커
-        const clusterMarker = new kakao.maps.Marker({ position: overlayData.POSITION });
+        // 같은 지점을 가리키는 클러스터용 마커.
+        // 이미지가 투명이라 화면에는 안 보이고, 묶였을 때만 클러스터 뱃지로 나타난다.
+        const clusterMarker = new kakao.maps.Marker({
+          position: overlayData.POSITION,
+          image: new kakao.maps.MarkerImage(TRANSPARENT_PIN, new kakao.maps.Size(1, 1)),
+        });
         clusterMarker.customData = customData;
         kakao.maps.event.addListener(clusterMarker, 'click', function () {
           map.setLevel(DetailLevel);
@@ -685,14 +695,24 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     // 마커를 클러스터에 넣고, 줌 레벨에 따라 [클러스터 <-> 가격 카드] 를 전환한다
     clusterer.addMarkers(clusterMarkers);
 
-    const syncByLevel = () => {
-      const detail = map.getLevel() <= CLUSTER_MIN_LEVEL;
-      overlays.forEach((o) => o.setMap(detail ? map : null));
-      if (detail) clusterer.clear();
-      else clusterer.addMarkers(clusterMarkers);
+    /* 클러스터에 묶인 것(2개 이상)은 뱃지로, 혼자인 것은 원래대로 가격 카드로 보여준다.
+       (형 리뷰 2026-08-12 — "한개짜리는 그냥 원래 표현하던 방법으로") */
+    const syncOverlays = () => {
+      const grouped = new Set();
+      // 클러스터가 동작하지 않는 레벨(확대 상태)에서는 전부 가격 카드로 보여준다
+      if (map.getLevel() >= CLUSTER_MIN_LEVEL) {
+        clusterer.getClusters().forEach((c) => {
+          if (c.getSize() >= 2) c.getMarkers().forEach((m) => grouped.add(m.customData?.id));
+        });
+      }
+      overlays.forEach((o) => {
+        const alone = !grouped.has(o.customData?.id);
+        o.setMap(alone ? map : null);
+      });
     };
-    kakao.maps.event.addListener(map, 'zoom_changed', syncByLevel);
-    syncByLevel();
+    kakao.maps.event.addListener(clusterer, 'clustered', syncOverlays);
+    kakao.maps.event.addListener(map, 'zoom_changed', () => setTimeout(syncOverlays, 0));
+    setTimeout(syncOverlays, 0);
 
     //오버레이를 변수에 담아둔다
     setOverlays(overlays);
