@@ -21,6 +21,7 @@ import { seedChatRooms, clearSeededChats } from './seedChat';
 const C = {
   ink: '#131313', gray: '#71717a', gray2: '#a3a3a3',
   line: '#e3e3e3', bg: '#f4f5f7', card: '#fff', brand: '#FF4E19', blue: '#2563eb',
+  red: '#e11d48',   // 아직 답 안 단 표시 (형 지시 2026-08-12)
 };
 const FONT = "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif";
 
@@ -219,7 +220,7 @@ export default function ReviewPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
         <h1 style={{ margin: 0, fontSize: 21, fontWeight: 800 }}>홍여사 리뷰</h1>
         <span style={{ fontSize: 14, color: C.gray }}>
-          화면 {ALL.length}개 · <b style={{ color: C.brand }}>미답변 {unanswered}</b>
+          화면 {ALL.length}개 · <b style={{ color: unanswered > 0 ? C.red : C.gray2 }}>미답변 {unanswered}</b>
         </span>
         {sharing && <span style={{ fontSize: 13, fontWeight: 700, color: '#1a7f37' }}>화면공유 중 — 지도까지 캡처됩니다</span>}
         {busy && <span style={{ fontSize: 14, color: C.brand, fontWeight: 700 }}>{busy}</span>}
@@ -237,21 +238,6 @@ export default function ReviewPage() {
         </div>
       )}
 
-      {/* 도메인 탭 (FCM 보드에서도 이동할 수 있게 위로 뺐다) */}
-      {cur.board === 'fcm' && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
-          {DOMAINS.map((d) => (
-            <button key={d.key} style={btn(d.key === domain)}
-              onClick={() => { setDomain(d.key); setCurId(d.screens[0].id); }}>
-              {d.label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {cur.board === 'fcm' ? (
-        <div style={{ maxWidth: 760 }}><FcmTestBoard /></div>
-      ) : (
       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
 
         {/* ── 좌: 실제 화면 (스크롤해도 붙어있게 고정 — 우측 기록만 흐른다) ── */}
@@ -332,7 +318,15 @@ export default function ReviewPage() {
               return (
                 <button key={d.key} style={btn(on)}
                   onClick={() => { setDomain(d.key); setCurId(d.screens[0].id); }}>
-                  {d.label}{n > 0 && <span style={{ marginLeft: 6, fontSize: 13, opacity: .85 }}>{n}</span>}
+                  {d.label}
+                  {n > 0 && (
+                    <span style={{
+                      marginLeft: 6, fontSize: 12, fontWeight: 700,
+                      minWidth: 18, height: 18, lineHeight: '18px', borderRadius: 9,
+                      padding: '0 5px', textAlign: 'center', display: 'inline-block',
+                      background: C.red, color: '#fff',
+                    }}>{n}</span>
+                  )}
                 </button>
               );
             })}
@@ -353,7 +347,8 @@ export default function ReviewPage() {
                     <span style={{
                       fontSize: 12, fontWeight: 700, minWidth: 18, height: 18, lineHeight: '18px',
                       borderRadius: 9, padding: '0 5px', textAlign: 'center',
-                      background: on ? '#fff' : C.brand, color: on ? C.brand : '#fff',
+                      background: C.red, color: '#fff',
+                      border: on ? '1px solid #fff' : 'none',
                     }}>{n}</span>
                   )}
                 </button>
@@ -361,6 +356,7 @@ export default function ReviewPage() {
             })}
           </div>
 
+          {cur.board === 'fcm' ? <FcmTestBoard /> : (
           <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, minHeight: 240 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4 }}>
               <div style={{ fontSize: 18, fontWeight: 700 }}>{cur.no} {cur.name}</div>
@@ -439,9 +435,9 @@ export default function ReviewPage() {
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
-      )}
 
       {/* 이미지 확대 */}
       {zoom && (

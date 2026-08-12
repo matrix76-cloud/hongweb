@@ -77,11 +77,16 @@ export default function FcmTestBoard() {
     setBusy('');
   };
 
-  // 실제 발송 없이 배너 모양만 확인
+  // 실제 발송 없이 배너 모양만 확인.
+  // 왼쪽 미리보기(iframe) 안의 앱에도 같이 전달한다 — 거기서 실제 모양을 봐야 한다.
   const preview = (c) => {
-    window.dispatchEvent(new CustomEvent('push:preview', {
-      detail: { title: c.title, body: c.body, link: c.link, type: c.type },
-    }));
+    const detail = { title: c.title, body: c.body, link: c.link, type: c.type };
+    window.dispatchEvent(new CustomEvent('push:preview', { detail }));
+    document.querySelectorAll('iframe').forEach((f) => {
+      try {
+        f.contentWindow?.dispatchEvent(new f.contentWindow.CustomEvent('push:preview', { detail }));
+      } catch { /* 다른 origin 이면 무시 */ }
+    });
   };
 
   return (
