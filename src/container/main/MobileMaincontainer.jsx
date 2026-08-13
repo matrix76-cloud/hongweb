@@ -974,8 +974,11 @@ const MobileMaincontainer =({containerStyle}) =>  {
               </Column>
 
           </Column>
-  
+
           <StickyPos>
+          {/* 목록에도 제목을 붙인다. 필터와 같이 위에 붙어 있어야 스크롤해도 무엇을 보는지 안다
+              (형 리뷰 2026-08-13 "아래 일감리스트에도 라벨이 들어가야 할거같음") */}
+          <Label label={'내 주변에 올라온 일감'} containerStyle={{background:'var(--surface)', height:'auto', padding:'2px 0 10px'}} />
           <div className="new-div">
             {
               FilterItems.map((data, index)=>(
