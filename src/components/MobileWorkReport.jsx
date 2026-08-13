@@ -16,10 +16,13 @@ import { ReadWorkByIndividually } from "../service/WorkService";
 import { imageDB, Seekimage } from "../utility/imageData";
 import { REQUESTINFO } from "../utility/work_";
 import { workOf } from "../utility/chat";
+import { shortRegion } from "../utility/region";
 import WorkLocationMap from "./WorkLocationMap";
 import WorkPhotoGrid from "./WorkPhotoGrid";
 import { IsFavorite, ToggleFavorite } from "../service/FavoriteService";
-import { PiHeartBold, PiHeartFill } from "react-icons/pi";
+import { PiHeartBold, PiHeartFill, PiPhoneBold } from "react-icons/pi";
+import { isGuestUser, LOGIN_NEEDED } from "../utility/guest";
+import LoginGate from "./LoginGate";
 
 
 
@@ -49,22 +52,85 @@ const LoadingAnimationStyle={
   left: "35%"
 }
 
-/* 하단 고정 액션 바 — 스크롤과 무관하게 지원 버튼이 항상 보인다 (형 리뷰 2026-08-12) */
+/* 지원 버튼 — 화면에 붙여두지 않고 내용 다 읽은 맨 아래에 둔다 (형 리뷰 2026-08-13).
+   전에는 fixed 로 늘 떠 있어서 지도·사진을 가렸다. */
 const ActionBar = styled.div`
-  z-index: 900;
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--surface);
+  width: 100%;
+  margin-top: 28px;
+  padding: 20px 0 calc(24px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-soft);
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
   box-sizing: border-box;
 `
+/* 며칠 전인지 사람 말로 */
+const timeAgoText = (ts) => {
+  const ms = Date.now() - Number(ts || 0);
+  if (!Number.isFinite(ms) || ms < 0) return '';
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return '방금 전';
+  if (m < 60) return `${m}분 전`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}시간 전`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}일 전`;
+  const w = Math.floor(d / 7);
+  return w < 5 ? `${w}주 전` : `${Math.floor(d / 30)}개월 전`;
+};
+
+/* 일감 요약 헤더 (형 리뷰 2026-08-13 "이부분은 스타일리쉬 하게").
+   전에는 "고객님이 작성하신 요구 사항은 다음과 같습니다" 한 줄만 있어서,
+   무슨 일이 얼마짜리인지는 아래 표를 읽어야 알 수 있었다. 제일 중요한 걸 위로 올린다. */
+const Head = styled.div`
+  padding: 6px 2px 16px;
+`
+const HeadTop = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+const HeadType = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+  word-break: keep-all;
+`
+/* 상태는 뱃지 대신 글자 색으로만 (전역 UI 규칙) */
+const HeadState = styled.span`
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: ${({ $done }) => ($done ? 'var(--text-weak)' : '#FF4E19')};
+`
+const HeadPrice = styled.div`
+  margin-top: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  span { font-size: 18px; font-weight: 600; margin-left: 2px; }
+`
+const HeadMeta = styled.div`
+  margin-top: 8px;
+  font-size: 15px;
+  color: var(--text-sub);
+`
+const HeadLine = styled.div`
+  height: 1px;
+  background: var(--border-soft);
+  margin: 16px 0 14px;
+`
+/* 표 위 작은 제목 */
+const SectionLabel = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 22px 0 2px;
+`
+
 /* 조회수 · 채팅 진행중 건수 (형 리뷰 2026-08-12) */
 const CountRow = styled.div`
   display: flex;
@@ -145,6 +211,66 @@ const InfoLongText = styled.div`
   word-break: break-word;
 `
 
+/* 안내 한 줄 + 버튼 두 개 (형 리뷰 2026-08-13) */
+const ActionWrap = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`
+/* 대화방 말풍선 모양 그대로 (형 리뷰 2026-08-13 "대화 말풍선 처럼 처리해줘").
+   상대가 건네는 말이라 왼쪽 말풍선(좌상단만 각진 모서리)을 쓴다.
+   허용한 일감은 브랜드 연한 살구색, 아닌 경우는 회색 — 대화방의 두 말풍선 색을 그대로 가져왔다. */
+const VoiceNotice = styled.div`
+  position: relative;
+  align-self: flex-start;
+  max-width: 88%;
+  width: fit-content;
+  box-sizing: border-box;
+  padding: 11px 14px;
+  border-radius: 14px;
+  border-top-left-radius: 4px;
+  background: ${({ $on }) => ($on ? '#FFEDE6' : '#F4F4F5')};
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: left;
+  font-weight: 500;
+  word-break: keep-all;
+
+  /* 아래 보이스톡 버튼을 가리키는 꼬리 (형 리뷰 2026-08-13).
+     말풍선과 같은 색 삼각형을 아래쪽에 붙여 어느 버튼 이야기인지 알려준다.
+     버튼이 왼쪽 칸이라 꼬리도 왼쪽에 둔다. */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 26px;
+    bottom: -8px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 9px solid ${({ $on }) => ($on ? '#FFEDE6' : '#F4F4F5')};
+  }
+`
+/* 허용 안 한 일감에서는 꺼진 모습으로 둔다 — 아예 숨기면 그런 기능이 있는 줄도 모른다 */
+const VoiceButton = styled.button`
+  height: 52px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid ${({ $on }) => ($on ? '#FF4E19' : 'var(--border)')};
+  color: ${({ $on }) => ($on ? '#FF4E19' : 'var(--text-weak)')};
+  &:active { opacity: .8; }
+`
+
 /* 보이스톡을 허용한 일감이면 버튼이 둘이라 나란히 놓는다 */
 const ActionButtons = styled.div`
   display: flex;
@@ -183,6 +309,8 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
   /* 올린 사람이 보이스톡 허용을 켰는지 (일 등록 마지막 '연락 옵션') */
   const [voicetalk, setVoicetalk] = useState(false);
   const [voicetalknotice, setVoicetalknotice] = useState(false);
+  const [voiceoffnotice, setVoiceoffnotice] = useState(false);   // 허용 안 한 일감에서 눌렀을 때
+  const [logingate, setLogingate] = useState(null);   // 둘러보기 중 로그인 유도 (형 리뷰 2026-08-13)
   /* 조회수·진행중 건수를 쓰려고 일감 원본을 들고 있는다 (형 리뷰 2026-08-12) */
   const [workinfo, setWorkinfo] = useState({});
   /* 찜 (형 리뷰 2026-08-13) — 내 정보 > 찜한 일감 으로 모인다 */
@@ -254,7 +382,8 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
    * 1) WORK 정보를 가져돈다
    * 2) 지원자 의 정보를 가져온다
    */
-  const _handleReqComplete = async(WORK_ID) =>{
+ const _handleReqComplete = async(WORK_ID) =>{
+     if(isGuestUser(user)){ setLogingate(LOGIN_NEEDED.SUPPORT); return; }
   
      const WORK_INFO = await ReadWorkByIndividually({WORK_ID});
 
@@ -281,6 +410,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
   }
 
   const _handleFavorite = async () =>{
+    if(isGuestUser(user)){ setLogingate(LOGIN_NEEDED.FAVORITE); return; }
     const next = await ToggleFavorite(user?.users_id, WORK_ID);
     setFaved(next);
     setRefresh((refresh) => refresh +1);
@@ -309,6 +439,20 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
   };
 
   // 지역 좌표 — 아이콘을 눌러 팝업을 띄우는 대신 화면에 바로 지도를 보여준다
+  /* 헤더에 쓸 금액·지역·등록일 (형 리뷰 2026-08-13) */
+  const headPrice = (()=>{
+    const d = (messages || []).find((x)=> x && x.requesttype == '금액');
+    if(!d) return '';
+    const num = Number(String(d.result ?? '').replace(/[^0-9.-]/g, ''));
+    return Number.isFinite(num) && num > 0 ? num.toLocaleString('ko-KR') : '';
+  })();
+  const headMeta = (()=>{
+    const d = (messages || []).find((x)=> x && x.requesttype == '지역');
+    const region = d ? shortRegion(d.result) : '';
+    const when = workinfo.CREATEDT ? timeAgoText(workinfo.CREATEDT) : '';
+    return [region, when].filter(Boolean).join(' · ');
+  })();
+
   const regionPoint = (() => {
     const d = (messages || []).find((x) => x && x.requesttype === REQUESTINFO.CUSTOMERREGION && x.latitude);
     return d ? { lat: d.latitude, lng: d.longitude, addr: d.result } : null;
@@ -343,13 +487,29 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
         supportWorkSuccess == true && <MobileSuccessPopup callback={supportsuccesscallback} content ={'일감에 정상적으로 지원되었습니다'} />
       }
 
+      <LoginGate reason={logingate} onClose={()=>setLogingate(null)} />
+
       {
         voicetalknotice == true && <MobileWarningPopup callback={()=>{setVoicetalknotice(false)}} content ={'보이스톡은 준비 중입니다. 지금은 지원하기로 채팅을 열어 연락해 주세요.'} />
       }
 
       {
+        voiceoffnotice == true && <MobileWarningPopup callback={()=>{setVoiceoffnotice(false)}} content ={'이 일감은 올린 분이 보이스톡을 받지 않기로 했습니다. 지원하기를 눌러 채팅으로 이야기해 주세요.'} />
+      }
+
+      {
         currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
           width={"100px"} height={'100px'}/>) :(<>
+          <Head>
+            <HeadTop>
+              <HeadType>{WORKTYPE || workinfo.WORKTYPE}</HeadType>
+              <HeadState $done={closework}>{closework ? '마감' : '진행중'}</HeadState>
+            </HeadTop>
+            {headPrice && <HeadPrice>{headPrice}<span>원</span></HeadPrice>}
+            <HeadMeta>{headMeta}</HeadMeta>
+            <HeadLine />
+          </Head>
+
           {/* 홈 카드에 있던 조회수·진행중 건수를 상세에도 (형 리뷰 2026-08-12) */}
           <CountRow>
             <CountItem>
@@ -368,6 +528,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
           </CountRow>
 
           {/* 표 대신 항목 목록 — 칸이 갈라져 답답했다 (형 리뷰 2026-08-12) */}
+          <SectionLabel>요청 내용</SectionLabel>
           <InfoList>
             {
               (messages || []).filter((d)=> d && d.type =='response').map((data, index)=>(
@@ -396,8 +557,6 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
             />
           )}
 
-          {/* 하단 고정 액션 바 — 스크롤과 무관하게 항상 보인다 (형 리뷰 2026-08-12) */}
-          <div style={{height:96}} />
           <ActionBar>
    
 
@@ -413,17 +572,25 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
                ownerwork == true && <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'var(--border-soft)'} color={'#999'} text={'본인이 등록한 일감'}/>
              }
              {
-               /* 보이스톡은 올린 사람이 허용을 켠 일감에서만 지원하기 옆에 붙는다.
-                  통화 기능 자체는 아직 없어서 눌러도 준비중 안내만 띄운다 (형 리뷰 2026-08-12) */
+               /* 보이스톡 버튼은 항상 둔다. 올린 사람이 허용을 켰으면 살아 있고, 아니면 꺼진 채로 보인다.
+                  위에 왜 되는지/안 되는지 한 줄로 알려준다. (형 리뷰 2026-08-13) */
                (supporterwork ==false && ownerwork == false) && (
-                 voicetalk == true ? (
+                 <ActionWrap>
+                   <VoiceNotice $on={voicetalk}>
+                     {voicetalk
+                       ? '보이스톡을 허용한 일감이에요. 지금 바로 통화해보세요'
+                       : '보이스톡을 받지 않는 일감이에요. 지원하기를 눌러 채팅으로 이야기해보세요'}
+                   </VoiceNotice>
                    <ActionButtons>
-                     <Button containerStyle={{border: '1px solid #FF4E19', fontSize:17, fontWeight:700}} onPress={()=>{setVoicetalknotice(true)}} height={'52px'} width={'100%'} radius={'10px'} bgcolor={'#FFF'} color={'#FF4E19'} text={'보이스톡'}/>
+                     <VoiceButton
+                       $on={voicetalk}
+                       onClick={()=>{ voicetalk ? setVoicetalknotice(true) : setVoiceoffnotice(true); }}
+                     >
+                       <PiPhoneBold size={18}/>보이스톡
+                     </VoiceButton>
                      <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'52px'} width={'100%'} radius={'10px'} bgcolor={'#FF4E19'} color={'#fff'} text={'지원하기'}/>
                    </ActionButtons>
-                 ) : (
-                   <Button containerStyle={{border: 'none', fontSize:17, fontWeight:700}} onPress={()=>{_handleReqComplete(WORK_ID)}} height={'52px'} width={'90%'} radius={'10px'} bgcolor={'#FF4E19'} color={'#fff'} text={'지원하기'}/>
-                 )
+                 </ActionWrap>
                )
              }
            </>

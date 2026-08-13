@@ -42,6 +42,8 @@ import Empty from "../../components/Empty";
 import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
 import { RESET } from "../../store/menu/MenuSlice";
 import { ReadSupportersByWork } from "../../service/ChatService";
+import { isGuestUser, LOGIN_NEEDED } from "../../utility/guest";
+import LoginGate from "../../components/LoginGate";
 import { LoadingMainAnimationStyle } from "../../screen/css/common";
 
 const Container = styled.div`
@@ -343,6 +345,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
   const [displayitems, setDisplayitems] = useState([]);
   /* 일감별 지원자 — 카드에 프로필을 겹쳐 보여주려고 한 번만 읽어둔다 (형 리뷰 2026-08-13) */
   const [supporters, setSupporters] = useState({});
+  /* 둘러보기 중 로그인이 필요한 걸 눌렀을 때 띄우는 안내 (형 리뷰 2026-08-13) */
+  const [logingate, setLogingate] = useState(null);
   const [currentloading, setCurrentloading] = useState(false);
   const [menu, setMenu] = useState('');
 
@@ -650,6 +654,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
   }, [user.latitude, user.longitude]);
 
   const _handlebasicmenuclick = (checkmenu) => {
+    /* 둘러보기 중이면 여기서 로그인을 받는다 (형 리뷰 2026-08-13) */
+    if(isGuestUser(user)){ setLogingate(LOGIN_NEEDED.REGIST); return; }
     const key = Object.keys(WORKNAME).find((k) => WORKNAME[k] === checkmenu);
     const totalset = WORKPOLICY[key] ?? 0;
     navigate("/Mobileregist", { state: { WORKTYPE: checkmenu, WORKTOTAL: totalset } });
@@ -1072,6 +1078,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
       </div>
 
+      <LoginGate reason={logingate} onClose={()=>setLogingate(null)} />
 
     </>
 

@@ -13,8 +13,7 @@ import { Create_userdevice, readuserbydeviceid, updatealluserbydeviceid, Update_
 import { v4 as uuidv4 } from 'uuid';
 
 import localforage from 'localforage';
-import { isOnboardingDone } from './MobileOnboardingcontainer';
-import { isAgreed } from './MobileAgreecontainer';
+import { resolveEntryRoute } from '../../utility/entry';
 import Axios from "axios";
 import randomLocation from 'random-location'
 ;
@@ -255,14 +254,8 @@ const MobileSplashcontainer =({containerStyle}) =>  {
       console.log("TCL: Mobile MAIN  -> GetItem", value)
       userconfig = value;
       if (userconfig.deviceid  == undefined ||  userconfig.deviceid  =='') {
-        // 처음 온 사람이면 온보딩부터 보여준다. 한 번 본 뒤에는 바로 가입 화면으로 (형 지시 2026-08-12)
-        // 온보딩 → 약관 동의 → 로그인 순서로 보낸다 (형 지시 2026-08-12)
-        const seen = await isOnboardingDone();
-        if (!seen) { navigate("/Mobileonboarding"); }
-        else {
-          const agreed = await isAgreed();
-          navigate(agreed ? "/Mobilelogin" : "/Mobileagree");
-        }
+        // 온보딩 → 약관 동의 → 로그인. 어디로 갈지는 한 곳에서 정한다 (형 지시 2026-08-13)
+        navigate(await resolveEntryRoute());
       }else{
   
         const DEVICEID = userconfig.deviceid;
@@ -278,7 +271,8 @@ const MobileSplashcontainer =({containerStyle}) =>  {
 
 
         if(userdata == -1){
-          navigate("/Mobilegate");
+          // 저장된 기기 정보는 있는데 그 계정이 DB 에 없다 — 처음부터 다시 (형 지시 2026-08-13)
+          navigate(await resolveEntryRoute());
         }else{
           console.log("TCL: Mobile MAIN -> DEVICEID 존재")
           setRefresh((refresh) => refresh +1);
@@ -309,7 +303,7 @@ const MobileSplashcontainer =({containerStyle}) =>  {
     console.log("TCL: StartProcess -> storage fail ",);
 
   
-    navigate("/Mobilegate");
+    resolveEntryRoute().then((to) => navigate(to));
 
     });
 

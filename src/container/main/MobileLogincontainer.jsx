@@ -9,6 +9,7 @@ import { signInWithEmail, signInWithGoogle, signInWithKakao, authErrorText } fro
 import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
 import { isAgreed } from "./MobileAgreecontainer";
 import { imageDB } from "../../utility/imageData";
+import { enterGuest, clearGuest } from "../../utility/guest";
 import {
   Wrap, Logo, PageTitle, Card, Field, Label, Input, PrimaryBtn,
   SocialBtn, Divider, Bottom,
@@ -41,6 +42,20 @@ const Links = styled.div`
   }
 `;
 
+const LookAround = styled.button`
+  display: block;
+  margin: 6px auto 30px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-sub);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px;
+`;
+
 const MobileLogincontainer = ({ containerStyle }) => {
   const navigate = useNavigate();
   const { dispatch } = useContext(UserContext);
@@ -57,11 +72,18 @@ const MobileLogincontainer = ({ containerStyle }) => {
     return () => { alive = false; };
   }, []);
 
+  /* 둘러보기 — 게스트로 표시하고 홈으로 */
+  const _handleLookAround = async () => {
+    await enterGuest();
+    navigate("/Mobilemain");
+  };
+
   const alertBox = (title, message) =>
     setDialog({ title, message, alertonly: true, onConfirm: () => setDialog(null) });
 
   const done = async (userconfig) => {
     await localforage.setItem("userconfig", userconfig);
+    await clearGuest();   // 로그인했으면 둘러보기 표시를 지운다 (형 리뷰 2026-08-13)
     dispatch(userconfig);
     navigate("/Mobilemain");
   };
@@ -148,6 +170,10 @@ const MobileLogincontainer = ({ containerStyle }) => {
         아직 회원이 아니신가요?
         <button onClick={() => navigate("/Mobilesignup")}>회원가입</button>
       </Bottom>
+
+      {/* 가입 전에 동네에 일감이 있는지부터 보게 한다 (형 리뷰 2026-08-13).
+          보는 건 열어두고, 등록·지원·채팅에서 로그인을 받는다. */}
+      <LookAround onClick={_handleLookAround}>로그인 없이 먼저 둘러보기</LookAround>
 
       {dialog && <MobileConfirmPopup {...dialog} onCancel={() => setDialog(null)} />}
     </Wrap>

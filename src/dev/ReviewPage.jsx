@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DOMAINS, STATUS_LABEL, STATUS_COLOR } from './reviewData';
 import { captureFrame, describeTarget } from './reviewCapture';
 import FcmTestBoard from './FcmTestBoard';
+import { loadThread, postEntry, deleteEntry } from './reviewThreadService';
 import { seedChatRooms, clearSeededChats } from './seedChat';
 
 /**
@@ -60,8 +61,7 @@ export default function ReviewPage() {
   const entries = thread[curId] || [];
   const curDomain = DOMAINS.find((d) => d.key === domain) || DOMAINS[0];
 
-  const load = () =>
-    fetch('/__review_thread').then((r) => r.json()).then(setThread).catch(() => setThread({}));
+  const load = () => loadThread().then(setThread).catch(() => setThread({}));
 
   useEffect(() => { load(); }, []);
   useEffect(() => {
@@ -151,15 +151,11 @@ export default function ReviewPage() {
     const t = text.trim();
     if (!t && !pins.length && !attachImgs.length) return;
     setBusy('저장 중...');
-    await fetch('/__review_thread', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: curId, by: '형', text: t,
-        pins: pins.length ? pins : undefined,
-        images: attachImgs.length ? attachImgs : undefined,
-        replyTo: replyTo || undefined,
-      }),
+    await postEntry({
+      id: curId, by: '형', text: t,
+      pins: pins.length ? pins : undefined,
+      images: attachImgs.length ? attachImgs : undefined,
+      replyTo: replyTo || undefined,
     });
     setText(''); setPins([]); setAttachImgs([]); setPinMode(false); setReplyTo(null);
     setBusy('');
@@ -167,10 +163,7 @@ export default function ReviewPage() {
   };
 
   const del = async (pid) => {
-    await fetch('/__review_thread', {
-      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: curId, pid }),
-    });
+    await deleteEntry({ id: curId, pid });
     load();
   };
 

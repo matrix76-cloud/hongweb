@@ -19,9 +19,11 @@ import LottieAnimation from "../../common/LottieAnimation";
 
 
 const Container = styled.div`
-    max-height:1000px;
-
-  
+    /* max-height:1000px 이 있어서 내용이 길면 그 아래로 배경이 안 칠해졌다 (형 리뷰 2026-08-13) */
+    /* 일감 상세는 카드가 아니라 한 장짜리 화면이라 회색 바탕이 붕 떠 보였다 — 흰색으로 */
+    background: var(--surface);
+    min-height: 100vh;
+    box-sizing: border-box;
 `
 
 const LoadingAnimationStyle={
@@ -100,7 +102,8 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
       loading == true ? ( <LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
         width={"100px"} height={'100px'}
         />) :( <Column>
-          <div style={{marginTop: 70, color :'var(--text)', fontSize:16, width:'90%', marginLeft:5}}>고객님이 작성하신 요구 사항은 다음과 같습니다</div>
+          {/* 안내 한 줄 대신 요약 헤더를 MobileWorkReport 안에서 보여준다 (형 리뷰 2026-08-13) */}
+          <div style={{height: 62}} />
           <MobileWorkReport messages={messages} WORK_ID = {WORK_ID} WORKTYPE={worktype} WORK_STATUS={workstatus}/>
         </Column>)
     } 

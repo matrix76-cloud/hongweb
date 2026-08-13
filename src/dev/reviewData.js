@@ -52,20 +52,8 @@ export const ENTRY_REVIEW = [
     '테스트: 대화명에 "테스트계정" 을 넣으면 te****@hongyeosa.com 이 나온다.',
   ] },
 
-  { id: 'gate', no: '006', name: '게이트 (구)', path: '/Mobilegate', status: 'todo', spec: [
-    '예전 가입 진입점. 지금 흐름에서는 지나지 않는다 — 스플래시가 로그인으로 바로 보낸다.',
-    '정리 대상.',
-  ] },
 
-  { id: 'phone', no: '007', name: '전화번호 인증 (폐기 예정)', path: '/Mobilephone', status: 'todo', spec: [
-    '★ 로그인 문턱에서는 걷어냈다 — "로그인이 너무 어려웠다"가 실패 원인 중 하나였다.',
-    '전화번호는 나중에 결제·홍여사 등록 단계에서 받는다. 그때 받은 번호로 이메일 찾기를 붙일 수 있다.',
-  ] },
 
-  { id: 'policy', no: '008', name: '약관 동의 (구)', path: '/Mobilepolicy', status: 'todo', spec: [
-    '전화번호 흐름의 마지막 단계였다 — 동의하면 곧바로 계정을 만들고 홈으로 간다.',
-    '새 흐름의 약관은 002 다. 이 화면은 정리 대상.',
-  ] },
 ];
 
 export const POST_REVIEW = [

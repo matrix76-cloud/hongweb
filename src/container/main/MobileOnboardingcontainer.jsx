@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import localforage from "localforage";
+import { enterGuest } from "../../utility/guest";
 import { imageDB } from "../../utility/imageData";
 import illustStep1 from "../../assets/imageset/honggroup.png";
 
@@ -236,9 +237,12 @@ const MobileOnboardingcontainer = ({ containerStyle }) => {
   const s = STEPS[i];
   const last = i === STEPS.length - 1;
 
+  /* 온보딩을 마치면 홈으로 — 로그인 없이 둘러볼 수 있게 한다 (형 지시 2026-08-13).
+     가입은 무언가 하려는 순간(등록·지원·채팅)에 받는다. */
   const finish = async () => {
     try { await localforage.setItem(ONBOARDING_KEY, true); } catch { /* noop */ }
-    navigate("/Mobileagree");
+    await enterGuest();
+    navigate("/Mobilemain");
   };
 
   const next = () => (last ? finish() : setI(i + 1));

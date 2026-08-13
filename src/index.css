@@ -114,7 +114,10 @@ body {
     "Segoe UI", "Malgun Gothic", Helvetica, Arial, sans-serif;
   margin :unset;
   letter-spacing: -0.32px;
+  /* 가로 스크롤만 막으려던 건데 hidden 은 세로까지 스크롤 컨테이너로 만들어
+     휠로 화면이 안 내려갔다(리뷰 페이지에서 드러남). 세로는 명시적으로 열어둔다. (2026-08-13) */
   overflow-x: hidden !important;
+  overflow-y: auto !important;
   line-height: 1.3;
 
 }

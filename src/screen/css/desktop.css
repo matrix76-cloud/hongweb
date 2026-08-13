@@ -1,0 +1,139 @@
+/* ─────────────────────────────────────────────────────────────
+   PC 랜딩 + 폰 목업 (형 지시 2026-08-13 — seekone 방식)
+
+   모바일: 앱 화면만 그대로. 랜딩 요소는 전부 숨긴다.
+   PC(≥1024px): 왼쪽 랜딩 + 오른쪽 폰 목업 안에 같은 앱 화면.
+
+   ★ 핵심 — .app-frame 에 transform 을 준다.
+     우리 화면들은 헤더·하단탭이 position:fixed 인데, 그대로 두면 PC 에서
+     폰 목업을 뚫고 브라우저 창 기준으로 붙는다. transform 이 있는 요소는
+     fixed 자식의 기준(containing block)이 되므로 폰 안에 갇힌다.
+   ───────────────────────────────────────────────────────────── */
+
+.desktop-shell {
+  height: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-stage {
+  display: contents;   /* 모바일에서는 없는 셈 치고 app-frame 이 그대로 흐른다 */
+}
+
+.app-frame {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  height: 100dvh;
+  margin: 0 auto;
+  background: var(--bg, #F3F3F3);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  /* fixed 자식을 이 안에 가둔다 (위 설명 참고) */
+  transform: translateZ(0);
+}
+
+/* 랜딩 조각들 — 모바일에서는 숨긴다 */
+.hg-landing,
+.hg-landing-bg,
+.hg-lhead,
+.hg-lorbit {
+  display: none;
+}
+
+/* ── PC (≥1024px) ── */
+@media (min-width: 1024px) {
+  body {
+    background: #F6F1EC;
+    overflow: hidden;
+  }
+
+  .hg-landing-bg {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(900px 620px at 78% 18%, rgba(255, 78, 25, 0.10), transparent 60%),
+      radial-gradient(720px 520px at 12% 78%, rgba(255, 133, 82, 0.12), transparent 62%),
+      linear-gradient(180deg, #FBF7F3 0%, #F2E9E1 100%);
+  }
+
+  .desktop-shell {
+    position: relative;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(430px, 520px);
+    grid-template-rows: 68px 1fr;
+    grid-template-areas:
+      "hdr hdr"
+      "land frame";
+    column-gap: 48px;
+    height: 100vh;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px 56px 32px;
+    overflow: clip;
+  }
+
+  .hg-lhead {
+    grid-area: hdr;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hg-landing {
+    grid-area: land;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    padding-bottom: 40px;
+  }
+
+  /* 폰 무대 — 아래를 기준으로 세운다 */
+  .desktop-shell > .phone-stage {
+    grid-area: frame;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    min-height: 0;
+    z-index: 2;
+  }
+
+  /* 폰 목업 */
+  .app-frame {
+    width: 390px;
+    max-width: 390px;
+    height: min(800px, calc(100vh - 130px));
+    border-radius: 42px;
+    border: 10px solid #15161A;
+    box-shadow:
+      0 30px 70px rgba(24, 16, 10, 0.28),
+      0 4px 14px rgba(24, 16, 10, 0.12);
+    overflow: hidden;
+    background: var(--bg, #F3F3F3);
+  }
+
+  /* 폰 안쪽은 화면 높이에 맞춰 스크롤 */
+  .app-frame > * {
+    min-height: 0;
+  }
+}
+
+/* 아주 큰 화면에서는 폰을 조금 키운다 */
+@media (min-width: 1440px) {
+  .app-frame {
+    height: min(844px, calc(100vh - 120px));
+  }
+}

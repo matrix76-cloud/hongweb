@@ -99,7 +99,8 @@ export default function MobileLogoutSuccessPopup({callback, content}) {
   const navigation = useNavigate();
 
   const handleClose = () =>{    
-    navigation("/Mobilegate");
+    // 로그아웃하면 로그인 화면으로 (옛 게이트로 보내고 있었다 — 형 지시 2026-08-13)
+    navigation("/Mobilelogin");
     setOpen(false);
     callback([]);
 

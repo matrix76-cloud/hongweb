@@ -583,8 +583,11 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
       drawnRef.current.overlays.forEach((o)=> o.setMap(null));
       drawnRef.current.markers.forEach((m)=> m.setMap(null));
       if(drawnRef.current.clusterer) drawnRef.current.clusterer.clear();
+      if(drawnRef.current.zoomListener && mapRef.current){
+        kakao.maps.event.removeListener(mapRef.current, 'zoom_changed', drawnRef.current.zoomListener);
+      }
     }catch(e){ console.warn('[map] 이전 오버레이 정리 실패', e); }
-    drawnRef.current = { overlays: [], markers: [], clusterer: null };
+    drawnRef.current = { overlays: [], markers: [], clusterer: null, zoomListener: null };
 
     const geocoder = new window.kakao.maps.services.Geocoder();
 
@@ -777,7 +780,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
     const syncOverlays = () => {
       const grouped = new Set();
       // 클러스터가 동작하지 않는 레벨(확대 상태)에서는 전부 가격 카드로 보여준다
-      if (map.getLevel() >= CLUSTER_MIN_LEVEL) {
+      if (map.getLevel() >= CLUSTER_MIN_LEVEL && typeof clusterer.getClusters === 'function') {
         clusterer.getClusters().forEach((c) => {
           if (c.getSize() >= 2) c.getMarkers().forEach((m) => grouped.add(m.customData?.id));
         });
@@ -795,12 +798,17 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
       requestAnimationFrame(() => { syncQueued = false; syncOverlays(); });
     };
 
+    /* 지도를 재사용하면서 리스너가 쌓였다. 옛 리스너가 이미 정리된 클러스터러를 붙잡고 있어
+       zoom 할 때 clusterer.getClusters is not a function 이 났다. 붙이기 전에 떼어낸다. (2026-08-13) */
+    if(drawnRef.current.zoomListener){
+      try{ kakao.maps.event.removeListener(map, 'zoom_changed', drawnRef.current.zoomListener); }catch(e){}
+    }
     kakao.maps.event.addListener(clusterer, 'clustered', requestSync);
     kakao.maps.event.addListener(map, 'zoom_changed', requestSync);
     requestSync();
 
     // 다음번에 지울 수 있게 기억해둔다
-    drawnRef.current = { overlays, markers: clusterMarkers, clusterer };
+    drawnRef.current = { overlays, markers: clusterMarkers, clusterer, zoomListener: requestSync };
 
     //오버레이를 변수에 담아둔다
     setOverlays(overlays);

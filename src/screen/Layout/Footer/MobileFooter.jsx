@@ -6,6 +6,8 @@ import { imageDB } from '../../../utility/imageData';
 import { MOBILEMAINMENU } from "../../../utility/screen";
 import { UserContext } from "../../../context/User";
 import { SubscribeChatRooms, UnreadTotalOf } from "../../../service/ChatService";
+import { isGuestUser, LOGIN_NEEDED } from "../../../utility/guest";
+import LoginGate from "../../../components/LoginGate";
 
 // 선택된 탭만 포인트색, 나머지는 회색이 아니라 검정 (형 리뷰 2026-08-12)
 const ON_COLOR = '#FF4E19';
@@ -26,6 +28,7 @@ const MobileFooter = ({ type, unreadCount }) => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [unread, setUnread] = useState(0);
+  const [gate, setGate] = useState(null);
 
   // 안읽은 대화 수를 실시간으로 받아 채팅 탭에 표시한다.
   // 전엔 이 값을 아무도 안 넘겨줘서 뱃지가 항상 0 이었다. (형 리뷰 2026-08-12)
@@ -43,6 +46,11 @@ const MobileFooter = ({ type, unreadCount }) => {
   const badgeCount = unreadCount != null ? unreadCount : unread;
 
   const go = (tab) => {
+    /* 둘러보기 중이면 채팅·내 정보에서 로그인을 받는다 (형 리뷰 2026-08-13) */
+    if (isGuestUser(user)) {
+      if (tab.key === MOBILEMAINMENU.CHATMENU) { setGate(LOGIN_NEEDED.CHAT); return; }
+      if (tab.key === MOBILEMAINMENU.CONFIGMENU) { setGate(LOGIN_NEEDED.CONFIG); return; }
+    }
     if (tab.key === MOBILEMAINMENU.MAPMENU) {
       navigate(tab.path, { state: { WORK_ID: "", TYPE: "" } });
       return;
@@ -52,6 +60,7 @@ const MobileFooter = ({ type, unreadCount }) => {
 
   return (
     <Fragment>
+      <LoginGate reason={gate} onClose={()=>setGate(null)} />
       <footer>
         <div className="site-mobile-footer2">
           <div className="buttonview">

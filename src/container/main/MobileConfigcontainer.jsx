@@ -76,9 +76,12 @@ const RegistHong = styled.div`
   flex-direction: column;
   gap: 14px;
 `
+/* 주황 채움이 너무 진해서 배너 전체가 무거웠다 — 테두리만 남긴다 (형 리뷰 2026-08-13) */
 const RegistLayer = styled.div`
   height: 50px;
-  background: #FF4E19;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-sizing: border-box;
   border-radius: 10px;
   display: flex;
   flex-direction: row;
@@ -90,7 +93,7 @@ const RegistLayer = styled.div`
   transition: transform .12s ease;
 `
 const RegistLayerContent = styled.div`
-  color: #fff;
+  color: var(--text);
   font-size: 16px;
   font-weight: 700;
 `
@@ -336,7 +339,7 @@ const MobileConfigcontainer =({containerStyle}) =>  {
             </Row>
             <RegistLayer onClick={_handleWorkerInfo}>
                 <RegistLayerContent>홍여사 등록하러 가기</RegistLayerContent>
-                <RiArrowRightSLine size={20} color={'#fff'}/>
+                <RiArrowRightSLine size={20} color={'var(--text)'}/>
             </RegistLayer>
           </RegistHong>
         
