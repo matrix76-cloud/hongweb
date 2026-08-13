@@ -23,3 +23,26 @@ export const getFixedPosition = () =>
   USE_FIXED_LOCATION
     ? { coords: { latitude: FIXED_LOCATION.latitude, longitude: FIXED_LOCATION.longitude } }
     : null;
+
+/* 리뷰용 데모 계정 (2026-08-13)
+   리뷰 페이지의 왼쪽 화면을 "로그인한 상태"로 보기 위한 것.
+   주소에 ?demo=1 이 붙어 있을 때만 적용된다 — 일반 사용자에게는 영향이 없다.
+   USERS/demo_review 문서와 짝을 이룬다. */
+export const DEMO_USER = {
+  users_id: 'demo_review',
+  nickname: '데모 사용자',
+  address_name: FIXED_LOCATION.address_name,
+  latitude: FIXED_LOCATION.latitude,
+  longitude: FIXED_LOCATION.longitude,
+  userimg: '',
+  phone: '01000000000',
+};
+
+/** 지금 화면이 데모로 열렸는가 (?demo=1) */
+export const isDemoMode = () => {
+  try {
+    return new URLSearchParams(window.location.search).get('demo') === '1';
+  } catch {
+    return false;
+  }
+};

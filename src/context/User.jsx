@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import localforage from "localforage";
-import { FIXED_LOCATION, USE_FIXED_LOCATION } from "../utility/devLocation";
+import { DEMO_USER, FIXED_LOCATION, USE_FIXED_LOCATION, isDemoMode } from "../utility/devLocation";
 
 const UserContext = createContext({
   user: {
@@ -22,9 +22,12 @@ const UserContext = createContext({
 // 개발 중에는 위치를 다산동으로 채워둔다.
 // 스플래시를 거치지 않고 /Mobilemain 으로 바로 들어오면 위치가 비어
 // 거리 계산이 NaN 이 되고 일감이 하나도 안 보였다. (형 지적 2026-08-12)
-const INITIAL_USER = USE_FIXED_LOCATION
-  ? { latitude: FIXED_LOCATION.latitude, longitude: FIXED_LOCATION.longitude, address_name: FIXED_LOCATION.address_name }
-  : {};
+// ?demo=1 이면 데모 계정으로 시작한다 — 리뷰 페이지에서 로그인한 화면을 보기 위함
+const INITIAL_USER = isDemoMode()
+  ? { ...DEMO_USER }
+  : (USE_FIXED_LOCATION
+      ? { latitude: FIXED_LOCATION.latitude, longitude: FIXED_LOCATION.longitude, address_name: FIXED_LOCATION.address_name }
+      : {});
 
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(INITIAL_USER);

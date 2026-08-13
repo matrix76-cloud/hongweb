@@ -31,6 +31,12 @@ const PHONE = { w: 360, h: 800 };
 
 const ALL = DOMAINS.flatMap((d) => d.screens.map((s) => ({ ...s, domain: d.key })));
 
+/* 왼쪽 미리보기는 데모 계정으로 연다 — 로그인한 상태의 화면을 봐야 하기 때문 (2026-08-13) */
+const withDemo = (path) => {
+  if (!path) return path;
+  return path + (path.includes('?') ? '&' : '?') + 'demo=1';
+};
+
 const btn = (on) => ({
   fontSize: 14, fontWeight: on ? 700 : 500, padding: '7px 13px', borderRadius: 8, cursor: 'pointer',
   border: `1px solid ${on ? C.brand : C.line}`,
@@ -254,7 +260,7 @@ export default function ReviewPage() {
 
           <div style={{ position: 'relative', width: PHONE.w, height: PHONE.h, border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: 'var(--surface)' }}>
             {cur.path ? (
-              <iframe ref={frameRef} title={cur.name} src={cur.path}
+              <iframe ref={frameRef} title={cur.name} src={withDemo(cur.path)}
                 style={{ width: '100%', height: '100%', border: 'none', display: 'block' }} />
             ) : (
               <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', justifyContent: 'center', padding: 34, textAlign: 'center' }}>
