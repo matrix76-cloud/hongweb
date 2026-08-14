@@ -13,7 +13,8 @@ const Container = styled.div`
   width: 100%;
   height: 50px;
   font-family: 'Pretendard-Regular';
-  font-size: 16px;
+  /* 섹션 제목이 작아 보인다 — 16 에서 19 로 (형 리뷰 2026-08-15 "여기 글씨가 좀 작은듯") */
+  font-size: 19px;
   background : var(--bg-soft);
   color :var(--text);
 
@@ -63,7 +64,8 @@ const Label =({containerStyle, label, sublabel}) =>  {
   return (
 
     <Container style={containerStyle}>
-        <div style={{fontFamily: 'Pretendard-Bold', width:'140px', paddingLeft:15}}>{label}</div>
+        {/* 고정폭 140px 은 긴 제목("무슨 일을 맡기실까요?")이 좁아 보이던 원인 — 자연폭으로 */}
+        <div style={{fontFamily: 'Pretendard-Bold', whiteSpace:'nowrap', paddingLeft:15}}>{label}</div>
         <SubLabel>{sublabel}</SubLabel>
    
     </Container>

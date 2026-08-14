@@ -23,6 +23,7 @@ import { Column } from "../../common/Column";
 import MobileWorkItem from "../../components/MobileWorkItem";
 import Label from "../../common/Label";
 import { GoNoEntry } from "react-icons/go";
+import { WorkIcon, workColor } from "../../utility/workIcon";
 
 import "./MobileMaincontainer.css";
 import MobileStoreInfo from "../../components/MobileStoreInfo";
@@ -50,6 +51,7 @@ const Container = styled.div`
   padding:50px 0px 0px 0px;
   width: ${({width}) => width}px;
   margin : 0 auto;
+  background: var(--surface); /* 회색 바탕이 격자 뒤로 비쳤다 — 전부 흰색으로 (형 리뷰 2026-08-15) */
   height: calc(100vh - 50px);
   scrollbar-width: none; // 스크롤바 안보이게 하기
   overflow-x: hidden; /* X축 스크롤을 숨깁니다. */
@@ -93,10 +95,11 @@ const Box = styled.div`
   transition: transform .12s ease;
 `
 const BoxImg = styled.div`
-  width: 64px;
-  height: 64px;
+  /* 원이 아이콘에 비해 너무 컸다 — 한 단계 줄임 (형 2026-08-15) */
+  width: 54px;
+  height: 54px;
   border-radius: 100px;
-  background: var(--bg-soft);
+  background: ${({ $c }) => $c || "var(--icon-bg)"};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -286,27 +289,28 @@ const SearchElementStyle ={
 
 // 홍여사 서비스 — 청소 / 집안일 / 아이 / 돌봄 / 반려 순으로 묶어 배열한다.
 // 누르면 그 종류의 일 등록으로 바로 간다(①일 올리기 진입점). 필터가 아니다. — CORE.md
+// 아이콘은 utility/workIcon.jsx 의 공용 매핑에서 온다 (형 리뷰 2026-08-14 "너무 화려한색이라")
 const WorkItems=[
   // 청소
-  {name : WORKNAME.HOMECLEAN,      img:imageDB.house,        img2:imageDB.housegray},
-  {name : WORKNAME.BUSINESSCLEAN,  img:imageDB.business,     img2:imageDB.businessgray},
-  {name : WORKNAME.MOVECLEAN,      img:imageDB.move,         img2:imageDB.movegray},
+  {name : WORKNAME.HOMECLEAN},
+  {name : WORKNAME.BUSINESSCLEAN},
+  {name : WORKNAME.MOVECLEAN},
   // 집안일
-  {name : WORKNAME.FOODPREPARE,    img:imageDB.cook,         img2:imageDB.cookgray},
-  {name : WORKNAME.SHOPPING,       img:imageDB.shopping,     img2:imageDB.shoppinggray},
-  {name : WORKNAME.CARRYLOAD,      img:imageDB.carry,        img2:imageDB.carrygray},
-  {name : WORKNAME.ERRAND,         img:imageDB.help,         img2:imageDB.helpgray},
+  {name : WORKNAME.FOODPREPARE},
+  {name : WORKNAME.SHOPPING},
+  {name : WORKNAME.CARRYLOAD},
+  {name : WORKNAME.ERRAND},
   // 아이
-  {name : WORKNAME.BABYCARE,       img:imageDB.babycare,     img2:imageDB.babycaregray},
-  {name : WORKNAME.GOOUTSCHOOL,    img:imageDB.gooutschool,  img2:imageDB.gooutschoolgray},
-  {name : WORKNAME.LESSON,         img:imageDB.lesson,       img2:imageDB.lessongray},
-  {name : WORKNAME.GOSCHOOLEVENT,  img:imageDB.schoolevent,  img2:imageDB.schooleventgray},
+  {name : WORKNAME.BABYCARE},
+  {name : WORKNAME.GOOUTSCHOOL},
+  {name : WORKNAME.LESSON},
+  {name : WORKNAME.GOSCHOOLEVENT},
   // 돌봄
-  {name : WORKNAME.PATIENTCARE,    img:imageDB.patientcare,  img2:imageDB.patientcaregray},
-  {name : WORKNAME.GOHOSPITAL,     img:imageDB.hospital,     img2:imageDB.hospitalgray},
+  {name : WORKNAME.PATIENTCARE},
+  {name : WORKNAME.GOHOSPITAL},
   // 반려
-  {name : WORKNAME.GODOGWALK,      img:imageDB.dog,          img2:imageDB.doggray},
-  {name : WORKNAME.GODOGHOSPITAL,  img:imageDB.doghospital,  img2:imageDB.doghospitalgray},
+  {name : WORKNAME.GODOGWALK},
+  {name : WORKNAME.GODOGHOSPITAL},
 ]
 
 const FilterItems=[
@@ -961,7 +965,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
                   {
                     WorkItems.map((data, index)=>(
                       <Box key={index} onClick={()=>{_handlebasicmenuclick(data.name)}}>
-                        <BoxImg><img src={data.img} alt={data.name} style={{width:48, height:48, objectFit:"contain"}}/></BoxImg>
+                        <BoxImg $c={workColor(data.name)}><WorkIcon name={data.name} size={28} color="#fff"/></BoxImg>
                         <BoxLabel>{data.name}</BoxLabel>
                       </Box>
                     ))

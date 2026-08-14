@@ -3,7 +3,8 @@ import { HashRouter, Route, BrowserRouter, Routes, useLocation, useNavigate } fr
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
 import moment from "moment";
-import { imageDB, Seekimage } from "../../utility/imageData";
+import { imageDB } from "../../utility/imageData";
+import { WorkIcon } from "../../utility/workIcon";
 import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import StoreInfo from "../../components/StoreInfo";
@@ -284,7 +285,7 @@ const PCMaincontainer =({containerStyle}) =>  {
  
           {
             workitems.length == 0 && <Column style={{height:300}}>
-              <img src={Seekimage(value)} style={{width:60}}/>
+              <WorkIcon name={value} size={40}/>
               <div style={{fontSize:18}}>해당 일감이 존재 하지 않습니다</div>
             </Column>
           }

@@ -12,7 +12,8 @@ import { AroundRow, BetweenRow, Row } from "../../common/Row";
 import Fade from "react-reveal/Fade";
 import { Requestbabycaremessages, Requestbusinesscleanmessages, Requestcarryloadmessages, Requestcleanmessages, Requestdoghospitalmessages, Requestdogwalkmessages, Requesterrandmessages, Requestfoodpreparemessages, Requestgohospitalmessages, Requestgooutschoolmessages, REQUESTINFO, Requestlessonmessages, Requestmovecleanmessages, Requestpatientcaremessages, Requestschooleventmessages, Requestshoppingmessages, WORKNAME, WORKPOLICY } from "../../utility/work";
 import { useSleep } from "../../utility/common";
-import { imageDB, Seekimage } from "../../utility/imageData";
+import { imageDB } from "../../utility/imageData";
+import { WorkIcon } from "../../utility/workIcon";
 import Text from "../../common/Text";
 
 import Calendar from "react-calendar";
@@ -968,7 +969,7 @@ const PCRegistcontainer =({containerStyle, type, totalset}) =>  {
 
           <AroundRow style={{width:"600px", margin : "0 auto"}}>
             <Row>
-              <img src={Seekimage(type)} style={{width:40}}/>
+              <WorkIcon name={type} size={30}/>
               <Title>{type}</Title>
             </Row>
 

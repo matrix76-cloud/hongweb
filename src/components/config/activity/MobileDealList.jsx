@@ -7,7 +7,6 @@ import { ReadWorkByIndividually } from "../../../service/WorkService";
 import { workOf } from "../../../utility/chat";
 import { WORKSTATUS } from "../../../utility/status";
 import { shortRegion } from "../../../utility/region";
-import { Seekimage, Seekgrayimage } from "../../../utility/imageData";
 import Empty from "../../Empty";
 import LottieAnimation from "../../../common/LottieAnimation";
 import { imageDB } from "../../../utility/imageData";
@@ -30,53 +29,53 @@ const Summary = styled.div`
   padding: 4px 2px 14px;
   b { color: #FF4E19; font-weight: 700; font-size: 17px; }
 `;
+/* 아이콘 없는 정보 카드 — 각진 모서리, 텍스트 위계로만 (형 확정 2026-08-15, /listlab 카드 3) */
 const Card = styled.div`
   box-sizing: border-box;
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px 18px;
-  margin-bottom: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
   cursor: pointer;
   &:active { background: var(--bg-soft); }
 `;
-const Icon = styled.div`
-  flex-shrink: 0;
-  width: 54px;
-  height: 54px;
-  border-radius: 100px;
-  background: var(--bg-soft);
+const TitleRow = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-const Body = styled.div`
-  min-width: 0;
-  flex: 1;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
 `;
 const Title = styled.div`
   font-size: 17px;
   font-weight: 700;
-  color: var(--text);
+  color: ${({ $done }) => ($done ? '#9A9A9A' : 'var(--text)')};
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-const Sub = styled.div`
-  font-size: 14px;
-  color: #8A8A8A;
-  margin-top: 5px;
+const Status = styled.span`
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: ${({ $done }) => ($done ? '#9A9A9A' : '#E5472F')};
 `;
-const Role = styled.div`
-  font-size: 14px;
-  color: var(--text);
-  font-weight: 600;
-  margin-top: 6px;
+const Price = styled.div`
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 4px;
+  color: ${({ $done }) => ($done ? '#9A9A9A' : 'var(--text)')};
+`;
+const Meta = styled.div`
+  font-size: 13px;
+  color: #6F6F6F;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
 `;
 const LoadingAnimationStyle = { zIndex: 11, position: "absolute", top: "40%", left: "40%" };
 
@@ -151,18 +150,15 @@ const MobileDealList = ({ done = false }) => {
       <Summary>{done ? "체결완료된 거래" : "체결중인 거래"} <b>{items.length}</b>건</Summary>
       {items.map(({ room, work, mine }) => (
         <Card key={room.CHAT_ID} onClick={() => navigate("/Mobilecontent", { state: { CHAT_ID: room.CHAT_ID } })}>
-          <Icon>
-            <img
-              src={done ? Seekgrayimage(work.WORKTYPE) : Seekimage(work.WORKTYPE)}
-              alt={work.WORKTYPE}
-              style={{ width: 44, height: 44, objectFit: "contain" }}
-            />
-          </Icon>
-          <Body>
-            <Title>{work.WORKTYPE}</Title>
-            <Sub>{[regionOf(work), priceOf(work)].filter(Boolean).join(" · ")}</Sub>
-            <Role>{mine ? "내가 올린 일감" : "내가 지원한 일감"}</Role>
-          </Body>
+          <TitleRow>
+            <Title $done={done}>{work.WORKTYPE}</Title>
+            <Status $done={done}>{done ? "체결완료" : "체결중"}</Status>
+          </TitleRow>
+          <Price $done={done}>{priceOf(work)}</Price>
+          <Meta>
+            <span>{regionOf(work)}</span>
+            <span>{mine ? "내가 올린 일감" : "내가 지원한 일감"}</span>
+          </Meta>
         </Card>
       ))}
     </Container>

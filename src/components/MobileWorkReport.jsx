@@ -13,7 +13,7 @@ import { CreateChat, ReadChat } from "../service/ChatService";
 
 import { Readuserbyusersid } from "../service/UserService";
 import { ReadWorkByIndividually } from "../service/WorkService";
-import { imageDB, Seekimage } from "../utility/imageData";
+import { imageDB } from "../utility/imageData";
 import { REQUESTINFO } from "../utility/work_";
 import { workOf } from "../utility/chat";
 import { shortRegion } from "../utility/region";
@@ -479,7 +479,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
 
       {
         popupstatus == true && <MobileWorkMapPopup callback={popupcallback} latitude={latitude} longitude={longitudie}
-        top={'30%'}  left={'10%'} height={'280px'} width={'280px'} name={worktype} markerimg={Seekimage(worktype)}
+        top={'30%'}  left={'10%'} height={'280px'} width={'280px'} name={worktype}
         />
       }
 
@@ -547,13 +547,13 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
           {/* 참고 사진 — 지도 위에 한 줄 세 칸 격자 (형 리뷰 2026-08-12) */}
           <WorkPhotoGrid photos={workinfo.WORK_PHOTOS} />
 
-          {/* 위치 지도 — 팝업 대신 화면에 바로 (형 리뷰 2026-08-12) */}
+          {/* 위치 지도 — 팝업 대신 화면에 바로 (형 리뷰 2026-08-12)
+              마커는 기본 지도핀 — 원색 아이콘 마커도 함께 정리 (형 리뷰 2026-08-14) */}
           {regionPoint && (
             <WorkLocationMap
               latitude={regionPoint.lat}
               longitude={regionPoint.lng}
               address={regionPoint.addr}
-              markerimg={Seekimage(WORKTYPE)}
             />
           )}
 

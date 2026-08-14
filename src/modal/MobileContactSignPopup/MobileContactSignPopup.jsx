@@ -8,7 +8,7 @@ import { useSpring, animated } from '@react-spring/web';
 
 
 import styled from 'styled-components';
-import { imageDB, Seekimage } from '../../utility/imageData';
+import { imageDB } from '../../utility/imageData';
 import { BetweenRow, Row } from '../../common/Row';
 import { REQUESTINFO, WORKNAME } from '../../utility/work';
 import Button from '../../common/Button';
@@ -353,7 +353,7 @@ export default function MobileContactSign({callback, messages, WORKTYPE, OWNER, 
 
             {
               popupstatus == true && <MobileWorkMapPopup callback={popupcallback} latitude={latitude} longitude={longitudie}
-              top={'30%'}  left={'10%'} height={'280px'} width={'280px'} name={worktype} markerimg={Seekimage(worktype)}
+              top={'30%'}  left={'10%'} height={'280px'} width={'280px'} name={worktype}
               />
             }
 

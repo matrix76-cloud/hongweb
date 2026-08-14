@@ -49,6 +49,8 @@ import MobileWorkpage from "./page/main/Mobileworkpage";
 import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
 
 import ReviewPage from "./dev/ReviewPage";
+import IconLab from "./dev/IconLab";
+import ListLab from "./dev/ListLab";
 import DesktopPromo from "./components/DesktopPromo";
 import "./screen/css/desktop.css";
 import PushToast from "./components/PushToast";
@@ -118,7 +120,7 @@ const App = () => {
   /* PC 랜딩 + 폰 목업 (형 지시 2026-08-13, seekone 방식).
      리뷰페이지와 PC 전용 화면은 넓게 써야 하니 목업 밖에 그대로 둔다. */
   const path = (location.pathname || "").toLowerCase();
-  const wideScreen = path.startsWith("/review") || path.startsWith("/pc");
+  const wideScreen = path.startsWith("/review") || path.startsWith("/pc") || path.startsWith("/iconlab") || path.startsWith("/listlab");
 
   const PhoneShell = ({ children }) => (
     wideScreen ? children : (
@@ -206,6 +208,12 @@ const App = () => {
       {/* 화면 리뷰 — 배포본에서도 연다. 폰으로 실물을 보며 메모를 남겨야 하기 때문 (2026-08-13).
           어디에도 링크하지 않는 숨은 경로이고, 저장은 Firestore(reviewThreads) 로 간다. */}
       <Route path="/review" element={<ReviewPage />} />
+
+      {/* 홈 아이콘 색 조합 시안 — 형이 케이스를 고르는 임시 페이지 (2026-08-15) */}
+      <Route path="/iconlab" element={<IconLab />} />
+
+      {/* 일감 리스트 카드/테이블 시안 — 형이 표현 방식을 고르는 임시 페이지 (2026-08-15) */}
+      <Route path="/listlab" element={<ListLab />} />
 
     </Routes>
     </PhoneShell>

@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/User";
 import { ReadWorkByUSERS_ID } from "../../../service/WorkService";
 import { shortRegion } from "../../../utility/region";
-import { Seekimage, Seekgrayimage } from "../../../utility/imageData";
 import { WORKSTATUS } from "../../../utility/status";
 import TimeAgo from 'react-timeago';
 import koreanStrings from "react-timeago/lib/language-strings/ko";
@@ -27,69 +26,58 @@ const Summary = styled.div`
   b { color: #FF4E19; font-weight: 700; font-size: 17px; }
 `;
 
+/* 아이콘 없는 정보 카드 — 각진 모서리, 텍스트 위계로만 (형 확정 2026-08-15, /listlab 카드 3) */
 const Card = styled.div`
   box-sizing: border-box;
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 18px;
-  margin-bottom: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
   cursor: pointer;
   &:active { background: var(--bg-soft); }
 `;
 
-const IconCircle = styled.div`
-  flex-shrink: 0;
-  width: 56px;
-  height: 56px;
-  border-radius: 100px;
-  background: var(--bg-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Info = styled.div`
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`;
-
 const TitleRow = styled.div`
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
 `;
 
 const Title = styled.div`
   font-size: 17px;
-  font-weight: 600;
-  color: var(--text);
+  font-weight: 700;
+  color: ${({ $done }) => ($done ? '#9A9A9A' : 'var(--text)')};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const Status = styled.span`
+  flex-shrink: 0;
   font-size: 13px;
-  font-weight: 600;
-  color: ${({ done }) => (done ? '#A3A3A3' : '#FF2121')};
+  font-weight: 700;
+  color: ${({ done }) => (done ? '#9A9A9A' : '#E5472F')};
 `;
 
 const Price = styled.div`
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 4px;
+  color: ${({ $done }) => ($done ? '#9A9A9A' : 'var(--text)')};
 `;
 
 const Meta = styled.div`
-  font-size: 14px;
-  color: #A3A3A3;
+  font-size: 13px;
+  color: #6F6F6F;
   display: flex;
+  justify-content: space-between;
   gap: 10px;
+  margin-top: 8px;
 `;
 
 const Empty = styled.div`
@@ -160,21 +148,15 @@ const MobileMyWork = ({ status }) => {
         return (
           <Card key={w.WORK_ID}
             onClick={() => navigate("/Mobilecontent", { state: { WORK_ID: w.WORK_ID, TYPE: w.WORKTYPE } })}>
-            <IconCircle>
-              <img src={done ? Seekgrayimage(w.WORKTYPE) : Seekimage(w.WORKTYPE)} alt={w.WORKTYPE}
-                style={{ width: 40, height: 40, objectFit: 'contain' }} />
-            </IconCircle>
-            <Info>
-              <TitleRow>
-                <Title>{w.WORKTYPE}</Title>
-                <Status done={done}>{done ? '마감' : '진행중'}</Status>
-              </TitleRow>
-              <Price>{priceOf(w)}원</Price>
-              <Meta>
-                <span>{regionOf(w)}</span>
-                <span><TimeAgo date={getFullTime(w.CREATEDT)} formatter={formatter} /></span>
-              </Meta>
-            </Info>
+            <TitleRow>
+              <Title $done={done}>{w.WORKTYPE}</Title>
+              <Status done={done}>{done ? '마감' : '진행중'}</Status>
+            </TitleRow>
+            <Price $done={done}>{priceOf(w)}원</Price>
+            <Meta>
+              <span>{regionOf(w)}</span>
+              <span><TimeAgo date={getFullTime(w.CREATEDT)} formatter={formatter} /></span>
+            </Meta>
           </Card>
         );
       })}

@@ -37,10 +37,17 @@ import NicknameEditor from "../../components/NicknameEditor";
 
 
 
+/* 홈처럼 컨테이너가 자체 스크롤을 가진다 — 화면 전체(app-frame)가 스크롤되면
+   하단 탭(fixed)이 내용을 따라 올라가 버린다 (형 리뷰 2026-08-15 "풋바가 따라 올라가나").
+   높이 = 화면 - 하단탭(76px). 하단 여백은 안쪽 패딩으로 준다. */
 const Container = styled.div`
   padding-top:55px;
+  padding-bottom: 30px;
   background-color : var(--bg-soft);
-
+  box-sizing: border-box;
+  height: calc(100dvh - 76px);
+  overflow-y: auto;
+  scrollbar-width: none;
 `
 const BoxItem = styled.div`
 
@@ -331,8 +338,8 @@ const MobileConfigcontainer =({containerStyle}) =>  {
           
 
           <RegistHong>
-            <Row style={{justifyContent:"flex-start", alignItems:"center", gap:14, width:"100%"}}>
-              <img src={imageDB.logo2} style={{width:44, height:44, objectFit:"contain", flexShrink:0}}/>
+            {/* 청소 아줌마 일러스트는 뺐다 (형 리뷰 2026-08-15) */}
+            <Row style={{justifyContent:"flex-start", alignItems:"center", width:"100%"}}>
               <div style={{fontSize:15, lineHeight:1.5, color:"var(--text)", fontWeight:500}}>
                 홍여사로 등록하면<br/>모든 일감에 지원할 수 있어요
               </div>

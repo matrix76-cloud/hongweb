@@ -2,7 +2,8 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { imageDB, Seekimage } from "../../../utility/imageData";
+import { imageDB } from "../../../utility/imageData";
+import { WorkIcon } from "../../../utility/workIcon";
 import { UserContext } from "../../../context/User";
 import { GrPrevious } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -73,7 +74,7 @@ const MobileWorkheader = ({callback, image,name}) => {
 
 
       <div style={{paddingLeft:15, display:"flex", fontWeight:700, fontSize:'16px', color:"var(--text)", alignItems:"center"}}>
-        <img src={Seekimage(image)} style={{width:32}}/>
+        <WorkIcon name={image} size={24}/>
         <div style={{paddingLeft:10}}>{name}</div>
       </div>
 

@@ -3,7 +3,7 @@ import { HashRouter, Route, BrowserRouter, Routes, useLocation, useNavigate } fr
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
 import moment from "moment";
-import { imageDB, Seekimage } from "../../utility/imageData";
+import { imageDB } from "../../utility/imageData";
 import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
@@ -1004,7 +1004,6 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
             longitude={regionPoint.lng}
             top={'25%'} left={'8%'} height={'300px'} width={'84%'}
             name={workOf(ITEM).WORKTYPE}
-            markerimg={Seekimage(workOf(ITEM).WORKTYPE)}
           />
         )
       }

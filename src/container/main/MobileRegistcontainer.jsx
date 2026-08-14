@@ -12,7 +12,8 @@ import { AroundRow, BetweenRow, Row } from "../../common/Row";
 import Fade from "react-reveal/Fade";
 import { Requestbabycaremessages, Requestbusinesscleanmessages, Requestcarryloadmessages, Requestcleanmessages, Requestdoghospitalmessages, Requestdogwalkmessages, Requesterrandmessages, Requestfoodpreparemessages, Requestgohospitalmessages, Requestgooutschoolmessages, REQUESTINFO, Requestlessonmessages, Requestmovecleanmessages, Requestpatientcaremessages, Requestrecipetranmitmessages, Requestschooleventmessages, Requestshoppingmessages, WORKNAME, WORKPOLICY } from "../../utility/work";
 import { useSleep } from "../../utility/common";
-import { imageDB, Seekimage } from "../../utility/imageData";
+import { imageDB } from "../../utility/imageData";
+import { WorkIcon } from "../../utility/workIcon";
 import Text from "../../common/Text";
 
 import Calendar from "react-calendar";
@@ -1365,7 +1366,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
         <RegistHeader>
           <HeaderTop>
             <Row style={{gap:10, alignItems:"center"}}>
-              <img src={Seekimage(type)} style={{width:36, height:36, objectFit:"contain"}}/>
+              <WorkIcon name={type} size={28}/>
               <Title>{type}</Title>
             </Row>
             <StepCount>

@@ -3,7 +3,8 @@ import { HashRouter, Route, BrowserRouter, Routes, useLocation, useNavigate } fr
 import styled from 'styled-components';
 import { UserContext } from "../../context/User";
 import moment from "moment";
-import { imageDB, Seekimage } from "../../utility/imageData";
+import { imageDB } from "../../utility/imageData";
+import { WorkIcon, workColor } from "../../utility/workIcon";
 import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import StoreInfo from "../../components/StoreInfo";
@@ -60,10 +61,16 @@ const Box = styled.div`
 
 `
 const BoxImg = styled.div`
-  background: var(--bg-soft);
+  background: ${({ $c }) => $c || "var(--icon-bg)"};
   border-radius: 100px;
-  border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
+  /* 선택 링 — 원이 주황(집안일)일 때도 보이게 흰 틈을 두고 감싼다 */
+  box-shadow: ${({$clickstatus}) => $clickstatus == true ? ('0 0 0 2px var(--surface), 0 0 0 5px #FF7125') : ('none')};
   padding: 10px;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 const RegistButton = styled.div`
     height: 50px;
@@ -88,22 +95,23 @@ const Label = styled.div`
 `
 
 
+// 아이콘은 utility/workIcon.jsx 공용 매핑 (형 리뷰 2026-08-14 — 원색 png 전부 교체)
 const WorkItems=[
-  {name : WORKNAME.HOMECLEAN, img:imageDB.house},
-  {name :WORKNAME.BUSINESSCLEAN, img:imageDB.business},
-  {name :WORKNAME.MOVECLEAN, img:imageDB.move},
-  {name :WORKNAME.FOODPREPARE, img:imageDB.cook},
-  {name :WORKNAME.ERRAND, img:imageDB.help},
-  {name :WORKNAME.GOOUTSCHOOL, img:imageDB.gooutschool},
-  {name :WORKNAME.BABYCARE, img:imageDB.babycare},
-  {name :WORKNAME.LESSON, img:imageDB.lesson},
-  {name :WORKNAME.PATIENTCARE, img:imageDB.patientcare},
-  {name :WORKNAME.CARRYLOAD, img:imageDB.carry},
-  {name :WORKNAME.GOHOSPITAL, img:imageDB.hospital},
-  {name :WORKNAME.GOSCHOOLEVENT, img:imageDB.schoolevent},
-  {name :WORKNAME.SHOPPING, img:imageDB.shopping},
-  {name :WORKNAME.GODOGHOSPITAL, img:imageDB.doghospital},
-  {name :WORKNAME.GODOGWALK, img:imageDB.dog},
+  {name : WORKNAME.HOMECLEAN},
+  {name :WORKNAME.BUSINESSCLEAN},
+  {name :WORKNAME.MOVECLEAN},
+  {name :WORKNAME.FOODPREPARE},
+  {name :WORKNAME.ERRAND},
+  {name :WORKNAME.GOOUTSCHOOL},
+  {name :WORKNAME.BABYCARE},
+  {name :WORKNAME.LESSON},
+  {name :WORKNAME.PATIENTCARE},
+  {name :WORKNAME.CARRYLOAD},
+  {name :WORKNAME.GOHOSPITAL},
+  {name :WORKNAME.GOSCHOOLEVENT},
+  {name :WORKNAME.SHOPPING},
+  {name :WORKNAME.GODOGHOSPITAL},
+  {name :WORKNAME.GODOGWALK},
 ]
 
 
@@ -219,7 +227,7 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
         <FlexstartRow style={{background:"var(--surface)", height:'80px', paddingLeft:'15%'}}>
           {
                menu != '' ? (<>
-                <img src={Seekimage(menu)} style={{width:40, height:40, marginRight:20}}/>
+                <WorkIcon name={menu} size={30} style={{marginRight:20}}/>
                 <Label>{menu}는 {checkworkstep(menu)}단계만 거치면 일감을 자유롭게 등록할수가 있습니다</Label>
                 </>) :(<div>
                 <Label>일감을 자유롭게 등록하세요</Label>
@@ -236,7 +244,7 @@ const PCWorkregistercontainer =({containerStyle}) =>  {
             {
               WorkItems.map((data, index)=>(
                 <Box onClick={()=>{_handlemenuclick(data.name)}} >
-                  <BoxImg $clickstatus={menu == data.name}><img src={data.img} style={{width:64, height:64}}/></BoxImg>
+                  <BoxImg $clickstatus={menu == data.name} $c={workColor(data.name)}><WorkIcon name={data.name} size={30} color="#fff"/></BoxImg>
                   <div style={{ fontSize:14, marginTop:10}}>{data.name}</div>
                 </Box>
               ))

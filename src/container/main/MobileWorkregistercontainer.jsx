@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { UserContext } from "../../context/User";
 import moment from "moment";
 import { imageDB } from "../../utility/imageData";
+import { WorkIcon, workColor } from "../../utility/workIcon";
 import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import StoreInfo from "../../components/StoreInfo";
@@ -57,10 +58,16 @@ const Box = styled.div`
 
 `
 const BoxImg = styled.div`
-  background: var(--bg-soft);
+  background: ${({ $c }) => $c || "var(--icon-bg)"};
   border-radius: 100px;
-  border: ${({$clickstatus}) => $clickstatus == true ? ('3px solid #FF7125') :('') };
-  padding: 10px;
+  /* 선택 링 — 원이 주황(집안일)일 때도 보이게 흰 틈을 두고 감싼다 */
+  box-shadow: ${({$clickstatus}) => $clickstatus == true ? ('0 0 0 2px var(--surface), 0 0 0 5px #FF7125') : ('none')};
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 const BoxText = styled.div`
   color: ${({$clickstatus}) => $clickstatus == true ? ('#FF7125') :('#000') };
@@ -70,24 +77,24 @@ const BoxText = styled.div`
 `
 
 
-
+// 아이콘은 utility/workIcon.jsx 공용 매핑 (형 리뷰 2026-08-14 — 원색 png 전부 교체)
+// 요리비법(RECIPETRANSMIT)은 폐지된 항목이라 목록에서 뺐다 (CORE.md)
 const WorkItems=[
-  {name : WORKNAME.HOMECLEAN, img:imageDB.house},
-  {name :WORKNAME.BUSINESSCLEAN, img:imageDB.business},
-  {name :WORKNAME.MOVECLEAN, img:imageDB.move},
-  {name :WORKNAME.FOODPREPARE, img:imageDB.cook},
-  {name :WORKNAME.ERRAND, img:imageDB.help},
-  {name :WORKNAME.GOOUTSCHOOL, img:imageDB.gooutschool},
-  {name :WORKNAME.BABYCARE, img:imageDB.babycare},
-  {name :WORKNAME.LESSON, img:imageDB.lesson},
-  {name :WORKNAME.PATIENTCARE, img:imageDB.patientcare},
-  {name :WORKNAME.CARRYLOAD, img:imageDB.carry},
-  {name :WORKNAME.GOHOSPITAL, img:imageDB.hospital},
-  {name :WORKNAME.RECIPETRANSMIT, img:imageDB.recipe},
-  {name :WORKNAME.GOSCHOOLEVENT, img:imageDB.schoolevent},
-  {name :WORKNAME.SHOPPING, img:imageDB.shopping},
-  {name :WORKNAME.GODOGHOSPITAL, img:imageDB.doghospital},
-  {name :WORKNAME.GODOGWALK, img:imageDB.dog},
+  {name : WORKNAME.HOMECLEAN},
+  {name :WORKNAME.BUSINESSCLEAN},
+  {name :WORKNAME.MOVECLEAN},
+  {name :WORKNAME.FOODPREPARE},
+  {name :WORKNAME.ERRAND},
+  {name :WORKNAME.GOOUTSCHOOL},
+  {name :WORKNAME.BABYCARE},
+  {name :WORKNAME.LESSON},
+  {name :WORKNAME.PATIENTCARE},
+  {name :WORKNAME.CARRYLOAD},
+  {name :WORKNAME.GOHOSPITAL},
+  {name :WORKNAME.GOSCHOOLEVENT},
+  {name :WORKNAME.SHOPPING},
+  {name :WORKNAME.GODOGHOSPITAL},
+  {name :WORKNAME.GODOGWALK},
 ]
 
 
@@ -170,7 +177,7 @@ const MobileWorkregistercontainer =({containerStyle}) =>  {
             {
               WorkItems.map((data, index)=>(
                 <Box onClick={()=>{_handlemenuclick(data.name)}}>
-                  <BoxImg  $clickstatus={menu == data.name}><img src={data.img} style={{width:48, height:48}}/></BoxImg>
+                  <BoxImg  $clickstatus={menu == data.name} $c={workColor(data.name)}><WorkIcon name={data.name} size={26} color="#fff"/></BoxImg>
                   <BoxText $clickstatus={menu == data.name}>{data.name}</BoxText>
                 </Box>
               ))

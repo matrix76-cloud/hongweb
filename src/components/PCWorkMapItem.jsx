@@ -6,7 +6,8 @@ import { UserContext } from "../context/User";
 import { CommaFormatted } from "../utility/money";
 import { distanceFunc } from "../utility/region";
 import { CiHeart } from "react-icons/ci";
-import { imageDB, Seekimage } from "../utility/imageData";
+import { imageDB } from "../utility/imageData";
+import { WorkIcon, workColor } from "../utility/workIcon";
 import { BetweenColumn, Column, FlexstartColumn } from "../common/Column";
 import { FiEye } from "react-icons/fi";
 import { getDateOrTime } from "../utility/date";
@@ -232,8 +233,8 @@ const PCWorkMapItem = React.forwardRef(({containerStyle, width, workdata, onPres
           </FlexstartColumn>
 
           <BetweenRow style={{height:"100%", width:"34%"}}>
-            <div style={{background:"var(--bg-soft)", height:80, width:80, borderRadius:80, display:"flex", justifyContent:"center", alignItems:"center"}}>
-            <img src={Seekimage(workdata.WORKTYPE)} style={{width:64}}/>
+            <div style={{background:workColor(workdata.WORKTYPE), height:68, width:68, borderRadius:68, display:"flex", justifyContent:"center", alignItems:"center"}}>
+            <WorkIcon name={workdata.WORKTYPE} size={32} color="#fff"/>
             </div>
           </BetweenRow>
         </Row>
