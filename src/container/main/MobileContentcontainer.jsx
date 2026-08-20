@@ -422,6 +422,67 @@ const MenuSheet = styled.div`
   border-top-right-radius: 16px;
   padding: 8px 8px calc(8px + var(--safe-bottom));
 `;
+/* 의뢰내역 — 대화방 윗줄에 늘어놓지 않고 버튼으로 연다 (형 지시 2026-08-20) */
+const RequestBtn = styled.button`
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  background: none;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  font-family: Pretendard;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  &:active { background: var(--bg-soft); }
+`;
+const SheetTitle = styled.div`
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  padding: 14px 14px 10px;
+`;
+const SheetBody = styled.div`
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0 14px 6px;
+`;
+const SheetRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 15px;
+  &:last-child { border-bottom: none; }
+`;
+const SheetLabel = styled.div`
+  flex: none;
+  width: 92px;
+  color: #A3A3A3;
+`;
+const SheetValue = styled.div`
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  word-break: break-all;
+`;
+const SheetClose = styled.button`
+  width: 100%;
+  margin-top: 6px;
+  padding: 14px;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border-soft);
+  font-family: Pretendard;
+  font-size: 16px;
+  color: var(--text);
+  cursor: pointer;
+  &:active { background: var(--bg-soft); }
+`;
+
 const MenuItem = styled.button`
   display: flex;
   align-items: center;
@@ -526,6 +587,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
   const [contactpopup, setContactpopup] = useState(false);
+  const [requestpopup, setRequestpopup] = useState(false);   // 의뢰내역 (형 지시 2026-08-20)
   const [contactsignpopup, setContactsignpopup] = useState(false);
   const [contactwritepopup, setContactwritepopup] = useState(false);
   const [paypopup, setPaypopup] = useState(false);
@@ -962,9 +1024,29 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
 
   const findPrice = () =>{
-    const FindIndex = workOf(ITEM).WORK_INFO.findIndex(x=>x.requesttype == REQUESTINFO.MONEY);
+    /* 금액 문항이 없는 일감이면 -1 이 나와 WORK_INFO[-1].result 에서 터졌다. 없으면 빈 값으로 둔다. */
+    const list = workOf(ITEM).WORK_INFO || [];
+    const FindIndex = list.findIndex(x=>x.requesttype == REQUESTINFO.MONEY);
 
-    return workOf(ITEM).WORK_INFO[FindIndex].result;
+    return FindIndex < 0 ? '' : list[FindIndex].result;
+  }
+
+  /* 의뢰할 때 답한 내용을 항목 = 답 으로 펴서 돌려준다. 대화방 윗줄에 늘어놓지 않고
+     [의뢰내역 보기] 로 연다. (형 지시 2026-08-20) */
+  const requestRows = () =>{
+    const list = workOf(ITEM).WORK_INFO || [];
+
+    return list
+      .filter(x => x.type == 'response' && x.requesttype)
+      .map(x => {
+        const v = x.result;
+        const text = (v && typeof v === 'object')
+          ? Object.values(v).filter(Boolean).join(' · ')
+          : String(v ?? '').trim();
+
+        return { label: x.requesttype, value: text };
+      })
+      .filter(x => x.value !== '');
   }
 
   const imguploadwarningcallback = () =>{
@@ -1045,6 +1127,45 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       }
 
       {
+        requestpopup == true && (
+          <MenuDim onClick={()=>{ setRequestpopup(false); }}>
+            <MenuSheet onClick={(e)=> e.stopPropagation()}>
+              <SheetTitle>의뢰내역</SheetTitle>
+              <SheetBody>
+                {workOf(ITEM).WORKTYPE && (
+                  <SheetRow>
+                    <SheetLabel>일감</SheetLabel>
+                    <SheetValue>{workOf(ITEM).WORKTYPE}</SheetValue>
+                  </SheetRow>
+                )}
+
+                <SheetRow>
+                  <SheetLabel>지역</SheetLabel>
+                  <SheetValue>
+                    {regionPoint?.addr || ITEM.OWNER.USERINFO.address_name}
+                    {regionPoint && (
+                      <MapLink onClick={()=>{ setRequestpopup(false); _handlemapview(); }}>
+                        <IoMapOutline size={14} /> 지도로 보기
+                      </MapLink>
+                    )}
+                  </SheetValue>
+                </SheetRow>
+
+                {requestRows().map((row, index)=>(
+                  <SheetRow key={index}>
+                    <SheetLabel>{row.label}</SheetLabel>
+                    <SheetValue>{row.value}</SheetValue>
+                  </SheetRow>
+                ))}
+              </SheetBody>
+
+              <SheetClose onClick={()=>{ setRequestpopup(false); }}>닫기</SheetClose>
+            </MenuSheet>
+          </MenuDim>
+        )
+      }
+
+      {
         roommenu == true && (
           <MenuDim onClick={()=>{ setRoommenu(false); }}>
             <MenuSheet onClick={(e)=> e.stopPropagation()}>
@@ -1086,17 +1207,11 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                   OWNER == true ? (<OwnerTag>의뢰</OwnerTag>):(<SupportTag>지원</SupportTag>)
                 }
 
-              {/* 거리는 같은 좌표를 두 번 넣어 늘 0 이었다. 일감 종류·지역·가격만 보여준다 (형 지시 2026-08-12) */}
-              <StoreAddr>
-                {workOf(ITEM).WORKTYPE ? `${workOf(ITEM).WORKTYPE} · ` : ''}
-                {shortRegion(regionPoint?.addr || ITEM.OWNER.USERINFO.address_name)}
-                {findPrice() ? ` · ${findPrice()}` : ''}
-                {regionPoint && (
-                  <MapLink onClick={_handlemapview}>
-                    <IoMapOutline size={14} /> 지도로 보기
-                  </MapLink>
-                )}
-              </StoreAddr>
+              {/* 종류·지역·금액·지도를 한 줄에 늘어놓던 자리다. 한 줄에 다 안 들어가 잘려서,
+                  버튼 하나로 바꾸고 내용은 눌러서 보게 했다. (형 지시 2026-08-20) */}
+              <RequestBtn onClick={()=>{ setRequestpopup(true); }}>
+                의뢰내역 보기
+              </RequestBtn>
               </FlexstartRow>
             </div>
 

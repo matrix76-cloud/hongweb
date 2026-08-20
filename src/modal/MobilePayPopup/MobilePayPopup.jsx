@@ -115,14 +115,21 @@ const Notice = styled.div`
   white-space: pre-wrap;
 `;
 
-/** 등록된 금액 문자열에서 숫자만 뽑는다 ("50,000원" -> 50000) */
+/** 등록된 금액 문자열에서 숫자만 뽑는다 ("350,000원" -> 350000).
+    콤마·단위는 버린다. "협의" 처럼 숫자가 없으면 0 이다. */
 const toNumber = (v) => {
   const n = Number(String(v ?? "").replace(/[^0-9]/g, ""));
   return Number.isFinite(n) ? n : 0;
 };
 
 const MobilePayPopup = ({ callback, amount, orderName, workId }) => {
-  const value = toNumber(amount) || 50000;
+  /* 기본값 5만원을 두면 안 된다.
+     금액을 안 적은 일감(문항이 없거나 답이 비어 있는 경우)에서 결제를 누르면
+     엉뚱하게 5만원이 청구된다. 예전에는 금액을 못 찾으면 그 위에서 예외가 나
+     여기까지 오지도 않았는데, 방어 코드가 들어가면서 조용히 통과하게 됐다.
+     금액이 없으면 결제창을 아예 열지 않는다. (2026-08-20) */
+  const value = toNumber(amount);
+  const noPrice = value <= 0;
 
   const [widgets, setWidgets] = useState(null);
   const [ready, setReady] = useState(false);
@@ -133,6 +140,8 @@ const MobilePayPopup = ({ callback, amount, orderName, workId }) => {
   const close = () => { if (typeof callback === 'function') callback([]); };
 
   useEffect(() => {
+    if (noPrice) return undefined;   // 금액이 없으면 결제창을 준비하지 않는다
+
     let alive = true;
     (async () => {
       try {
@@ -156,7 +165,7 @@ const MobilePayPopup = ({ callback, amount, orderName, workId }) => {
       }
     })();
     return () => { alive = false; };
-  }, [value]);
+  }, [value, noPrice]);
 
   const pay = async () => {
     if (!widgets || busy) return;
@@ -195,22 +204,34 @@ const MobilePayPopup = ({ callback, amount, orderName, workId }) => {
 
         <Summary>
           <Row>일감<b>{orderName || "구해줘 홍여사"}</b></Row>
-          <Total>결제 금액<b>{won(value)}</b></Total>
+          <Total>결제 금액<b>{noPrice ? "미정" : won(value)}</b></Total>
         </Summary>
 
-        <div id="payment-method" />
-        <div id="agreement" />
+        {noPrice ? (
+          <>
+            <Warn>
+              {"이 일감에는 금액이 정해져 있지 않습니다.\n"
+                + "대화방에서 금액을 먼저 정한 뒤에 결제해주세요."}
+            </Warn>
+            <PayBtn onClick={close}>대화로 돌아가기</PayBtn>
+          </>
+        ) : (
+          <>
+            <div id="payment-method" />
+            <div id="agreement" />
 
-        {err && <Warn>{err}</Warn>}
+            {err && <Warn>{err}</Warn>}
 
-        <PayBtn onClick={pay} disabled={!ready || busy}>
-          {busy ? "결제창을 여는 중..." : `${won(value)} 결제하기`}
-        </PayBtn>
+            <PayBtn onClick={pay} disabled={!ready || busy}>
+              {busy ? "결제창을 여는 중..." : `${won(value)} 결제하기`}
+            </PayBtn>
 
-        <Notice>
-          {"결제한 돈은 일이 끝날 때까지 홍컴즈가 맡아둡니다.\n"
-            + "일이 끝나고 확인되면 홍여사에게 전달됩니다."}
-        </Notice>
+            <Notice>
+              {"결제한 돈은 일이 끝날 때까지 홍컴즈가 맡아둡니다.\n"
+                + "일이 끝나고 확인되면 홍여사에게 전달됩니다."}
+            </Notice>
+          </>
+        )}
       </Sheet>
     </Dim>
   );
