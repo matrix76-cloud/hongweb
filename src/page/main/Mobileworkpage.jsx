@@ -51,7 +51,7 @@ const MobileWorkpage =() =>  {
   return (
 
     <MobileWorkLayout image={location.state.WORKTYPE} name={location.state.WORKTYPE + '일감정보'} type={MOBILEMAINMENU.REGIONMENU}>
-        <MobileWorkcontainer  WORK_ID={location.state.WORK_ID} TYPE={location.state.TYPE}  />
+        <MobileWorkcontainer  WORK_ID={location.state.WORK_ID} TYPE={location.state.TYPE} FROMCHAT={location.state.FROMCHAT}  />
     </MobileWorkLayout>
   );
 

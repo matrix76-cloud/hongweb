@@ -280,7 +280,10 @@ const ActionButtons = styled.div`
   & > * { flex: 1 1 0; min-width: 0; }
 `
 
-const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STATUS}) =>  {
+/* FROMCHAT — 대화방에서 [의뢰내역 보기] 로 들어온 경우. 이미 지원해서 연결된 사이라
+   "이미 지원한 일감" 같은 안내나 지원하기 버튼이 알려줄 게 없어 하단 줄을 통째로 숨긴다.
+   홈에서 들어올 때는 예전 그대로다. (형 지시 2026-08-20) */
+const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STATUS, FROMCHAT}) =>  {
 
 /** 제목 정리
  ** 설명
@@ -557,6 +560,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
             />
           )}
 
+          {FROMCHAT != true && (
           <ActionBar>
    
 
@@ -597,6 +601,7 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
          )
        }
           </ActionBar>
+          )}
           </>)
       }
 

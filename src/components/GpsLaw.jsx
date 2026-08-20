@@ -38,7 +38,6 @@ const ColumnItem = styled.div`
 `
 const Indexno = styled.div`
     color: #849dd2;
-    font-weight: 600;
 `
 const Label  = styled.div`
     margin-left:20px;
@@ -99,7 +98,7 @@ const GpsLaw =({containerStyle}) =>  {
             GPSLAW.map((data, index)=>(
                 <div onClick={()=>{_handleView(index)}}>
                     <RowItem>
-                        <Row style={{fontSize:20, fontWeight:700}}>
+                        <Row style={{fontSize:18}}>
                             <Indexno>{data.INDEX}</Indexno>
                             <Label>{data.LABEL}</Label>
                         </Row>
@@ -111,7 +110,7 @@ const GpsLaw =({containerStyle}) =>  {
                     </RowItem>       
                     {
                         data.OPEN == true &&      
-                        <ul style={{lineHeight:2, padding:20, background:'#f0f0f0',  paddingLeft: 40}}>
+                        <ul style={{lineHeight:2, padding:20, background:'var(--surface)',  paddingLeft: 40}}>
                             {
                                 data.CONTENT.map((subdata, index)=>(
                                     <li style={{margin:"10px 0px",listStyleType: "decimal", whiteSpace:'pre-line'}}

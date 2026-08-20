@@ -8,7 +8,7 @@ import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import { Column, FlexstartColumn } from "../../common/Column";
-import { CHATCONTENTTYPE, CHATIMAGETYPE, EventItems, PCCOMMNUNITYMENU } from "../../utility/screen";
+import { CHATCONTENTTYPE, CHATIMAGETYPE, EventItems, FILTERITMETYPE, PCCOMMNUNITYMENU } from "../../utility/screen";
 import Empty from "../../components/Empty";
 import Button from "../../common/Button";
 import { DataContext } from "../../context/Data";
@@ -46,6 +46,7 @@ import MobileContactSign from "../../modal/MobileContactSignPopup/MobileContactS
 import MobileContactDoc from "../../modal/MobileContactDocPopup/MobileContactDocPopup";
 import MobilePayPopup from "../../modal/MobilePayPopup/MobilePayPopup";
 import { startCall } from "../../service/CallService";
+import { ReadWorkByIndividually } from "../../service/WorkService";
 
 const Container = styled.div`
     background-color : var(--surface);
@@ -438,51 +439,6 @@ const RequestBtn = styled.button`
   cursor: pointer;
   &:active { background: var(--bg-soft); }
 `;
-const SheetTitle = styled.div`
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-  padding: 14px 14px 10px;
-`;
-const SheetBody = styled.div`
-  max-height: 60vh;
-  overflow-y: auto;
-  padding: 0 14px 6px;
-`;
-const SheetRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 11px 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: 15px;
-  &:last-child { border-bottom: none; }
-`;
-const SheetLabel = styled.div`
-  flex: none;
-  width: 92px;
-  color: #A3A3A3;
-`;
-const SheetValue = styled.div`
-  flex: 1;
-  min-width: 0;
-  color: var(--text);
-  word-break: break-all;
-`;
-const SheetClose = styled.button`
-  width: 100%;
-  margin-top: 6px;
-  padding: 14px;
-  background: none;
-  border: none;
-  border-top: 1px solid var(--border-soft);
-  font-family: Pretendard;
-  font-size: 16px;
-  color: var(--text);
-  cursor: pointer;
-  &:active { background: var(--bg-soft); }
-`;
-
 const MenuItem = styled.button`
   display: flex;
   align-items: center;
@@ -587,7 +543,6 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
   const [contactpopup, setContactpopup] = useState(false);
-  const [requestpopup, setRequestpopup] = useState(false);   // 의뢰내역 (형 지시 2026-08-20)
   const [contactsignpopup, setContactsignpopup] = useState(false);
   const [contactwritepopup, setContactwritepopup] = useState(false);
   const [paypopup, setPaypopup] = useState(false);
@@ -885,6 +840,32 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
     }
   }
 
+  /* 올린 사람이 보이스톡을 허용한 일감인가. (형 지시 2026-08-20)
+   *
+   * 대화방이 들고 있는 INFO 는 방을 만들 때 굳은 복사본이다. 일감 주인이 나중에
+   * 설정을 바꿔도 이미 열린 방에는 반영되지 않는다. 그래서 WORK_ID 로 지금 값을 다시 읽는다.
+   * 일감 상세(MobileWorkReport)도 같은 방식으로 읽고 있어서 두 화면이 어긋나지 않는다.
+   */
+  const [voiceAllowed, setVoiceAllowed] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    const WORK_ID = workOf(ITEM)?.WORK_ID;
+    if (!WORK_ID) return undefined;
+
+    (async () => {
+      try {
+        const w = await ReadWorkByIndividually({ WORK_ID });
+        if (alive) setVoiceAllowed(w?.WORK_OPTION?.VOICETALK === true);
+      } catch (e) {
+        // 못 읽으면 안 보여주는 쪽으로 둔다 — 안 받겠다는 사람에게 전화가 가면 안 된다
+        if (alive) setVoiceAllowed(false);
+      }
+    })();
+
+    return () => { alive = false; };
+  }, [ITEM?.CHAT_ID]);
+
   // 결제 (의뢰한 사람만 누를 수 있다)
   const _handlepay = () =>{
     setPaypopup(true);
@@ -1031,22 +1012,17 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
     return FindIndex < 0 ? '' : list[FindIndex].result;
   }
 
-  /* 의뢰할 때 답한 내용을 항목 = 답 으로 펴서 돌려준다. 대화방 윗줄에 늘어놓지 않고
-     [의뢰내역 보기] 로 연다. (형 지시 2026-08-20) */
-  const requestRows = () =>{
-    const list = workOf(ITEM).WORK_INFO || [];
-
-    return list
-      .filter(x => x.type == 'response' && x.requesttype)
-      .map(x => {
-        const v = x.result;
-        const text = (v && typeof v === 'object')
-          ? Object.values(v).filter(Boolean).join(' · ')
-          : String(v ?? '').trim();
-
-        return { label: x.requesttype, value: text };
-      })
-      .filter(x => x.value !== '');
+  /* 의뢰내역은 홈에서 일감을 눌렀을 때와 같은 화면(/Mobilework)으로 보낸다.
+     시트로 따로 그리다가, 홈에서 보던 것과 같게 해달라고 하셔서 그 화면을 그대로 쓴다. (형 지시 2026-08-20) */
+  const _handlerequestview = () =>{
+    navigate("/Mobilework", {
+      state: {
+        WORK_ID : workOf(ITEM).WORK_ID,
+        TYPE : FILTERITMETYPE.HONG,
+        WORKTYPE : workOf(ITEM).WORKTYPE || ITEM.WORKTYPE || '',
+        FROMCHAT : true,          // 하단 지원 버튼줄을 숨긴다 (형 지시 2026-08-20)
+      },
+    });
   }
 
   const imguploadwarningcallback = () =>{
@@ -1127,45 +1103,6 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       }
 
       {
-        requestpopup == true && (
-          <MenuDim onClick={()=>{ setRequestpopup(false); }}>
-            <MenuSheet onClick={(e)=> e.stopPropagation()}>
-              <SheetTitle>의뢰내역</SheetTitle>
-              <SheetBody>
-                {workOf(ITEM).WORKTYPE && (
-                  <SheetRow>
-                    <SheetLabel>일감</SheetLabel>
-                    <SheetValue>{workOf(ITEM).WORKTYPE}</SheetValue>
-                  </SheetRow>
-                )}
-
-                <SheetRow>
-                  <SheetLabel>지역</SheetLabel>
-                  <SheetValue>
-                    {regionPoint?.addr || ITEM.OWNER.USERINFO.address_name}
-                    {regionPoint && (
-                      <MapLink onClick={()=>{ setRequestpopup(false); _handlemapview(); }}>
-                        <IoMapOutline size={14} /> 지도로 보기
-                      </MapLink>
-                    )}
-                  </SheetValue>
-                </SheetRow>
-
-                {requestRows().map((row, index)=>(
-                  <SheetRow key={index}>
-                    <SheetLabel>{row.label}</SheetLabel>
-                    <SheetValue>{row.value}</SheetValue>
-                  </SheetRow>
-                ))}
-              </SheetBody>
-
-              <SheetClose onClick={()=>{ setRequestpopup(false); }}>닫기</SheetClose>
-            </MenuSheet>
-          </MenuDim>
-        )
-      }
-
-      {
         roommenu == true && (
           <MenuDim onClick={()=>{ setRoommenu(false); }}>
             <MenuSheet onClick={(e)=> e.stopPropagation()}>
@@ -1209,7 +1146,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
               {/* 종류·지역·금액·지도를 한 줄에 늘어놓던 자리다. 한 줄에 다 안 들어가 잘려서,
                   버튼 하나로 바꾸고 내용은 눌러서 보게 했다. (형 지시 2026-08-20) */}
-              <RequestBtn onClick={()=>{ setRequestpopup(true); }}>
+              <RequestBtn onClick={_handlerequestview}>
                 의뢰내역 보기
               </RequestBtn>
               </FlexstartRow>
@@ -1235,10 +1172,15 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                   />
                 )}
 
-                {/* 보이스톡 (2026-08-13) */}
-                <MoreBtn onClick={_handlevoice} aria-label="음성통화">
-                  <IoCallOutline size={19} color="var(--text)" />
-                </MoreBtn>
+                {/* 보이스톡 — 올린 사람이 허용한 일감에서만 (형 지시 2026-08-20)
+                    일감 상세(MobileWorkReport)는 예전부터 이 조건을 보고 있었는데
+                    대화방에만 빠져 있었다. 안 받겠다고 한 일감에서도 버튼이 보이고
+                    누르면 그대로 전화가 걸렸다. */}
+                {voiceAllowed && (
+                  <MoreBtn onClick={_handlevoice} aria-label="음성통화">
+                    <IoCallOutline size={19} color="var(--text)" />
+                  </MoreBtn>
+                )}
 
                 {/* 나가기 · 신고 · 차단 */}
                 <MoreBtn onClick={()=>{ setRoommenu(true); }} aria-label="더보기">

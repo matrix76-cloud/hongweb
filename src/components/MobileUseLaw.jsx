@@ -13,7 +13,10 @@ import { IoIosArrowUp  } from "react-icons/io";
 import { ref } from "firebase/storage";
 
 const Container = styled.div`
-    font-size: 14px;
+    font-size: 15px;
+    /* 뒤에 깔린 연회색이 비쳐 바탕이 회색으로 보였다 — 약관 화면은 흰 바탕으로 (형 지시 2026-08-20) */
+    background: var(--surface);
+    min-height: 100vh;
     /* 약관이 세로로 이어 붙는 화면이라 앞 약관과 붙어 시작 지점이 안 보였다.
        제목 위에 여백을 준다. (형 리뷰 2026-08-12) */
     padding-top: 28px;
@@ -37,7 +40,6 @@ const ColumnItem = styled.div`
 `
 const Indexno = styled.div`
     color: #849dd2;
-    font-weight: 600;
 `
 const Label  = styled.div`
     margin-left:20px;
@@ -99,7 +101,7 @@ const MobileUseLaw =({containerStyle}) =>  {
             USELAW.map((data, index)=>(
                 <div onClick={()=>{_handleView(index)}}>
                     <RowItem>
-                        <Row style={{fontSize:14, fontWeight:700}}>
+                        <Row style={{fontSize:15}}>
                             <Indexno>{data.INDEX}</Indexno>
                             <Label>{data.LABEL}</Label>
                         </Row>
@@ -111,7 +113,7 @@ const MobileUseLaw =({containerStyle}) =>  {
                     </RowItem>       
                     {
                         data.OPEN == true &&      
-                        <ul style={{lineHeight:2, padding:20, background:'#f0f0f0',  paddingLeft: 40}}>
+                        <ul style={{lineHeight:2, padding:20, background:'var(--surface)',  paddingLeft: 40}}>
                             {
                                 data.CONTENT.map((subdata, index)=>(
                                     <li style={{margin:"10px 0px",listStyleType: "decimal", whiteSpace:'pre-line'}}

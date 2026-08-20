@@ -45,7 +45,7 @@ const LoadingAnimationStyle={
 
 
 
-const MobileWorkcontainer =({containerStyle, WORK_ID, TYPE}) =>  {
+const MobileWorkcontainer =({containerStyle, WORK_ID, TYPE, FROMCHAT}) =>  {
 console.log("TCL: MobileWorkcontainer -> TYPE", TYPE)
 console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
 
@@ -104,7 +104,7 @@ console.log("TCL: MobileWorkcontainer -> WORK_ID", WORK_ID)
         />) :( <Column>
           {/* 안내 한 줄 대신 요약 헤더를 MobileWorkReport 안에서 보여준다 (형 리뷰 2026-08-13) */}
           <div style={{height: 62}} />
-          <MobileWorkReport messages={messages} WORK_ID = {WORK_ID} WORKTYPE={worktype} WORK_STATUS={workstatus}/>
+          <MobileWorkReport messages={messages} WORK_ID = {WORK_ID} WORKTYPE={worktype} WORK_STATUS={workstatus} FROMCHAT={FROMCHAT}/>
         </Column>)
     } 
     </Container>

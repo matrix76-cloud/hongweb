@@ -15,7 +15,10 @@ import { LAWTYPE } from "../utility/screen";
 
 const Container = styled.div`
     width:100%;
-    font-size: 14px;
+    font-size: 15px;
+    /* 뒤에 깔린 연회색이 비쳐 바탕이 회색으로 보였다 — 약관 화면은 흰 바탕으로 (형 지시 2026-08-20) */
+    background: var(--surface);
+    min-height: 100vh;
     /* 앞 약관과 붙어 시작 지점이 안 보였다 (형 리뷰 2026-08-12) */
     padding-top: 28px;
 `
@@ -30,7 +33,6 @@ const RowItem = styled.div`
 
 const Indexno = styled.div`
     color: #849dd2;
-    font-weight: 600;
 `
 const Label  = styled.div`
     margin-left:20px;
@@ -92,7 +94,7 @@ const MobileGpsLaw =({containerStyle}) =>  {
             GPSLAW.map((data, index)=>(
                 <div onClick={()=>{_handleView(index)}}>
                     <RowItem>
-                        <Row style={{fontSize:14, fontWeight:700}}>
+                        <Row style={{fontSize:15}}>
                             <Indexno>{data.INDEX}</Indexno>
                             <Label>{data.LABEL}</Label>
                         </Row>
@@ -104,7 +106,7 @@ const MobileGpsLaw =({containerStyle}) =>  {
                     </RowItem>       
                     {
                         data.OPEN == true &&      
-                        <ul style={{lineHeight:2, padding:20, background:'#f0f0f0',  paddingLeft: 40}}>
+                        <ul style={{lineHeight:2, padding:20, background:'var(--surface)',  paddingLeft: 40}}>
                             {
                                 data.CONTENT.map((subdata, index)=>(
                                     <li style={{margin:"10px 0px",listStyleType: "decimal", whiteSpace:'pre-line'}}
