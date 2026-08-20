@@ -11,7 +11,9 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   font-weight:700;
-  margin-left:15px;
+  /* 목록 컨테이너가 이미 좌측 15px 를 들여쓴다 — 여기서 또 주면 이 줄만 안으로 밀린다.
+     화면의 좌측 라인을 하나로 맞춘다 (형 지적 2026-08-19) */
+  margin-left:0;
   margin-bottom:10px;
   font-family : 'Pretendard-SemiBold';
 

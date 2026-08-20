@@ -13,7 +13,7 @@ import { DataContext } from "../../context/Data";
 import { DeleteWorkByUSER_ID, ReadWork } from "../../service/WorkService";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import Loading from "../../components/Loading";
-import { FILTERITEMDISTANCE, FILTERITEMPERIOD, FILTERITEMPROCESS, FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
+import { CONFIGMOVE, FILTERITEMDISTANCE, FILTERITEMPERIOD, FILTERITEMPROCESS, FILTERITMETYPE, LoadingType, PCMAINMENU } from "../../utility/screen";
 import { distanceFunc } from "../../utility/region";
 import { WORKSTATUS } from "../../utility/status";
 import Position from "../../components/Position";
@@ -24,6 +24,7 @@ import MobileWorkItem from "../../components/MobileWorkItem";
 import Label from "../../common/Label";
 import { GoNoEntry } from "react-icons/go";
 import { WorkIcon, workColor } from "../../utility/workIcon";
+import HomePromoBanner from "../../components/HomePromoBanner";
 
 import "./MobileMaincontainer.css";
 import MobileStoreInfo from "../../components/MobileStoreInfo";
@@ -32,6 +33,7 @@ import { useSleep } from "../../utility/common";
 import { FILTERNAME } from "../../utility/fitler";
 
 import { FiTerminal } from "react-icons/fi";
+import { RiArrowRightSLine } from "react-icons/ri";
 import MobileServiceFilter from "../../modal/MobileServiceFilterPopup/MobileServiceFilter";
 import MobilePriceFilter from "../../modal/MobilePriceFilterPopup/MobilePriceFilter";
 import MobilePeriodFilter from "../../modal/MobilePeriodFilterPopup/MobilePeriodFilter";
@@ -43,6 +45,7 @@ import Empty from "../../components/Empty";
 import MobileSuccessPopup from "../../modal/MobileSuccessPopup/MobileSuccessPopup";
 import { RESET } from "../../store/menu/MenuSlice";
 import { ReadSupportersByWork } from "../../service/ChatService";
+import { getNearbyWorkerCount } from "../../service/WorkerService";
 import { isGuestUser, LOGIN_NEEDED } from "../../utility/guest";
 import LoginGate from "../../components/LoginGate";
 import { LoadingMainAnimationStyle } from "../../screen/css/common";
@@ -95,9 +98,10 @@ const Box = styled.div`
   transition: transform .12s ease;
 `
 const BoxImg = styled.div`
-  /* 원이 아이콘에 비해 너무 컸다 — 한 단계 줄임 (형 2026-08-15) */
-  width: 54px;
-  height: 54px;
+  /* 원이 아이콘에 비해 너무 컸다 — 한 단계 줄임 (형 2026-08-15)
+     배너가 위에 들어오면서 아직 크다고 하셔서 한 번 더 줄임 (형 리뷰 2026-08-16) */
+  width: 48px;
+  height: 48px;
   border-radius: 100px;
   background: ${({ $c }) => $c || "var(--icon-bg)"};
   display: flex;
@@ -209,35 +213,58 @@ const Bannerstyle={
 
 /* 관광지 배너 자리에 들어간 이용 안내 (형 리뷰 2026-08-12)
    CORE 의 ①~③ 흐름을 그대로 세 줄로 보여준다. */
-const GuideCard = styled.div`
-  width: 100%;
-  box-sizing: border-box;
-  background: var(--bg-soft);
-  border: 1px solid var(--border-soft);
-  border-radius: 12px;
-  padding: 18px 20px;
-`
-const GuideTitle = styled.div`
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 12px;
-`
-const GuideStep = styled.div`
+/* 예전엔 여기가 "일손이 필요하세요? 1·2·3" 안내였는데, 위 배너가 같은 말을 하고 있어
+   지금 동네가 얼마나 돌아가고 있는지 알리는 자리로 바꿨다 (형 리뷰 2026-08-16).
+   문장으로 썼더니 읽고 끝이라, 눌러서 이어갈 수 있는 요약 버튼으로 다시 바꿨다
+   (형 리뷰 2026-08-16 "이부분을 요약 버튼으로 해서 만들어줘") */
+const PromoRow = styled.div`
   display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  font-size: 15px;
-  line-height: 1.55;
-  color: #4B4B4B;
-  & + & {
-    margin-top: 9px;
-  }
+  gap: 8px;
+  width: 100%;
 `
-const GuideNo = styled.span`
-  flex-shrink: 0;
-  color: #FF4E19;
-  font-weight: 700;
+/* 남색 단색 (형 확정 2026-08-20 — /statlab 02안).
+   먹색으로 갔다가 바꿨다. 위 일 종류 격자를 채도 낮춘 색으로 바꾸고 나니
+   이 두 칸만 새까매서 따로 놀았다. 격자 첫 줄(청소)과 같은 색을 써서 한 벌로 묶는다. */
+const PromoBtn = styled.div`
+  flex: 1 1 0;
+  min-width: 0;
+  box-sizing: border-box;
+  background: #3C6E9F;
+  border-radius: 10px;
+  padding: 13px 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  &:active { transform: scale(0.98); }
+  transition: transform .12s ease;
+`
+const PromoBtnLabel = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 14px;
+  color: #ffffff;
+  opacity: .8;
+`
+const PromoBtnNum = styled.div`
+  margin-top: 6px;
+  font-size: 20px;
+  font-family: 'Pretendard-Bold';
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+`
+const PromoBtnUnit = styled.span`
+  font-size: 15px;
+  margin-left: 2px;
+`
+/* 숫자만 있으면 무슨 숫자인지 한 번 더 생각해야 한다 — 한 줄로 짚어준다 (형 지시 2026-08-19) */
+const PromoBtnDesc = styled.div`
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #ffffff;
+  opacity: .75;
 `
 
 const Inputstyle ={
@@ -351,6 +378,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
   const [supporters, setSupporters] = useState({});
   /* 둘러보기 중 로그인이 필요한 걸 눌렀을 때 띄우는 안내 (형 리뷰 2026-08-13) */
   const [logingate, setLogingate] = useState(null);
+  /* 홈 홍보 한 줄에 쓰는 활동 중인 홍여사 수 (형 리뷰 2026-08-16) */
+  const [workercount, setWorkercount] = useState(0);
   const [currentloading, setCurrentloading] = useState(false);
   const [menu, setMenu] = useState('');
 
@@ -388,6 +417,26 @@ const MobileMaincontainer =({containerStyle}) =>  {
   }, []);
 
 
+
+  /* 요약 버튼에서 아래 일감 목록으로 내려가는 자리 (형 리뷰 2026-08-16) */
+  const listRef = useRef(null);
+
+  const _handleScrollToList = () => {
+    listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const _handleAboutHong = () => {
+    navigate("/Mobileconfigcontent", { state: { NAME: CONFIGMOVE.ABOUT, TYPE: "" } });
+  };
+
+  /* 활동 중인 홍여사 수 — 전체가 아니라 '내 주변' 이다.
+     범위는 내 정보 > 나의 범위설정 값을 그대로 쓴다 (형 지시 2026-08-19). */
+  useEffect(()=>{
+    let alive = true;
+    getNearbyWorkerCount({ latitude: user.latitude, longitude: user.longitude })
+      .then((n)=>{ if(alive) setWorkercount(n); });
+    return ()=>{ alive = false; };
+  }, [user.latitude, user.longitude]);
 
   useEffect(() => {
     if (document.activeElement.tagName === 'INPUT') {
@@ -955,17 +1004,22 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
 
 
+              {/* 홍여사가 어떤 서비스인지 세 장으로 알려주는 자리 (형 확정 2026-08-16, /bannerlab 4안).
+                  누를 데는 없다 — 배너 안에서 읽고 끝난다. */}
+              <HomePromoBanner />
+
               {/* 이 격자는 누르면 그 종류의 일 등록으로 가는 진입점이다.
                   "홍여사 서비스"는 뭘 하라는 건지 안 알려줘서 행동을 부르는 말로 바꿨다 (형 리뷰 2026-08-12) */}
-              <Label label={'무슨 일을 맡기실까요?'} containerStyle={{background:'var(--surface)'}} />
+              {/* 배너 바로 밑에 붙어 답답하다고 하셔서 위쪽을 띄웠다 (형 리뷰 2026-08-16) */}
+              <Label label={'무슨 일을 맡기실까요?'} containerStyle={{background:'var(--surface)', marginTop:'16px', paddingLeft:'15px', boxSizing:'border-box'}} />
 
 
-              <Column style={{width:"100%", padding:"0 14px", boxSizing:"border-box"}}>
+              <Column style={{width:"100%", padding:"0 15px", boxSizing:"border-box"}}>
                 <CategoryGrid>
                   {
                     WorkItems.map((data, index)=>(
                       <Box key={index} onClick={()=>{_handlebasicmenuclick(data.name)}}>
-                        <BoxImg $c={workColor(data.name)}><WorkIcon name={data.name} size={28} color="#fff"/></BoxImg>
+                        <BoxImg $c={workColor(data.name)}><WorkIcon name={data.name} size={25} color="#fff"/></BoxImg>
                         <BoxLabel>{data.name}</BoxLabel>
                       </Box>
                     ))
@@ -974,21 +1028,33 @@ const MobileMaincontainer =({containerStyle}) =>  {
               </Column>
 
 
-              <Column style={{width:"100%", padding:"0 24px", margin:"24px auto 0px", boxSizing:"border-box"}}>
-                <GuideCard>
-                  <GuideTitle>일손이 필요하세요?</GuideTitle>
-                  <GuideStep><GuideNo>1</GuideNo><span>위에서 필요한 일을 골라 등록하세요.</span></GuideStep>
-                  <GuideStep><GuideNo>2</GuideNo><span>가까운 홍여사들이 지원합니다.</span></GuideStep>
-                  <GuideStep><GuideNo>3</GuideNo><span>마음에 드는 분을 골라 연결됩니다.</span></GuideStep>
-                </GuideCard>
-              </Column>
+              {/* 수치가 아직 안 들어왔을 땐 아예 안 보여준다 — "0건 올라와 있습니다"는 홍보가 아니라 역효과 */}
+              {(workitems.length > 0 || workercount > 0) && (
+                <Column style={{width:"100%", padding:"0 15px", margin:"22px auto 0px", boxSizing:"border-box"}}>
+                  <PromoRow>
+                    <PromoBtn onClick={_handleScrollToList}>
+                      <PromoBtnLabel>내 주변 일감<RiArrowRightSLine size={18}/></PromoBtnLabel>
+                      <PromoBtnNum>{workitems.length}<PromoBtnUnit>건</PromoBtnUnit></PromoBtnNum>
+                      <PromoBtnDesc>지금 동네에 올라온 일</PromoBtnDesc>
+                    </PromoBtn>
+                    <PromoBtn onClick={_handleAboutHong}>
+                      <PromoBtnLabel>활동 중인 홍여사<RiArrowRightSLine size={18}/></PromoBtnLabel>
+                      <PromoBtnNum>{workercount}<PromoBtnUnit>명</PromoBtnUnit></PromoBtnNum>
+                      <PromoBtnDesc>내 범위 안에서 일하는 중</PromoBtnDesc>
+                    </PromoBtn>
+                  </PromoRow>
+                </Column>
+              )}
 
           </Column>
+
+          {/* 위 요약 버튼이 여기로 내려온다 */}
+          <div ref={listRef} />
 
           <StickyPos>
           {/* 목록에도 제목을 붙인다. 필터와 같이 위에 붙어 있어야 스크롤해도 무엇을 보는지 안다
               (형 리뷰 2026-08-13 "아래 일감리스트에도 라벨이 들어가야 할거같음") */}
-          <Label label={'내 주변에 올라온 일감'} containerStyle={{background:'var(--surface)', height:'auto', padding:'2px 0 10px'}} />
+          <Label label={'내 주변에 올라온 일감'} containerStyle={{background:'var(--surface)', height:'auto', padding:'2px 0 10px 15px', boxSizing:'border-box'}} />
           <div className="new-div">
             {
               FilterItems.map((data, index)=>(

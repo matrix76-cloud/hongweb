@@ -26,8 +26,15 @@ const C = {
 };
 const FONT = "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif";
 
-// 좌측 미리보기 = 실제 폰 사이즈. 360x800 (안드로이드 20:9 표준)
-const PHONE = { w: 360, h: 800 };
+/* 좌측 미리보기 = 실제 폰 사이즈(CSS 픽셀 기준).
+   360x800 은 구형 안드로이드 기준이라 요즘 폰보다 좁다 → 프리셋으로 고를 수 있게 (2026-08-16) */
+const PHONES = [
+  { key: 'a360', label: '안드로이드 (구형)', w: 360, h: 800 },
+  { key: 'i393', label: '아이폰 15/16', w: 393, h: 852 },
+  { key: 's412', label: '갤럭시 S/A', w: 412, h: 915 },
+  { key: 'i430', label: '아이폰 Pro Max', w: 430, h: 932 },
+];
+const PHONE_KEY = 'hongweb.review.phone';
 
 const ALL = DOMAINS.flatMap((d) => d.screens.map((s) => ({ ...s, domain: d.key })));
 
@@ -58,6 +65,15 @@ export default function ReviewPage() {
   const [sharing, setSharing] = useState(false);
   const [zoom, setZoom] = useState(null);
   const [seedmsg, setSeedmsg] = useState('');
+  const [phoneKey, setPhoneKey] = useState(() => localStorage.getItem(PHONE_KEY) || 'i393');
+  const [winH, setWinH] = useState(() => window.innerHeight);
+
+  const PHONE = PHONES.find((p) => p.key === phoneKey) || PHONES[1];
+
+  /* 폰이 브라우저 창보다 길면 아래(하단 탭바)가 잘려서 안 보인다 → 창 높이에 맞춰 자동 축소.
+     핀 좌표는 %, 캡처는 iframe 실측이라 축소해도 그대로 맞는다. (형 지적 2026-08-16) */
+  const TOOLBAR_H = 46;
+  const scale = Math.min(1, (winH - 34 - TOOLBAR_H) / PHONE.h);
 
   const frameRef = useRef(null);
   const videoRef = useRef(null);
@@ -70,6 +86,11 @@ export default function ReviewPage() {
   const load = () => loadThread().then(setThread).catch(() => setThread({}));
 
   useEffect(() => { load(); }, []);
+  useEffect(() => {
+    const onResize = () => setWinH(window.innerHeight);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
   useEffect(() => {
     setPins([]); setViewPins(null); setPinMode(false); setReplyTo(null); setAttachImgs([]);
   }, [curId]);
@@ -225,6 +246,20 @@ export default function ReviewPage() {
         {busy && <span style={{ fontSize: 14, color: C.brand, fontWeight: 700 }}>{busy}</span>}
 
         <div style={{ flex: 1 }} />
+
+        {/* 기기 크기 — 맨 위로 올렸다. 화면을 바꿔 볼 때마다 왼쪽 칸까지 눈이 내려갔다 (형 지시 2026-08-20) */}
+        <select
+          value={phoneKey}
+          onChange={(e) => { setPhoneKey(e.target.value); localStorage.setItem(PHONE_KEY, e.target.value); }}
+          style={{
+            fontFamily: FONT, fontSize: 14, color: C.ink, padding: '6px 8px',
+            border: `1px solid ${C.line}`, borderRadius: 8, background: 'var(--surface)', cursor: 'pointer',
+          }}>
+          {PHONES.map((p) => (
+            <option key={p.key} value={p.key}>{p.label} {p.w}×{p.h}</option>
+          ))}
+        </select>
+
         {/* 채팅 화면을 보려면 대화방이 있어야 하는데 방은 지원하기를 눌러야 생긴다.
             지금 앱에 로그인된 계정으로 방과 대화를 만들어 넣는다. (형 요청 2026-08-12) */}
         <button style={{ ...btn(false), padding: '6px 11px' }} onClick={makeSeed} disabled={!!busy}>채팅 시드 5개</button>
@@ -241,7 +276,7 @@ export default function ReviewPage() {
 
         {/* ── 좌: 실제 화면 (스크롤해도 붙어있게 고정 — 우측 기록만 흐른다) ── */}
         <div style={{ flexShrink: 0, position: 'sticky', top: 12, alignSelf: 'flex-start' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap', width: PHONE.w }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, flexWrap: 'wrap', width: Math.round(PHONE.w * scale) }}>
             <button style={btn(pinMode)} onClick={() => { setPinMode((v) => !v); setViewPins(null); }}>
               {pinMode ? '핀 찍는 중' : '핀 찍기'}
             </button>
@@ -255,10 +290,19 @@ export default function ReviewPage() {
             {viewPins && <button style={{ ...btn(false), padding: '6px 9px' }} onClick={() => setViewPins(null)}>보기 끄기</button>}
             {sharing && <button style={{ ...btn(false), padding: '6px 9px' }} onClick={stopShare}>공유 중지</button>}
             <div style={{ flex: 1 }} />
-            <span style={{ fontSize: 13, color: C.gray2 }}>{PHONE.w} × {PHONE.h}</span>
+            {scale < 1 && (
+              <span style={{ fontSize: 13, color: C.gray }} title="창 높이에 맞춰 줄여서 보여준다 (실제 크기는 아래 선택값)">
+                {Math.round(scale * 100)}%
+              </span>
+            )}
           </div>
 
-          <div style={{ position: 'relative', width: PHONE.w, height: PHONE.h, border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: 'var(--surface)' }}>
+          <div style={{ width: Math.round(PHONE.w * scale), height: Math.round(PHONE.h * scale) }}>
+          <div style={{
+            position: 'relative', width: PHONE.w, height: PHONE.h,
+            transform: `scale(${scale})`, transformOrigin: 'top left',
+            border: `1px solid ${C.line}`, borderRadius: 12, overflow: 'hidden', background: 'var(--surface)',
+          }}>
             {cur.path ? (
               <iframe ref={frameRef} title={cur.name} src={withDemo(cur.path)}
                 style={{ width: '100%', height: '100%', border: 'none', display: 'block' }} />
@@ -288,10 +332,11 @@ export default function ReviewPage() {
               }}>{p.label || i + 1}</div>
             ))}
           </div>
+          </div>
 
           {/* 첨부 예정 스샷 */}
           {attachImgs.length > 0 && (
-            <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap', width: PHONE.w }}>
+            <div style={{ marginTop: 10, display: 'flex', gap: 8, flexWrap: 'wrap', width: Math.round(PHONE.w * scale) }}>
               {attachImgs.map((src, i) => (
                 <div key={i} style={{ position: 'relative' }}>
                   <img src={src} alt="" onClick={() => setZoom(src)}

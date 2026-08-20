@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { RiArrowDownSLine } from "react-icons/ri";
+import { RiArrowDownSLine, RiKakaoTalkFill } from "react-icons/ri";
+import { IoCallOutline } from "react-icons/io5";
+
+/* 상담 연결처 — 바뀌면 여기만 고친다 */
+const SUPPORT_TEL = "070-4544-7684";
+/* 카카오톡 채널 "홍여사"(검색용 @홍여사) 공개 ID = _JAKqn — 개발자 콘솔 연결된 채널 기준.
+   /chat 을 붙이면 채널 홈이 아니라 바로 상담 대화창이 열린다. (형 확인 2026-08-20) */
+const KAKAO_CHANNEL = "http://pf.kakao.com/_JAKqn/chat";
 
 /**
  * 내 정보 > 고객센터 · 자주묻는 질문 · 홍여사 알아보기 (형 리뷰 2026-08-13 "모두 처리 해줘").
@@ -42,6 +49,34 @@ const BlockText = styled.div`
   line-height: 1.7;
   color: #4B4B4B;
   white-space: pre-wrap;
+`;
+const TelLink = styled.a`
+  color: inherit;
+  text-decoration: none;
+`;
+
+/* 전화·카톡으로 바로 잇는 버튼 (형 지시 2026-08-20).
+   읽고 끝나는 화면이 아니라 여기서 바로 연결되게 한다. */
+const Actions = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+`;
+const ActionBtn = styled.a`
+  flex: 1 1 0;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  background: ${({ $kind }) => ($kind === 'kakao' ? '#FEE500' : 'var(--surface)')};
+  color: ${({ $kind }) => ($kind === 'kakao' ? '#191600' : 'var(--text)')};
+  border: ${({ $kind }) => ($kind === 'kakao' ? 'none' : '1.5px solid var(--border)')};
+  &:active { opacity: .85; }
 `;
 const Row = styled.div`
   border-bottom: 1px solid var(--border);
@@ -166,6 +201,20 @@ const MobileSupport = ({ kind = "support" }) => {
     <Container>
       <Head>고객센터</Head>
       <Desc>{"쓰시다가 막히거나 이상한 점이 있으면 알려주세요.\n확인하고 답을 드리겠습니다."}</Desc>
+
+      <Actions>
+        <ActionBtn href={`tel:${SUPPORT_TEL}`}>
+          <IoCallOutline size={20} /> 전화 상담
+        </ActionBtn>
+        <ActionBtn $kind="kakao" href={KAKAO_CHANNEL} target="_blank" rel="noreferrer">
+          <RiKakaoTalkFill size={20} /> 카톡 상담
+        </ActionBtn>
+      </Actions>
+
+      <Block>
+        <BlockTitle>대표번호</BlockTitle>
+        <BlockText><TelLink href={`tel:${SUPPORT_TEL}`}>{SUPPORT_TEL}</TelLink></BlockText>
+      </Block>
 
       <Block>
         <BlockTitle>문의 메일</BlockTitle>

@@ -178,7 +178,7 @@ useEffect(() => {
         {/* 채팅 아이콘·알림 배지 제거 — 하단 탭에 채팅이 이미 있고 배지 숫자는 가짜였다 (형 리뷰 2026-08-12) */}
         <img className="mono-icon" src={imageDB.search} width={24} onClick={_handleAI} style={{paddingRight:14, cursor:"pointer"}}/>
         {/* 공지사항 (형 리뷰 2026-08-12) */}
-        <PiMegaphoneBold size={23} color="#131313" onClick={_handleNotice} style={{cursor:"pointer"}} aria-label="공지사항"/>
+        <PiMegaphoneBold size={23} color="var(--text)" onClick={_handleNotice} style={{cursor:"pointer"}} aria-label="공지사항"/>
         </div>
     
 

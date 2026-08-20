@@ -151,7 +151,7 @@ const CheckSlot = styled.span`
 
 const Footer = styled.div`
   flex-shrink: 0;
-  padding: 12px 20px calc(14px + env(safe-area-inset-bottom));
+  padding: 12px 20px calc(14px + var(--safe-bottom));
   border-top: 1px solid var(--border-soft);
   background: var(--surface);
 `;

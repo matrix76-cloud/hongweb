@@ -91,7 +91,7 @@ const UseLaw =({containerStyle}) =>  {
     <Container>
         <RowItem>
             <div style={{fontSize:25, fontWeight:700}}>이용약관</div>
-            <div>2025년 8월 5일</div>
+            <div style={{fontSize:14, color:'#A3A3A3'}}>작성일자 2025년 8월 5일</div>
         </RowItem>
         <div style={{marginTop:20}}>
         {

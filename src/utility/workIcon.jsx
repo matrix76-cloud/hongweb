@@ -24,24 +24,30 @@ export const WORKICON = {
   [WORKNAME.GODOGHOSPITAL]: LuCross,
 };
 
-// 그룹별 원 배경색 — 청소 파랑 / 집안일 주황 / 아이 노랑 / 돌봄 초록 / 반려 보라.
-// 원 안의 아이콘은 흰색으로 그린다 (형 확정 2026-08-15, /iconlab 케이스 15).
+// 그룹별 원 배경색 — 청소 / 집안일 / 아이 / 돌봄 / 반려.
+// 원 안의 아이콘은 흰색으로 그린다.
+//
+// 채도를 한 톤 낮춘 판이다 (형 확정 2026-08-20 — /gridlab 02안).
+// 원색 다섯 가지가 나란히 있으니 격자가 알록달록해서 소란스러웠다.
+// 구성은 그대로 두고 색만 죽였다.
+//
+// 반려는 원래 보라(#7C3AED)였는데 청록으로 바꿨다 — 형이 안 쓰는 색이다.
 export const WORKCOLOR = {
-  [WORKNAME.HOMECLEAN]: "#2563EB",
-  [WORKNAME.BUSINESSCLEAN]: "#2563EB",
-  [WORKNAME.MOVECLEAN]: "#2563EB",
-  [WORKNAME.FOODPREPARE]: "#FF4E19",
-  [WORKNAME.SHOPPING]: "#FF4E19",
-  [WORKNAME.CARRYLOAD]: "#FF4E19",
-  [WORKNAME.ERRAND]: "#FF4E19",
-  [WORKNAME.BABYCARE]: "#F59E0B",
-  [WORKNAME.GOOUTSCHOOL]: "#F59E0B",
-  [WORKNAME.LESSON]: "#F59E0B",
-  [WORKNAME.GOSCHOOLEVENT]: "#F59E0B",
-  [WORKNAME.PATIENTCARE]: "#16A34A",
-  [WORKNAME.GOHOSPITAL]: "#16A34A",
-  [WORKNAME.GODOGWALK]: "#7C3AED",
-  [WORKNAME.GODOGHOSPITAL]: "#7C3AED",
+  [WORKNAME.HOMECLEAN]: "#3C6E9F",
+  [WORKNAME.BUSINESSCLEAN]: "#3C6E9F",
+  [WORKNAME.MOVECLEAN]: "#3C6E9F",
+  [WORKNAME.FOODPREPARE]: "#C4562F",
+  [WORKNAME.SHOPPING]: "#C4562F",
+  [WORKNAME.CARRYLOAD]: "#C4562F",
+  [WORKNAME.ERRAND]: "#C4562F",
+  [WORKNAME.BABYCARE]: "#B8862E",
+  [WORKNAME.GOOUTSCHOOL]: "#B8862E",
+  [WORKNAME.LESSON]: "#B8862E",
+  [WORKNAME.GOSCHOOLEVENT]: "#B8862E",
+  [WORKNAME.PATIENTCARE]: "#3E7D5A",
+  [WORKNAME.GOHOSPITAL]: "#3E7D5A",
+  [WORKNAME.GODOGWALK]: "#3F7D85",
+  [WORKNAME.GODOGHOSPITAL]: "#3F7D85",
 };
 
 // 마감·완료된 일감의 원 — 색 대신 회색

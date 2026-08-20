@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import localforage from "localforage";
-import { enterGuest } from "../../utility/guest";
+import { enterGuest, isGuest } from "../../utility/guest";
 import { imageDB } from "../../utility/imageData";
+import { useNoScroll } from "../../utility/useNoScroll";
 import illustStep1 from "../../assets/imageset/honggroup.png";
 
 /**
@@ -21,19 +22,27 @@ export const isOnboardingDone = async () => {
   catch { return false; }
 };
 
+/* 세 장을 넘겨도 아래 글·점·버튼이 제자리에 있어야 한다.
+   예전에는 Wrap 이 min-height 라 1장(큰 일러스트)에서만 화면보다 길어졌고,
+   2·3장(작은 그림)에서는 짧아져서 '다음' 버튼이 위아래로 튀었다.
+   버튼이 움직이니 연달아 누르면 두 번째 탭이 헛나갔다. (형 지적 2026-08-18) */
 const Wrap = styled.div`
-  min-height: 100vh;
-  min-height: 100dvh;
+  /* 100dvh 로 잡으면 앱 웹뷰에서 실제 화면보다 짧게 계산돼 아래가 뜬다.
+     화면 틀(.app-frame)의 높이를 그대로 따라간다. (형 지적 2026-08-18) */
+  height: 100%;
+  min-height: 100%;
   box-sizing: border-box;
   background: var(--surface);
   display: flex;
   flex-direction: column;
-  padding: 0 24px calc(28px + env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
+  padding: 0 24px calc(20px + var(--safe-bottom));
 `;
 
+/* 그림 칸이 남는 높이를 전부 먹는다 — 그림 크기가 달라도 칸 높이는 그대로다 */
 const Illust = styled.div`
-  flex: 1;
-  min-height: 40vh;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,8 +52,14 @@ const Illust = styled.div`
 const IllustImg = styled.img`
   width: 100%;
   max-width: 300px;
-  height: auto;
+  height: 100%;
   object-fit: contain;
+`;
+
+/* 제목이 두 줄이든 세 줄이든 아래가 안 밀리게 최소 높이를 잡아둔다 */
+const Copy = styled.div`
+  flex: 0 0 auto;
+  min-height: 186px;
 `;
 
 /* 2·3단계 그림 — 에셋이 제각각이라 로고 심볼로 통일해서 직접 그린다 */
@@ -234,18 +249,32 @@ const MobileOnboardingcontainer = ({ containerStyle }) => {
   const navigate = useNavigate();
   const [i, setI] = useState(0);
 
+  useNoScroll();   // 한 화면에 다 들어간다 — 스크롤 막대도 밀리는 느낌도 없앤다
+
   const s = STEPS[i];
   const last = i === STEPS.length - 1;
 
-  /* 온보딩을 마치면 홈으로 — 로그인 없이 둘러볼 수 있게 한다 (형 지시 2026-08-13).
-     가입은 무언가 하려는 순간(등록·지원·채팅)에 받는다. */
-  const finish = async () => {
+  const markSeen = async () => {
     try { await localforage.setItem(ONBOARDING_KEY, true); } catch { /* noop */ }
+  };
+
+  /* 마지막 장의 '시작하기' — 로그인 안 한 사람은 로그인 화면으로 바로 보낸다.
+     홈에 들렀다가 가는 게 아니라 곧장 로그인이다 (형 지시 2026-08-18). */
+  const start = async () => {
+    await markSeen();
+    if (await isGuest()) { navigate("/Mobilelogin", { replace: true }); return; }
+    navigate("/Mobilemain", { replace: true });
+  };
+
+  /* '건너뛰기' 는 말 그대로 둘러보기 — 로그인 없이 홈으로 간다.
+     가입은 무언가 하려는 순간(등록·지원·채팅)에 받는다 (형 지시 2026-08-13). */
+  const skip = async () => {
+    await markSeen();
     await enterGuest();
     navigate("/Mobilemain");
   };
 
-  const next = () => (last ? finish() : setI(i + 1));
+  const next = () => (last ? start() : setI(i + 1));
 
   return (
     <Wrap style={containerStyle}>
@@ -255,12 +284,14 @@ const MobileOnboardingcontainer = ({ containerStyle }) => {
         {s.illust === "pick" && <StagePick />}
       </Illust>
 
-      <Step>{s.step}</Step>
-      <Title>
-        {/* 홀수 번째 조각만 포인트색 — 문장을 끊지 않고 강조한다 */}
-        {s.title.map((seg, k) => (k % 2 === 1 ? <span key={k}>{seg}</span> : <React.Fragment key={k}>{seg}</React.Fragment>))}
-      </Title>
-      <Sub>{s.sub}</Sub>
+      <Copy>
+        <Step>{s.step}</Step>
+        <Title>
+          {/* 홀수 번째 조각만 포인트색 — 문장을 끊지 않고 강조한다 */}
+          {s.title.map((seg, k) => (k % 2 === 1 ? <span key={k}>{seg}</span> : <React.Fragment key={k}>{seg}</React.Fragment>))}
+        </Title>
+        <Sub>{s.sub}</Sub>
+      </Copy>
 
       <Dots>
         {STEPS.map((_, k) => <Dot key={k} $on={k === i} />)}
@@ -268,10 +299,10 @@ const MobileOnboardingcontainer = ({ containerStyle }) => {
 
       <Foot>
         {last ? (
-          <StartBtn onClick={finish}>시작하기</StartBtn>
+          <StartBtn onClick={start}>시작하기</StartBtn>
         ) : (
           <>
-            <Skip onClick={finish}>건너뛰기</Skip>
+            <Skip onClick={skip}>건너뛰기</Skip>
             <NextBtn onClick={next}>다음</NextBtn>
           </>
         )}

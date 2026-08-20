@@ -225,26 +225,35 @@ const MobileSearchcontainer = ({ search }) => {
   const [kw, setKw] = useState(search || "");
   const [works, setWorks] = useState([]);
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  /* 예전에는 일감·사용자 목록을 다 받을 때까지 화면 전체를 로딩 애니메이션으로 덮었다.
+     검색창에 뭘 치기도 전에 스피너부터 돌아서, 들어가자마자 기다리는 화면이 됐다.
+     이제 화면은 바로 띄우고 목록은 뒤에서 받는다. (형 지적 2026-08-18) */
+  const [ready, setReady] = useState(false);
   const [recent, setRecent] = useState([]);
   /* 고른 조건. {kind:'region'|'work'|'price'|'user', value, label} */
   const [picked, setPicked] = useState(null);
 
   useEffect(() => {
     let alive = true;
+
+    // 최근 검색어는 기기에 있으니 곧바로 보여준다
+    localforage.getItem(RECENT_KEY)
+      .then((r) => { if (alive) setRecent(Array.isArray(r) ? r : []); })
+      .catch(() => {});
+
+    // 검색 대상 목록은 뒤에서 받는다 — 받는 동안에도 화면은 쓸 수 있다
     (async () => {
-      const [w, u, r] = await Promise.all([
+      const [w, u] = await Promise.all([
         ReadWork({ latitude: user.latitude, longitude: user.longitude }),
         readuser(),
-        localforage.getItem(RECENT_KEY),
       ]);
       if (!alive) return;
       const list = (w === -1 ? [] : w || []).map((d) => ({ ...d, TYPE: FILTERITMETYPE.HONG }));
       setWorks(list);
       setUsers(u === -1 ? [] : u || []);
-      setRecent(Array.isArray(r) ? r : []);
-      setLoading(false);
+      setReady(true);
     })();
+
     return () => { alive = false; };
   }, []);
 
@@ -339,19 +348,12 @@ const MobileSearchcontainer = ({ search }) => {
     navigate("/Mobilework", { state: { WORK_ID: work.WORK_ID, TYPE: FILTERITMETYPE.HONG, WORKTYPE: work.WORKTYPE } });
   };
 
-  if (loading) {
-    return (
-      <Container>
-        <LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge} width={"100px"} height={"100px"} />
-      </Container>
-    );
-  }
 
   return (
     <Container>
       <SearchBarWrap>
         <SearchBar>
-          <IoSearch size={20} color="#9A9A9A" />
+          <IoSearch size={20} color="var(--text-sub)" />
           <SearchInput
             ref={inputRef}
             value={kw}
@@ -393,7 +395,7 @@ const MobileSearchcontainer = ({ search }) => {
             recent.map((t) => (
               <RecentRow key={t} onClick={() => setKw(t)}>
                 <RowTitle style={{ fontWeight: 500 }}>{t}</RowTitle>
-                <IoCloseCircle size={18} color="#D5D5D5" onClick={(e) => {
+                <IoCloseCircle size={18} color="var(--text-sub)" onClick={(e) => {
                   e.stopPropagation();
                   const next = recent.filter((x) => x !== t);
                   setRecent(next);
@@ -406,10 +408,13 @@ const MobileSearchcontainer = ({ search }) => {
         </>
       ) : (
         <>
+          {/* 목록이 아직 안 왔을 때만 한 줄로 알려준다 — 화면을 통째로 막지는 않는다 */}
+          {!ready && <SectionNone style={{ padding: "10px 16px" }}>목록을 불러오는 중입니다</SectionNone>}
+
           <Section><SectionTitle>지역</SectionTitle></Section>
           {regionHits.length === 0 ? <SectionNone style={{ padding: "8px 16px 12px" }}>맞는 지역이 없습니다</SectionNone> : regionHits.map((r) => (
             <Row key={r.label} onClick={() => pick({ kind: "region", value: r.label, label: r.label }, r.label)}>
-              <PiMapPinBold size={20} color="#B0B0B0" />
+              <PiMapPinBold size={20} color="var(--text-sub)" />
               <RowMain><RowTitle><Hi text={r.label} q={q} /></RowTitle></RowMain>
               <RowCount>{r.count}건</RowCount>
             </Row>
@@ -418,7 +423,7 @@ const MobileSearchcontainer = ({ search }) => {
           <Section><SectionTitle>일감</SectionTitle></Section>
           {workHits.length === 0 ? <SectionNone style={{ padding: "8px 16px 12px" }}>맞는 일감 종류가 없습니다</SectionNone> : workHits.map((w) => (
             <Row key={w.name} onClick={() => pick({ kind: "work", value: w.name, label: w.name }, w.name)}>
-              <PiBriefcaseBold size={20} color="#B0B0B0" />
+              <PiBriefcaseBold size={20} color="var(--text-sub)" />
               <RowMain><RowTitle><Hi text={w.name} q={q} /></RowTitle></RowMain>
               <RowCount>{w.count}건</RowCount>
             </Row>
@@ -429,7 +434,7 @@ const MobileSearchcontainer = ({ search }) => {
             <SectionNone style={{ padding: "8px 16px 12px" }}>맞는 견적가가 없습니다</SectionNone>
           ) : (
             <Row onClick={() => pick({ kind: "price", value: priceHit, label: `${priceHit.won.toLocaleString("ko-KR")}원 근처` }, q)}>
-              <PiCoinsBold size={20} color="#B0B0B0" />
+              <PiCoinsBold size={20} color="var(--text-sub)" />
               <RowMain>
                 <RowTitle>{priceHit.won.toLocaleString("ko-KR")}원 근처</RowTitle>
                 <RowSub>{priceHit.lo.toLocaleString("ko-KR")}원 ~ {priceHit.hi.toLocaleString("ko-KR")}원</RowSub>

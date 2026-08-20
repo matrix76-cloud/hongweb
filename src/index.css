@@ -14,6 +14,30 @@
      아래 두 변수는 매핑에 없는 이름이 들어왔을 때의 예비색으로만 남겨둔다. */
   --icon-bg:   #FFE4D6;
   --icon-fg:   #C2410C;
+
+  /* 화면 아래 안전영역(아이폰 홈 막대 등). 브라우저에서는 실제 값이 들어온다. */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 앱(WebView) 안에서는 RN 의 SafeAreaView 가 이미 아래 여백을 준다.
+   웹에서 env() 를 또 빼면 여백이 두 배가 되어 버튼이 붕 뜬다.
+   실제로 안드로이드에서 131px 이 더 빠지고 있었다. (형 지적 2026-08-18) */
+html.in-app {
+  --safe-bottom: 0px;
+}
+
+/* 글자 크기 — 작게 / 보통 / 크게 (형 지시 2026-08-19)
+   우리 화면은 대부분 px 로 적혀 있어서 html font-size 만 바꿔서는 안 커진다.
+   그래서 화면 전체 배율을 조금 올리고 내린다 — 글자와 함께 여백·버튼도 같이 커져
+   글이 칸을 넘쳐 잘리는 일이 없다. */
+:root[data-textscale="small"]  { zoom: 0.92; }
+:root[data-textscale="large"]  { zoom: 1.12; }
+
+/* 끝에서 잡아당길 때 화면이 밀렸다 돌아오는 느낌(고무줄·글로우)을 없앤다.
+   앱에서는 이게 웹페이지처럼 보여서 어색하다 (형 지시 2026-08-18) */
+html, body, .app-frame {
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 /* 검은 선으로 그려진 단색 아이콘은 어두운 배경에서 안 보인다 — 반전시킨다 (형 리뷰 2026-08-13).

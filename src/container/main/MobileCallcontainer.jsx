@@ -35,7 +35,7 @@ const Screen = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: calc(60px + env(safe-area-inset-top)) 24px calc(40px + env(safe-area-inset-bottom));
+  padding: calc(60px + env(safe-area-inset-top)) 24px calc(40px + var(--safe-bottom));
 `;
 
 const Name = styled.div`

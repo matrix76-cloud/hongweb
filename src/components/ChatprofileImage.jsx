@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import HongAvatar from "./HongAvatar";
+import { IoPerson } from "react-icons/io5";
 
 /**
- * 대화 상대 프로필. (형 지시 2026-08-12)
+ * 프로필 사진.
  *
- * 사진이 없거나 주소가 깨지면 기본 이미지로 떨어진다.
- * 기본 이미지는 홍여사 캐릭터 아바타(HongAvatar) 다 — 아무 서비스나 쓰는 회색 실루엣 대신
- * 로고의 캐릭터를 그대로 쓴다. (형 리뷰 2026-08-12)
+ * 사진이 없거나 주소가 깨지면 기본 그림으로 떨어진다.
+ * 기본 그림은 사람 아이콘이다. 예전에는 홍여사 캐릭터(HongAvatar)를 썼는데
+ * 서비스 로고와 같은 그림이라 사람마다 로고가 박힌 것처럼 보였다. (형 지시 2026-08-20)
  *
- * 목록·대화방 모두 이 컴포넌트를 쓰므로 여기만 바꾸면 전부 같이 바뀐다.
+ * 대화방·대화목록·사람찾기·내 정보·통화화면이 모두 이 컴포넌트를 쓴다 — 여기만 바꾸면 전부 같이 바뀐다.
  */
 const Circle = styled.div`
   flex: none;
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;
   border-radius: 50%;
-  background: #FFEDE4;
+  background: #F1F1F4;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -43,7 +43,7 @@ const ChatprofileImage = ({ containerStyle, source, size = 46 }) => {
     <Circle style={containerStyle} $size={size}>
       {ok
         ? <Img src={source} alt="" onError={() => setFailed(true)} />
-        : <HongAvatar size={size} />}
+        : <IoPerson size={Math.round(size * 0.52)} color="#BDBDC2" />}
     </Circle>
   );
 };

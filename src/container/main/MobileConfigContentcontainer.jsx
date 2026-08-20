@@ -21,6 +21,7 @@ import { WORKSTATUS } from "../../utility/status";
 import MobileSearchRange from "../../components/config/activity/MobileSearchRange";
 import MobileNotiSetting from "../../components/config/activity/MobileNotiSetting";
 import MobileThemeSetting from "../../components/config/activity/MobileThemeSetting";
+import MobileTextSizeSetting from "../../components/config/activity/MobileTextSizeSetting";
 import MobileFavoriteWork from "../../components/config/activity/MobileFavoriteWork";
 import MobileDealList from "../../components/config/activity/MobileDealList";
 import MobilePayList from "../../components/config/money/MobilePayList";
@@ -143,6 +144,9 @@ const MobileConfigContentcontainer =({containerStyle, name}) =>  {
 
         {
           name == CONFIGMOVE.THEMESETTING && <MobileThemeSetting/>
+        }
+        {
+          name == CONFIGMOVE.TEXTSIZESETTING && <MobileTextSizeSetting/>
         }
 
         {

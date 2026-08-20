@@ -192,12 +192,16 @@ const StoreIntroduce = styled.div`
 `
 
 const Content = styled.div`
-  padding-top: 78px;
+  /* 위 고정줄(Enter)이 사진·이름을 빼면서 낮아졌다. 그만큼 당겨준다. (형 지적 2026-08-20) */
+  padding-top: 60px;
 `
 const SupportTag = styled.div`
   font-size: 13px;
   color: #A3A3A3;
-  margin-left: 6px;
+  /* 좁은 칸에서 "의 뢰" 로 쪼개져 세로로 서던 것 — 줄바꿈을 막는다 (형 지적 2026-08-20) */
+  flex: none;
+  white-space: nowrap;
+  margin-right: 6px;
   display: flex;
   align-items: center;
 `
@@ -205,7 +209,10 @@ const SupportTag = styled.div`
 const OwnerTag = styled.div`
   font-size: 13px;
   color: #A3A3A3;
-  margin-left: 6px;
+  /* 좁은 칸에서 "의 뢰" 로 쪼개져 세로로 서던 것 — 줄바꿈을 막는다 (형 지적 2026-08-20) */
+  flex: none;
+  white-space: nowrap;
+  margin-right: 6px;
   display: flex;
   align-items: center;
 `
@@ -217,7 +224,7 @@ const BottomLine = styled.div`
   bottom: 0;
   box-sizing: border-box;
   border-top: 1px solid var(--border-soft);
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 12px calc(8px + var(--safe-bottom));
   z-index: 5;
 `;
 const ChatbtnLayer = styled.div`
@@ -413,7 +420,7 @@ const MenuSheet = styled.div`
   background: var(--surface);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 8px calc(8px + var(--safe-bottom));
 `;
 const MenuItem = styled.button`
   display: flex;
@@ -993,7 +1000,14 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       }
 
       {
-        paypopup == true && <MobilePayPopup />
+        paypopup == true && (
+          <MobilePayPopup
+            callback={MobilePaypopupCallback}
+            amount={findPrice()}                 /* 등록된 일감 금액 그대로 */
+            orderName={ITEM.WORKTYPE || workOf(ITEM).WORKTYPE}
+            workId={workOf(ITEM).WORK_ID}
+          />
+        )
       }
 
       {
@@ -1035,10 +1049,10 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
           <MenuDim onClick={()=>{ setRoommenu(false); }}>
             <MenuSheet onClick={(e)=> e.stopPropagation()}>
               <MenuItem onClick={_handleexit}>
-                <SlLogout size={18} color="#71717a" /> 대화방 나가기
+                <SlLogout size={18} color="var(--text-sub)" /> 대화방 나가기
               </MenuItem>
               <MenuItem onClick={_handlereport}>
-                <SlShield size={18} color="#71717a" /> 신고하기
+                <SlShield size={18} color="var(--text-sub)" /> 신고하기
               </MenuItem>
               <MenuItem $danger onClick={_handleblock}>
                 <SlUserUnfollow size={18} color="#c02020" /> 차단하기
@@ -1064,17 +1078,13 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
       <Row margin={'0px auto;'} width={'100%'} height={'100%'} >
         <Column style={{background:"var(--surface)", width:"100%", height:"100%", justifyContent:"flex-start", borderRight: "1px solid var(--border-soft)"}}>
           <Enter>
-            {/* 일감 아이콘이 비면 빈 사각형만 남아서, 대화 상대 프로필을 앞에 둔다.
-                사진이 없으면 사람 아이콘으로 떨어진다 (형 지시 2026-08-12) */}
-            <ChatprofileImage source={LEFTIMAGE} size={44} />
-
+            {/* 위 헤더에 "OOO 님과 대화" 로 사진과 이름이 이미 나와 있었다 — 같은 것이 두 번이라 여기서는 뺐다.
+                남는 줄에는 일감 정보만 둔다. (형 지적 2026-08-20) */}
             <div style={{flex:1, minWidth:0}}>
               <FlexstartRow style={{alignItems:"center"}}>
-                <StoreName>{LEFTNAME || '이름 없음'}</StoreName>
                 {
                   OWNER == true ? (<OwnerTag>의뢰</OwnerTag>):(<SupportTag>지원</SupportTag>)
                 }
-              </FlexstartRow>
 
               {/* 거리는 같은 좌표를 두 번 넣어 늘 0 이었다. 일감 종류·지역·가격만 보여준다 (형 지시 2026-08-12) */}
               <StoreAddr>
@@ -1087,6 +1097,7 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                   </MapLink>
                 )}
               </StoreAddr>
+              </FlexstartRow>
             </div>
 
             <EnterButton>
@@ -1111,12 +1122,12 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
 
                 {/* 보이스톡 (2026-08-13) */}
                 <MoreBtn onClick={_handlevoice} aria-label="음성통화">
-                  <IoCallOutline size={19} color="#131313" />
+                  <IoCallOutline size={19} color="var(--text)" />
                 </MoreBtn>
 
                 {/* 나가기 · 신고 · 차단 */}
                 <MoreBtn onClick={()=>{ setRoommenu(true); }} aria-label="더보기">
-                  <SlOptionsVertical size={16} color="#71717a" />
+                  <SlOptionsVertical size={16} color="var(--text-sub)" />
                 </MoreBtn>
             </EnterButton>
           </Enter>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import localforage from "localforage";
 import { RiArrowRightSLine } from "react-icons/ri";
@@ -167,7 +167,7 @@ const LawBody = styled.div`
 `;
 const LawFoot = styled.div`
   flex: none;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 12px 16px calc(12px + var(--safe-bottom));
   border-top: 1px solid var(--border-soft);
 
   button {
@@ -196,6 +196,7 @@ const LAW_TITLE = { use: "이용약관", privacy: "개인정보 처리지침", g
 
 const MobileAgreecontainer = ({ containerStyle }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [checked, setChecked] = useState({});
   const [law, setLaw] = useState(null);   // 전문 보기 시트
 
@@ -222,7 +223,9 @@ const MobileAgreecontainer = ({ containerStyle }) => {
       gps: !!checked.gps,
       marketing: !!checked.marketing,
     });
-    navigate("/Mobilelogin");
+    /* 어떤 로그인 버튼을 누르다 여기로 왔는지 들고 돌아간다.
+       동의만 하면 그 로그인이 곧바로 이어진다 — 버튼을 두 번 누르지 않게 (형 지적 2026-08-18) */
+    navigate("/Mobilelogin", { replace: true, state: { autoLogin: location.state?.after || null } });
   };
 
   return (

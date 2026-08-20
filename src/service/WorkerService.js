@@ -1,5 +1,5 @@
 import { db, auth, storage, firebaseConfig, firebaseApp } from '../api/config';
-import { collection, getDocs, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy, addDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query, updateDoc,where,doc,setDoc, deleteDoc, orderBy, addDoc, getDoc, getCountFromServer } from 'firebase/firestore';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut, updateProfile } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { COMMUNITYSTATUS, WORKSTATUS } from '../utility/status';
@@ -9,6 +9,7 @@ import Axios from 'axios';
 import { CreateRegistAddr, ReadRegistAddr } from './RegistAddrService';
 import { FILTERITMETYPE } from '../utility/screen';
 import { CountryAddress, KeywordAddress } from '../utility/region';
+import { getSearchRange } from "../utility/searchRange";
 const authService = getAuth(firebaseApp);
 
 
@@ -66,6 +67,19 @@ export const CreateWorker = async (data) => {
 };
 
 
+/* 홈 홍보 문구에 쓰는 "활동 중인 홍여사" 수.
+   문서를 다 읽지 않고 집계만 받아온다 — 홈은 자주 열리는 화면이라 읽기 비용을 아낀다.
+   (형 리뷰 2026-08-16 "몇명의 홍여사가 활동중이고") */
+export const getWorkerCount = async () => {
+  try {
+    const snapshot = await getCountFromServer(collection(db, "WORKERS"));
+    return snapshot.data().count || 0;
+  } catch (e) {
+    console.log("getWorkerCount 오류:", e.message);
+    return 0;
+  }
+};
+
 export const getAllWorkers = async () => {
   const snapshot = await getDocs(collection(db, "WORKERS"));
   return snapshot.docs.map(doc => doc.data());
@@ -107,6 +121,44 @@ export const getAiWorkers = async (latitude, longitude, checkdistance = 4) => {
 
 
 
+
+/* 내 주변 홍여사 수 (형 지시 2026-08-19)
+ *
+ * 예전에는 WORKERS 전체를 세어 1110명 같은 숫자를 보여줬다. 그런데 홈에서 말하는
+ * "활동 중인 홍여사"는 내 동네에서 일을 받아줄 수 있는 사람이다. 멀리 사는 분까지
+ * 세면 숫자만 커지고 뜻이 없다. 범위는 내 정보 > 나의 범위설정 값을 그대로 쓴다.
+ *
+ * 좌표로 거르는 일이라 서버 집계(getCountFromServer)를 못 쓴다. 대신 잠깐 보관한다.
+ */
+const NEARBY_CACHE_MS = 60 * 1000;
+let nearbyCountCache = null;   // { key, at, count }
+
+export const getNearbyWorkerCount = async ({ latitude, longitude, checkdistance }) => {
+  if (!latitude || !longitude) return 0;
+
+  const limitKm = Number(checkdistance) > 0 ? Number(checkdistance) : getSearchRange();
+  const key = `${Number(latitude).toFixed(3)}|${Number(longitude).toFixed(3)}|${limitKm}`;
+  if (nearbyCountCache && nearbyCountCache.key === key && Date.now() - nearbyCountCache.at < NEARBY_CACHE_MS) {
+    return nearbyCountCache.count;
+  }
+
+  try {
+    const snapshot = await getDocs(collection(db, "WORKERS"));
+    let count = 0;
+    snapshot.docs.forEach((doc) => {
+      const data = doc.data();
+      const lat = data.LAT || data.latitude;
+      const lng = data.LNG || data.longitude;
+      if (!lat || !lng) return;
+      if (distanceFunc(lat, lng, latitude, longitude) <= limitKm) count += 1;
+    });
+    nearbyCountCache = { key, at: Date.now(), count };
+    return count;
+  } catch (e) {
+    console.log("getNearbyWorkerCount 오류:", e.message);
+    return 0;
+  }
+};
 
 export const getNearbyWorkers = async ({ latitude, longitude, checkdistance = 4 }) => {
   const snapshot = await getDocs(collection(db, "WORKERS"));

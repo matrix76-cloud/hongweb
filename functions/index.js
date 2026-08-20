@@ -390,3 +390,15 @@ exports.sendLoginCode = emailAuth.sendLoginCode;
 exports.verifyLoginCode = emailAuth.verifyLoginCode;
 exports.findMaskedEmail = emailAuth.findMaskedEmail;
 exports.withdrawAccount = emailAuth.withdrawAccount;
+
+/* 카카오로 시작하기 (형 지시 2026-08-18)
+   앱이 네이티브로 받은 카카오 토큰을 파이어베이스 커스텀 토큰으로 바꿔준다. */
+const kakaoAuth = require('./kakaoAuth');
+exports.kakaoCustomToken = kakaoAuth.kakaoCustomToken;
+
+
+/* 토스페이먼츠 결제 (형 지시 2026-08-20)
+   결제 승인은 반드시 서버에서 한다 — 앞단에서 하면 금액을 손댈 수 있다. */
+const tossPay = require('./tossPay');
+exports.tossPrepare = tossPay.tossPrepare;
+exports.tossConfirm = tossPay.tossConfirm;

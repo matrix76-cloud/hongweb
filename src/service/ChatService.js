@@ -231,25 +231,48 @@ export const MarkRead = async ({ CHAT_ID, USERS_ID }) => {
  * 반환값은 구독 해제 함수 — 화면 언마운트 때 호출할 것.
  */
 export const SubscribeChatRooms = ({ USERS_ID }, callback) => {
-  const q = query(collection(db, "CHAT"), orderBy("CREATEDT", "desc"));
+  /* 예전에는 CHAT 컬렉션 전체를 받아 와서 내 방만 걸러냈다.
+     남의 대화방까지 전부 내려받으니 채팅 화면이 열릴 때마다 한참 걸렸고,
+     방이 늘어날수록 더 느려졌다. 이제 내가 낀 방만 물어본다. (형 지적 2026-08-18)
 
-  return onSnapshot(q, (snapshot) => {
+     정렬은 서버에 맡기지 않고 여기서 한다 — 정렬까지 서버에 맡기면
+     복합 색인을 따로 만들어야 하고, 없으면 조회 자체가 실패한다. */
+  if (!USERS_ID) { callback([]); return () => {}; }
+
+  const mine = { owner: [], supporter: [] };
+
+  const emit = () => {
+    const seen = new Set();
     const rooms = [];
-    snapshot.forEach((d) => {
-      const room = d.data();
-      const mine = room.OWNER_ID === USERS_ID || room.SUPPORTER_ID === USERS_ID;
-      if (!mine) return;
+    [...mine.owner, ...mine.supporter].forEach((room) => {
+      if (!room || seen.has(room.CHAT_ID)) return;      // 양쪽에 걸리는 방은 한 번만
       // 내가 나간 방은 내 목록에서만 뺀다 (상대에게는 그대로 남는다)
       if (Array.isArray(room.EXITED) && room.EXITED.includes(USERS_ID)) return;
+      seen.add(room.CHAT_ID);
       rooms.push(room);
     });
     // 마지막 대화가 있는 방을 위로 (없으면 만든 시간 기준)
     rooms.sort((a, b) => (b.LASTMESSAGE_AT || b.CREATEDT || 0) - (a.LASTMESSAGE_AT || a.CREATEDT || 0));
     callback(rooms);
-  }, (e) => {
-    console.log("TCL: SubscribeChatRooms -> error", e.message);
-    callback([]);
-  });
+  };
+
+  const watch = (field, bucket) => onSnapshot(
+    query(collection(db, "CHAT"), where(field, "==", USERS_ID)),
+    (snapshot) => {
+      mine[bucket] = snapshot.docs.map((d) => d.data());
+      emit();
+    },
+    (e) => {
+      console.log("TCL: SubscribeChatRooms ->", field, e.message);
+      mine[bucket] = [];
+      emit();
+    },
+  );
+
+  const stopOwner = watch("OWNER_ID", "owner");
+  const stopSupporter = watch("SUPPORTER_ID", "supporter");
+
+  return () => { stopOwner(); stopSupporter(); };
 };
 
 /** 방 목록에서 내 안읽음 총합 (하단 탭 뱃지용) */

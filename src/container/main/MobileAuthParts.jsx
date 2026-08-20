@@ -9,7 +9,7 @@ export const Wrap = styled.div`
   min-height: 100dvh;
   box-sizing: border-box;
   background: #F7F7F8;
-  padding: 40px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+  padding: 40px 20px calc(32px + var(--safe-bottom));
 `;
 
 export const Logo = styled.img`

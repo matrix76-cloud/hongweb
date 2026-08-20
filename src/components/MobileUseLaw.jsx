@@ -89,9 +89,10 @@ const MobileUseLaw =({containerStyle}) =>  {
   return (
 
     <Container>
-        <RowItem>
-            <div style={{fontSize:18, fontWeight:700}}>이용약관</div>
-            <div>2025년 8월 5일</div>
+            {/* 화면 위 헤더에 제목이 이미 있어 같은 제목이 두 번 나왔다 — 본문 제목은 뺐다.
+                날짜는 무슨 날짜인지 몰라 "작성일자" 를 붙였다. (형 지적 2026-08-20) */}
+        <RowItem style={{justifyContent:'flex-end'}}>
+            <div style={{fontSize:13, color:'#A3A3A3'}}>작성일자 2025년 8월 5일</div>
         </RowItem>
         <div>
         {

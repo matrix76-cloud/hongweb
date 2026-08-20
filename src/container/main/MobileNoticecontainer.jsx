@@ -114,13 +114,10 @@ const MobileNoticecontainer = () => {
     return () => { alive = false; };
   }, []);
 
-  if (loading) {
-    return (
-      <Container>
-        <LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge} width={"100px"} height={"100px"} />
-      </Container>
-    );
-  }
+  /* 들어가자마자 화면 전체를 로딩 애니메이션으로 덮지 않는다.
+     공지는 몇 건 안 되는데 스피너부터 돌면 기다리는 화면처럼 보인다. (형 지적 2026-08-19)
+     아직 못 받았을 때는 빈 화면으로 두고, 다 받은 뒤에만 '없습니다' 를 알린다. */
+  if (loading) return <Container />;
 
   if (!items.length) {
     return (

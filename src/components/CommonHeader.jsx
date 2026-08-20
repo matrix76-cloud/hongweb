@@ -152,9 +152,9 @@ const CommonHeader = ({
             {finalProps.hasBackButton && (
                 <IconWrapper onClick={handleBack}>
                     {finalProps.hasBackButton === 'close' ? (
-                        <IoCloseOutline size={24} color="#333" />
+                        <IoCloseOutline size={24} color="var(--text)" />
                     ) : (
-                        <IoArrowBackOutline size={24} color="#333" />
+                        <IoArrowBackOutline size={24} color="var(--text)" />
                     )}
                 </IconWrapper>
             )}

@@ -19,6 +19,9 @@ import { RiArrowRightSLine } from "react-icons/ri";
 import { uploadImage } from "../../../service/UploadService";
 import { Update_userinfobyusersid } from "../../../service/UserService";
 import ChatprofileImage from "../../ChatprofileImage";
+import { ReadWorkByUSERS_ID } from "../../../service/WorkService";
+import { ReadChat } from "../../../service/ChatService";
+import { WORKSTATUS } from "../../../utility/status";
 
 const Container = styled.div`
   padding-bottom:30px;
@@ -133,17 +136,34 @@ const SubLabelContent = styled.div`
   font-weight: 600;
   padding: 20px 0px;
 `
+/* 점선 원 안에 숫자만 있어서 무슨 수치인지 안 보였다 — 항목에 맞는 그림과 같이 보여준다
+   (형 리뷰 2026-08-16 "각각에 맞는 이미지로 해서 수치를 나타내줘") */
 const Point = styled.div`
   color: #ff4e19;
-  padding: 10px 18px;
-  border-radius: 50px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  gap: 4px;
+  min-width: 62px;
+  padding: 4px 0;
+`
+const PointNum = styled.div`
+  font-size: 20px;
   font-family: 'Pretendard-Bold';
-  border: 2px dotted #ff4e19;
-
+  color: #ff4e19;
+  line-height: 1;
+`
+const PointUnit = styled.span`
+  font-size: 14px;
+  font-family: 'Pretendard-SemiBold';
+  margin-left: 2px;
+`
+const EmptyLine = styled.div`
+  margin-top: 10px;
+  font-size: 15px;
+  color: var(--text);
+  opacity: .7;
 `
 const ULITEM = styled.ul`
   padding-left: 15px;
@@ -172,6 +192,11 @@ const MobileProfileConfig =({containerStyle}) =>  {
   const [temperature, setTemperature] = useState(40);
   const [img, setImg] = useState('');
 
+  /* 지수와 이력은 지어낸 숫자가 아니라 이 계정의 실제 기록에서 센다 (형 리뷰 2026-08-16
+     "목업 데이타 말고 진짜 데이타로 넣어줘") */
+  const [stat, setStat] = useState({ trade: 0, like: 0, response: 0, ready: false });
+  const [history, setHistory] = useState([]);
+
   useLayoutEffect(() => {
   }, []);
 
@@ -191,6 +216,45 @@ const MobileProfileConfig =({containerStyle}) =>  {
       }
       FetchData();
   }, [])
+
+  /* 지수 · 최근 이력 — 이 계정의 일감과 대화방에서 직접 센다.
+     거래지수  : 마감까지 간 내 일감 수
+     호감지수  : 내 일감에 지원해 대화까지 이어진 사람 수 (아직 "호감 누르기" 기능이 없어 이걸로 센다)
+     채팅응답률: 내 대화방 중 안 읽은 말이 없는 방의 비율 */
+  useEffect(()=>{
+    let alive = true;
+    async function FetchStat(){
+      const USERS_ID = user?.users_id;
+      if(!USERS_ID) return;
+
+      const works = await ReadWorkByUSERS_ID({ USERS_ID }).catch(()=> []);
+      const chats = await ReadChat({ USERS_ID }).catch(()=> -1);
+      const rooms = Array.isArray(chats) ? chats : [];
+
+      const trade = works.filter((w)=> w.WORK_STATUS === WORKSTATUS.CLOSE).length;
+      const like = rooms.filter((r)=> r.OWNER_ID === USERS_ID).length;
+      const read = rooms.filter((r)=> !(r.UNREAD && r.UNREAD[USERS_ID] > 0)).length;
+      const response = rooms.length ? Math.round((read / rooms.length) * 100) : 0;
+
+      /* 최근 3일 — 일감을 올린 것과 대화가 시작된 것을 시간순으로 */
+      const since = Date.now() - 3 * 24 * 60 * 60 * 1000;
+      const day = (t)=> new Date(t).toLocaleDateString('ko-KR', { month:'2-digit', day:'2-digit' }).replace(/\.$/, '');
+      const rows = [
+        ...works.filter((w)=> (w.CREATEDT||0) >= since)
+                .map((w)=> ({ at: w.CREATEDT, text: `일감 등록 · ${w.WORKTYPE || '일감'} · ${day(w.CREATEDT)}` })),
+        ...works.filter((w)=> w.WORK_STATUS === WORKSTATUS.CLOSE && (w.UPDATEDT || w.CREATEDT || 0) >= since)
+                .map((w)=> ({ at: w.UPDATEDT || w.CREATEDT, text: `거래 마감 · ${w.WORKTYPE || '일감'} · ${day(w.UPDATEDT || w.CREATEDT)}` })),
+        ...rooms.filter((r)=> (r.CREATEDT||0) >= since)
+                .map((r)=> ({ at: r.CREATEDT, text: `대화 시작 · ${r.OWNER_ID === USERS_ID ? (r.SUPPORTER || '지원자') : (r.OWNER || '의뢰인')}님 · ${day(r.CREATEDT)}` })),
+      ].sort((a,b)=> b.at - a.at).slice(0, 8);
+
+      if(!alive) return;
+      setStat({ trade, like, response, ready: true });
+      setHistory(rows);
+    }
+    FetchStat();
+    return ()=>{ alive = false; };
+  }, [user?.users_id])
 
   const _handleNameMove = () =>{
     navigate("/Mobileconfigcontent",{state :{NAME :CONFIGMOVE.PROFILENAME, TYPE : ""}});
@@ -238,10 +302,11 @@ const MobileProfileConfig =({containerStyle}) =>  {
                   <div style={{display:"flex"}}>
                   <div>거래지수</div>
                   </div>
-                  <div style={{lineHeight:1.6, marginTop:6, fontSize:15, color:"#71717a"}}>거래 내역을 토대로 지수를 산출해요</div>
+                  <div style={{lineHeight:1.6, marginTop:6, fontSize:15, color:"var(--text)", opacity:.7}}>마감까지 간 거래를 세요</div>
                 </PointBoxInner>
                 <Point>
-                  1
+                  <GrTransaction size={22} color="#ff4e19" />
+                  <PointNum>{stat.trade}<PointUnit>건</PointUnit></PointNum>
                 </Point>
 
               </PointBox>
@@ -250,21 +315,23 @@ const MobileProfileConfig =({containerStyle}) =>  {
                 <div style={{display:"flex"}}>
                   호감지수
                   </div>
-                <div style={{lineHeight:1.6, marginTop:6, fontSize:15, color:"#71717a"}}>호감 표현이 많을수록 지수가 높아져요</div>
+                <div style={{lineHeight:1.6, marginTop:6, fontSize:15, color:"var(--text)", opacity:.7}}>내 일감에 지원해 대화까지 온 분들이에요</div>
                 </PointBoxInner>
                 <Point>
-                  2
+                  <FaRegHeart size={22} color="#ff4e19" />
+                  <PointNum>{stat.like}<PointUnit>명</PointUnit></PointNum>
                 </Point>
               </PointBox>
               <PointBox>
                 <PointBoxInner>
                 <div style={{display:"flex"}}>
-                  체팅응답률
+                  채팅응답률
                 </div>
-                <div style={{lineHeight:1.8,marginTop:5}}>응답이 빠를 수록 응답률이 높아 진다</div>
+                <div style={{lineHeight:1.6, marginTop:6, fontSize:15, color:"var(--text)", opacity:.7}}>안 읽은 말을 남기지 않을수록 높아져요</div>
                 </PointBoxInner>
                 <Point>
-                  1
+                  <DiResponsive size={24} color="#ff4e19" />
+                  <PointNum>{stat.response}<PointUnit>%</PointUnit></PointNum>
                 </Point>
               </PointBox>
        
@@ -277,33 +344,22 @@ const MobileProfileConfig =({containerStyle}) =>  {
 
 
 
-    <BoxItem> 
+    {/* 주소지 변경 내역은 뺐다 (형 리뷰 2026-08-16 "주소지 변경부분은 삭제해줘") */}
 
-      <div>주소지 변경 내역입니다</div>
-      <ULITEM>
-      <li> 다산 1동 미인증</li>
-      <li> 성북동 미인증</li>
-      <li> 다산 2동 미인증</li>
-      </ULITEM>
-         
-
-    </BoxItem>
-
-
-    <BoxItem> 
+    <BoxItem>
 
 
       <div>최근 3일내 이력 입니다</div>
 
-      <ULITEM>
-      <li> 의뢰 1회 계약완료 1회 2024.09.17</li>
-      <li> 일감 등록 2024.09.17</li>
-      <li> 공간 대여 등록 2024.09.17</li>
-      </ULITEM>
-    </BoxItem>
-
-    <BoxItem>
-
+      {
+        history.length > 0 ? (
+          <ULITEM>
+            {history.map((h, i)=>(<li key={i}> {h.text}</li>))}
+          </ULITEM>
+        ) : (
+          <EmptyLine>최근 3일 동안 올린 일감이나 시작한 대화가 없습니다.</EmptyLine>
+        )
+      }
     </BoxItem>
 
 

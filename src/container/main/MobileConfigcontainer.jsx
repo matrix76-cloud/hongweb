@@ -6,7 +6,7 @@ import { UserContext } from "../../context/User";
 import { imageDB } from "../../utility/imageData";
 
 import { RiArrowRightSLine } from "react-icons/ri";
-import { PiSignOutBold, PiUserMinusBold } from "react-icons/pi";
+import { PiSignOutBold, PiUserMinusBold, PiTextAaBold } from "react-icons/pi";
 import localforage from 'localforage';
 import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
 import { WithdrawUser, Update_userinfobyusersid } from "../../service/UserService";
@@ -75,7 +75,8 @@ const ProfileConfigBtn = styled.div`
 const RegistHong = styled.div`
   box-sizing: border-box;
   border: 1px solid var(--border-soft);
-  background: #FFFBF8;
+  /* 살구빛 바탕(#FFFBF8)을 뺐다 — 어두운 모드에서 이 칸만 하얗게 떠 있기도 했다 (형 리뷰 2026-08-16) */
+  background: var(--surface);
   margin: 16px 0 4px;
   padding: 16px;
   border-radius: 14px;
@@ -409,6 +410,15 @@ const MobileConfigcontainer =({containerStyle}) =>  {
                 <SubLabelContent>화면 설정</SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>    
+            </SubLabel>
+
+            {/* 글자 크기 — 화면 설정 바로 아래에 같은 모양으로 (형 지시 2026-08-19) */}
+            <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.TEXTSIZESETTING)}>
+              <Row>
+                <PiTextAaBold/>
+                <SubLabelContent>글자 크기</SubLabelContent>
+              </Row>
+              <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>
         </BoxItem>
 

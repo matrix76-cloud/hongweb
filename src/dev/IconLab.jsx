@@ -44,7 +44,7 @@ const CASES = [
 
 // 그룹별 색 — 청소 / 집안일 / 아이 / 돌봄 / 반려 순 (WorkItems 배열 순서와 동일)
 const GROUPS = [
-  { size: 3, solid: "#2563EB", pastelBg: "#DBEAFE", pastelFg: "#1D4ED8" }, // 청소
+  { size: 3, solid: "#1467D8", pastelBg: "#DBEAFE", pastelFg: "#1D4ED8" }, // 청소
   { size: 4, solid: "#FF4E19", pastelBg: "#FFE4D6", pastelFg: "#C2410C" }, // 집안일
   { size: 4, solid: "#F59E0B", pastelBg: "#FEF3C7", pastelFg: "#B45309" }, // 아이
   { size: 2, solid: "#16A34A", pastelBg: "#DCFCE7", pastelFg: "#15803D" }, // 돌봄

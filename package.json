@@ -20,7 +20,7 @@
     "@syncfusion/ej2-react-calendars": "^26.1.40",
     "@toast-ui/editor-plugin-color-syntax": "^3.1.0",
     "@toast-ui/react-editor": "^3.2.3",
-    "@tosspayments/tosspayments-sdk": "^2.3.1",
+    "@tosspayments/tosspayments-sdk": "^2.8.0",
     "@xeger/quill-image-actions": "^0.7.2",
     "@xeger/quill-image-formats": "^0.7.2",
     "axios": "^0.19.2",

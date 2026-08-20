@@ -11,10 +11,12 @@ const authService = getAuth(firebaseApp);
 
 
 /**
-/**
- * 카카오맵을 연동 하기 위해서 kakao 변수를 선언 해둔다
+ * 카카오맵 SDK 는 이 모듈이 뜨는 시점에 아직 없을 수 있다.
+ * (index.html 이 autoload=false 로 붙이고, 앱 웹뷰에서는 아예 못 붙는 경우도 있다)
+ * 그래서 최상단에서 const { kakao } = window 로 굳히지 않고,
+ * 쓰는 자리에서 await ensureKakao() 로 그때그때 가져온다. (2026-08-18)
  */
-const { kakao } = window;
+import { ensureKakao } from "../utility/kakaoReady";
 
 
 export const distanceFunc = (lat1, lon1, lat2, lon2) => {
@@ -52,6 +54,7 @@ export const  deg2rad = (deg)=> {
 
 
 export const CreateWork = async({USERS_ID,WORKTYPE, WORK_INFO, WORK_OPTION, WORK_PHOTOS}) =>{
+  clearWorkCache();   // 목록이 바뀌었으니 보관해둔 것은 버린다 (2026-08-19)
 
   return new Promise(async (resolve, reject) => {
     let success = true;
@@ -90,6 +93,7 @@ export const CreateWork = async({USERS_ID,WORKTYPE, WORK_INFO, WORK_OPTION, WORK
 }
 
 export const CreateWorkInfo = async({USERS_ID,WORKTYPE, WORK_INFO}) =>{
+  clearWorkCache();   // 목록이 바뀌었으니 보관해둔 것은 버린다 (2026-08-19)
 
   let success = true;
   const WORKREF = doc(collection(db, "WORKINFO"));
@@ -146,9 +150,29 @@ export const ReadAllWork = async()=>{
   }
 }
 
+/* 일감 목록 잠깐 보관 (형 지적 2026-08-19 "지도 클릭하고 들어갔을 때 너무 늦게 뜸")
+ *
+ * 홈·지도·검색이 모두 같은 목록을 쓰는데 탭을 옮길 때마다 처음부터 다시 받고 있었다.
+ * WORK 는 문서를 통째로 받아 거리로 걸러내는 구조라 그 왕복이 그대로 대기 시간이 된다.
+ * 같은 자리·같은 범위라면 잠깐 동안은 방금 받은 걸 그대로 쓴다.
+ *
+ * 새 일감이 늦게 보이면 안 되니 수명은 짧게 둔다. 등록·수정 뒤에는 clearWorkCache() 로 버린다.
+ */
+const WORK_CACHE_MS = 60 * 1000;
+let workCache = null;   // { key, at, items }
+
+export const clearWorkCache = () => { workCache = null; };
+
 export const ReadWork = async({latitude, longitude, checkdistance})=>{
   // 범위를 넘기지 않으면 사용자가 설정한 값을 쓴다 (내 정보 > 나의 범위설정)
   const limitKm = Number(checkdistance) > 0 ? Number(checkdistance) : getSearchRange();
+
+  // 소수 셋째 자리면 100m 남짓 — 그 안에서 움직인 건 같은 자리로 본다
+  const cacheKey = `${Number(latitude).toFixed(3)}|${Number(longitude).toFixed(3)}|${limitKm}`;
+  if (workCache && workCache.key === cacheKey && Date.now() - workCache.at < WORK_CACHE_MS) {
+    return workCache.items;
+  }
+
   const workRef = collection(db, "WORK");
 
   let workitems = [];
@@ -181,6 +205,7 @@ export const ReadWork = async({latitude, longitude, checkdistance})=>{
 
     if (querySnapshot.size > 0) {
       success = true;
+      workCache = { key: cacheKey, at: Date.now(), items: workitems };
     }
   } catch (e) {
     console.log("error", e.message);
@@ -258,6 +283,7 @@ export const ReadRoomByIndividually = async({ROOM_ID})=>{
 
 
 export const DeleteWorkByUSER_ID = async({USER_ID}) =>{
+  clearWorkCache();   // 목록이 바뀌었으니 보관해둔 것은 버린다 (2026-08-19)
 
 
   const workRef = collection(db, "WORK");
@@ -291,84 +317,95 @@ export const DeleteWorkByUSER_ID = async({USER_ID}) =>{
 
 export const DefaultReadWork = async({currentlatitude, currentlongitude})=>{
 
-  return new Promise(async (resolve, resject) => {
+  /* 이 함수는 반드시 끝나야 한다.
+   *
+   * 예전에는 resolve 가 카카오 지오코더 콜백 안에만 있었다. 그래서
+   *   · 카카오 SDK 가 안 떠 있거나 (앱 웹뷰에서 실제로 이랬다)
+   *   · 읽어올 문서가 없거나
+   *   · 좌표→주소 변환이 하나라도 실패하면
+   * Promise 가 영영 끝나지 않았고, 이걸 await 하던 스플래시가 그 자리에 멈췄다.
+   * 로딩 아이콘만 계속 도는 증상의 원인이다. (2026-08-18)
+   *
+   * 이제는 어떤 길로 가든 반드시 끝난다.
+   */
+  const kakaoSdk = await ensureKakao();
+
+  return new Promise(async (resolve) => {
     const workRef = collection(db, "WORKINFO");
 
-    let workitems = [];
-    let success = false;
-    const q = query(workRef);
-  
-    try {
-      const querySnapshot = await getDocs(q);
-  
-      let icount = 0;
-      querySnapshot.forEach((doc) => {
-  
-        let item ={
-          CREATEDT :"",
-          WORKTYPE : "",
-          WORK_INFO : [],
-          WORK_STATUS :""
-        }
-   
-        item.WORKTYPE = doc.data().WORKTYPE;
-  
-        let WORK_INFONEW = doc.data().WORK_INFO;
-  
-  
-        const FindIndex = WORK_INFONEW.findIndex(x=>x.requesttype == '지역');
+    const workitems = [];
+    let done = false;
+    const finish = () => { if (!done) { done = true; resolve(workitems); } };
 
-        if(FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined){
+    // 무슨 일이 있어도 10초 뒤에는 끝낸다
+    const giveup = setTimeout(() => {
+      console.log("TCL: DefaultReadWork -> 시간 초과, 모은 것만 넘긴다", workitems.length);
+      finish();
+    }, 10000);
+
+    const settle = () => { clearTimeout(giveup); finish(); };
+
+    try {
+      const querySnapshot = await getDocs(query(workRef));
+
+      let pending = 0;      // 주소 변환을 걸어둔 건수
+      let scanned = false;  // 문서를 다 훑었는가
+      const maybeDone = () => { if (scanned && pending === 0) settle(); };
+
+      querySnapshot.forEach((doc) => {
+        const item = { CREATEDT: "", WORKTYPE: "", WORK_INFO: [], WORK_STATUS: "" };
+        item.WORKTYPE = doc.data().WORKTYPE;
+
+        const WORK_INFONEW = doc.data().WORK_INFO;
+
+        // 지역 정보가 없는 문서는 건너뛴다.
+        // 등록 도중 끊긴 문서가 다수 있는데, 안 거르면 WORK_INFO[-1].latitude 에서
+        // 예외가 나 조회 전체가 실패했다. (2026-08-12)
+        const FindIndex = WORK_INFONEW.findIndex(x => x.requesttype == '지역');
+        if (FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined) {
           return;
         }
 
-      // 지역 정보가 없는 문서는 건너뛴다.
-      // 예전에 등록 도중 끊긴 문서가 다수 있는데, 이걸 거르지 않으면
-      // WORK_INFO[-1].latitude 에서 예외가 나 조회 전체가 실패했다. (2026-08-12)
-      if(FindIndex === -1 || WORK_INFONEW[FindIndex].latitude === undefined){
-        return;
-      }
-        const P = {
-          latitude: currentlatitude,
-          longitude: currentlongitude
-        }
-  
-        const R = 5000 // meters
+        const P = { latitude: currentlatitude, longitude: currentlongitude };
+        const R = 5000; // meters
         const randomPoint = randomLocation.randomCirclePoint(P, R);
-  
-        const geocoder = new kakao.maps.services.Geocoder();
-    
-        geocoder.coord2Address(randomPoint.longitude, randomPoint.latitude, async (result, status) => {
-        
-          if (status === kakao.maps.services.Status.OK) {
-            const address = result[0].address.address_name;
-        
-            console.log("TCL: DefaultReadWork -> randomPoint", randomPoint.longitude, randomPoint.latitude,address);
-  
-            WORK_INFONEW[FindIndex].result = address;
+
+        // 카카오 SDK 가 없으면 주소는 비워두고 좌표만 넣는다 — 멈추지 않는 게 우선이다
+        if (!kakaoSdk?.maps?.services) {
+          WORK_INFONEW[FindIndex].latitude = randomPoint.latitude;
+          WORK_INFONEW[FindIndex].longitude = randomPoint.longitude;
+          item.WORK_INFO = WORK_INFONEW;
+          item.WORK_STATUS = 1;
+          workitems.push(item);
+          return;
+        }
+
+        pending += 1;
+        const geocoder = new kakaoSdk.maps.services.Geocoder();
+        geocoder.coord2Address(randomPoint.longitude, randomPoint.latitude, (result, status) => {
+          try {
+            if (status === kakaoSdk.maps.services.Status.OK) {
+              WORK_INFONEW[FindIndex].result = result[0].address.address_name;
+            }
             WORK_INFONEW[FindIndex].latitude = randomPoint.latitude;
             WORK_INFONEW[FindIndex].longitude = randomPoint.longitude;
             item.WORK_INFO = WORK_INFONEW;
             item.WORK_STATUS = 1;
-            icount++;
             workitems.push(item);
-            if(querySnapshot.size == icount){
-              console.log("TCL: DefaultReadWork -> icount", icount ,querySnapshot.size)
-              success = true;
-  
-              resolve(workitems);
-            }
-    
+          } catch (e) {
+            console.log("TCL: DefaultReadWork -> 주소 변환 실패, 건너뛴다", e.message);
+          } finally {
+            pending -= 1;   // 성공이든 실패든 한 건은 처리됐다
+            maybeDone();
           }
         });
       });
-  
-     
+
+      scanned = true;
+      maybeDone();          // 변환할 게 하나도 없으면 여기서 끝난다
     } catch (e) {
-      console.log("error", e.message);
-    } finally {
-  
-  
+      console.log("TCL: DefaultReadWork -> 조회 실패, 빈 목록으로 끝낸다", e.message);
+      settle();
     }
   });
 

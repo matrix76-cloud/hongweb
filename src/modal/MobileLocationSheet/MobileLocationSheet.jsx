@@ -29,7 +29,7 @@ const Sheet = styled.div`
   background: var(--surface);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  padding: 16px 16px calc(16px + var(--safe-bottom));
 `;
 
 const SheetHead = styled.div`
@@ -147,7 +147,7 @@ const MobileLocationSheet = ({ open, onClose, onRelocated }) => {
             <SheetHead>
               <SheetTitle>위치 설정</SheetTitle>
               <CloseBtn onClick={onClose} aria-label="닫기">
-                <MdClose size={22} color="#71717a" />
+                <MdClose size={22} color="var(--text-sub)" />
               </CloseBtn>
             </SheetHead>
 
@@ -159,7 +159,7 @@ const MobileLocationSheet = ({ open, onClose, onRelocated }) => {
                 <RowTitle>현재 위치로 재검색</RowTitle>
                 <RowDesc>{locating ? "현재 위치를 찾는 중..." : "GPS로 내 위치를 다시 잡아요"}</RowDesc>
               </span>
-              <MdChevronRight size={20} color="#a3a3a3" style={{ flex: "none" }} />
+              <MdChevronRight size={20} color="var(--text-sub)" style={{ flex: "none" }} />
             </RowBtn>
 
             <RowBtn onClick={_handleMapPick} style={{ marginTop: 4 }}>
@@ -170,7 +170,7 @@ const MobileLocationSheet = ({ open, onClose, onRelocated }) => {
                 <RowTitle>지도로 위치지정</RowTitle>
                 <RowDesc>지도를 움직여 원하는 위치를 직접 선택해요</RowDesc>
               </span>
-              <MdChevronRight size={20} color="#a3a3a3" style={{ flex: "none" }} />
+              <MdChevronRight size={20} color="var(--text-sub)" style={{ flex: "none" }} />
             </RowBtn>
           </Sheet>
         </Dim>

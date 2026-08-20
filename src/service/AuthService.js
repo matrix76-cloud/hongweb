@@ -6,6 +6,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { firebaseApp } from "../api/config";
 import { FIXED_LOCATION } from "../utility/devLocation";
 import { loadAgreement } from "../container/main/MobileAgreecontainer";
+import { isInApp, appCanSocial, requestNativeSocial } from "./appBridge";
 
 /**
  * 로그인 · 회원가입 (형 지시 2026-08-12 — 숨고 화면 방식)
@@ -139,11 +140,61 @@ export const signInWithEmail = async ({ email, password }) => {
 };
 
 /** 구글로 시작하기 */
-export const signInWithGoogle = async () => {
+const googleProvider = () => {
   const provider = new firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
-  const cred = await auth.signInWithPopup(provider);
+  return provider;
+};
+
+/**
+ * 구글로 시작하기.
+ *
+ * 앱(WebView) 안에서는 팝업을 쓸 수 없다. 띄울 창이 없어서 인증 페이지가 본 화면을
+ * 그대로 덮어버리고, 인증이 끝나도 결과를 돌려줄 창(opener)이 없어 파이어베이스
+ * 중계 페이지에 그대로 머문다 — 로그인은 됐는데 흰 화면만 남던 원인. (형 2026-08-18)
+ *
+ * 그래서 앱에서는 리다이렉트 방식으로 간다. 이 함수는 화면을 넘겨주고 끝나며,
+ * 돌아온 뒤 completeGoogleRedirect() 가 나머지를 마무리한다.
+ */
+export const signInWithGoogle = async () => {
+  /* ① 앱이 직접 할 수 있으면 앱에 맡긴다 — 폰에 로그인된 구글 계정을 그대로 쓴다.
+        아이디·비번을 다시 치지 않아도 되는 건 이 길뿐이다. */
+  if (appCanSocial("google")) {
+    const res = await requestNativeSocial("google");
+    if (res.error) throw new Error(res.error);
+    if (!res.idToken) throw new Error("구글에서 인증 정보를 받지 못했습니다");
+
+    const credential = firebase.auth.GoogleAuthProvider.credential(res.idToken);
+    const cred = await auth.signInWithCredential(credential);
+    return attachUserDoc(cred, "google");
+  }
+
+  /* ② 옛 앱 — 팝업을 띄울 창이 없으니 리다이렉트로 다녀온다.
+        (팝업을 쓰면 인증 후 돌아올 곳이 없어 흰 화면이 남는다) */
+  if (isInApp()) {
+    await auth.signInWithRedirect(googleProvider());
+    return new Promise(() => {});   // 여기서 페이지가 떠난다
+  }
+
+  /* ③ 일반 브라우저 */
+  const cred = await auth.signInWithPopup(googleProvider());
   return attachUserDoc(cred, "google");
+};
+
+/**
+ * 리다이렉트로 다녀온 결과를 받는다.
+ * 로그인하고 돌아왔으면 화면들이 쓰는 형태로 돌려주고, 아니면 null 이다.
+ */
+export const completeGoogleRedirect = async () => {
+  try {
+    const cred = await auth.getRedirectResult();
+    if (!cred || !cred.user) return { cfg: null, error: null };
+    return { cfg: await attachUserDoc(cred, "google"), error: null };
+  } catch (e) {
+    // 조용히 삼키면 로그인 화면으로 되돌아온 것처럼만 보인다 — 왜 안 됐는지 알려준다
+    console.log("TCL: 구글 리다이렉트 결과 실패", e?.code, e?.message);
+    return { cfg: null, error: e };
+  }
 };
 
 /* ── 이메일 인증코드 로그인 (형 지시 2026-08-12) ──
@@ -181,7 +232,22 @@ export const findMaskedEmails = async (nickname) => {
  * (필요한 것: functions 의 kakaoCustomToken + IAM 의 Service Account Token Creator)
  */
 export const signInWithKakao = async () => {
-  throw new Error("카카오 로그인은 준비 중입니다");
+  if (!appCanSocial("kakao")) {
+    // 브라우저에는 아직 길을 안 냈다 — 앱에서만 받는다
+    throw new Error("카카오로 시작하기는 앱에서 이용해주세요.");
+  }
+
+  // ① 앱이 카카오톡으로 로그인하고 토큰을 가져온다
+  const res = await requestNativeSocial("kakao");
+  if (res.error) throw new Error(res.error);
+  if (!res.accessToken) throw new Error("카카오에서 인증 정보를 받지 못했습니다");
+
+  // ② 그 토큰이 진짜인지 서버가 카카오에 확인하고 파이어베이스 토큰으로 바꿔준다
+  const call = httpsCallable(fns(), "kakaoCustomToken");
+  const out = await call({ accessToken: res.accessToken });
+
+  const cred = await auth.signInWithCustomToken(out.data.token);
+  return attachUserDoc(cred, "kakao");
 };
 
 /** 비밀번호 재설정 메일 */
@@ -210,6 +276,9 @@ export const authErrorText = (e) => {
   if (code.includes("wrong-password") || code.includes("invalid-credential")) return "비밀번호가 맞지 않습니다.";
   if (code.includes("too-many-requests")) return "잠시 후 다시 시도해주세요.";
   if (code.includes("popup-closed-by-user")) return "로그인 창이 닫혔습니다.";
+  // 파이어베이스 콘솔에서 그 로그인 방법이 꺼져 있는 경우 (Authentication > Sign-in method)
+  if (code.includes("operation-not-allowed")) return "지금은 이 방법으로 로그인할 수 없습니다. 잠시 후 다시 시도해주세요.";
+  if (code.includes("network-request-failed")) return "인터넷 연결을 확인해주세요.";
   // 서버(onCall)에서 올려보낸 문구는 그대로 보여준다
   if (e && e.message && !e.message.startsWith("Firebase:")) return e.message;
   return (e && e.message) || "로그인에 실패했습니다.";

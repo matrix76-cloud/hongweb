@@ -33,8 +33,6 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 
-  /* fixed 자식을 이 안에 가둔다 (위 설명 참고) */
-  transform: translateZ(0);
 }
 
 /* 랜딩 조각들 — 모바일에서는 숨긴다 */
@@ -113,6 +111,11 @@
 
   /* 폰 목업 */
   .app-frame {
+    /* fixed 자식(헤더·하단탭)을 폰 목업 안에 가둔다 — transform 이 있는 요소가
+       fixed 의 기준이 되기 때문이다. PC 에서만 필요하다.
+       모바일에도 걸어두면 .app-frame 이 스크롤될 때 하단탭이 같이 밀려 올라간다.
+       (채팅 화면에서 형이 잡아낸 증상, 2026-08-18) */
+    transform: translateZ(0);
     width: 390px;
     max-width: 390px;
     height: min(800px, calc(100vh - 130px));

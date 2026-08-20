@@ -3183,10 +3183,10 @@
   resolved "https://registry.npmjs.org/@tootallnate/once/-/once-2.0.0.tgz"
   integrity sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==
 
-"@tosspayments/tosspayments-sdk@^2.3.1":
-  version "2.3.1"
-  resolved "https://registry.npmjs.org/@tosspayments/tosspayments-sdk/-/tosspayments-sdk-2.3.1.tgz"
-  integrity sha512-g7UFcyQn9I76/2fSgST1x3g92TwTx6e51g1w4RAeUKvXcevDqrrqW/1Zxh8HnJ0ohx54z9ss+BfGd1cIBveofA==
+"@tosspayments/tosspayments-sdk@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.npmjs.org/@tosspayments/tosspayments-sdk/-/tosspayments-sdk-2.8.0.tgz"
+  integrity sha512-DWFlEqrX6m0hHcjuSf3pHIdeNbyN8SQ3VanO0Ru3qQwYf8NHfAKn1wr90VJrCgPio4aYvHOtbtMld3BfRTxexQ==
 
 "@trysound/sax@0.2.0":
   version "0.2.0"

@@ -10,25 +10,29 @@ import { PiXBold, PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
  * 좌우 버튼 · 좌우로 밀기(스와이프) · 키보드 화살표로 다음 장을 본다.
  */
 
+/* 위아래 칸(요청 내용·위치)과 제목 서식·간격을 똑같이 맞춘다 (형 지적 2026-08-18) */
 const Section = styled.div`
   width: 100%;
-  margin: 4px 0 18px;
+  margin: 22px 0 0;
 `;
 const Title = styled.div`
   font-size: 16px;
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 10px;
+  margin: 0 0 10px;
 `;
+/* 한 줄에 세 칸. 사진이 한두 장이면 왼쪽으로 몰리지 않고 가운데에 온다 (형 지시 2026-08-18) */
 const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
 `;
 const Cell = styled.div`
   position: relative;
-  width: 100%;
-  padding-top: 100%;
+  flex: 0 0 calc((100% - 16px) / 3);
+  max-width: calc((100% - 16px) / 3);
+  padding-top: calc((100% - 16px) / 3);
   border-radius: 10px;
   overflow: hidden;
   background: var(--bg);
@@ -116,7 +120,7 @@ const Arrow = styled.div`
 `;
 const Dots = styled.div`
   flex: 0 0 auto;
-  padding: 16px 0 calc(20px + env(safe-area-inset-bottom));
+  padding: 16px 0 calc(20px + var(--safe-bottom));
   display: flex;
   align-items: center;
   justify-content: center;

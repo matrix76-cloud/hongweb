@@ -86,9 +86,9 @@ const MobileChatcontainer =({containerStyle}) =>  {
     const USERS_ID = user.users_id;
     let blocked = [];
 
+    /* 예전에는 여기서 readuser() 로 USERS 전체를 받아왔다. 화면에서 쓰지도 않는 값인데
+       사용자가 늘수록 채팅 화면 열리는 시간만 늘었다. 지웠다. (형 지적 2026-08-18) */
     async function FetchData(){
-      const users = await readuser();
-      setUseritems(users);
       // 차단한 사람의 방은 목록에서 뺀다 (형 지시 2026-08-12)
       blocked = await ReadBlocked({USERS_ID});
       setRefresh((refresh) => refresh +1);

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Empty from "../../Empty";
+import { useNavigate } from "react-router-dom";
 
 /**
  * 내 정보 > 결제관리 / 입금관리 (형 리뷰 2026-08-13 "모두 처리 해줘").
@@ -38,8 +39,23 @@ const Notice = styled.div`
 `;
 
 /** kind: 'pay'(결제) | 'deposit'(입금) */
+const GoPay = styled.button`
+  width: 100%;
+  height: 52px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 12px;
+  background: #3C6E9F;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+`;
+
 const MobilePayList = ({ kind = "pay" }) => {
   const pay = kind === "pay";
+  const navigate = useNavigate();
   return (
     <Container>
       <Head>{pay ? "결제관리" : "입금관리"}</Head>
@@ -52,11 +68,16 @@ const MobilePayList = ({ kind = "pay" }) => {
       <Empty content={pay ? "결제 내역이 없습니다" : "입금 내역이 없습니다"} height={160} />
 
       <Notice>
-        지금은 앱 안에서 돈이 오가지 않습니다. 금액은 채팅으로 정하고 만나서 직접 주고받습니다.
-        그래서 아직 쌓일 내역이 없습니다.
-        {"\n\n"}
-        앱에서 바로 결제하는 기능이 들어오면 그때부터 이 자리에 내역이 남습니다.
+        {pay
+          ? "앱에서 바로 결제하는 기능을 붙이는 중입니다. 결제하면 이 자리에 내역이 남습니다.\n\n결제한 돈은 일이 끝날 때까지 홍컴즈가 맡아두고, 일이 확인되면 홍여사에게 전달됩니다."
+          : "일하고 받은 돈의 내역이 이 자리에 남습니다. 정산이 붙는 대로 채워집니다."}
       </Notice>
+
+      {pay && (
+        <GoPay onClick={() => navigate("/Mobilepay", { state: { amount: 50000, orderName: "집 청소" } })}>
+          결제 화면 열어보기
+        </GoPay>
+      )}
     </Container>
   );
 };

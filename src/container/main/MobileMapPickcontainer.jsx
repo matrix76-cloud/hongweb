@@ -109,7 +109,7 @@ const BottomBar = styled.div`
   flex: none;
   display: flex;
   gap: 10px;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 12px 16px calc(12px + var(--safe-bottom));
   border-top: 1px solid var(--border-soft);
 `;
 

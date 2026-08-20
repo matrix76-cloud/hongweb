@@ -7,7 +7,9 @@ import { UserContext } from "../../context/User";
 import { DefaultReadWork, findWorkAndFunctionCallFromCurrentPosition, ReadAllWork, ReadWork } from "../../service/WorkService";
 import { useSleep } from "../../utility/common";
 import { imageDB } from "../../utility/imageData";
+import { useNoScroll } from "../../utility/useNoScroll";
 import { LINKTYPE, MOVE } from "../../utility/link";
+import { APP_TO_WEB } from "../../service/appBridge";
 import { Create_userdevice, readuserbydeviceid, updatealluserbydeviceid, Update_tokendevice, Update_usertoken } from "../../service/UserService";
 
 import { v4 as uuidv4 } from 'uuid';
@@ -26,18 +28,32 @@ import { getFixedPosition } from "../../utility/devLocation";
 const getCurrentPositionOrFixed = (onOk, onErr, opts) => {
   const fixed = getFixedPosition();
   if (fixed) { onOk(fixed); return; }
+  if (typeof navigator === 'undefined' || !navigator.geolocation) { onErr(new Error('no geolocation')); return; }
   navigator.geolocation.getCurrentPosition(onOk, onErr, opts);
 };
 
+/* 위치를 못 구했을 때 쓸 좌표 (형 보고 2026-08-16 "스피너만 도네").
+   마켓에 올라가 있는 앱은 WebView 에 geolocationEnabled 가 빠져 있다. 안드로이드는 이 값이
+   기본 false 라 브라우저 위치 요청에 성공도 실패도 안 온다 — 콜백을 기다리다 화면이 영영 멈춘다.
+   앱을 다시 올릴 때까지도 돌아가야 하므로, 위치는 못 구해도 화면은 넘어가게 한다. */
+const FALLBACK_POSITION = { latitude: 37.6115, longitude: 127.1560 };
+
+// 이 시간 안에 위치가 안 잡히면 기다리지 않고 넘어간다
+const LOCATION_WAIT_MS = 7000;
 
 
+
+/* 로딩 화면은 화면 전체를 흰색으로 채운다.
+   예전에는 바깥 div 에 높이가 없어 이 박스가 내용 높이만큼만 자랐고,
+   그 아래로 app-frame 의 회색 바탕이 드러나 화면 반만 흰색으로 보였다.
+   alignItems 는 CSS 속성명이 아니라 세로 가운데 정렬도 안 먹고 있었다. (2026-08-18) */
 const Container = styled.div`
-  height: 100%;
-  display : flex;
-  justify-content:center;
-  alignItems:center;
-  width :100%;
-  background : var(--surface);
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: var(--surface);
 `
 const style = {
   display: "flex"
@@ -57,6 +73,8 @@ const MobileSplashcontainer =({containerStyle}) =>  {
   const { datadispatch, data} = useContext(DataContext);
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(1);
+
+  useNoScroll();   // 로딩 화면은 스크롤할 게 없다
   const [location, setLocation] = useState({ latitude: null, longitude: null });
 
   const [move, setMove] = useState(0);
@@ -67,6 +85,9 @@ const MobileSplashcontainer =({containerStyle}) =>  {
 
   const elementRef = useRef(null);
   const isWeb = typeof window !== 'undefined'; // 웹 환경 확인
+
+  // 위치가 어느 경로로 먼저 들어오든(앱 · 브라우저 · 대기 만료) 한 번만 진행한다
+  const startedRef = useRef(false);
 
   useLayoutEffect(() => {
     setHeight(elementRef.current.offsetHeight -10);
@@ -136,10 +157,20 @@ const MobileSplashcontainer =({containerStyle}) =>  {
 
     const { data, type } = JSON.parse(event.data);
 
-    if (type === LINKTYPE.START) {
+    /* 앱이 보내는 종류 이름은 'APP_INIT' 인데 여기서는 LINKTYPE.START(숫자 0)와 비교하고 있었다.
+       그래서 앱이 이미 구해서 넘겨준 좌표를 웹이 한 번도 못 받았고, 브라우저 위치가 늦거나
+       실패하면 기본 좌표(다산동)로 넘어가 화면에 엉뚱한 동네가 떴다. (형 지적 2026-08-18) */
+    if (type === APP_TO_WEB.INIT || type === LINKTYPE.START) {
       console.log("TCL: listener -> LINKTYPE.START", LINKTYPE.START, data.token);
       user.token = data.token;
       dispatch(user);
+
+      /* 앱은 자기가 구한 위치도 같이 보내준다. 예전엔 이 값을 버리고 웹이 다시 구했는데,
+         마켓에 올라간 앱은 WebView 에서 위치를 못 구해 그대로 멈췄다 (형 2026-08-16).
+         앱이 준 값이 있으면 그걸 그대로 쓴다 — 이게 제일 빠르고 확실하다. */
+      if (data && data.latitude && data.longitude) {
+        proceedWith(Number(data.latitude), Number(data.longitude));
+      }
     }
   };
 
@@ -168,58 +199,87 @@ const MobileSplashcontainer =({containerStyle}) =>  {
    * 시간이 생명이다. 이러한 처리는 주소지 변경이나 현재 위치 재설정에서도 사용 된다(데이타가 있는것처럼 보여야 하기 때문에)
   */
   
+  /**
+   * 좌표가 손에 들어온 뒤의 공통 처리 — 주소로 바꿔 사용자 정보에 넣고 다음 화면으로 보낸다.
+   *
+   * 여기서 지키는 것 하나: 무슨 일이 있어도 멈추지 않는다.
+   * 주소 변환(카카오)이 실패해도, 주변 일감 조회가 실패해도 좌표만 들고 그냥 넘어간다.
+   * 예전에는 실패하면 alert 를 띄웠는데, 앱 안에서는 그 알럿이 화면을 잠가버린다.
+   */
+  const proceedWith = async (latitude, longitude) => {
+    if (startedRef.current) return;          // 앱·브라우저·대기만료 중 먼저 온 것 하나만
+    startedRef.current = true;
+
+    console.log("TCL: proceedWith ->", latitude, longitude);
+    setLocation({ latitude, longitude });
+
+    user.latitude  = latitude;
+    user.longitude = longitude;
+    user.userimg   = PROFILEIMAGE;
+
+    // 좌표 → 주소. SDK 가 안 떠 있거나 실패해도 진행한다
+    try {
+      const kakaoSdk = typeof window !== 'undefined' ? window.kakao : null;
+      if (kakaoSdk?.maps?.services) {
+        const address = await new Promise((resolve) => {
+          const geocoder = new kakaoSdk.maps.services.Geocoder();
+          const giveup = setTimeout(() => resolve(null), 4000);
+          geocoder.coord2Address(longitude, latitude, (result, status) => {
+            clearTimeout(giveup);
+            resolve(status === kakaoSdk.maps.services.Status.OK ? result[0].address : null);
+          });
+        });
+        if (address) user.address_name = address.address_name;
+      }
+    } catch (e) {
+      console.error("TCL: 주소 변환 실패 — 좌표로만 진행", e);
+    }
+
+    dispatch(user);
+
+    try {
+      await findWorkAndFunctionCallFromCurrentPosition({
+        currentlatitude: latitude,
+        currentlongitude: longitude,
+        checkdistance: CHECKDISTANCE,
+      });
+    } catch (e) {
+      console.error("TCL: 주변 일감 준비 실패 — 그대로 진행", e);
+    }
+
+    FinalProcess();
+  };
+
   const StartProcess =() =>{
     console.log("TCL: StartProcess")
+
+    /* 위치를 기다리는 데 상한을 둔다. 마켓에 올라간 앱은 WebView 설정 때문에
+       성공도 실패도 안 돌아오는 경우가 있어서, 여기가 없으면 스피너만 돈다. */
+    setTimeout(() => {
+      if (startedRef.current) return;
+      console.warn("TCL: 위치를 못 받아 기본 위치로 진행한다");
+      proceedWith(FALLBACK_POSITION.latitude, FALLBACK_POSITION.longitude);
+    }, LOCATION_WAIT_MS);
+
     getCurrentPositionOrFixed(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        setLocation({ latitude, longitude });
-        console.log("TCL: StartProcess -> latitude", latitude)
-        console.log("TCL: StartProcess -> longitude", longitude)
-        // Geocoder를 사용하여 좌표를 주소로 변환
-        const geocoder = new kakao.maps.services.Geocoder();
-        geocoder.coord2Address(longitude, latitude, async (result, status) => {
-          if (status === kakao.maps.services.Status.OK) {
-            const address = result[0].address;
-
-  
-            user.address_name = address.address_name;
-            user.latitude  = latitude;
-            user.longitude = longitude;
-            user.userimg = PROFILEIMAGE;
-            
-            dispatch(user);
-            console.log("TCL: StartProcess  user setting -> ", user );
-
-            // 설정된 거리 내외에 현재 위치에 존재 하는 데이타가 있습니까?
-
-            const currentlatitude = latitude;
-            const currentlongitude = longitude;
-            const checkdistance = CHECKDISTANCE;
-            const workfunctioncall = await findWorkAndFunctionCallFromCurrentPosition({currentlatitude, currentlongitude, checkdistance});
-
-            FinalProcess();
-
-  
-          }else{
-            alert(status);
-          }
-        });
-  
+        proceedWith(latitude, longitude);
       },
       (err) => {
-        console.error(err);
-        alert(err);
+        // 위치 거부·실패도 막다른 길이 아니다. 기본 위치로 넘어간다
+        console.error("TCL: 위치 실패 — 기본 위치로 진행", err);
+        proceedWith(FALLBACK_POSITION.latitude, FALLBACK_POSITION.longitude);
       },
       {
           enableHighAccuracy: false,  // 높은 정확도 비활성화
-          timeout: 20000,             // 최대 20초 대기
-          maximumAge: 0              // 캐시된 위치 사용 안 함
+          timeout: 6000,              // 오래 붙잡지 않는다 (예전 20초는 앱에서 너무 길었다)
+          maximumAge: 600000          // 10분 안에 구한 값이 있으면 그대로 쓴다
       }
     );
 
 
-  } 
+  }
    /**
    * 설정 값이 존재하지 않는 다면 mobilegate로 이동 한다
    * 설정 값이 존재 하지만 데이타 베이스에 설정값(디바이스아이디)에 맞는 데이타가 없다면 mobile phone으로 이동한다
@@ -240,10 +300,14 @@ const MobileSplashcontainer =({containerStyle}) =>  {
     const longitude = user.longitude;
     const checkdistance = INCLUDEDISTANCE;
 
-    const workitems = await ReadWork({latitude, longitude,checkdistance});
-
-    data.workitems = workitems;
-    datadispatch(data);
+    // 목록을 미리 받아두는 것뿐이다. 여기서 넘어지면 화면 자체가 안 뜨므로 실패해도 그냥 간다
+    try {
+      const workitems = await ReadWork({latitude, longitude,checkdistance});
+      data.workitems = workitems;
+      datadispatch(data);
+    } catch (e) {
+      console.error("TCL: 일감 미리 받기 실패 — 빈 목록으로 진행", e);
+    }
 
 
 
@@ -252,7 +316,7 @@ const MobileSplashcontainer =({containerStyle}) =>  {
     localforage.getItem('userconfig')
     .then(async function(value) {
       console.log("TCL: Mobile MAIN  -> GetItem", value)
-      userconfig = value;
+      userconfig = value || {};
       if (userconfig.deviceid  == undefined ||  userconfig.deviceid  =='') {
         // 온보딩 → 약관 동의 → 로그인. 어디로 갈지는 한 곳에서 정한다 (형 지시 2026-08-13)
         navigate(await resolveEntryRoute());
@@ -313,10 +377,10 @@ const MobileSplashcontainer =({containerStyle}) =>  {
 
 
   return (
-    <div ref={elementRef}>
+    <div ref={elementRef} style={{ height: '100%' }}>
       <Container style={containerStyle} height={height}>
-          <LottieAnimation containerStyle={{marginTop:"65%"}} animationData={imageDB.loadinglarge}
-            width={"150px"} height={'150px'}/>
+          <LottieAnimation animationData={imageDB.loadinglarge}
+            width={"96px"} height={'96px'}/>
       </Container>
     </div>
   );

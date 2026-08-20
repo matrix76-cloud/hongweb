@@ -113,12 +113,12 @@ const StoreInfo  = ({containerStyle, height})=>{
             </StoreButtonView>
 
             <StoreBusinessView>
-                <StoreBusinessText>(주)에듀컴 사업자등록번호 : 765-13-02236 통신판매업 신고번호 : 2024-다산-0881  </StoreBusinessText>
+                <StoreBusinessText>주식회사 홍컴즈 | 대표 이행렬 | 사업자등록번호 480-86-03245 | 서울특별시 서초구 사임당로8길 13, 4층 402-제이681호 | 대표전화 070-4544-7684</StoreBusinessText>
                 
             </StoreBusinessView>
             <StoreBusinessInfoView>
                 <StoreBusinessInfoText>
-                (주)에듀컴은 통신판매중개자이며, 통신판매의 당사자가 아닙니다.
+                주식회사 홍컴즈는 통신판매중개자이며, 통신판매의 당사자가 아닙니다.
                 따라서, 상품의 예약, 이용 및 환불 등과 관련한 책임을 지지 않습니다.
                 </StoreBusinessInfoText>
             </StoreBusinessInfoView>

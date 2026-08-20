@@ -198,6 +198,7 @@ export const CONFIGMOVE = {
     SEARCHRANGE: "나의 범위설정",
     NOTISETTING: "실시간 알림설정",
     THEMESETTING: "화면 설정",
+    TEXTSIZESETTING: "글자 크기",
     FAVORITEWORK: "찜한 일감",
     DEALOPEN: "체결중인 거래",
     DEALDONE: "체결완료된 거래",

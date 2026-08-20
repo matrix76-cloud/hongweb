@@ -28,7 +28,7 @@ const Sheet = styled.div`
   background: var(--surface);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  padding: 18px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  padding: 18px 16px calc(16px + var(--safe-bottom));
 `;
 
 const Head = styled.div`

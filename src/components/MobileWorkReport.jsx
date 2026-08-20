@@ -57,7 +57,7 @@ const LoadingAnimationStyle={
 const ActionBar = styled.div`
   width: 100%;
   margin-top: 28px;
-  padding: 20px 0 calc(24px + env(safe-area-inset-bottom));
+  padding: 20px 0 calc(24px + var(--safe-bottom));
   border-top: 1px solid var(--border-soft);
   display: flex;
   flex-direction: row;

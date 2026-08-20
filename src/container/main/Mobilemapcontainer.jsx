@@ -128,9 +128,11 @@ const LoadingAnimationStyle={
 }
 
 /* 지도 위 버튼들은 어두운 모드에서도 흰색을 유지한다 — 지도 타일이 밝다 (형 리뷰 2026-08-13) */
+/* 흰 바탕 + 주황 테두리 (형 확정 2026-08-20 — /maplab 필터 04안).
+   흰 지도 위에서 흰 버튼이 묻히던 걸, 바탕은 그대로 두고 윤곽으로 세운다. */
 const FilterButton = styled.div`
   background-color: #fff;
-  color: #131313;
+  color: #FF4E19;
   width: 80px;
   height: 40px;
   display: flex;
@@ -138,8 +140,10 @@ const FilterButton = styled.div`
   align-items: center;
   justify-content: space-evenly;
   border-radius: 20px;
-  border: 1px solid var(--border-soft);
+  border: 1.5px solid #FF4E19;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
   font-family: 'Pretendard-SemiBold';
+  cursor: pointer;
 `
 
 /* 현재 위치로 이동 — 지도 위 동그란 아이콘 버튼 (형 리뷰 2026-08-12) */
@@ -170,14 +174,15 @@ const OpenOnlyLabel = styled.div`
   height: 40px;
   padding: 0 14px;
   background: #fff;
-  border: 1px solid var(--border-soft);
+  border: 1.5px solid #FF4E19;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
   border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 7px;
   font-size: 15px;
   font-weight: 600;
-  color: #131313;
+  color: #FF4E19;
   cursor: pointer;
   user-select: none;
 `
@@ -680,9 +685,11 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
       minClusterSize: 2,        // 2개 이상만 클러스터. 1개는 원래대로 가격 카드
       disableClickZoom: false,
       gridSize: 90,
+      /* 진초록 (형 확정 2026-08-20 — /maplab 클러스터 03안).
+         낱개 카드는 주황, 묶음은 초록. 색이 갈려 한눈에 구분된다. */
       styles: [{
         width: '44px', height: '44px',
-        background: '#FF4E19',
+        background: '#1f7a5a',
         borderRadius: '22px',
         color: '#fff',
         textAlign: 'center',
@@ -1209,7 +1216,7 @@ const MobileMapcontainer =({containerStyle, ID, TYPE}) =>  {
 
       {/* 현재 위치로 이동 — 필터 줄 바로 위 오른쪽 (형 리뷰 2026-08-12) */}
       <CurrentPosButton onClick={_handleMoveCurrent} title="현재 위치로 이동" aria-label="현재 위치로 이동">
-        <MdMyLocation size={22} color="#131313"/>
+        <MdMyLocation size={22} color="var(--text)"/>
       </CurrentPosButton>
 
       <ButtonLayer>
