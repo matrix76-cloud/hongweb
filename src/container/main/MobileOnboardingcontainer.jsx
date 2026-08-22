@@ -6,6 +6,10 @@ import { enterGuest, isGuest } from "../../utility/guest";
 import { imageDB } from "../../utility/imageData";
 import { useNoScroll } from "../../utility/useNoScroll";
 import illustStep1 from "../../assets/imageset/honggroup.png";
+import { onboardVariant } from "../../components/OnboardStages";
+
+// 온보딩 그림 안 — /onboardlab 에서 고른 것 (형 확정 전까지 1안 "cards")
+const ONBOARD_VARIANT = "town5";   // 형 확정 2026-08-23: 9안 = 올리기·동네(여성만·같은 동네)·채팅·알림·안심
 
 /**
  * 온보딩 3단계 (형 지시 2026-08-12 — doum 프로젝트 OnboardingStepsPage 구조를 따랐다)
@@ -201,29 +205,6 @@ const StartBtn = styled.button`
   cursor: pointer;
 `;
 
-// ② 홍여사들이 지원한다 — 심볼 여럿이 손을 드는 그림
-const StageApply = () => (
-  <Stage>
-    <Symbol src={imageDB.logo} $size={72} $x={14} $y={92} />
-    <Symbol src={imageDB.logo} $size={88} $x={92} $y={64} />
-    <Symbol src={imageDB.logo} $size={72} $x={186} $y={92} />
-    <Bubble $x={0} $y={44} $on>지원할게요</Bubble>
-    <Bubble $x={150} $y={26}>저도요</Bubble>
-  </Stage>
-);
-
-// ③ 마음에 드는 분을 고른다 — 가운데 한 명만 고른 그림
-const StagePick = () => (
-  <Stage>
-    <Symbol src={imageDB.logo} $size={64} $x={12} $y={112} style={{ opacity: .35 }} />
-    <Symbol src={imageDB.logo} $size={104} $x={80} $y={72} />
-    <PickRing $size={116} $x={74} $y={66} />
-    <PickMark $x={158} $y={140}>✓</PickMark>
-    <Symbol src={imageDB.logo} $size={64} $x={186} $y={112} style={{ opacity: .35 }} />
-    <Bubble $x={64} $y={24} $on>이분으로 할게요</Bubble>
-  </Stage>
-);
-
 const STEPS = [
   {
     step: "STEP 01",
@@ -246,13 +227,15 @@ const STEPS = [
 ];
 
 const MobileOnboardingcontainer = ({ containerStyle }) => {
+  const VARIANT = onboardVariant(ONBOARD_VARIANT);
+  const PAGES = VARIANT.copy || STEPS;   // 특징형 안은 문구도 같이 갖고 있다
   const navigate = useNavigate();
   const [i, setI] = useState(0);
 
   useNoScroll();   // 한 화면에 다 들어간다 — 스크롤 막대도 밀리는 느낌도 없앤다
 
-  const s = STEPS[i];
-  const last = i === STEPS.length - 1;
+  const s = PAGES[i];
+  const last = i === PAGES.length - 1;
 
   const markSeen = async () => {
     try { await localforage.setItem(ONBOARDING_KEY, true); } catch { /* noop */ }
@@ -279,9 +262,7 @@ const MobileOnboardingcontainer = ({ containerStyle }) => {
   return (
     <Wrap style={containerStyle}>
       <Illust>
-        {s.illust === "image" && <IllustImg src={illustStep1} alt="" />}
-        {s.illust === "apply" && <StageApply />}
-        {s.illust === "pick" && <StagePick />}
+        {React.createElement(VARIANT.steps[i])}
       </Illust>
 
       <Copy>
@@ -294,7 +275,7 @@ const MobileOnboardingcontainer = ({ containerStyle }) => {
       </Copy>
 
       <Dots>
-        {STEPS.map((_, k) => <Dot key={k} $on={k === i} />)}
+        {PAGES.map((_, k) => <Dot key={k} $on={k === i} />)}
       </Dots>
 
       <Foot>

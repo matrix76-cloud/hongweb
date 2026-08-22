@@ -136,7 +136,8 @@ let nearbyCountCache = null;   // { key, at, count }
 export const getNearbyWorkerCount = async ({ latitude, longitude, checkdistance }) => {
   if (!latitude || !longitude) return 0;
 
-  const limitKm = Number(checkdistance) > 0 ? Number(checkdistance) : getSearchRange();
+  // 0(지역 상관 없음) 이면 거리로 거르지 않는다 (형 리뷰 2026-08-21)
+  const limitKm = checkdistance == null || checkdistance === '' ? getSearchRange() : Number(checkdistance);
   const key = `${Number(latitude).toFixed(3)}|${Number(longitude).toFixed(3)}|${limitKm}`;
   if (nearbyCountCache && nearbyCountCache.key === key && Date.now() - nearbyCountCache.at < NEARBY_CACHE_MS) {
     return nearbyCountCache.count;
@@ -150,7 +151,7 @@ export const getNearbyWorkerCount = async ({ latitude, longitude, checkdistance 
       const lat = data.LAT || data.latitude;
       const lng = data.LNG || data.longitude;
       if (!lat || !lng) return;
-      if (distanceFunc(lat, lng, latitude, longitude) <= limitKm) count += 1;
+      if (!(limitKm > 0) || distanceFunc(lat, lng, latitude, longitude) <= limitKm) count += 1;
     });
     nearbyCountCache = { key, at: Date.now(), count };
     return count;

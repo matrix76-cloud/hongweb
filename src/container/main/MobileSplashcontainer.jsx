@@ -298,11 +298,11 @@ const MobileSplashcontainer =({containerStyle}) =>  {
     //Function 호출
     const latitude = user.latitude;
     const longitude = user.longitude;
-    const checkdistance = INCLUDEDISTANCE;
+    // 범위는 사용자가 고른 값(기본 "지역 상관 없음")을 쓴다 — 5km 고정값을 넘기면 그걸 덮어썼다 (형 리뷰 2026-08-21)
 
     // 목록을 미리 받아두는 것뿐이다. 여기서 넘어지면 화면 자체가 안 뜨므로 실패해도 그냥 간다
     try {
-      const workitems = await ReadWork({latitude, longitude,checkdistance});
+      const workitems = await ReadWork({latitude, longitude});
       data.workitems = workitems;
       datadispatch(data);
     } catch (e) {

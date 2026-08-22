@@ -6,7 +6,7 @@ import { COMMUNITYSTATUS, WORKSTATUS } from '../utility/status';
 import randomLocation from 'random-location'
 import { useSleep } from '../utility/common';
 import Axios from 'axios';
-import { CHATCONTENTTYPE } from "../utility/screen";
+import { CHATCONTENTTYPE, CONTRACTSTATUS } from "../utility/screen";
 const authService = getAuth(firebaseApp);
 
 
@@ -486,5 +486,142 @@ export const ReadSupportersByWork = async () => {
   } catch (e) {
     console.log("ReadSupportersByWork error", e.message);
     return {};
+  }
+};
+
+
+/* ────────────────────────────────────────────────────────────────
+   수수료 계약 (형 지시 2026-08-20)
+
+   대화로 금액을 흥정하던 방식을 없앴다. 흐름은 한 줄이다.
+
+     의뢰자 [수수료 입력] → 금액 전송(OFFERED)
+       → 일하는 사람 화면에 "이 금액에 하시겠습니까?" → 수락(ACCEPTED) / 거절(REJECTED)
+       → 수락되면 의뢰자의 결제 버튼이 열린다
+
+   상태는 방 문서의 CONTRACT 한 곳에만 둔다. 대화에는 무슨 일이 있었는지
+   카드로 남긴다 — 처음 보는 사람도 읽어 내려가면 이해되도록. (형 지시)
+   ──────────────────────────────────────────────────────────────── */
+
+/** 방 문서 실시간 구독 — 상대가 수락·거절하면 내 화면이 바로 바뀐다 */
+export const SubscribeChatRoom = ({ CHAT_ID }, callback) => {
+  if (!CHAT_ID) { callback(null); return () => {}; }
+  return onSnapshot(doc(db, "CHAT", CHAT_ID), (snap) => {
+    callback(snap.exists() ? snap.data() : null);
+  }, (e) => {
+    console.log("TCL: SubscribeChatRoom -> error", e.message);
+  });
+};
+
+/** 대화에 남기는 계약 카드. 목록의 마지막 대화·안읽음도 같이 갱신된다. */
+const writeContractCard = async ({ CHAT_ID, USERS_ID, STATE, AMOUNT, TEXT }) => {
+  const messageRef = doc(collection(db, `CHAT/${CHAT_ID}/messages`));
+  await setDoc(messageRef, {
+    MESSAGE_ID: messageRef.id,
+    TEXT,
+    CREATEDT: Date.now(),
+    USERS_ID,
+    READ: [USERS_ID],
+    CHAT_CONTENT_TYPE: CHATCONTENTTYPE.CONTRACT,
+    CONTRACT_STATE: STATE,
+    CONTRACT_AMOUNT: Number(AMOUNT) || 0,
+  });
+  await UpdateChatSummary({ CHAT_ID, msg: TEXT, users_id: USERS_ID });
+};
+
+/**
+ * 의뢰자가 수수료를 보낸다. 이미 계약이 서 있으면 다시 보낼 수 없다.
+ * 거절당한 뒤에는 다시 보낼 수 있다 — 금액을 낮춰 다시 물어보는 자리다.
+ */
+export const OfferContract = async ({ CHAT_ID, USERS_ID, AMOUNT }) => {
+  const amount = Number(AMOUNT) || 0;
+  if (!CHAT_ID || !USERS_ID || amount <= 0) return false;
+
+  try {
+    const snap = await getDoc(doc(db, "CHAT", CHAT_ID));
+    if (!snap.exists()) return false;
+    const room = snap.data();
+    if (room.OWNER_ID !== USERS_ID) return false;                       // 의뢰자만
+    if (room.CONTRACT?.STATUS === CONTRACTSTATUS.ACCEPTED) return false; // 이미 계약됨
+
+    await updateDoc(doc(db, "CHAT", CHAT_ID), {
+      CONTRACT: {
+        STATUS: CONTRACTSTATUS.OFFERED,
+        AMOUNT: amount,
+        OFFERED_BY: USERS_ID,
+        OFFERED_AT: Date.now(),
+      },
+    });
+
+    await writeContractCard({
+      CHAT_ID, USERS_ID,
+      STATE: CONTRACTSTATUS.OFFERED,
+      AMOUNT: amount,
+      TEXT: `수수료 ${amount.toLocaleString('ko-KR')}원을 제안했습니다.`,
+    });
+    return true;
+  } catch (e) {
+    console.log("TCL: OfferContract -> error", e.message);
+    return false;
+  }
+};
+
+/** 일하는 사람이 수락 = 계약 수립. 여기서부터 의뢰자의 결제 버튼이 열린다. */
+export const AcceptContract = async ({ CHAT_ID, USERS_ID }) => {
+  if (!CHAT_ID || !USERS_ID) return false;
+  try {
+    const snap = await getDoc(doc(db, "CHAT", CHAT_ID));
+    if (!snap.exists()) return false;
+    const room = snap.data();
+    if (room.SUPPORTER_ID !== USERS_ID) return false;                    // 일하는 사람만
+    if (room.CONTRACT?.STATUS !== CONTRACTSTATUS.OFFERED) return false;  // 기다리는 제안이 있어야
+
+    const amount = Number(room.CONTRACT.AMOUNT) || 0;
+    await updateDoc(doc(db, "CHAT", CHAT_ID), {
+      "CONTRACT.STATUS": CONTRACTSTATUS.ACCEPTED,
+      "CONTRACT.DECIDED_AT": Date.now(),
+      "CONTRACT.DECIDED_BY": USERS_ID,
+    });
+
+    await writeContractCard({
+      CHAT_ID, USERS_ID,
+      STATE: CONTRACTSTATUS.ACCEPTED,
+      AMOUNT: amount,
+      TEXT: `수수료 ${amount.toLocaleString('ko-KR')}원에 계약이 성사되었습니다.`,
+    });
+    return true;
+  } catch (e) {
+    console.log("TCL: AcceptContract -> error", e.message);
+    return false;
+  }
+};
+
+/** 거절 — 계약은 서지 않고, 의뢰자가 금액을 다시 보낼 수 있는 상태로 돌아간다 */
+export const RejectContract = async ({ CHAT_ID, USERS_ID }) => {
+  if (!CHAT_ID || !USERS_ID) return false;
+  try {
+    const snap = await getDoc(doc(db, "CHAT", CHAT_ID));
+    if (!snap.exists()) return false;
+    const room = snap.data();
+    if (room.SUPPORTER_ID !== USERS_ID) return false;
+    if (room.CONTRACT?.STATUS !== CONTRACTSTATUS.OFFERED) return false;
+
+    const amount = Number(room.CONTRACT.AMOUNT) || 0;
+    await updateDoc(doc(db, "CHAT", CHAT_ID), {
+      "CONTRACT.STATUS": CONTRACTSTATUS.REJECTED,
+      "CONTRACT.DECIDED_AT": Date.now(),
+      "CONTRACT.DECIDED_BY": USERS_ID,
+    });
+
+    await writeContractCard({
+      CHAT_ID, USERS_ID,
+      STATE: CONTRACTSTATUS.REJECTED,
+      AMOUNT: amount,
+      TEXT: `수수료 ${amount.toLocaleString('ko-KR')}원 제안을 거절했습니다.`,
+    });
+    return true;
+  } catch (e) {
+    console.log("TCL: RejectContract -> error", e.message);
+    return false;
   }
 };

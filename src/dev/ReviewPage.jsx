@@ -4,6 +4,7 @@ import { captureFrame, describeTarget } from './reviewCapture';
 import FcmTestBoard from './FcmTestBoard';
 import { loadThread, postEntry, deleteEntry } from './reviewThreadService';
 import { seedChatRooms, clearSeededChats } from './seedChat';
+import { restoreReviewAccount, REVIEW_ACCOUNT } from './reviewAccount';
 
 /**
  * 개발 전용 리뷰 허브 (/review · DEV 게이트)
@@ -200,17 +201,42 @@ export default function ReviewPage() {
     setBusy('시드 만드는 중...');
     setSeedmsg('');
     try {
-      const made = await seedChatRooms(5);
+      const made = await seedChatRooms();   // 개수·상태는 seedChat.js 의 PLAN 이 정한다
       setSeedmsg(
         `대화방 ${made.length}개를 만들었습니다.\n` +
-        made.map((m) => `  · ${m.with} 님 — ${m.work} (대화 ${m.messages}개)`).join('\n') +
-        '\n좌측 화면에서 채팅 탭을 눌러 확인하세요.'
+        made.map((m) => `  · ${m.with} 님 — ${m.work || '일감'} [${m.role}] ${m.contract} (대화 ${m.messages}개)`).join('\n') +
+        '\n좌측 화면에서 채팅 탭을 눌러 확인하세요.\n내가 의뢰한 방 3개는 계약이 끝나 있어 [결제] 를 바로 누를 수 있습니다.'
       );
     } catch (e) {
       setSeedmsg(`시드 실패: ${e.message}`);
     }
     setBusy('');
     if (frameRef.current) frameRef.current.src = frameRef.current.src;
+  };
+
+  /* 심사용 계정 되돌리기 (형 지시 2026-08-21 "복원을 버튼으로 해줘")
+     심사하는 분이 결제를 눌러보거나 수수료를 수락·거절하면 상태가 바뀐다.
+     다음 심사 전에 이 버튼 한 번이면 처음 모습으로 돌아간다. */
+  const restoreAccount = async () => {
+    if (busy) return;
+    setBusy('심사 계정 되돌리는 중...');
+    setSeedmsg('');
+    try {
+      const r = await restoreReviewAccount();
+      setSeedmsg(
+        `심사 계정을 처음 상태로 되돌렸습니다.\n` +
+        `  아이디   ${r.email}\n` +
+        `  비밀번호 ${r.password}\n` +
+        `  대화명   ${r.nickname}\n\n` +
+        `대화방 ${r.rooms.length}개\n` +
+        r.rooms.map((m) => `  · ${m.with} 님 — ${m.work || '일감'} [${m.role}] ${m.contract}`).join('\n') +
+        `\n올린 일감 ${r.works.length}개 — ${r.works.join(' · ')}` +
+        (r.removed ? `\n(전에 있던 시드 대화방 ${r.removed}개는 지웠습니다)` : '')
+      );
+    } catch (e) {
+      setSeedmsg(`복원 실패: ${e.message}`);
+    }
+    setBusy('');
   };
 
   const dropSeed = async () => {
@@ -262,8 +288,18 @@ export default function ReviewPage() {
 
         {/* 채팅 화면을 보려면 대화방이 있어야 하는데 방은 지원하기를 눌러야 생긴다.
             지금 앱에 로그인된 계정으로 방과 대화를 만들어 넣는다. (형 요청 2026-08-12) */}
-        <button style={{ ...btn(false), padding: '6px 11px' }} onClick={makeSeed} disabled={!!busy}>채팅 시드 5개</button>
+        <button style={{ ...btn(false), padding: '6px 11px' }} onClick={makeSeed} disabled={!!busy}>채팅 시드 만들기</button>
         <button style={{ ...btn(false), padding: '6px 11px' }} onClick={dropSeed} disabled={!!busy}>시드 삭제</button>
+
+        {/* 마켓 심사용 계정을 처음 상태로 (형 지시 2026-08-21) */}
+        <button
+          style={{ ...btn(false), padding: '6px 11px' }}
+          onClick={restoreAccount}
+          disabled={!!busy}
+          title={`${REVIEW_ACCOUNT.email} 계정의 대화방·계약·올린 일감을 처음 상태로 되돌립니다`}
+        >
+          심사 계정 복원
+        </button>
       </div>
 
       {seedmsg && (

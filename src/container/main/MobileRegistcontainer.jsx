@@ -56,13 +56,6 @@ const ContentLayer = styled.div`
 
 `
 
-const ResponseContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width:100%;
-  justify-content: flex-end;
-`;
-
 const TitleLayer = styled.div`
   height:150px;
   align-items: center;
@@ -149,9 +142,9 @@ const SelectLayer = styled.div`
   min-width: 0;
   overflow-wrap: anywhere;
   padding: 10px 8px;
-  border: ${({$check}) => $check == true ? ('1.5px solid #FF4E19') : ('1px solid var(--border)')};
-  background: ${({$check}) => $check == true ? ('#FFF5F0') : ('var(--surface)')};
-  color: ${({$check}) => $check == true ? ('#FF4E19') : ('var(--text)')};
+  border: ${({$check}) => $check == true ? ('1.5px solid #1b1f27') : ('1px solid var(--border)')};
+  background: ${({$check}) => $check == true ? ('#f1f4f8') : ('var(--surface)')};
+  color: ${({$check}) => $check == true ? ('#1b1f27') : ('var(--text)')};
   font-weight: ${({$check}) => $check == true ? (700) : (500)};
   border-radius: 10px;
   font-size: 15px;
@@ -168,8 +161,8 @@ const SelectLayer = styled.div`
 
 /* 답변 밑의 수정 — 눌리는 게 분명하도록 버튼 모양으로 (형 리뷰 2026-08-12) */
 const AdjustBtn = styled.button`
-  margin: 8px 10px 0 0;
-  height: 32px;
+  flex-shrink: 0;
+  height: 34px;
   padding: 0 12px;
   border: 1px solid #E0E0E0;
   border-radius: 8px;
@@ -185,30 +178,39 @@ const AdjustBtn = styled.button`
   &:active { background: #F5F5F5; }
 `;
 
-const ItemRightLayer = styled.div`
+/* 버튼·선택 기본색 — 주황(#FF7125)이 너무 튀어 먹색으로 (형 리뷰 2026-08-22) */
+const PRIMARY = '#1b1f27';
+
+/* 질문 말풍선 안에 붙는 답 한 줄 — 오른쪽 주황 말풍선 대신 (형 리뷰 2026-08-22) */
+const AnswerLine = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
 `;
-const ItemRightBox = styled.div`
-  background: #FF4E19;
-  border-top-right-radius: 4px;
-  border-top-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-  border-bottom-left-radius: 16px;
-  padding: 12px 18px;
-  margin: 10px 10px 0px;
-  color: #fff;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  font-size: 15px;
-  font-weight: 600;
+const AnswerText = styled.div`
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1b1f27;
   line-height: 1.45;
-  text-align: left;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  &::before {
+    content: '답';
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: #1b1f27;
+    padding: 2px 6px;
+  }
 `;
 
 const RegistHeader = styled.div`
@@ -287,54 +289,109 @@ export const StyledCalendarWrapper = styled.div`
 
 // 캘린더를 불러옴
 export const StyledCalendar = styled(Calendar)`
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 10px 8px 12px;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.2;
 
-width: 100%;
-background: white;
-border: 1px solid #a0a096;
-line-height: 1.125em;
-font-size: 14px; /* 글자 크기 */
-text-decoration: none; /* 밑줄 제거 */
+  /* 2026. 08  ‹ › */
+  .react-calendar__navigation {
+    height: 44px;
+    margin-bottom: 6px;
+  }
+  .react-calendar__navigation button {
+    min-width: 44px;
+    background: none;
+    color: #1b1f27;
+    font-size: 22px;
+    font-family: inherit;
+  }
+  .react-calendar__navigation__label {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .react-calendar__navigation button:disabled { color: #c8c8c8; background: none; }
+  .react-calendar__navigation button:enabled:hover,
+  .react-calendar__navigation button:enabled:focus { background: none; }
 
-.react-calendar__navigation button {
-  color: #4d4d4d;
-  min-width: 44px;
-  background: none;
-  font-size: 20px; /* 네비게이션 버튼 글자 크기 */
-  margin-top: 8px;
-}
+  /* 일 월 화 수 목 금 토 */
+  .react-calendar__month-view__weekdays {
+    margin-bottom: 4px;
+  }
+  .react-calendar__month-view__weekdays__weekday {
+    padding: 6px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8a8a8a;
+    text-transform: none;
+  }
+  .react-calendar__month-view__weekdays__weekday abbr {
+    text-decoration: none;
+    cursor: default;
+  }
 
-.react-calendar__month-view__weekdays__weekday {
-  font-size: 14px; /* 요일 이름 글자 크기 */
-  color: #6b6b6b;
-  font-weight:500;
-  text-decoration: none; /* 밑줄 제거 */
-}
+  /* 날짜 한 칸 — 가운데 둥근 원 */
+  .react-calendar__tile {
+    position: relative;
+    height: 44px;
+    padding: 0;
+    background: none;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: inherit;
+    color: #1b1f27;
+    border-radius: 22px;
+    transition: background .12s ease;
+  }
+  .react-calendar__tile abbr {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+  }
+  .react-calendar__tile:enabled:hover abbr,
+  .react-calendar__tile:enabled:focus abbr { background: #f1f4f8; }
+  .react-calendar__tile:enabled:hover,
+  .react-calendar__tile:enabled:focus { background: none; }
 
-.react-calendar__tile {
-  background: none;
-  font-size: 14px; /* 날짜 타일 글자 크기 */
-  color: #4d4d4d;
-  padding: 5px 6.6667px;
-}
+  /* 오늘 — 먹색 테두리 */
+  .react-calendar__tile--now { background: none; }
+  .react-calendar__tile--now abbr {
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1.5px #1b1f27;
+  }
 
-.react-calendar__tile--now {
-  font-size: 16px;
-  font-weight:800;
-  color : #0000ff;
- }
- .react-calendar__tile:disabled {
-  color: #d6cfcf !important;
- }
+  /* 고른 날 — 먹색 채움 */
+  .react-calendar__tile--active,
+  .react-calendar__tile--active:enabled:hover,
+  .react-calendar__tile--active:enabled:focus { background: none; }
+  .react-calendar__tile--active abbr,
+  .react-calendar__tile--active:enabled:hover abbr,
+  .react-calendar__tile--active:enabled:focus abbr {
+    background: #1b1f27;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: none;
+  }
 
-.react-calendar__tile--active {
-  background: #1087ff;
-  color: white;
-  border-radius : 20px;
-}
+  /* 지난 날 */
+  .react-calendar__tile:disabled {
+    background: none;
+    color: #c8c8c8;
+  }
+  .react-calendar__tile:disabled abbr { box-shadow: none; }
 
-.react-calendar__tile--hover {
-  background: #1087ff;
-}
+  /* 일요일만 살짝 */
+  .react-calendar__month-view__days__day--weekend:nth-child(7n+1):not(:disabled) { color: #c0392b; }
+  .react-calendar__month-view__days__day--weekend:nth-child(7n+1):not(:disabled).react-calendar__tile--active abbr { color: #fff; }
 `;
 
 
@@ -390,7 +447,7 @@ const Switch = styled.div`
   width: 50px;
   height: 30px;
   border-radius: 100px;
-  background: ${({ $on }) => ($on ? '#FF4E19' : '#D8D8D8')};
+  background: ${({ $on }) => ($on ? '#1b1f27' : '#D8D8D8')};
   padding: 3px;
   box-sizing: border-box;
   transition: background 0.18s ease;
@@ -439,7 +496,7 @@ const DayBtn = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: ${({$enable}) => $enable == true ? ('1px solid #F75100') : ('1px solid #C3C3C3')};
+  border: ${({$enable}) => $enable == true ? ('1.5px solid #1b1f27') : ('1px solid #C3C3C3')};
   color: var(--text);
 
 `
@@ -448,9 +505,13 @@ const DayBtn = styled.div`
 // kakao 는 전역(window.kakao)을 참조 시점에 읽는다.
 // 최상단에서 구조분해하면 SDK 로드 전 undefined 로 굳는다 (Vite=ES모듈, 2026-08-12)
 
+/* 지역 선택 지도 — 말풍선 폭을 꽉 채운다. 270x320 고정이라 작았다 (형 리뷰 2026-08-22 "지도 크게") */
 const mapstyle = {
-  width:'270px',
-  height:'320px'
+  width:'100%',
+  height:'420px',
+  borderRadius:'10px',
+  overflow:'hidden',
+  border:'1px solid var(--border-soft)'
 };
 
 
@@ -1149,6 +1210,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
         };
     
         var map = new kakao.maps.Map(mapContainer, mapOption);
+        // 폭 100% 카드 안이라 그려진 직후 크기가 바뀔 수 있다 — 한 번 더 잡아준다
+        setTimeout(() => { try { map.relayout(); map.setCenter(new kakao.maps.LatLng(user.latitude, user.longitude)); } catch (e) { /* noop */ } }, 300);
 
         var imageSrc = imageDB.movegps; // 마커 이미지의 URL
         var imageSize = new kakao.maps.Size(64, 69); // 마커 이미지의 크기
@@ -1353,6 +1416,23 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
   }
   
 
+  /* 질문 말풍선 안에 붙는 답 + 수정 버튼.
+     답은 messages[index+1](type:response) 에 들어있고, 수정은 그 response 기준 index 로 되돌린다.
+     지도·사진·요청문처럼 responseshow:false 인 건 말풍선 안에 이미 보이니 생략. (형 리뷰 2026-08-22) */
+  const AnswerRow = ({ index }) => {
+    const q = messages[index];
+    const r = messages[index + 1];
+    if (!q?.selected || !r || r.type !== 'response' || !r.responseshow || !r.result) return null;
+    return (
+      <AnswerLine>
+        <AnswerText>{r.result}</AnswerText>
+        <AdjustBtn onClick={()=>{_handleAdjust(index + 1)}}>
+          <PiPencilSimpleBold size={14}/>수정
+        </AdjustBtn>
+      </AnswerLine>
+    );
+  };
+
   return (
     <>
       {
@@ -1402,8 +1482,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 고객요구사항 선택 */}
             {("request" == data.type && data.show == true) && (
                 <div className="fade-in-bottom" style={{width:"100%"}}>
-                  <Itemlayer width={'70%'}>
-                    <ItemLeftBox width={'70%'}>
+                  <Itemlayer width={'100%'}>
+                    <ItemLeftBox width={'100%'}>
                       <span>{data.info}</span>
                       {
                       data.selected == false ?
@@ -1420,10 +1500,11 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                             </SelectLayer>
                           ))}
                           </SelectGrid>
-                          <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
                         </>
-                      ):(<span>{data.request}</span>)
+                      ):null
                       }
+                      <AnswerRow index={index}/>
                     </ItemLeftBox>  
                   </Itemlayer>
                 </div>
@@ -1432,8 +1513,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 날짜 선택 */} 
             {("requestdate" == data.type && data.show == true) && (
               <div className="fade-in-bottom" style={{width:"100%"}}>
-                <Itemlayer width={'70%'}>
-                    <ItemLeftBox width={'70%'}>
+                <Itemlayer width={'100%'}>
+                    <ItemLeftBox width={'100%'}>
                       <span>{data.info}</span>
                       {
                         data.selected == false ?(<div style={{marginTop:15}}>
@@ -1459,7 +1540,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                                 />
                             </StyledCalendarWrapper>
 
-                            <Button containerStyle={{border: 'none', fontSize:14, marginTop:10}} onPress={()=>{_handleCalendarDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                            <Button containerStyle={{border: 'none', fontSize:14, marginTop:10}} onPress={()=>{_handleCalendarDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
                           </Fragment>     
                           ):(<Fragment>
 
@@ -1520,12 +1601,13 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                               </Row>
                             }
               
-                            <Button containerStyle={{border: 'none', fontSize:14, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                            <Button containerStyle={{border: 'none', fontSize:14, marginTop:10}} onPress={()=>{_handleDateNext(index)}} height={'44px'} width={'100%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
                             </Fragment>)
                         }
                         
-                       </div>):(<span>{data.content}</span>)
+                       </div>):null
                       }
+                      <AnswerRow index={index}/>
                     </ItemLeftBox>       
                   </Itemlayer>
 
@@ -1535,8 +1617,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 대상 선택 */} 
            {("requesttarget" == data.type && data.show == true) && (
               <div className="fade-in-bottom" style={{width:"100%"}}>
-                <Itemlayer width={'70%'}>
-                    <ItemLeftBox width={'70%'}>
+                <Itemlayer width={'100%'}>
+                    <ItemLeftBox width={'100%'}>
                     <span>{data.info}</span> 
                     
                     <span>{'청소대상'}</span> 
@@ -1564,7 +1646,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                       ))}
                       </SelectGrid>
 
-                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTargetNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTargetNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
+                      <AnswerRow index={index}/>
                     
                     </ItemLeftBox>       
                   </Itemlayer>
@@ -1575,8 +1658,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 시간과 금액 선텍 */} 
             {("requesttimemoney" == data.type && data.show == true) && (
               <div className="fade-in-bottom" style={{width:"100%"}}>
-                <Itemlayer width={'70%'}>
-                    <ItemLeftBox width={'70%'}>
+                <Itemlayer width={'100%'}>
+                    <ItemLeftBox width={'100%'}>
                     <span>{data.info}</span> 
                     
                
@@ -1604,7 +1687,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                       ))}
                       </SelectGrid>
 
-                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTimeMoneyNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleTimeMoneyNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
+                      <AnswerRow index={index}/>
                     
                     </ItemLeftBox>       
                   </Itemlayer>
@@ -1614,8 +1698,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 도움받을 사람 선택 */} 
             {("requesthelp" == data.type && data.show == true) && (
               <div className="fade-in-bottom" style={{width:"100%"}}>
-                <Itemlayer width={'70%'}>
-                    <ItemLeftBox width={'70%'}>
+                <Itemlayer width={'100%'}>
+                    <ItemLeftBox width={'100%'}>
                     <span>{data.info}</span> 
                     
                
@@ -1643,7 +1727,8 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                       ))}
                       </SelectGrid>
 
-                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleHelpNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                      <Button containerStyle={{border: 'none', fontSize:14}} onPress={()=>{_handleHelpNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
+                      <AnswerRow index={index}/>
                     
                     </ItemLeftBox>       
                   </Itemlayer>
@@ -1654,13 +1739,14 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 지역 선택 */} 
             {("requestregion" == data.type && data.show == true) && (
             <div className="fade-in-bottom" style={{width:"100%"}}>
-                    <Itemlayer width={'90%'}>
-                    <ItemLeftBox style={{width:"90%", height:"400px"}}>
+                    <Itemlayer width={'100%'}>
+                    {/* 지도가 absolute 로 떠 있어 카드 폭과 무관하게 270px 였다 — 흐름 안에 두고 폭 100% (형 리뷰 2026-08-22) */}
+                    <ItemLeftBox style={{width:"100%"}}>
                       <span>{data.info}</span>
-                      <div style={{marginTop:35, height:300, position:"absolute",  top: '30px'}}>
+                      <div style={{marginTop:12, width:'100%'}}>
                         <div id="map"  style={mapstyle}></div>
                         <Row>
-                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10}} onPress={()=>{_handleRegionNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleRegionNext(index)}} height={'46px'} width={'100%'} radius={'8px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
                         </Row>
                       </div>
                     </ItemLeftBox>  
@@ -1671,7 +1757,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
             {/* 홍여사에게 요청할 내용 */} 
             {("requestcomment" == data.type && data.show == true) && (
             <div className="fade-in-bottom" style={{width:"100%"}} ref={useCommentRef}>
-                    <Itemlayer width={'90%'}>
+                    <Itemlayer width={'100%'}>
                     {/* 입력칸이 absolute 로 카드 밖에 떠 있어서 좁고 잘렸다 — 그냥 흐름 안에 둔다 (형 리뷰 2026-08-12) */}
                     <ItemLeftBox style={{width:"100%"}}>
                       <span>{data.info}</span>
@@ -1681,7 +1767,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                         placeholder={'필수 입력은 아니에요. 40자 이내로 적어주세요'}
                         />
                         <Row>
-                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleCommentNext(index)}} height={'46px'} width={'100%'} radius={'8px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                          <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleCommentNext(index)}} height={'46px'} width={'100%'} radius={'8px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
                         </Row>
                       </div>
                     </ItemLeftBox>
@@ -1698,7 +1784,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                       <span>{data.info}</span>
                       <Column>
                         <ImageUploadComponent callback={imageuploadcallback}/>
-                        <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleRoomNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'다음'}/>
+                        <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleRoomNext(index)}} height={'34px'} width={'100%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'다음'}/>
                       </Column>
                     </ItemLeftBox>  
                   </Itemlayer>  
@@ -1763,7 +1849,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
                     <div style={{display:"flex", flexDirection:"row", margin:'10px auto', width:'100%',justifyContent: "space-between" }}>
 
                       <Button containerStyle={{border: '1px solid #C3C3C3', fontSize:16, marginTop:10, fontWeight:600}} onPress={_handleReset} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FFF'} color={'#131313'} text={'다시작성하기'}/>
-                      <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={'#FF7125'} color={'#fff'} text={'등록하기'}/>
+                      <Button containerStyle={{border: 'none', fontSize:16, marginTop:10, fontWeight:600}} onPress={()=>{_handleReqComplete(index)}} height={'44px'} width={'48%'} radius={'4px'} bgcolor={PRIMARY} color={'#fff'} text={'등록하기'}/>
 
                     </div>
                   </ItemLeftBox>  
@@ -1771,24 +1857,7 @@ const MobileRegistcontainer =({containerStyle, type, totalset}) =>  {
               </div>
             )}
 
-            {/* 고객요구에 대한 확인*/}
-            {("response" == data.type && data.show == true && data.responseshow == true ) &&(
-           
-                  <div className="fade-in-bottom" style={{width:"100%"}}>
-                    <ResponseContainer>
-                    <ItemRightLayer>         
-                        <ItemRightBox><span>{data.result}</span>
-                        <img src={imageDB.enablecheck} style={{width:"16px", hieght:"16px", marginLeft:5}}/>
-                        </ItemRightBox>
-                        {/* 밑줄 글자라 눌리는 줄 몰랐다 — 버튼으로 (형 리뷰 2026-08-12) */}
-                        <AdjustBtn onClick={()=>{_handleAdjust(index)}}>
-                          <PiPencilSimpleBold size={14}/>수정
-                        </AdjustBtn>
-                   </ItemRightLayer>
-                   </ResponseContainer>
-                  </div>
-        
-            )}
+            {/* 답변은 질문 말풍선 안(AnswerRow)에 보여준다 — 오른쪽 말풍선은 없앴다 (형 리뷰 2026-08-22) */}
             </Fragment>
           ))}
           </ContentLayer>

@@ -22,14 +22,38 @@ const admin = require('firebase-admin');
 const REGION = 'asia-northeast3';
 const db = () => admin.firestore();
 
-/** 대상 uid 들의 토큰을 모은다 */
+/**
+ * 알림음 (형 지시 2026-08-22, 도우미 앱과 같은 방식)
+ *   사용자가 내 정보 > 알림음 설정에서 고른 값이 USERS.notisound 에 있다 (src/utility/notiSound.js 와 같은 키).
+ *   안드로이드 8+ 는 소리가 알림이 아니라 "채널"에 묶이므로, 앱(HongLady)이 음원마다 채널 `sound_<key>` 를
+ *   미리 만들어 두고 여기서는 그 채널 id 를 지정해 보낸다. iOS 는 번들에 실린 `<key>.caf` 를 지정한다.
+ *   앱에 아직 그 채널·음원이 없으면 기기 기본음으로 울린다(조용히 사라지는 것보단 낫다).
+ */
+const NOTI_SOUNDS = ['honglady', 'bell', 'chime', 'soft', 'system'];
+const DEFAULT_NOTI_SOUND = 'honglady';
+
+/** uid -> 알림음 키 */
+async function soundForUid(uid) {
+  try {
+    const q = await db().collection('USERS').where('USERS_ID', '==', uid).limit(1).get();
+    const v = q.empty ? null : q.docs[0].data().notisound;
+    return NOTI_SOUNDS.includes(v) ? v : DEFAULT_NOTI_SOUND;
+  } catch (e) {
+    return DEFAULT_NOTI_SOUND;
+  }
+}
+
+/** 대상 uid 들의 토큰을 모은다 (사람마다 고른 알림음도 같이) */
 async function tokensForUids(uids) {
   const out = [];
   for (const uid of uids) {
-    const q = await db().collection('fcmTokens').where('uid', '==', uid).get();
+    const [q, sound] = await Promise.all([
+      db().collection('fcmTokens').where('uid', '==', uid).get(),
+      soundForUid(uid),
+    ]);
     q.forEach((d) => {
       const t = d.data().token;
-      if (t) out.push({ ref: d.ref, token: t });
+      if (t) out.push({ ref: d.ref, token: t, sound });
     });
   }
   // 같은 토큰이 여러 문서에 있으면 한 번만
@@ -37,12 +61,31 @@ async function tokensForUids(uids) {
   return out.filter((t) => (seen.has(t.token) ? false : seen.add(t.token)));
 }
 
-/** 실제 발송 + 죽은 토큰 정리 */
+/** 실제 발송 + 죽은 토큰 정리 — 알림음이 다른 사람끼리는 따로 묶어 보낸다 */
 async function pushToTokens({ toks, title, body, data }) {
   if (!toks.length) return { successCount: 0, failureCount: 0 };
 
+  const groups = new Map();
+  toks.forEach((t) => {
+    const k = t.sound || DEFAULT_NOTI_SOUND;
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(t);
+  });
+
+  let successCount = 0;
+  let failureCount = 0;
+  for (const [sound, group] of groups) {
+    const r = await pushGroup({ toks: group, sound, title, body, data });
+    successCount += r.successCount;
+    failureCount += r.failureCount;
+  }
+  return { successCount, failureCount };
+}
+
+async function pushGroup({ toks, sound, title, body, data }) {
   // 보이스톡은 "지금 받아야" 의미가 있다. 잠금화면에서도 즉시 뜨도록 최고 우선순위로 보낸다.
   const isCall = (data && data.type) === 'voicecall';
+  const isSystem = sound === 'system';
 
   const resp = await admin.messaging().sendEachForMulticast({
     tokens: toks.map((t) => t.token),
@@ -52,14 +95,15 @@ async function pushToTokens({ toks, title, body, data }) {
       priority: 'high',
       ttl: isCall ? 45 * 1000 : undefined,   // 통화는 45초 안에 못 받으면 의미가 없다
       notification: {
-        sound: 'default',
-        channelId: isCall ? 'voicecall' : undefined,
+        sound: isSystem ? 'default' : sound,
+        // 앱이 만들어 둔 음원별 채널. 통화는 예전처럼 voicecall 채널 (앱에 있으면) 로.
+        channelId: isCall ? 'voicecall' : `sound_${sound}`,
         ...(isCall ? { priority: 'max', visibility: 'public' } : {}),
       },
     },
     apns: {
       headers: isCall ? { 'apns-priority': '10', 'apns-expiration': String(Math.floor(Date.now() / 1000) + 45) } : undefined,
-      payload: { aps: { sound: 'default', ...(isCall ? { 'interruption-level': 'time-sensitive' } : {}) } },
+      payload: { aps: { sound: isSystem ? 'default' : `${sound}.caf`, ...(isCall ? { 'interruption-level': 'time-sensitive' } : {}) } },
     },
     webpush: {
       headers: { Urgency: 'high' },

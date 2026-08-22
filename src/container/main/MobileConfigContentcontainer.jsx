@@ -20,6 +20,7 @@ import MobileMyWork from "../../components/config/activity/MobileMyWork";
 import { WORKSTATUS } from "../../utility/status";
 import MobileSearchRange from "../../components/config/activity/MobileSearchRange";
 import MobileNotiSetting from "../../components/config/activity/MobileNotiSetting";
+import MobileSoundSetting from "../../components/config/activity/MobileSoundSetting";
 import MobileThemeSetting from "../../components/config/activity/MobileThemeSetting";
 import MobileTextSizeSetting from "../../components/config/activity/MobileTextSizeSetting";
 import MobileFavoriteWork from "../../components/config/activity/MobileFavoriteWork";
@@ -140,6 +141,10 @@ const MobileConfigContentcontainer =({containerStyle, name}) =>  {
 
         {
           name == CONFIGMOVE.NOTISETTING && <MobileNotiSetting/>
+        }
+
+        {
+          name == CONFIGMOVE.SOUNDSETTING && <MobileSoundSetting/>
         }
 
         {

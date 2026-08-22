@@ -10,8 +10,20 @@
 // 통이미지(mobilebanner1.png 처럼 글자가 그림에 박힌 것)는 쓰지 않았다.
 // 글자가 흐려지고 문구를 못 고친다. 네 안 다 코드로 그렸고 캐릭터만 SVG 다.
 import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
+/* 5~7안 재료 — 온보딩 honggroup.png 를 낱개로 잘라 각자 움직이게 했다 (2026-08-22) */
+import imgBus from "../assets/banner/bus.png";
+import imgDog from "../assets/banner/dog.png";
+import imgDrill from "../assets/banner/drill.png";
+import imgBag from "../assets/banner/bag.png";
+import imgSign from "../assets/banner/sign.png";
+import imgCook from "../assets/banner/cook.png";
+import imgGuitar from "../assets/banner/guitar.png";
+import imgDogwash from "../assets/banner/dogwash.png";
+import imgHong from "../assets/banner/honglady.png";
+import imgHongWalk from "../assets/banner/honglady_walking.gif";
 import HongAvatar from "../components/HongAvatar";
+import HomePromoBanner from "../components/HomePromoBanner";
 import { WorkIcon, workColor } from "../utility/workIcon";
 
 const ORANGE = "#FF4E19";
@@ -247,6 +259,192 @@ const Case4 = () => (
   </Carousel>
 );
 
+
+/* ══ 5·6·7안 — 은행앱(우리WON) 홈 배너 방식 (형 지시 2026-08-22)
+   "글씨는 흰 박스로 슬라이드, 그 아래는 캐릭터가 움직이는 배너 이미지"
+   새 그림을 그린 게 아니라 온보딩 그림(honggroup.png)을 낱개로 잘라 CSS 로 움직인다.
+   움직임은 전부 transform 만 써서 폰에서도 가볍고, 움직임 줄이기 설정이면 멈춘다. ══ */
+
+const kFloat = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+`;
+const kFloatTilt = keyframes`
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-6px) rotate(5deg); }
+`;
+const kBob = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+`;
+const kSway = keyframes`
+  0%, 100% { transform: rotate(-1.6deg); }
+  50% { transform: rotate(1.6deg); }
+`;
+const kDrive = keyframes`
+  0% { transform: translateX(-140px); }
+  100% { transform: translateX(420px); }
+`;
+const kDriveBack = keyframes`
+  0% { transform: translateX(420px) scaleX(-1); }
+  100% { transform: translateX(-160px) scaleX(-1); }
+`;
+const kWalk = keyframes`
+  0% { transform: translateX(-120px); }
+  100% { transform: translateX(400px); }
+`;
+const kWobble = keyframes`
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(-2deg); }
+`;
+
+const motion = (anim, dur, delay = "0s", timing = "ease-in-out") => css`
+  animation: ${anim} ${dur} ${timing} ${delay} infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+`;
+
+/* 움직이는 그림 한 장 — 자리(left/top/bottom)·크기·움직임을 props 로 받는다 */
+const Piece = styled.img.attrs({ alt: "", draggable: false })`
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  width: ${({ $w }) => $w}px;
+  ${({ $l }) => ($l !== undefined ? `left:${$l}px;` : "")}
+  ${({ $r }) => ($r !== undefined ? `right:${$r}px;` : "")}
+  ${({ $t }) => ($t !== undefined ? `top:${$t}px;` : "")}
+  ${({ $b }) => ($b !== undefined ? `bottom:${$b}px;` : "")}
+  transform-origin: ${({ $origin }) => $origin || "center"};
+  ${({ $motion }) => $motion || ""}
+`;
+
+/* 흰 박스 안 글. 은행앱처럼 박스 안에서 슬라이드되고 점은 박스 오른쪽 아래 */
+const BoxSlide = styled.div`
+  padding: 16px 18px 22px;
+  min-height: 104px;
+  box-sizing: border-box;
+`;
+const BoxHead = styled.div`
+  font-size: 19px; font-weight: 800; color: ${INK}; line-height: 1.3; letter-spacing: -.01em;
+`;
+const BoxBody = styled.div`
+  font-size: 15px; color: ${INK}; line-height: 1.5; margin-top: 6px; white-space: pre-line;
+`;
+const BoxDotRow = styled.div`
+  position: absolute; right: 14px; bottom: 10px; display: flex; gap: 5px;
+`;
+const BoxDot = styled.div`
+  width: ${({ $on }) => ($on ? 14 : 5)}px; height: 5px;
+  background: ${({ $on }) => ($on ? INK : "#d8d8d8")};
+  transition: width .2s ease;
+`;
+const boxDots = (idx) => (
+  <BoxDotRow>{SLIDES.map((s, i) => <BoxDot key={s.key} $on={i === idx} />)}</BoxDotRow>
+);
+const TextBox = styled.div`
+  position: relative;
+  background: #fff;
+  border: 1px solid #e8e4e0;
+  border-radius: ${({ $r }) => $r || 0}px;
+  box-shadow: 0 6px 18px rgba(60, 30, 10, .08);
+  overflow: hidden;
+`;
+const BoxCarousel = ({ radius }) => (
+  <TextBox $r={radius}>
+    <Carousel dots={boxDots}>
+      {SLIDES.map((s) => (
+        <BoxSlide key={s.key}>
+          <BoxHead>{s.head}</BoxHead>
+          <BoxBody>{s.body}</BoxBody>
+        </BoxSlide>
+      ))}
+    </Carousel>
+  </TextBox>
+);
+
+/* ── 5안: 은행앱 그대로 — 위 흰 박스, 아래 그림 띠. 홍여사가 오른쪽에 서 있고
+        버스가 바닥을 지나가고 강아지가 옆에서 깡총거린다 ── */
+const S5 = styled.div`
+  position: relative; overflow: hidden; height: 290px; box-sizing: border-box;
+  background: linear-gradient(180deg, #FFF6F1 0%, #FFE9DD 100%);
+`;
+const S5Ground = styled.div`
+  position: absolute; left: 0; right: 0; bottom: 0; height: 34px;
+  background: #FFD9C4;
+`;
+const S5Box = styled.div`
+  position: relative; z-index: 3; padding: 14px 14px 0;
+`;
+const Case5 = () => (
+  <S5>
+    <S5Box><BoxCarousel radius={12} /></S5Box>
+    <S5Ground />
+    <Piece src={imgDrill} $w={56} $l={18} $t={150} $origin="50% 80%" $motion={motion(kFloatTilt, "3.4s")} />
+    <Piece src={imgBag} $w={52} $l={90} $t={176} $motion={motion(kFloat, "2.8s", ".6s")} />
+    <Piece src={imgSign} $w={46} $l={168} $b={24} $origin="50% 100%" $motion={motion(kWobble, "2.6s", ".3s")} />
+    <Piece src={imgDog} $w={58} $l={212} $b={22} $motion={motion(kBob, "1.5s")} />
+    <Piece src={imgHong} $w={96} $r={16} $b={14} $origin="50% 100%" $motion={motion(kSway, "3.2s")} />
+    <Piece src={imgBus} $w={78} $l={0} $b={2} $motion={motion(kDrive, "13s", "-5s", "linear")} />
+  </S5>
+);
+
+/* ── 6안: 배너 전체가 한 장면 — 박스가 가운데 떠 있고 캐릭터들이 박스 뒤·옆을 지나간다.
+        박스는 형 스타일대로 각지게. ── */
+const S6 = styled.div`
+  position: relative; overflow: hidden; height: 300px;
+  background:
+    radial-gradient(circle at 86% 18%, #FFD2BB 0, #FFD2BB 62px, transparent 63px),
+    radial-gradient(circle at 10% 88%, #FFE3D4 0, #FFE3D4 90px, transparent 91px),
+    linear-gradient(180deg, #FFF3EC 0%, #FFEADF 100%);
+`;
+const S6Box = styled.div`
+  position: absolute; z-index: 3; left: 18px; right: 18px; top: 58px;
+`;
+const Case6 = () => (
+  <S6>
+    <Piece src={imgCook} $w={68} $l={16} $t={10} $motion={motion(kFloat, "3.6s")} />
+    <Piece src={imgGuitar} $w={66} $r={80} $t={6} $motion={motion(kFloat, "3.1s", "1s")} />
+    <Piece src={imgDogwash} $w={62} $r={10} $t={30} $motion={motion(kFloat, "4s", ".4s")} />
+    <Piece src={imgBus} $w={84} $l={0} $t={118} $motion={motion(kDriveBack, "15s", "-6s", "linear")} />
+    <S6Box><BoxCarousel radius={0} /></S6Box>
+    <Piece src={imgDrill} $w={52} $l={18} $b={26} $origin="50% 80%" $motion={motion(kFloatTilt, "3.2s", ".2s")} />
+    <Piece src={imgBag} $w={50} $l={92} $b={14} $motion={motion(kFloat, "2.7s", ".8s")} />
+    <Piece src={imgDog} $w={56} $l={196} $b={12} $motion={motion(kBob, "1.5s")} />
+    <Piece src={imgHong} $w={92} $r={18} $b={8} $origin="50% 100%" $motion={motion(kSway, "3.2s")} />
+  </S6>
+);
+
+/* ── 7안: 걷는 홍여사 — 위 흰 박스, 아래 거리. 홍여사(gif)가 왼쪽에서 오른쪽으로 걸어가고
+        강아지가 따라간다. 배경은 거의 흰색이라 홈에서 제일 조용하다 ── */
+const S7 = styled.div`
+  position: relative; overflow: hidden; height: 280px; background: #fff;
+`;
+const S7Box = styled.div`
+  position: relative; z-index: 3; padding: 14px 14px 0;
+`;
+const S7Road = styled.div`
+  position: absolute; left: 0; right: 0; bottom: 0; height: 44px; background: #F1F4F8;
+  &::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: #E2E6EC;
+  }
+`;
+const Walker = styled.div`
+  position: absolute; left: 0; bottom: 10px; display: flex; align-items: flex-end; gap: 4px;
+  ${motion(kWalk, "11s", "-4s", "linear")}
+`;
+const Case7 = () => (
+  <S7>
+    <S7Box><BoxCarousel radius={8} /></S7Box>
+    <S7Road />
+    <Piece src={imgSign} $w={44} $r={22} $b={30} $origin="50% 100%" $motion={motion(kWobble, "2.8s")} />
+    <Piece src={imgBag} $w={48} $r={80} $b={40} $motion={motion(kFloat, "2.9s", ".5s")} />
+    <Piece src={imgBus} $w={66} $l={0} $b={6} $motion={motion(kDriveBack, "17s", "-6s", "linear")} />
+    <Walker>
+      <img src={imgHongWalk} alt="" draggable={false} style={{ width: 104, height: 104, objectFit: "contain" }} />
+      <Piece src={imgDog} $w={52} $l={96} $b={0} $motion={motion(kBob, "1.1s")} style={{ position: "relative", left: -8 }} />
+    </Walker>
+  </S7>
+);
+
 /* ── 페이지 골격 — iconlab · listlab 과 같은 바둑판 ── */
 const Page = styled.div`
   width: 100%; box-sizing: border-box; padding: 20px;
@@ -310,13 +508,21 @@ const VARIANTS = [
   { no: "2안", desc: "먹색 판 + 흰 글씨 — 또렷하고 홍보 자리인 게 분명하다. 오른쪽 아래 장수 표시", body: <Case2 /> },
   { no: "3안", desc: "연한 주황 바탕 + 일 아이콘 세 개 — 무슨 일을 맡길 수 있는지 그림으로 보인다", body: <Case3 /> },
   { no: "4안", desc: "배경 없이 글만 + 위 막대 표시 — 광고처럼 안 생겨서 그냥 읽힌다", body: <Case4 /> },
+  { no: "5안", desc: "은행앱 그대로 — 위는 흰 박스 슬라이드, 아래는 그림 띠. 홍여사·강아지·버스가 움직인다", body: <Case5 /> },
+  { no: "6안", desc: "배너 전체가 장면 — 각진 박스가 가운데 떠 있고 캐릭터가 박스 뒤·옆을 지나간다", body: <Case6 /> },
+  { no: "7안", desc: "걷는 홍여사 — 흰 바탕 + 거리. 홍여사가 걸어가고 강아지가 따라간다. 제일 조용하다", body: <Case7 /> },
+  { no: "8안", desc: "확정(2026-08-22) — 7안 구조 + 5안 배경색. 실제 홈에 들어간 HomePromoBanner 그대로", body: <HomePromoBanner figures="img" /> },
+  { no: "9안", desc: "확정(2026-08-23) — 8안에서 인물만 SVG — 할머니·청소 아줌마·아이들을 버스와 같은 평면 그림체로 직접 그림. 대걸레 쓸기, 할머니 토닥임", body: <HomePromoBanner figures="svg" /> },
 ];
 
 export default function BannerLab() {
+  // /bannerlab?only=5 — 그 안만 크게 본다 (형이 번호로 고른 뒤 폰에서 확인용)
+  const only = new URLSearchParams(window.location.search).get("only");
+  const list = only ? VARIANTS.filter((v) => v.no === `${only}안`) : VARIANTS;
   return (
     <Page>
       <LabGrid>
-        {VARIANTS.map((v) => (
+        {list.map((v) => (
           <Variant key={v.no}>
             <VariantTitle>{v.no}</VariantTitle>
             <VariantDesc>{v.desc}</VariantDesc>

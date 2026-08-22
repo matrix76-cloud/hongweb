@@ -165,7 +165,8 @@ export const clearWorkCache = () => { workCache = null; };
 
 export const ReadWork = async({latitude, longitude, checkdistance})=>{
   // 범위를 넘기지 않으면 사용자가 설정한 값을 쓴다 (내 정보 > 나의 범위설정)
-  const limitKm = Number(checkdistance) > 0 ? Number(checkdistance) : getSearchRange();
+  // 0(지역 상관 없음) 이면 거리로 거르지 않는다 (형 리뷰 2026-08-21)
+  const limitKm = checkdistance == null || checkdistance === '' ? getSearchRange() : Number(checkdistance);
 
   // 소수 셋째 자리면 100m 남짓 — 그 안에서 움직인 건 같은 자리로 본다
   const cacheKey = `${Number(latitude).toFixed(3)}|${Number(longitude).toFixed(3)}|${limitKm}`;
@@ -197,7 +198,7 @@ export const ReadWork = async({latitude, longitude, checkdistance})=>{
       const distance = distanceFunc(WORK_INFONEW[FindIndex].latitude , WORK_INFONEW[FindIndex].longitude,latitude,longitude );
       
 
-      if(distance < limitKm){
+      if(!(limitKm > 0) || distance < limitKm){
         workitems.push(doc.data());
       }
   

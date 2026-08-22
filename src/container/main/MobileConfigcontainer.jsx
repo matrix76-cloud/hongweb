@@ -11,8 +11,10 @@ import localforage from 'localforage';
 import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
 import { WithdrawUser, Update_userinfobyusersid } from "../../service/UserService";
 import { signOutAll, withdrawAccount } from "../../service/AuthService";
+import { unregisterWebPushToken } from "../../service/fcmService";
+import { clearGuest } from "../../utility/guest";
 import { PiCameraBold } from "react-icons/pi";
-import { PiMoonBold } from "react-icons/pi";
+import { PiMoonBold, PiSpeakerHighBold } from "react-icons/pi";
 import { PiBroom } from "react-icons/pi";
 import { BiClinic } from "react-icons/bi";
 import { VscCloseAll } from "react-icons/vsc";
@@ -257,7 +259,20 @@ const MobileConfigcontainer =({containerStyle}) =>  {
     setRefresh((refresh)=> refresh +1);
   }
 
-  /** 로그아웃 — 저장된 계정을 비우고 처음 화면으로 */
+  /**
+   * 로그아웃 (형 지시 2026-08-20 "로그아웃 기능 동작 하게 해줘")
+   *
+   * 눌러도 로그아웃이 안 되는 것처럼 보였다. 이유가 둘이었다.
+   *
+   *   ① 화면이 들고 있는 계정(UserContext)을 안 비웠다.
+   *      저장소(localforage)와 파이어베이스 세션만 지우고 끝냈는데, 앱이 실제로 보고 쓰는 것은
+   *      메모리에 올라와 있는 user 다. 그래서 새로고침하기 전까지는 여전히 로그인한 상태였다.
+   *   ② 다 지우고 '/' 로 보냈는데, 스플래시는 온보딩을 본 사람을 홈으로 보낸다(utility/entry.js).
+   *      결국 홈으로 되돌아와 아무것도 안 바뀐 화면이 됐다.
+   *
+   * 이제 계정을 완전히 비우고 로그인 화면으로 보낸다. 로그인 화면에는
+   * "로그인 없이 먼저 둘러보기" 가 있어서 그냥 나가고 싶은 사람도 막히지 않는다.
+   */
   const _handlelogout = () =>{
     setDialog({
       title: '로그아웃',
@@ -265,11 +280,30 @@ const MobileConfigcontainer =({containerStyle}) =>  {
       confirmText: '로그아웃',
       onConfirm: async () =>{
         setDialog(null);
-        // 저장된 계정만 비우면 Firebase 쪽 세션이 남아 다른 계정으로 못 바꾼다 (형 지시 2026-08-13)
-        await signOutAll();
-        await localforage.setItem('userconfig', {});
-        navigate('/');
+        await doSignOut();
+        navigate('/Mobilelogin', { replace: true });
       },
+    });
+  }
+
+  /** 로그아웃·탈퇴가 공통으로 하는 정리 — 하나라도 빠지면 로그인 상태가 남는다 */
+  const doSignOut = async () =>{
+    // 이 기기로 오던 알림을 끊는다 — 안 끊으면 로그아웃한 폰에 남의 알림이 계속 온다
+    try { await unregisterWebPushToken({ USERS_ID: user.users_id }); } catch (e) { /* noop */ }
+    // 저장된 계정만 비우면 파이어베이스 세션이 남아 다른 계정으로 못 바꾼다 (형 지시 2026-08-13)
+    await signOutAll();
+    await localforage.removeItem('userconfig').catch(()=>{});
+    await clearGuest();
+    /* 화면이 들고 있는 계정을 비운다. 위치·주소는 남겨둔다 —
+       지우면 홈에서 거리 계산이 NaN 이 되어 일감이 하나도 안 보인다. */
+    dispatch({
+      ...user,
+      deviceid: '',
+      users_id: '',
+      nickname: '',
+      phone: '',
+      userimg: '',
+      token: '',
     });
   }
 
@@ -299,9 +333,8 @@ const MobileConfigcontainer =({containerStyle}) =>  {
         // 안 지우면 같은 이메일로 다시 가입할 수 없다 (형 지시 2026-08-13)
         await WithdrawUser({ USERS_ID: user.users_id });
         try { await withdrawAccount(); } catch (err) { console.error('withdraw auth', err); }
-        await signOutAll();
-        await localforage.setItem('userconfig', {});
-        navigate('/');
+        await doSignOut();
+        navigate('/Mobilelogin', { replace: true });
       },
     });
   }
@@ -400,6 +433,15 @@ const MobileConfigcontainer =({containerStyle}) =>  {
               <Row>
                 <PiBellBold/>
                 <SubLabelContent>실시간 알림설정 </SubLabelContent>
+              </Row>
+              <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
+            </SubLabel>
+
+            {/* 알림음 — 도우미 앱과 같은 기능 (형 지시 2026-08-22) */}
+            <SubLabel onClick={()=>_handleConfigMove(CONFIGMOVE.SOUNDSETTING)}>
+              <Row>
+                <PiSpeakerHighBold/>
+                <SubLabelContent>알림음 설정</SubLabelContent>
               </Row>
               <RiArrowRightSLine size={20} style={{paddingRight:5}}/>
             </SubLabel>

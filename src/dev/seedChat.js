@@ -13,6 +13,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../api/config';
 import { FIXED_LOCATION } from '../utility/devLocation';
+import { CHATCONTENTTYPE, CONTRACTSTATUS } from '../utility/screen';
+import { REQUESTINFO } from '../utility/work';
 
 // 일감 종류와 무관하게 자연스럽게 읽히는 대화 묶음. 방마다 하나를 골라 쓴다.
 const SCRIPTS = [
@@ -85,6 +87,18 @@ const SCRIPTS = [
     ['supporter', '아닙니다. 미리 알려주셔서 오히려 좋습니다.'],
   ],
 ];
+
+/* 시드 방에 넣을 수수료. (형 지시 2026-08-21 "결제 버튼 바로 누르게")
+   일감에 적힌 금액이 있으면 그걸 쓰고, 없으면 눈에 익은 금액을 하나 준다.
+   토스 테스트 결제를 바로 눌러봐야 하므로 0 원인 방이 있으면 안 된다. */
+const FALLBACK_FEE = [35000, 50000, 80000, 120000, 65000];
+
+const priceOf = (work, i) => {
+  const list = (work && work.WORK_INFO) || [];
+  const found = list.find((x) => x.requesttype === REQUESTINFO.MONEY);
+  const n = Number(String(found?.result ?? '').replace(/[^0-9]/g, ''));
+  return n > 0 ? n : FALLBACK_FEE[i % FALLBACK_FEE.length];
+};
 
 const pick = (arr, n) => {
   const copy = [...arr];
@@ -180,8 +194,26 @@ const loadWorks = async (n) => {
  * 대화방 N개와 대화를 만든다.
  * 절반은 내가 일감 주인(지원을 받은 쪽), 절반은 내가 지원한 쪽으로 섞는다.
  */
-export const seedChatRooms = async (count = 5) => {
-  const me = await loadMe();
+/* 방마다 어떤 상태로 만들지 미리 정해둔다. (형 지시 2026-08-21)
+   "세 개 모두 계약 수립 — 결제 버튼 바로 누르게" 가 핵심이고,
+   나머지 세 개로 앞뒤 단계(수수료 입력 · 수락/거절 · 아직 아무것도 안 한 방)까지 한 번에 본다. */
+const PLAN = [
+  { owner: true,  contract: 'ACCEPTED' },   // 계약 완료 — [결제] 바로 눌린다
+  { owner: true,  contract: 'ACCEPTED' },   // 계약 완료
+  { owner: true,  contract: 'ACCEPTED' },   // 계약 완료
+  { owner: true,  contract: 'NONE' },       // 아직 제안 전 — [수수료 입력] 을 눌러볼 방
+  { owner: false, contract: 'OFFERED' },    // 내가 일하는 쪽 — 들어가면 수락/거절 창이 뜬다
+  { owner: false, contract: 'NONE' },       // 내가 일하는 쪽 — 아직 조용한 방
+];
+
+/**
+ * @param count  만들 방 개수
+ * @param forUser 붙일 계정 (없으면 지금 앱에 로그인된 계정).
+ *                심사용 계정을 되살릴 때 이 인자로 계정을 지정한다. (형 지시 2026-08-21)
+ *                모양은 앱이 쓰는 납작한 형태 { users_id, nickname, userimg, ... } 다.
+ */
+export const seedChatRooms = async (count = PLAN.length, forUser = null) => {
+  const me = forUser || await loadMe();
   const partners = await loadPartners(me.users_id, count);
   const works = await loadWorks(count);
 
@@ -191,7 +223,8 @@ export const seedChatRooms = async (count = 5) => {
   for (let i = 0; i < partners.length; i++) {
     const partner = partners[i];
     const work = works[i % works.length];
-    const iAmOwner = i % 2 === 0;
+    const plan = PLAN[i % PLAN.length];
+    const iAmOwner = plan.owner;
 
     const chatRef = doc(collection(db, 'CHAT'));
     const CHAT_ID = chatRef.id;
@@ -239,6 +272,67 @@ export const seedChatRooms = async (count = 5) => {
       lastAt = at;
     });
 
+    /* 수수료 계약 (형 지시 2026-08-21)
+     *
+     *   · 내가 의뢰자인 방(3개) — 계약까지 끝난 상태로 만든다. 열자마자 [결제] 가 눌린다.
+     *     토스 결제창을 바로 확인해야 해서다.
+     *   · 내가 일하는 사람인 방 — 하나는 제안이 와 있는 상태로 둔다. 들어가면
+     *     "이 금액에 하시겠습니까?" 창이 뜬다. 나머지 하나는 제안 전 그대로 둔다.
+     */
+    const fee = priceOf(work, i);
+    const contractKind = plan.contract;
+    let contract = null;
+    const contractCards = [];
+
+    if (contractKind !== 'NONE') {
+      const offeredAt = lastAt + 1000 * 60 * 5;
+      contractCards.push({
+        by: OWNER_ID,
+        at: offeredAt,
+        state: CONTRACTSTATUS.OFFERED,
+        text: `수수료 ${fee.toLocaleString('ko-KR')}원을 제안했습니다.`,
+      });
+      contract = {
+        STATUS: CONTRACTSTATUS.OFFERED,
+        AMOUNT: fee,
+        OFFERED_BY: OWNER_ID,
+        OFFERED_AT: offeredAt,
+      };
+
+      if (contractKind === 'ACCEPTED') {
+        const decidedAt = offeredAt + 1000 * 60 * 4;
+        contractCards.push({
+          by: SUPPORTER_ID,
+          at: decidedAt,
+          state: CONTRACTSTATUS.ACCEPTED,
+          text: `수수료 ${fee.toLocaleString('ko-KR')}원에 계약이 성사되었습니다.`,
+        });
+        contract = {
+          ...contract,
+          STATUS: CONTRACTSTATUS.ACCEPTED,
+          DECIDED_BY: SUPPORTER_ID,
+          DECIDED_AT: decidedAt,
+        };
+      }
+    }
+
+    contractCards.forEach((c) => {
+      const msgRef = doc(collection(db, `CHAT/${CHAT_ID}/messages`));
+      batch.set(msgRef, {
+        MESSAGE_ID: msgRef.id,
+        TEXT: c.text,
+        CREATEDT: c.at,
+        USERS_ID: c.by,
+        READ: [OWNER_ID, SUPPORTER_ID],
+        CHAT_CONTENT_TYPE: CHATCONTENTTYPE.CONTRACT,
+        CONTRACT_STATE: c.state,
+        CONTRACT_AMOUNT: fee,
+        SEEDED: true,
+      });
+      lastText = c.text;
+      lastAt = c.at;
+    });
+
     // 상대가 마지막에 남긴 안읽음 수
     const unreadForMe = script.slice(-2).filter(([role]) =>
       (role === 'owner' ? OWNER_ID : SUPPORTER_ID) !== me.users_id).length;
@@ -254,11 +348,21 @@ export const seedChatRooms = async (count = 5) => {
       LASTMESSAGE: lastText,
       LASTMESSAGE_AT: lastAt,
       UNREAD: { [OWNER_ID]: 0, [SUPPORTER_ID]: 0, [me.users_id]: unreadForMe },
+      ...(contract ? { CONTRACT: contract } : {}),
       SEEDED: true,
     });
 
     await batch.commit();
-    made.push({ CHAT_ID, with: partner.USERINFO.nickname, work: work.WORKTYPE, messages: script.length });
+    made.push({
+      CHAT_ID,
+      with: partner.USERINFO.nickname,
+      work: work.WORKTYPE,
+      messages: script.length + contractCards.length,
+      role: iAmOwner ? '내가 의뢰' : '내가 지원',
+      contract: contractKind === 'ACCEPTED' ? `계약 완료 · ${fee.toLocaleString('ko-KR')}원 (결제 가능)`
+        : contractKind === 'OFFERED' ? `수수료 제안 받음 · ${fee.toLocaleString('ko-KR')}원`
+        : '계약 전',
+    });
   }
 
   return made;

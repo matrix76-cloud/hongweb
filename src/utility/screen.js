@@ -170,6 +170,26 @@ export const CHATCONTENTTYPE ={
     IMAGE :"이미지",
     FILE : "파일",
     SCHEDULE : "일정",   // 대화방에서 날짜를 잡아 보내는 카드 (형 지시 2026-08-12)
+    CONTRACT : "계약",   // 수수료 제안·수락·거절이 대화에 남는 카드 (형 지시 2026-08-20)
+}
+
+
+/* 수수료 계약 (형 지시 2026-08-20)
+ *
+ * 대화로 금액을 흥정하던 것을 없앴다. 의뢰한 사람이 [수수료 입력] 으로 금액을 정해 보내면,
+ * 일하는 사람 화면에 "이 금액에 하시겠습니까?" 가 뜨고 수락하면 계약이 선다.
+ * 계약이 서야 결제 버튼이 열린다.
+ *
+ *   NONE     아직 아무 제안도 없음
+ *   OFFERED  의뢰자가 금액을 보냈고 답을 기다리는 중
+ *   ACCEPTED 일하는 사람이 수락 = 계약 수립 (결제 가능)
+ *   REJECTED 거절 — 의뢰자가 금액을 다시 보낼 수 있다
+ */
+export const CONTRACTSTATUS ={
+    NONE : "NONE",
+    OFFERED : "OFFERED",
+    ACCEPTED : "ACCEPTED",
+    REJECTED : "REJECTED",
 }
 
 
@@ -197,6 +217,7 @@ export const CONFIGMOVE = {
     MYWORK: "등록한 일감",
     SEARCHRANGE: "나의 범위설정",
     NOTISETTING: "실시간 알림설정",
+    SOUNDSETTING: "알림음 설정",
     THEMESETTING: "화면 설정",
     TEXTSIZESETTING: "글자 크기",
     FAVORITEWORK: "찜한 일감",

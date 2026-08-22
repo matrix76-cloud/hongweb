@@ -5,27 +5,26 @@ import localforage from "localforage";
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { UserContext } from "../../context/User";
-import { signInWithGoogle, signInWithKakao, authErrorText, completeGoogleRedirect } from "../../service/AuthService";
+import { signInWithGoogle, signInWithKakao, signInWithEmail, authErrorText, completeGoogleRedirect } from "../../service/AuthService";
 import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
 import { isAgreed } from "./MobileAgreecontainer";
 import { imageDB } from "../../utility/imageData";
-import { useNoScroll } from "../../utility/useNoScroll";
 import { enterGuest, clearGuest } from "../../utility/guest";
-import { SocialBtn } from "./MobileAuthParts";
+import { SocialBtn, Field, Label, Input, PrimaryBtn, Divider, Bottom } from "./MobileAuthParts";
 
 /**
- * 로그인 (형 지시 2026-08-18 — 소셜 로그인만)
+ * 로그인
  *
+ *   이메일 · 비밀번호            (형 지시 2026-08-21 — 다시 넣는다)
  *   카카오 · 구글로 시작하기      (네이버는 넣지 않는다)
+ *   둘러보기
  *
- * 이메일 로그인을 걷어내고 나니 남은 게 버튼 두 개뿐인데 위쪽에만 몰려 있고
- * 아래가 텅 비어 허전했다 (형 지적 2026-08-18). 그래서 이 화면만 따로 짠다.
- *  · 공용 Wrap/Card 를 쓰지 않는다 — 흰 카드 안에 버튼 두 개만 있는 꼴이 어색했다
- *  · 로고~버튼을 화면 가운데에 두고, 둘러보기는 아래에 붙인다
- *  · 버튼 아래 안내 문구는 뺐다 — 없어도 무슨 화면인지 안다 (형 지시)
+ * 8/18 에 "소셜만" 으로 정리하면서 이메일 칸을 걷어냈었다. 그때도 화면만 뺐고
+ * /Mobilesignup · /Mobilefindaccount 와 AuthService.signInWithEmail 은 그대로 뒀기 때문에,
+ * 들어가는 길만 다시 이어주면 된다.
  *
- * /Mobilesignup · /Mobilefindaccount 라우트와 AuthService.signInWithEmail 은
- * 지우지 않고 남겨뒀다. 들어가는 길만 없앤 상태다.
+ * 순서는 이메일 → 소셜이다. 아이디·비밀번호로 들어오는 분이 먼저 찾을 자리이고,
+ * 소셜은 아래에 "또는" 으로 붙어 있어도 눈에 잘 띈다.
  */
 const Screen = styled.div`
   min-height: 100vh;
@@ -47,6 +46,33 @@ const Middle = styled.div`
   margin: 0 auto;
 `;
 
+/* 이메일로 로그인하는 자리. 소셜 버튼과 붙어 보이지 않게 아래에 "또는" 을 둔다 */
+const LoginBtn = styled(PrimaryBtn)`
+  margin-top: 20px;
+`;
+
+const Links = styled.div`
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+
+  button {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    padding: 6px 2px;
+  }
+
+  i { font-style: normal; color: #D4D4D8; }
+`;
+
 const Logo = styled.img`
   width: 64px;
   height: 64px;
@@ -63,7 +89,7 @@ const Title = styled.div`
 `;
 
 const Sub = styled.div`
-  margin: 10px 0 32px;
+  margin: 10px 0 26px;
   font-size: 16px;
   line-height: 1.5;
   color: var(--text);
@@ -91,10 +117,12 @@ const MobileLogincontainer = ({ containerStyle }) => {
   const location = useLocation();
   const { dispatch } = useContext(UserContext);
 
-  useNoScroll();   // 한 화면에 다 들어간다 — 스크롤 막대도 밀리는 느낌도 없앤다
-
   const [busy, setBusy] = useState(false);
   const [dialog, setDialog] = useState(null);
+
+  // 이메일 로그인 (형 지시 2026-08-21)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   /* 약관에서 동의하고 돌아온 길이면 로그인 화면을 보여주지 않는다.
      버튼을 이미 한 번 눌렀는데 같은 화면이 또 나오면 안 된다 (형 지적 2026-08-18).
@@ -164,6 +192,38 @@ const MobileLogincontainer = ({ containerStyle }) => {
     return false;
   };
 
+  /* 이메일 로그인 — 이미 있는 계정으로 들어오는 길이라 약관을 다시 받지 않는다.
+     약관은 가입할 때(/Mobilesignup 앞) 받는다. */
+  const _handleEmailLogin = async () => {
+    if (busy) return;
+    const id = email.trim();
+    if (!id || !password) {
+      alertBox("로그인", "아이디(이메일)와 비밀번호를 모두 적어주세요.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const cfg = await signInWithEmail({ email: id, password });
+      await done(cfg);
+    } catch (e) {
+      alertBox("로그인하지 못했습니다", authErrorText(e));
+    }
+    setBusy(false);
+  };
+
+  /* 한글 조합 중에 Enter 가 두 번 들어와 로그인이 두 번 걸리는 것을 막는다 */
+  const _handleEnter = (e) => {
+    if (e.nativeEvent?.isComposing || e.keyCode === 229) return;
+    if (e.key === "Enter") { e.preventDefault(); _handleEmailLogin(); }
+  };
+
+  /* 가입 — 약관을 아직 안 받았으면 약관부터. 가입 화면도 같은 검사를 하고 있어서
+     여기서 안 보내도 되지만, 화면이 한 번 번쩍이는 게 보기 안 좋다. */
+  const _handleSignup = async () => {
+    if (await isAgreed()) navigate("/Mobilesignup");
+    else navigate("/Mobileagree", { state: { after: "signup" } });
+  };
+
   const _handleGoogle = async () => {
     if (busy) return;
     if (!(await passAgreement("google"))) return;
@@ -212,6 +272,48 @@ const MobileLogincontainer = ({ containerStyle }) => {
         <Logo src={imageDB.logo} alt="" />
         <Title>구해줘 홍여사</Title>
         <Sub>동네 일손이 필요할 때, 홍여사</Sub>
+
+        {/* 아이디(이메일) · 비밀번호 (형 지시 2026-08-21) */}
+        <Field>
+          <Label htmlFor="login-email">아이디</Label>
+          <Input
+            id="login-email"
+            type="email"
+            inputMode="email"
+            autoComplete="username"
+            placeholder="가입하신 이메일"
+            value={email}
+            disabled={busy}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={_handleEnter}
+          />
+        </Field>
+
+        <Field>
+          <Label htmlFor="login-password">비밀번호</Label>
+          <Input
+            id="login-password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="비밀번호"
+            value={password}
+            disabled={busy}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={_handleEnter}
+          />
+        </Field>
+
+        <LoginBtn onClick={_handleEmailLogin} disabled={busy}>
+          {busy ? "확인 중..." : "로그인"}
+        </LoginBtn>
+
+        <Links>
+          <button onClick={_handleSignup}>회원가입</button>
+          <i>·</i>
+          <button onClick={() => navigate("/Mobilefindaccount")}>아이디 · 비밀번호 찾기</button>
+        </Links>
+
+        <Divider>또는</Divider>
 
         <SocialBtn $kind="kakao" onClick={_handleKakao}>
           <RiKakaoTalkFill size={20} /> 카카오로 시작하기

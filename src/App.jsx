@@ -9,6 +9,8 @@ import Mainpage from "./page/main/Mainpage";
 import Mappage from "./page/main/Mappage";
 import Workpage from "./page/main/Workpage";
 import Splashpage from "./page/sub/Splash/Splashpage";
+import PushBanner from "./components/PushBanner";
+import OnboardLab from "./dev/OnboardLab";
 
 // PC
 import PCCenterpage from "./page/PCmain/PCCenterpage";
@@ -52,14 +54,18 @@ import MobileWorkregistserpage from "./page/main/MobileWorkregisterpage";
 
 import ReviewPage from "./dev/ReviewPage";
 import IconLab from "./dev/IconLab";
+import SoundLab from "./dev/SoundLab";
 import ListLab from "./dev/ListLab";
 import BannerLab from "./dev/BannerLab";
 import StatLab from "./dev/StatLab";
 import MapLab from "./dev/MapLab";
 import GridLab from "./dev/GridLab";
+import AgreeLab from "./dev/AgreeLab";
 import DesktopPromo from "./components/DesktopPromo";
 import "./screen/css/desktop.css";
 import PushToast from "./components/PushToast";
+import PcOnlyNotice from "./components/PcOnlyNotice";
+import { isDesktopBrowser } from "./utility/device";
 
 import { Provider as MyProvider, useDispatch } from 'react-redux';
 import localforage from 'localforage';
@@ -158,19 +164,28 @@ const App = () => {
   /* PC 랜딩 + 폰 목업 (형 지시 2026-08-13, seekone 방식).
      리뷰페이지와 PC 전용 화면은 넓게 써야 하니 목업 밖에 그대로 둔다. */
   const path = (location.pathname || "").toLowerCase();
-  const wideScreen = path.startsWith("/review") || path.startsWith("/pc") || path.startsWith("/iconlab") || path.startsWith("/listlab") || path.startsWith("/bannerlab") || path.startsWith("/statlab") || path.startsWith("/maplab") || path.startsWith("/gridlab");
+  const wideScreen = path.startsWith("/review") || path.startsWith("/pc") || path.startsWith("/iconlab") || path.startsWith("/soundlab") || path.startsWith("/listlab") || path.startsWith("/bannerlab") || path.startsWith("/onboardlab") || path.startsWith("/statlab") || path.startsWith("/maplab") || path.startsWith("/gridlab") || path.startsWith("/agreelab");
+
+  /* PC 는 지원하지 않는다 — 첫 주소로 들어오면 "휴대폰에서 열어주세요" 만 보여준다.
+     (형 지시 2026-08-21 "루트로 들어갔을 때만 · 리뷰페이지는 지원하고")
+
+     첫 주소에서만 막는 이유: 앱(WebView)·리뷰 페이지 미리보기도 첫 주소로 들어오는데
+     그쪽은 isDesktopBrowser 가 걸러낸다. 다른 주소로 직접 들어온 화면은 건드리지 않는다. */
+  const pcOnly = path === "/" && isDesktopBrowser();
 
   return (
     <>
     {/* 화면을 보고 있을 때 오는 알림은 OS 가 안 띄운다 -> 상단에 직접 (형 지시 2026-08-12) */}
     <PushToast />
 
-    <PhoneShell wide={wideScreen}>
+    <PhoneShell wide={wideScreen || pcOnly}>
+    {/* 앱 안에서 알림이 왔을 때 위에서 내려오는 배너 — 앱 밖(브라우저)에선 아무것도 안 그린다 (2026-08-22) */}
+    <PushBanner />
     <Routes>
 
       {/* PC 도 같은 모바일 화면을 쓴다 — 폰 목업 안에서 돈다 (형 지시 2026-08-13, seekone 방식).
           기존 PC 전용 화면들(/PCmain 등)은 주소로 들어가면 그대로 열린다. */}
-      <Route path="/" element={<MobileSplashpage />} />
+      <Route path="/" element={pcOnly ? <PcOnlyNotice /> : <MobileSplashpage />} />
 
       {/* 마켓에 이미 올라간 앱은 웹뷰 주소가 help-4902e.web.app/mobile 로 박혀 있다.
           그 앱들은 다시 올리기 전까지 이 주소로만 들어오는데 여기 라우트가 없어서 빈 화면이 떴다.
@@ -244,15 +259,19 @@ const App = () => {
 
       {/* 홈 아이콘 색 조합 시안 — 형이 케이스를 고르는 임시 페이지 (2026-08-15) */}
       <Route path="/iconlab" element={<IconLab />} />
+      <Route path="/soundlab" element={<SoundLab />} />
 
       {/* 일감 리스트 카드/테이블 시안 — 형이 표현 방식을 고르는 임시 페이지 (2026-08-15) */}
       <Route path="/listlab" element={<ListLab />} />
 
       {/* 홈 상단 홍보 배너 시안 — 형이 안을 고르는 임시 페이지 (2026-08-16) */}
       <Route path="/bannerlab" element={<BannerLab />} />
+      <Route path="/onboardlab" element={<OnboardLab />} />
       <Route path="/statlab" element={<StatLab />} />
       <Route path="/maplab" element={<MapLab />} />
       <Route path="/gridlab" element={<GridLab />} />
+      {/* 약관 동의 화면 시안 — 형이 번호로 고르는 임시 페이지 (2026-08-23) */}
+      <Route path="/agreelab" element={<AgreeLab />} />
 
     </Routes>
     </PhoneShell>

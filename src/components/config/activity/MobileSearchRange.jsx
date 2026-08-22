@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { PiMapPinBold, PiCheckBold } from "react-icons/pi";
 import { UserContext } from "../../../context/User";
 import { ReadWork } from "../../../service/WorkService";
-import { RANGE_OPTIONS, getSearchRange, setSearchRange } from "../../../utility/searchRange";
+import { RANGE_OPTIONS, ANY_RANGE, rangeLabel, getSearchRange, setSearchRange } from "../../../utility/searchRange";
 
 /**
  * 내 정보 > 나의 범위설정
  * 일감 목록이 5km 로 고정돼 있어 동네에 일감이 적으면 아무것도 안 보였다. (형 지시 2026-08-12)
  * 범위를 고르면 그 자리에서 몇 건이 잡히는지 보여준다.
+ * 맨 위 "지역 상관 없음"이 처음 설치했을 때의 기본값이다. (형 리뷰 2026-08-21)
  */
 
 const Container = styled.div`
@@ -43,9 +44,9 @@ const Option = styled.div`
   padding: 0 18px;
   margin-bottom: 10px;
   border-radius: 12px;
-  border: 1.5px solid ${({ $on }) => ($on ? '#FF4E19' : 'var(--border)')};
-  background: ${({ $on }) => ($on ? '#FFF5F0' : 'var(--surface)')};
-  color: ${({ $on }) => ($on ? '#FF4E19' : 'var(--text)')};
+  border: 1.5px solid ${({ $on }) => ($on ? '#1b1f27' : 'var(--border)')};
+  background: ${({ $on }) => ($on ? '#f1f4f8' : 'var(--surface)')};
+  color: ${({ $on }) => ($on ? '#1b1f27' : 'var(--text)')};
   font-size: 16px;
   font-weight: ${({ $on }) => ($on ? 700 : 500)};
   cursor: pointer;
@@ -61,7 +62,7 @@ const Result = styled.div`
   font-size: 15px;
   line-height: 1.6;
   color: var(--text);
-  b { color: #FF4E19; font-weight: 700; font-size: 17px; }
+  b { color: #1b1f27; font-weight: 700; font-size: 17px; }
 `;
 
 const MobileSearchRange = () => {
@@ -71,7 +72,7 @@ const MobileSearchRange = () => {
 
   const countInRange = async (km) => {
     setCount(null);
-    if (!user?.latitude) return;
+    if (km !== ANY_RANGE && !user?.latitude) return;
     const items = await ReadWork({
       latitude: user.latitude,
       longitude: user.longitude,
@@ -89,15 +90,16 @@ const MobileSearchRange = () => {
 
   return (
     <Container>
-      <Head><PiMapPinBold size={20} color="#FF4E19" /> 일감을 찾을 범위</Head>
+      <Head><PiMapPinBold size={20} color="#1b1f27" /> 일감을 찾을 범위</Head>
       <Desc>
-        {user?.address_name || '내 위치'} 기준으로<br />
-        이 거리 안의 일감만 홈과 지도에 보여드려요.
+        {range === ANY_RANGE
+          ? <>거리에 상관없이 모든 일감을 홈과 지도에 보여드려요.<br />가까운 것만 보려면 아래에서 거리를 골라주세요.</>
+          : <>{user?.address_name || '내 위치'} 기준으로<br />이 거리 안의 일감만 홈과 지도에 보여드려요.</>}
       </Desc>
 
       {RANGE_OPTIONS.map((km) => (
         <Option key={km} $on={km === range} onClick={() => pick(km)}>
-          <span>{km}km 이내</span>
+          <span>{rangeLabel(km)}</span>
           {km === range && <PiCheckBold size={20} />}
         </Option>
       ))}

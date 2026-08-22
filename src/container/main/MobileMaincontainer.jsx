@@ -82,7 +82,7 @@ const style = {
 const CategoryGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  row-gap: 18px;
+  row-gap: 14px;
   column-gap: 6px;
   width: 100%;
   padding: 4px 0 8px;
@@ -91,7 +91,7 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   &:active { transform: scale(0.96); }
@@ -99,9 +99,10 @@ const Box = styled.div`
 `
 const BoxImg = styled.div`
   /* 원이 아이콘에 비해 너무 컸다 — 한 단계 줄임 (형 2026-08-15)
-     배너가 위에 들어오면서 아직 크다고 하셔서 한 번 더 줄임 (형 리뷰 2026-08-16) */
-  width: 48px;
-  height: 48px;
+     배너가 위에 들어오면서 아직 크다고 하셔서 한 번 더 줄임 (형 리뷰 2026-08-16)
+     그림 배너 들어간 뒤 "조금만 더" — 48→44 (형 2026-08-23) */
+  width: 44px;
+  height: 44px;
   border-radius: 100px;
   background: ${({ $c }) => $c || "var(--icon-bg)"};
   display: flex;
@@ -1019,7 +1020,7 @@ const MobileMaincontainer =({containerStyle}) =>  {
                   {
                     WorkItems.map((data, index)=>(
                       <Box key={index} onClick={()=>{_handlebasicmenuclick(data.name)}}>
-                        <BoxImg $c={workColor(data.name)}><WorkIcon name={data.name} size={25} color="#fff"/></BoxImg>
+                        <BoxImg $c={workColor(data.name)}><WorkIcon name={data.name} size={23} color="#fff"/></BoxImg>
                         <BoxLabel>{data.name}</BoxLabel>
                       </Box>
                     ))
@@ -1054,7 +1055,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
           <StickyPos>
           {/* 목록에도 제목을 붙인다. 필터와 같이 위에 붙어 있어야 스크롤해도 무엇을 보는지 안다
               (형 리뷰 2026-08-13 "아래 일감리스트에도 라벨이 들어가야 할거같음") */}
-          <Label label={'내 주변에 올라온 일감'} containerStyle={{background:'var(--surface)', height:'auto', padding:'2px 0 10px 15px', boxSizing:'border-box'}} />
+          {/* Label 안쪽 padding 15 가 또 있어서 글자가 칩(20px)보다 오른쪽에 있었다 — 바깥 5 로 해서 칩 왼쪽 끝에 맞춘다 (형 리뷰 2026-08-23 핀1) */}
+          <Label label={'내 주변에 올라온 일감'} containerStyle={{background:'var(--surface)', height:'auto', padding:'2px 0 10px 5px', boxSizing:'border-box'}} />
           <div className="new-div">
             {
               FilterItems.map((data, index)=>(

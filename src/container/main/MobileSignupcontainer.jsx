@@ -34,7 +34,11 @@ const MobileSignupcontainer = ({ containerStyle }) => {
   // 주소로 곧장 들어온 경우에도 약관을 먼저 지나게 한다 (형 지시 2026-08-12)
   useEffect(() => {
     let alive = true;
-    isAgreed().then((ok) => { if (alive && !ok) navigate("/Mobileagree", { replace: true }); });
+    /* 동의를 마치면 이 가입 화면으로 되돌아와야 한다. 표시를 안 들려 보내면
+       약관이 로그인 화면으로 보내버려 가입을 하려던 사람이 엉뚱한 데로 간다. (2026-08-21) */
+    isAgreed().then((ok) => {
+      if (alive && !ok) navigate("/Mobileagree", { replace: true, state: { after: "signup" } });
+    });
     return () => { alive = false; };
   }, []);
 

@@ -8,7 +8,7 @@ import PcAdvertisePopup from "../../modal/PcAdvertisePopup/PcAdvertisePopup";
 import PCWorkItem from "../../components/PCWorkItem";
 import { BetweenRow, FlexstartRow, Row } from "../../common/Row";
 import { Column, FlexstartColumn } from "../../common/Column";
-import { CHATCONTENTTYPE, CHATIMAGETYPE, EventItems, FILTERITMETYPE, PCCOMMNUNITYMENU } from "../../utility/screen";
+import { CHATCONTENTTYPE, CHATIMAGETYPE, CONTRACTSTATUS, EventItems, FILTERITMETYPE, PCCOMMNUNITYMENU } from "../../utility/screen";
 import Empty from "../../components/Empty";
 import Button from "../../common/Button";
 import { DataContext } from "../../context/Data";
@@ -32,7 +32,8 @@ import {
   SlTrash,
   SlCalender,
 } from "react-icons/sl";
-import { CreateMessage, MarkRead, DeleteMessageForMe, DeleteMessageForAll, ExitChat, ReportChat, BlockUser } from "../../service/ChatService";
+import { CreateMessage, MarkRead, DeleteMessageForMe, DeleteMessageForAll, ExitChat, ReportChat, BlockUser,
+  SubscribeChatRoom, OfferContract, AcceptContract, RejectContract } from "../../service/ChatService";
 import { workOf, msgTimeOf } from "../../utility/chat";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../../api/config";
@@ -45,6 +46,8 @@ import { setRef } from "@mui/material";
 import MobileContactSign from "../../modal/MobileContactSignPopup/MobileContactSignPopup";
 import MobileContactDoc from "../../modal/MobileContactDocPopup/MobileContactDocPopup";
 import MobilePayPopup from "../../modal/MobilePayPopup/MobilePayPopup";
+import MobileFeeOfferPopup from "../../modal/MobileFeeOfferPopup/MobileFeeOfferPopup";
+import MobileFeeAskPopup from "../../modal/MobileFeeAskPopup/MobileFeeAskPopup";
 import { startCall } from "../../service/CallService";
 import { ReadWorkByIndividually } from "../../service/WorkService";
 
@@ -534,6 +537,38 @@ const DateDivider = styled.div`
   }
 `;
 
+/* 수수료 계약 카드 — 대화 가운데에 남는 기록. (형 지시 2026-08-20)
+   말풍선이 아니라 가운데 한 장으로 둔다. 누가 한 말이 아니라 방에서 일어난 일이기 때문이다. */
+const ContractCard = styled.div`
+  width: 100%;
+  max-width: 268px;
+  margin: 14px auto;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  text-align: center;
+`;
+const ContractHead = styled.div`
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+`;
+const ContractAmount = styled.div`
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+`;
+const ContractNote = styled.div`
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  opacity: .7;
+`;
+
 const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME}) =>  {
 
   const { dispatch, user } = useContext(UserContext);
@@ -553,6 +588,13 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
   const [schedulepopup, setSchedulepopup] = useState(false); // 일정 잡기
   const [pickedmsg, setPickedmsg] = useState(null);  // 삭제하려고 고른 내 글
   const [downloadpopup, setDownloadpopup] = useState(false);
+
+  /* 수수료 계약 (형 지시 2026-08-20)
+     room 은 방 문서를 실시간으로 받아둔 것이다. 상대가 수락·거절하면 내 화면이 바로 바뀐다.
+     ITEM 은 목록에서 들고 들어온 그때의 사본이라 그것만 보고 있으면 갱신이 안 된다. */
+  const [room, setRoom] = useState(ITEM);
+  const [feeofferpopup, setFeeofferpopup] = useState(false);   // 의뢰자 — 금액 입력
+  const [feeasklater, setFeeasklater] = useState(false);       // 일하는 사람 — "나중에" 로 닫아둔 상태
 
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -866,8 +908,74 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
     return () => { alive = false; };
   }, [ITEM?.CHAT_ID]);
 
-  // 결제 (의뢰한 사람만 누를 수 있다)
+  /* ── 수수료 계약 (형 지시 2026-08-20) ───────────────────────────────
+     의뢰자가 [수수료 입력] 으로 금액을 보내면 → 일하는 사람 화면에 물어보는 창이 뜨고
+     → 수락하면 계약이 서고 → 그때부터 의뢰자의 결제 버튼이 열린다. */
+
+  // 방 문서를 실시간으로 받아둔다 — 상대의 수락·거절이 바로 보이게
+  useEffect(() => {
+    if (!chatid) return undefined;
+    const unsub = SubscribeChatRoom({ CHAT_ID: chatid }, (r) => {
+      if (r) setRoom(r);
+    });
+    return () => unsub();
+  }, [chatid]);
+
+  const contract = room?.CONTRACT || null;
+  const contractstatus = contract?.STATUS || CONTRACTSTATUS.NONE;
+  const contractamount = Number(contract?.AMOUNT) || 0;
+  const contracted = contractstatus === CONTRACTSTATUS.ACCEPTED;   // 계약 수립 = 결제 가능
+
+  /* 일하는 사람에게 물어보는 창.
+     "나중에" 로 닫으면 이번 방문에는 다시 띄우지 않는다. 제안 자체는 남아 있어서
+     상단의 [수수료 확인] 으로 다시 열 수 있다. */
+  const feeask = OWNER != true
+    && contractstatus === CONTRACTSTATUS.OFFERED
+    && feeasklater == false;
+
+  // 제안이 새로 오면 "나중에" 를 풀어 다시 물어본다
+  useEffect(() => {
+    if (contractstatus === CONTRACTSTATUS.OFFERED) setFeeasklater(false);
+  }, [contract?.OFFERED_AT]);
+
+  const _handlefeeoffer = () =>{
+    if (contracted) return;              // 이미 계약된 방은 금액을 바꿀 수 없다
+    setFeeofferpopup(true);
+    setRefresh((refresh) => refresh +1 );
+  }
+
+  const _handlefeesubmit = async (AMOUNT) =>{
+    await OfferContract({ CHAT_ID: chatid, USERS_ID: user.users_id, AMOUNT });
+    setFeeofferpopup(false);
+    setRefresh((refresh) => refresh +1 );
+  }
+
+  const _handlefeeaccept = async () =>{
+    await AcceptContract({ CHAT_ID: chatid, USERS_ID: user.users_id });
+    setFeeasklater(false);
+    setRefresh((refresh) => refresh +1 );
+  }
+
+  const _handlefeereject = async () =>{
+    await RejectContract({ CHAT_ID: chatid, USERS_ID: user.users_id });
+    setFeeasklater(false);
+    setRefresh((refresh) => refresh +1 );
+  }
+
+  // 결제 (의뢰한 사람만 · 계약이 선 뒤에만)
   const _handlepay = () =>{
+    if (!contracted) {
+      setDialog({
+        title: '아직 계약 전입니다',
+        message: contractstatus === CONTRACTSTATUS.OFFERED
+          ? '보내신 수수료를 상대가 아직 확인하지 않았습니다.\n수락하면 결제할 수 있습니다.'
+          : '수수료를 먼저 정해 보내주세요.\n상대가 수락하면 결제할 수 있습니다.',
+        confirmText: '확인',
+        alertonly: true,
+        onConfirm: ()=>{ setDialog(null); },
+      });
+      return;
+    }
     setPaypopup(true);
     setRefresh((refresh) => refresh +1 );
   }
@@ -1061,9 +1169,36 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
         paypopup == true && (
           <MobilePayPopup
             callback={MobilePaypopupCallback}
-            amount={findPrice()}                 /* 등록된 일감 금액 그대로 */
+            /* 계약된 수수료로 결제한다. 일감에 적어둔 금액이 아니라 둘이 합의한 금액이다.
+               (형 지시 2026-08-20 — 계약 수립 뒤에만 결제 버튼이 열린다) */
+            amount={contractamount > 0 ? contractamount : findPrice()}
             orderName={ITEM.WORKTYPE || workOf(ITEM).WORKTYPE}
             workId={workOf(ITEM).WORK_ID}
+          />
+        )
+      }
+
+      {/* 수수료 입력 — 의뢰한 사람이 금액을 정해 보낸다 (형 지시 2026-08-20) */}
+      {
+        feeofferpopup == true && (
+          <MobileFeeOfferPopup
+            amount={contractamount}
+            workPrice={findPrice()}
+            onSubmit={_handlefeesubmit}
+            onClose={()=>{ setFeeofferpopup(false); }}
+          />
+        )
+      }
+
+      {/* 수수료 제안 받기 — 일하는 사람 화면에 뜬다 */}
+      {
+        feeask == true && (
+          <MobileFeeAskPopup
+            amount={contractamount}
+            fromName={LEFTNAME}
+            onAccept={_handlefeeaccept}
+            onReject={_handlefeereject}
+            onLater={()=>{ setFeeasklater(true); }}
           />
         )
       }
@@ -1153,21 +1288,44 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
             </div>
 
             <EnterButton>
-                {/* 계약은 없어졌다. 결제만 두고, 일을 맡긴 사람에게만 보인다 (형 지시 2026-08-12) */}
-                {OWNER == true && (
+                {/* 수수료 계약 → 결제. 버튼 한 자리가 단계에 따라 바뀐다. (형 지시 2026-08-20)
+                    한 줄에 버튼을 여러 개 두면 좁은 폰에서 넘친다. 무엇보다 지금 할 일이
+                    하나씩만 보여야 처음 쓰는 사람이 헷갈리지 않는다.
+
+                      의뢰한 사람  : [수수료 입력] → [수락 대기] → [결제]
+                      일하는 사람  : (없음)      → [수수료 확인] → [계약됨]  */}
+                {OWNER == true ? (
                   <Button
-                    text={"결제"}
-                    onPress={_handlepay}
+                    text={contracted ? "결제" : contractstatus == CONTRACTSTATUS.OFFERED ? "수락 대기" : "수수료 입력"}
+                    onPress={contracted ? _handlepay : _handlefeeoffer}
                     containerStyle={{
-                      color: "#fff",
-                      background: "#FF4E19",
-                      border: "none",
-                      width: "62px",
+                      color: contracted ? "#fff" : contractstatus == CONTRACTSTATUS.OFFERED ? "var(--text)" : "#fff",
+                      background: contracted ? "#FF4E19" : contractstatus == CONTRACTSTATUS.OFFERED ? "var(--surface)" : "#FF4E19",
+                      border: contractstatus == CONTRACTSTATUS.OFFERED ? "1px solid var(--border)" : "none",
+                      width: contractstatus == CONTRACTSTATUS.NONE || contractstatus == CONTRACTSTATUS.REJECTED ? "84px" : "72px",
                       height: "34px",
                       fontSize: "14px",
                       marginLeft: "0px",
                       borderRadius: "8px",
                       fontFamily: "Pretendard",
+                      whiteSpace: "nowrap",
+                    }}
+                  />
+                ) : (contractstatus == CONTRACTSTATUS.OFFERED || contracted) && (
+                  <Button
+                    text={contracted ? "계약됨" : "수수료 확인"}
+                    onPress={contracted ? ()=>{} : ()=>{ setFeeasklater(false); }}
+                    containerStyle={{
+                      color: contracted ? "var(--text)" : "#fff",
+                      background: contracted ? "var(--surface)" : "#FF4E19",
+                      border: contracted ? "1px solid var(--border)" : "none",
+                      width: contracted ? "68px" : "84px",
+                      height: "34px",
+                      fontSize: "14px",
+                      marginLeft: "0px",
+                      borderRadius: "8px",
+                      fontFamily: "Pretendard",
+                      whiteSpace: "nowrap",
                     }}
                   />
                 )}
@@ -1204,8 +1362,27 @@ const MobileContentcontainer =({containerStyle, ITEM, OWNER, LEFTIMAGE, LEFTNAME
                     <DateDivider><span>{getDate(msgTimeOf(data))}</span></DateDivider>
                   )}
             
+                  {/* 수수료 계약 기록 — 말풍선이 아니라 가운데 카드로 남긴다 (형 지시 2026-08-20).
+                      대화를 처음부터 읽어 내려가도 금액이 어떻게 정해졌는지 보이게 하기 위해서다. */}
+                  {data.CHAT_CONTENT_TYPE == CHATCONTENTTYPE.CONTRACT && (
+                    <ContractCard>
+                      <ContractHead>
+                        {data.CONTRACT_STATE == CONTRACTSTATUS.ACCEPTED ? '계약 성사'
+                          : data.CONTRACT_STATE == CONTRACTSTATUS.REJECTED ? '수수료 거절'
+                          : '수수료 제안'}
+                      </ContractHead>
+                      <ContractAmount>{(Number(data.CONTRACT_AMOUNT) || 0).toLocaleString('ko-KR')}원</ContractAmount>
+                      <ContractNote>
+                        {data.CONTRACT_STATE == CONTRACTSTATUS.ACCEPTED ? '이제 결제할 수 있습니다'
+                          : data.CONTRACT_STATE == CONTRACTSTATUS.REJECTED ? '의뢰하신 분이 금액을 다시 보낼 수 있습니다'
+                          : '일하는 분의 수락을 기다립니다'}
+                      </ContractNote>
+                    </ContractCard>
+                  )}
+
                   {(data.CHAT_CONTENT_TYPE != CHATCONTENTTYPE.EXIT
-                  && data.CHAT_CONTENT_TYPE != CHATCONTENTTYPE.ENTER) &&
+                  && data.CHAT_CONTENT_TYPE != CHATCONTENTTYPE.ENTER
+                  && data.CHAT_CONTENT_TYPE != CHATCONTENTTYPE.CONTRACT) &&
                     <>
                       {user.users_id != data.USERS_ID ? (
                         <ItemLayerA>

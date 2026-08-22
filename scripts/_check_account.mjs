@@ -1,0 +1,17 @@
+import { createRequire } from 'module';
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+const require = createRequire(import.meta.url);
+initializeApp({ credential: cert(require('../functions/serviceAccountKey.json')) });
+const db = getFirestore();
+const ID = process.argv[2];
+const u = await db.collection('USERS').doc(ID).get();
+console.log('USERS 문서:', u.exists ? JSON.stringify({ ...u.data(), CHATINFO: undefined }).slice(0,400) : '없음');
+const o = await db.collection('CHAT').where('OWNER_ID','==',ID).get();
+const sp = await db.collection('CHAT').where('SUPPORTER_ID','==',ID).get();
+console.log('대화방 — 의뢰자', o.size, '/ 지원자', sp.size);
+const w = await db.collection('WORK').where('USERS_ID','==',ID).get();
+console.log('내가 올린 일감', w.size);
+const all = await db.collection('WORK').get();
+console.log('전체 일감', all.size);
+process.exit(0);
