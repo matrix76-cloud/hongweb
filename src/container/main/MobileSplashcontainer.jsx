@@ -357,7 +357,12 @@ const MobileSplashcontainer =({containerStyle}) =>  {
           }).catch(function (err) {
             console.error('Error saving userconfig:', err);
           });
-          navigate("/Mobilemain");
+          // 소셜 계정인데 번호가 아직 없으면 휴대폰 인증부터 (형 결정 2026-08-23 — 번호로 예전 회원과 잇는다)
+          if (userdata.AUTH_UID && !String(userdata.USERINFO.phone || '').trim()) {
+            navigate("/Mobilephoneverify");
+          } else {
+            navigate("/Mobilemain");
+          }
         }
   
       }

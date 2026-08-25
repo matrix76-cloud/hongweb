@@ -4,17 +4,18 @@
 //
 // spec 은 형이 2026-08-12 대화에서 정한 초심 기준으로 작성했다. 판단 기준은 CORE.md.
 
+// 사용자가 실제로 움직이는 순서대로 (형 2026-08-23): 스플래시 → 온보딩 → 약관 → 로그인 → 회원가입 → 휴대폰 인증 → (옆길) 계정 찾기
 export const ENTRY_REVIEW = [
-  { id: 'onboarding', no: '000', name: '온보딩 (3단계)', path: '/Mobileonboarding', status: 'wip', spec: [
-    '★ 처음 들어온 사람에게 CORE 흐름을 세 장으로 보여준다 — ①일 올리기 ②지원 ③픽.',
-    'doum 프로젝트 OnboardingStepsPage 구조를 따랐다 (일러스트 · STEP 라벨 · 제목 · 점 · 건너뛰기/다음).',
-    '한 번 보면 다시 안 뜬다. localforage 의 onboarding.done 을 스플래시가 확인한다.',
-  ] },
-
-  { id: 'splash', no: '001', name: '스플래시', path: '/', status: 'todo', spec: [
+  { id: 'splash', no: '000', name: '스플래시', path: '/', status: 'todo', spec: [
     '로고 노출 후 자동 전환. 모바일=MobileSplash / PC=PCSplash 분기(768px).',
     '★ 여기서 갈 곳을 정한다 — 온보딩 안 봤으면 온보딩, 약관 미동의면 약관, 다 지났으면 로그인.',
     '위치 권한·일감 프리로드도 여기서 한다.',
+  ] },
+
+  { id: 'onboarding', no: '001', name: '온보딩 (5장 · 9안)', path: '/Mobileonboarding', status: 'wip', spec: [
+    '★ 처음 들어온 사람에게 CORE 흐름을 세 장으로 보여준다 — ①일 올리기 ②지원 ③픽.',
+    'doum 프로젝트 OnboardingStepsPage 구조를 따랐다 (일러스트 · STEP 라벨 · 제목 · 점 · 건너뛰기/다음).',
+    '한 번 보면 다시 안 뜬다. localforage 의 onboarding.done 을 스플래시가 확인한다.',
   ] },
 
   { id: 'agree', no: '002', name: '약관 동의', path: '/Mobileagree', status: 'wip', spec: [
@@ -44,7 +45,13 @@ export const ENTRY_REVIEW = [
     '약관은 이 화면 앞에서 이미 받았다.',
   ] },
 
-  { id: 'findaccount', no: '005', name: '계정 찾기', path: '/Mobilefindaccount', status: 'wip', spec: [
+  { id: 'phoneverify', no: '005', name: '휴대폰 번호 인증', path: '/Mobilephoneverify', status: 'wip', spec: [
+    '★ 소셜 로그인 직후 한 번. 번호가 계정을 잇는 열쇠 — 같은 번호의 예전(2025) 회원이면 지원서·채팅·일감이 그대로 이어진다.',
+    '인증번호는 카카오 알림톡(루나소프트 템플릿 50051), 카카오 없으면 문자로 대체 발송.',
+    '합쳐졌다는 안내는 없다 — 인증되면 그냥 홈 (형 2026-08-23).',
+    '번호칸 autocomplete=tel: 안드로이드는 키보드 위에 내 번호가 떠서 한 번 탭.',
+  ] },
+  { id: 'findaccount', no: '006', name: '계정 찾기', path: '/Mobilefindaccount', status: 'wip', spec: [
     '탭 두 개 — 이메일 찾기 / 비밀번호 찾기.',
     '★ 이메일 찾기: 대화명이 맞으면 가려진 이메일을 알려준다 (ho****@gmail.com).',
     '★ 마스킹은 반드시 서버(functions/findMaskedEmail)에서 한다 — 앱에서 조회하면 원본이 그대로 보인다.',
@@ -92,6 +99,11 @@ export const POST_REVIEW = [
     '★ 흐름: 일감 카드 누름 → 상세 → 지원하기 → 채팅 연결.',
     '일감 조건·금액·거리·등록자 정보 표시.',
   ] },
+  { id: 'workers', no: '016', name: '활동 중인 홍여사', path: '/Mobileworkers', status: 'wip', spec: [
+    '★ 홈 [활동 중인 홍여사] 를 누르면 오는 실제 목록. 여성 회원만(남성 428명 제외), 내 범위 안 가까운 순 100명.',
+    '필터는 일감과 같은 칩: 초기화 · 서비스별 · 나이대 · 거리순 (형 리뷰 2026-08-23).',
+    '홍여사를 누르면 상세 시트 → [이 홍여사에게 일 맡기기] → 내 일감 고르기 → 대화방.',
+  ] },
 ];
 
 export const MY_REVIEW = [
@@ -122,11 +134,26 @@ export const FCM_REVIEW = [
 // ② 지원 · ③ 픽 / ④ 연결 · 결제 / 찾기 탭은 형 지시로 뺐다 (2026-08-12).
 // 채팅(/Mobilechat) · 지도 · 검색 · 위치 재설정도 함께 빠졌다.
 // 다시 볼 때는 그 배열(CONNECT_REVIEW · FIND_REVIEW 등)을 되살리면 된다.
+/* 시안 랩 — PC 폭 페이지라 폰 프레임에선 좁게 보인다. 폰 프리셋을 제일 넓은 걸로 두거나 새 창으로 열어 보는 게 편하다 */
+export const LAB_REVIEW = [
+  { id: 'bannerlab', no: 'L1', name: '홈 배너 시안 (1~9안)', path: '/bannerlab', status: 'done', spec: ['확정 9안 — 평면 SVG 인물·버스, 글 박스가 그림 밑단에 걸침. ?only=9 로 한 안만.'] },
+  { id: 'onboardlab', no: 'L2', name: '온보딩 시안 (0~9안)', path: '/onboardlab', status: 'done', spec: ['확정 9안 — 올리기·동네·채팅·알림·안심. ?only=9 로 한 안만.'] },
+  { id: 'soundlab', no: 'L3', name: '알림음 시안', path: '/soundlab', status: 'done', spec: ['홍여사·벨·차임·부드러운 소리·기기 기본음.'] },
+  { id: 'iconlab', no: 'L4', name: '아이콘 시안', path: '/iconlab', status: 'done', spec: [] },
+  { id: 'listlab', no: 'L5', name: '목록 시안', path: '/listlab', status: 'done', spec: [] },
+];
+
+export const PLAN_REVIEW = [
+  { id: 'roadmap', no: 'P', name: '9월 마스터 플랜 (캘린더)', path: '', status: 'wip', board: 'roadmap', spec: ['2026-09-30 정식 오픈 목표. 항목 클릭으로 대기→진행→완료, Firestore 에 저장.'] },
+];
+
 export const DOMAINS = [
   { key: 'entry',   label: '진입 · 인증',      screens: ENTRY_REVIEW },
   { key: 'post',    label: '① 일 올리기',      screens: POST_REVIEW },
   { key: 'my',      label: '내 정보',          screens: MY_REVIEW },
   { key: 'fcm',     label: 'FCM 테스트',       screens: FCM_REVIEW, noBoard: true },
+  { key: 'lab',     label: '시안 랩',          screens: LAB_REVIEW },
+  { key: 'plan',    label: '마스터 플랜',       screens: PLAN_REVIEW, noBoard: true },
 ];
 
 export const STATUS_LABEL = { done: '완료', wip: '작업중', todo: '미검수', none: '없음' };

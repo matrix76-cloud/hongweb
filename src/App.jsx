@@ -36,6 +36,7 @@ import MobileWorkerRegistpage from "./page/main/MobileWorkerRegistpage";
 import MobileMainpage from "./page/main/MobileMainpage";
 import MobileAgreepage from "./page/main/MobileAgreepage";
 import MobileSignuppage from "./page/main/MobileSignuppage";
+import MobilePhoneVerifypage from "./page/main/MobilePhoneVerifypage";
 import MobileFindAccountpage from "./page/main/MobileFindAccountpage";
 import MobileLoginpage from "./page/main/MobileLoginpage";
 import MobileOnboardingpage from "./page/main/MobileOnboardingpage";
@@ -44,6 +45,7 @@ import MobileMapReconfigpage from "./page/main/MobileMapReconfigpage";
 import MobileMappage from "./page/main/Mobilemappage";
 import MobileRegistpage from "./page/main/MobileRegistpage";
 import MobileSearchHistorypage from "./page/main/MobileSearchHistorypage";
+import MobileWorkerspage from "./page/main/MobileWorkerspage";
 import MobileSearchpage from "./page/main/MobileSearchpage";
 import MobileNoticepage from "./page/main/MobileNoticepage";
 import MobilePaypage from "./page/main/MobilePaypage";
@@ -61,6 +63,7 @@ import StatLab from "./dev/StatLab";
 import MapLab from "./dev/MapLab";
 import GridLab from "./dev/GridLab";
 import AgreeLab from "./dev/AgreeLab";
+import StripLab from "./dev/StripLab";
 import DesktopPromo from "./components/DesktopPromo";
 import "./screen/css/desktop.css";
 import PushToast from "./components/PushToast";
@@ -164,7 +167,7 @@ const App = () => {
   /* PC 랜딩 + 폰 목업 (형 지시 2026-08-13, seekone 방식).
      리뷰페이지와 PC 전용 화면은 넓게 써야 하니 목업 밖에 그대로 둔다. */
   const path = (location.pathname || "").toLowerCase();
-  const wideScreen = path.startsWith("/review") || path.startsWith("/pc") || path.startsWith("/iconlab") || path.startsWith("/soundlab") || path.startsWith("/listlab") || path.startsWith("/bannerlab") || path.startsWith("/onboardlab") || path.startsWith("/statlab") || path.startsWith("/maplab") || path.startsWith("/gridlab") || path.startsWith("/agreelab");
+  const wideScreen = path.startsWith("/review") || path.startsWith("/pc") || path.startsWith("/iconlab") || path.startsWith("/soundlab") || path.startsWith("/listlab") || path.startsWith("/bannerlab") || path.startsWith("/onboardlab") || path.startsWith("/statlab") || path.startsWith("/maplab") || path.startsWith("/gridlab") || path.startsWith("/agreelab") || path.startsWith("/striplab");
 
   /* PC 는 지원하지 않는다 — 첫 주소로 들어오면 "휴대폰에서 열어주세요" 만 보여준다.
      (형 지시 2026-08-21 "루트로 들어갔을 때만 · 리뷰페이지는 지원하고")
@@ -200,6 +203,7 @@ const App = () => {
       <Route path="/Mobileagree" element={<MobileAgreepage />} />
       <Route path="/Mobilelogin" element={<MobileLoginpage />} />
       <Route path="/Mobilesignup" element={<MobileSignuppage />} />
+      <Route path="/Mobilephoneverify" element={<MobilePhoneVerifypage />} />
       <Route path="/Mobilefindaccount" element={<MobileFindAccountpage />} />
       <Route path="/Mobileregist" element={<MobileRegistpage />} />
       <Route path="/Mobileladylicense" element={<MobileLadyLicenseAuthpage />} />
@@ -223,6 +227,8 @@ const App = () => {
 
       <Route path="/Mobilenotice" element={<MobileNoticepage />} />
       <Route path="/Mobilesearchhistory" element={<MobileSearchHistorypage />} />
+      {/* 활동 중인 홍여사 목록 — 홈 요약 칸에서 들어온다 (형 지시 2026-08-23) */}
+      <Route path="/Mobileworkers" element={<MobileWorkerspage />} />
       <Route path="/Mobilemapreconfig" element={<MobileMapReconfigpage />} />
       <Route path="/Mobilemappick" element={<MobileMapPickpage />} />
 
@@ -272,6 +278,8 @@ const App = () => {
       <Route path="/gridlab" element={<GridLab />} />
       {/* 약관 동의 화면 시안 — 형이 번호로 고르는 임시 페이지 (2026-08-23) */}
       <Route path="/agreelab" element={<AgreeLab />} />
+      {/* 홈 상단 소개 배너 시안 (2026-08-23) */}
+      <Route path="/striplab" element={<StripLab />} />
 
     </Routes>
     </PhoneShell>

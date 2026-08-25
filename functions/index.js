@@ -385,6 +385,11 @@ exports.notificationCleanup = fcm.notificationCleanup;
 
 /* 이메일 인증코드 로그인 · 이메일 찾기 (형 지시 2026-08-12)
    비밀번호 없이 코드로 들어온다. 마스킹은 서버에서 한다. */
+// 휴대폰 번호 인증 + 기존 회원 흡수 (2026-08-23). 인증번호는 카카오 알림톡(루나소프트, 실패 시 문자)으로 보낸다.
+const phoneAuth = require('./phoneAuth').create();
+exports.sendPhoneCode = phoneAuth.sendPhoneCode;
+exports.verifyPhoneCode = phoneAuth.verifyPhoneCode;
+
 const emailAuth = require('./emailAuth');
 exports.sendLoginCode = emailAuth.sendLoginCode;
 exports.verifyLoginCode = emailAuth.verifyLoginCode;

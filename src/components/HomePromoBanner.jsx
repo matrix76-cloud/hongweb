@@ -22,6 +22,8 @@ import { CleanerSvg, GrandmaSvg, KidSvg, PuppySvg, HospitalSvg } from "./BannerF
 const INK = "#1b1f27";
 const BLUE_SHIRT = "#2E4FA8";
 
+/* 네 장 모두 누르면 홍여사 알아보기(설명 페이지)로 간다 — "자세히 보기 하나로 통일" (형 지시 2026-08-23).
+   장마다 다른 곳으로 보내는 안도 해봤는데 헷갈려서 하나로 합쳤다. */
 const SLIDES = [
   {
     key: "what",
@@ -32,6 +34,11 @@ const SLIDES = [
     key: "how",
     head: "올리면 근처 홍여사가 지원합니다",
     body: "필요한 일을 올리면 주변에 알림이 갑니다.\n지원한 분 중에서 마음에 드는 분을 고르세요.",
+  },
+  {
+    key: "pick",
+    head: "마음에 드는 홍여사에게 직접 맡기세요",
+    body: "지금 활동 중인 홍여사를 보고 먼저 연락할 수 있습니다.\n지원을 기다리지 않아도 됩니다.",
   },
   {
     key: "safe",
@@ -197,7 +204,7 @@ const Slide = styled.div`
   flex: 0 0 100%;
   scroll-snap-align: start;
   box-sizing: border-box;
-  padding: 13px 16px 20px;
+  padding: 13px 16px 34px;
   min-height: 88px;
 `;
 const Head = styled.div`
@@ -206,6 +213,12 @@ const Head = styled.div`
 const Body = styled.div`
   font-size: 14px; color: ${INK}; line-height: 1.45; margin-top: 5px; white-space: pre-line;
 `;
+/* 배너를 누르면 소개로 간다는 표시 — 점 표시 반대편 (형 지시 2026-08-23) */
+const More = styled.div`
+  position: absolute; left: 16px; bottom: 9px;
+  font-size: 13px; font-weight: 700; color: ${INK};
+`;
+
 const DotRow = styled.div`
   position: absolute; right: 12px; bottom: 9px; display: flex; gap: 5px;
 `;
@@ -215,11 +228,14 @@ const Dot = styled.div`
   transition: width .2s ease;
 `;
 
-const HomePromoBanner = ({ figures = "svg" }) => {   // 형 확정 2026-08-23: SVG 인물(랩 9안)이 기본
+/* 배너를 누르면 홍여사 알아보기로 간다 — onNavigate 를 홈이 받아 옮긴다 (형 지시 2026-08-23).
+   예전엔 "누를 데는 없다" 였는데, 소개 진입점이 따로 없어져서 이 배너가 그 자리를 맡는다. */
+const HomePromoBanner = ({ figures = "svg", onNavigate }) => {   // 형 확정 2026-08-23: SVG 인물(랩 9안)이 기본
   const svg = figures === "svg";
   const ref = useRef(null);
   const touched = useRef(false);
   const [idx, setIdx] = useState(0);
+  const _go = () => { onNavigate && onNavigate(); };
 
   useEffect(() => {
     const el = ref.current;
@@ -248,7 +264,7 @@ const HomePromoBanner = ({ figures = "svg" }) => {   // 형 확정 2026-08-23: S
   };
 
   return (
-    <Wrap>
+    <Wrap onClick={_go} style={{ cursor: "pointer" }}>
     <Scene>
 
       <Road />
@@ -296,11 +312,13 @@ const HomePromoBanner = ({ figures = "svg" }) => {   // 형 확정 2026-08-23: S
               </Slide>
             ))}
           </Track>
+          <More>자세히 보기 &gt;</More>
           <DotRow>
             {SLIDES.map((s, i) => <Dot key={s.key} $on={i === idx} />)}
           </DotRow>
         </Box>
       </BoxWrap>
+
     </Wrap>
   );
 };

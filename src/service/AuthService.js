@@ -250,6 +250,29 @@ export const signInWithKakao = async () => {
   return attachUserDoc(cred, "kakao");
 };
 
+/* ── 휴대폰 번호 인증 + 기존 회원 흡수 (형 결정 2026-08-23) ──
+   소셜 로그인만으로는 예전(기기 기반) 회원과 이어지지 않는다. 번호가 열쇠다.
+   인증번호는 카카오 알림톡(실패 시 문자)로 가고, 코드가 맞으면 서버가 같은 번호의 예전 USERS 문서에
+   지금 계정을 잇는다. 사용자는 "인증했더니 예전 정보가 그대로"만 느낀다. */
+export const requestPhoneCode = async (phone) => {
+  const call = httpsCallable(fns(), "sendPhoneCode");
+  const res = await call({ phone });
+  return res.data;   // { ok, devCode? }
+};
+
+/** 코드 확인 → 서버가 계정을 잇는다 → 이어진(또는 지금) USERS 문서를 화면용으로 돌려준다 */
+export const confirmPhoneCode = async ({ phone, code }) => {
+  const call = httpsCallable(fns(), "verifyPhoneCode");
+  const res = await call({ phone, code });
+  // 서버가 이어진 문서를 같이 준다. 없을 때만 직접 찾는다.
+  let userdoc = res.data && res.data.user;
+  if (!userdoc) { const u = auth.currentUser; userdoc = u ? await findUserByAuthUid(u.uid) : null; }
+  return { ...res.data, cfg: userdoc ? toUserConfig(userdoc) : null };
+};
+
+/** 번호 인증이 아직인 계정인가 — 로그인·스플래시가 이걸 보고 인증 화면으로 보낸다 */
+export const needsPhoneVerify = (cfg) => !!cfg && !String(cfg.phone || "").trim();
+
 /** 비밀번호 재설정 메일 */
 export const sendResetPassword = async (email) => {
   await auth.sendPasswordResetEmail(email);

@@ -130,6 +130,13 @@ export const getAiWorkers = async (latitude, longitude, checkdistance = 4) => {
  *
  * 좌표로 거르는 일이라 서버 집계(getCountFromServer)를 못 쓴다. 대신 잠깐 보관한다.
  */
+/* 홍여사는 여성만 활동한다는 서비스 컨셉 — 남성으로 등록된 지원서는 건수·목록 모두에서 뺀다 (2026-08-23) */
+const MALE_WORDS = ['male', 'm', 'man', '남', '남자', '남성'];
+const isHongLady = (data) => {
+  const g = String(data.gender ?? data.GENDER ?? data.sex ?? '').trim().toLowerCase();
+  return !MALE_WORDS.includes(g);
+};
+
 const NEARBY_CACHE_MS = 60 * 1000;
 let nearbyCountCache = null;   // { key, at, count }
 
@@ -148,6 +155,7 @@ export const getNearbyWorkerCount = async ({ latitude, longitude, checkdistance 
     let count = 0;
     snapshot.docs.forEach((doc) => {
       const data = doc.data();
+      if (!isHongLady(data)) return;
       const lat = data.LAT || data.latitude;
       const lng = data.LNG || data.longitude;
       if (!lat || !lng) return;
@@ -161,31 +169,33 @@ export const getNearbyWorkerCount = async ({ latitude, longitude, checkdistance 
   }
 };
 
-export const getNearbyWorkers = async ({ latitude, longitude, checkdistance = 4 }) => {
+/* 홈 [활동 중인 홍여사] 를 눌렀을 때 보여주는 실제 목록 (형 지시 2026-08-23).
+   범위는 홈 건수와 똑같이 — 안 주면 나의 범위설정 값, 0 이면 거리로 거르지 않는다. */
+export const getNearbyWorkers = async ({ latitude, longitude, checkdistance }) => {
+  if (!latitude || !longitude) return [];
+  const limitKm = checkdistance == null || checkdistance === '' ? getSearchRange() : Number(checkdistance);
   const snapshot = await getDocs(collection(db, "WORKERS"));
   const nearbyWorkers = [];
 
   snapshot.docs.forEach((doc) => {
     const data = doc.data();
+    if (!isHongLady(data)) return;
     const lat = data.LAT || data.latitude;
     const lng = data.LNG || data.longitude;
+    if (!lat || !lng) return;
 
-    if (lat && lng) {
-      const distance = distanceFunc(lat, lng, latitude, longitude);
-      if (distance <= checkdistance) {
-        nearbyWorkers.push({
-          id: doc.id,
-          distance: Number(distance.toFixed(1)),
-          ...data,
-        });
-      }
+    const distance = distanceFunc(lat, lng, latitude, longitude);
+    if (!(limitKm > 0) || distance <= limitKm) {
+      nearbyWorkers.push({
+        id: doc.id,
+        distance: Number(distance.toFixed(1)),
+        ...data,
+      });
     }
   });
 
-  // 가까운 순 정렬 후 최대 50명 제한
-  const finalList = nearbyWorkers.sort((a, b) => a.distance - b.distance).slice(0, 60);
-
-  return finalList;
+  // 가까운 순. 몇 명까지 보여줄지는 화면이 정한다
+  return nearbyWorkers.sort((a, b) => a.distance - b.distance);
 };
 
 

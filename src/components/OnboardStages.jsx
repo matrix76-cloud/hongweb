@@ -465,3 +465,7 @@ export const ONBOARD_VARIANTS = [
     ] },
 ];
 export const onboardVariant = (key) => ONBOARD_VARIANTS.find((v) => v.key === key) || ONBOARD_VARIANTS[1];
+
+/* 홍여사 소개 화면이 글 사이에 끼워 쓰는 장면들 (형 지시 2026-08-23 "글만 있으니 밋밋, 중간에 이미지").
+   온보딩과 같은 그림을 써서 앱 전체 톤이 하나로 간다. */
+export const ABOUT_SCENES = { post: U1, apply: C2, pick: C3, town: F4, chat: F1, safe: F3B };

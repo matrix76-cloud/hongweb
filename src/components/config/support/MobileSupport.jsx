@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { ABOUT_SCENES } from "../../OnboardStages";
+import imgHong from "../../../assets/banner/honglady.png";
+import imgGroup from "../../../assets/imageset/honggroup.png";
 import styled from "styled-components";
 import { RiArrowDownSLine, RiKakaoTalkFill } from "react-icons/ri";
 import { IoCallOutline } from "react-icons/io5";
@@ -49,6 +52,19 @@ const BlockText = styled.div`
   line-height: 1.7;
   color: #4B4B4B;
   white-space: pre-wrap;
+`;
+/* 글 사이 그림 자리 — 온보딩 장면(260x240)은 가운데, 사진형 png 는 높이로 맞춘다 */
+const Scene = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 14px;
+  overflow: hidden;
+`;
+const Pic = styled.img`
+  display: block;
+  height: ${({ $h }) => $h || 150}px;
+  margin: 4px auto 14px;
+  object-fit: contain;
 `;
 const TelLink = styled.a`
   color: inherit;
@@ -168,17 +184,21 @@ const MobileSupport = ({ kind = "support" }) => {
     return (
       <Container>
         <Head>구해줘 홍여사</Head>
-        <Desc>집안일·돌봄·심부름처럼 사람 손이 필요한 일을 이웃과 이어주는 서비스입니다.</Desc>
+        <Desc>{"집안일·돌봄·심부름처럼 사람 손이 필요한 일을 이웃과 이어주는 서비스입니다.\n일하는 분은 모두 같은 동네에 사는 여성 홍여사입니다."}</Desc>
+        <Scene><ABOUT_SCENES.town /></Scene>
 
         <Block>
           <BlockTitle>일이 필요하신 분</BlockTitle>
+          <Scene><ABOUT_SCENES.apply /></Scene>
           <Step><No>1</No>홈에서 필요한 일을 골라 등록합니다.</Step>
           <Step><No>2</No>가까운 홍여사들이 지원합니다.</Step>
           <Step><No>3</No>마음에 드는 분을 골라 채팅으로 연결됩니다.</Step>
+          <Step><No>4</No>기다리지 않고 활동 중인 홍여사에게 직접 맡길 수도 있습니다.</Step>
         </Block>
 
         <Block>
           <BlockTitle>일을 하고 싶으신 분</BlockTitle>
+          <Pic src={imgHong} alt="" $h={150} />
           <Step><No>1</No>내 정보에서 홍여사 등록을 마칩니다.</Step>
           <Step><No>2</No>내 주변 일감을 보고 지원합니다.</Step>
           <Step><No>3</No>선택되면 채팅으로 일정과 금액을 정합니다.</Step>
@@ -186,11 +206,13 @@ const MobileSupport = ({ kind = "support" }) => {
 
         <Block>
           <BlockTitle>어떤 일을 맡길 수 있나요</BlockTitle>
+          <Pic src={imgGroup} alt="" $h={210} />
           <BlockText>{"청소 — 집 청소 · 사무실 청소 · 이사 청소\n집안일 — 식사 준비 · 장봐주기 · 짐 나르기 · 심부름\n아이 — 아이돌봄 · 등원하원 · 아이레슨 · 학교행사\n돌봄 — 간병하기 · 병원가기\n반려 — 애견산책 · 애견 병원"}</BlockText>
         </Block>
 
         <Block>
           <BlockTitle>안전하게 쓰시려면</BlockTitle>
+          <Scene><ABOUT_SCENES.safe /></Scene>
           <BlockText>{"대화는 앱 안에서 나눠주세요.\n일을 시작하기 전에 시간과 금액을 글로 남겨 서로 확인하세요.\n선입금 요구나 개인 계좌 송금 요청에는 응하지 마세요."}</BlockText>
         </Block>
       </Container>

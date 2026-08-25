@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DOMAINS, STATUS_LABEL, STATUS_COLOR } from './reviewData';
 import { captureFrame, describeTarget } from './reviewCapture';
 import FcmTestBoard from './FcmTestBoard';
+import RoadmapBoard from './RoadmapBoard';
 import { loadThread, postEntry, deleteEntry } from './reviewThreadService';
 import { seedChatRooms, clearSeededChats } from './seedChat';
 import { restoreReviewAccount, REVIEW_ACCOUNT } from './reviewAccount';
@@ -436,7 +437,7 @@ export default function ReviewPage() {
             })}
           </div>
 
-          {cur.board === 'fcm' ? <FcmTestBoard /> : (
+          {cur.board === 'roadmap' ? <RoadmapBoard /> : cur.board === 'fcm' ? <FcmTestBoard /> : (
           <div style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 12, padding: 16, minHeight: 240 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4 }}>
               <div style={{ fontSize: 18, fontWeight: 700 }}>{cur.no} {cur.name}</div>

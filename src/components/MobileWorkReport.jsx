@@ -116,7 +116,9 @@ const HeadPrice = styled.div`
 const HeadMeta = styled.div`
   margin-top: 8px;
   font-size: 15px;
+  line-height: 1.5;
   color: var(--text-sub);
+  b { color: var(--text); font-weight: 700; }
 `
 const HeadLine = styled.div`
   height: 1px;
@@ -128,33 +130,18 @@ const SectionLabel = styled.div`
   font-size: 16px;
   font-weight: 700;
   color: var(--text);
-  margin: 22px 0 2px;
+  margin: 10px 0 8px;
 `
 
-/* 조회수 · 채팅 진행중 건수 (형 리뷰 2026-08-12) */
-const CountRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 4px 2px 14px;
-`
-const CountItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #8A8A8A;
-  .label { color: #8A8A8A; }
-  .value { color: var(--text); font-weight: 700; }
-`
-/* 찜 버튼 — 조회수 줄 오른쪽 (형 리뷰 2026-08-13) */
+/* 찜 버튼 — 제목 줄 오른쪽 (형 리뷰 2026-08-23, 전엔 조회수 줄에 있었다) */
 const FavButton = styled.button`
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: 5px;
   border: 1px solid ${({ $on }) => ($on ? '#FF4E19' : 'var(--border)')};
-  border-radius: 100px;
+  border-radius: 0;
+  flex-shrink: 0;
   background: var(--surface);
   color: ${({ $on }) => ($on ? '#FF4E19' : '#666')};
   font-size: 14px;
@@ -164,48 +151,45 @@ const FavButton = styled.button`
   cursor: pointer;
   &:active { background: var(--bg-soft); }
 `
-const CountDot = styled.span`
-  width: 3px;
-  height: 3px;
-  border-radius: 100px;
-  background: #D9D9D9;
-`
 
-/* 요구사항 목록 — 표 대신 한 줄에 라벨/값 (형 리뷰 2026-08-12) */
+/* 요청 내용 — 표 형태 (형 리뷰 2026-08-23 "여기 부분 테이블 형태로").
+   8/12 에는 표를 걷고 한 줄 라벨/값으로 갔었는데, 값이 오른쪽에 붙어 긴 글이 읽기 나빴다.
+   왼쪽 라벨 칸(연한 면) + 오른쪽 값 칸, 1px 선, 각진 모서리. 값은 왼쪽 정렬. */
 const InfoList = styled.div`
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--border-soft);
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  border: 1px solid var(--border);
+  border-bottom: none;
 `
 const InfoRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 2px;
-  border-bottom: 1px solid var(--border);
+  display: contents;
 `
 const InfoLabel = styled.div`
-  flex: 0 0 88px;
+  box-sizing: border-box;
+  padding: 13px 12px;
+  background: var(--bg-soft);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   font-size: 15px;
-  color: #8A8A8A;
+  font-weight: 600;
+  color: var(--text);
   line-height: 1.5;
+  word-break: keep-all;
 `
 const InfoValue = styled.div`
-  flex: 1 1 auto;
+  box-sizing: border-box;
   min-width: 0;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--border);
   font-size: 16px;
   font-weight: 600;
   color: var(--text);
   line-height: 1.5;
-  text-align: right;
   word-break: keep-all;
 `
-/* 요구사항처럼 긴 글은 오른쪽 정렬이 읽기 나쁘다 — 왼쪽으로 흘린다 */
-const InfoLongText = styled.div`
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 16px;
-  color: var(--text);
+/* 요구사항처럼 긴 글 — 굵기 빼고 줄바꿈 살려서 */
+const InfoLongText = styled(InfoValue)`
+  font-weight: 400;
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
@@ -504,33 +488,24 @@ const MobileWorkReport =({containerStyle, messages, WORK_ID, WORKTYPE, WORK_STAT
         currentloading == true ? (<LottieAnimation containerStyle={LoadingAnimationStyle} animationData={imageDB.loadinglarge}
           width={"100px"} height={'100px'}/>) :(<>
           <Head>
+            {/* 조회수·채팅 건수·찜은 따로 줄을 두지 않고 위 요약에 합쳤다 (형 리뷰 2026-08-23 "위쪽 일감 설명줄에 포함") */}
             <HeadTop>
               <HeadType>{WORKTYPE || workinfo.WORKTYPE}</HeadType>
               <HeadState $done={closework}>{closework ? '마감' : '진행중'}</HeadState>
+              <FavButton onClick={_handleFavorite} aria-label={faved ? '찜 해제' : '찜하기'} $on={faved}>
+                {faved ? <PiHeartFill size={18}/> : <PiHeartBold size={18}/>}
+                {faved ? '찜함' : '찜하기'}
+              </FavButton>
             </HeadTop>
             {headPrice && <HeadPrice>{headPrice}<span>원</span></HeadPrice>}
-            <HeadMeta>{headMeta}</HeadMeta>
+            <HeadMeta>
+              {headMeta}
+              {headMeta ? ' · ' : ''}조회 {workinfo.VIEW_COUNT ?? 0} · 채팅 <b>{workinfo.APPLY_COUNT ?? 0}건</b>
+            </HeadMeta>
             <HeadLine />
           </Head>
 
-          {/* 홈 카드에 있던 조회수·진행중 건수를 상세에도 (형 리뷰 2026-08-12) */}
-          <CountRow>
-            <CountItem>
-              <img className="mono-icon" src={imageDB.eyesolid} alt="조회수" style={{width:16, height:16, objectFit:'contain'}}/>
-              <span>{workinfo.VIEW_COUNT ?? 0}</span>
-            </CountItem>
-            <CountDot />
-            <CountItem>
-              <span className="label">채팅중인 건수</span>
-              <span className="value">{workinfo.APPLY_COUNT ?? 0}건</span>
-            </CountItem>
-            <FavButton onClick={_handleFavorite} aria-label={faved ? '찜 해제' : '찜하기'} $on={faved}>
-              {faved ? <PiHeartFill size={18}/> : <PiHeartBold size={18}/>}
-              {faved ? '찜함' : '찜하기'}
-            </FavButton>
-          </CountRow>
-
-          {/* 표 대신 항목 목록 — 칸이 갈라져 답답했다 (형 리뷰 2026-08-12) */}
+          {/* 표 형태 (형 리뷰 2026-08-23) */}
           <SectionLabel>요청 내용</SectionLabel>
           <InfoList>
             {

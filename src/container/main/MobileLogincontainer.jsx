@@ -5,12 +5,12 @@ import localforage from "localforage";
 import { RiKakaoTalkFill } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { UserContext } from "../../context/User";
-import { signInWithGoogle, signInWithKakao, signInWithEmail, authErrorText, completeGoogleRedirect } from "../../service/AuthService";
+import { signInWithGoogle, signInWithKakao, authErrorText, completeGoogleRedirect, needsPhoneVerify } from "../../service/AuthService";
 import MobileConfirmPopup from "../../modal/MobileConfirmPopup/MobileConfirmPopup";
 import { isAgreed } from "./MobileAgreecontainer";
 import { imageDB } from "../../utility/imageData";
 import { enterGuest, clearGuest } from "../../utility/guest";
-import { SocialBtn, Field, Label, Input, PrimaryBtn, Divider, Bottom } from "./MobileAuthParts";
+import { SocialBtn } from "./MobileAuthParts";
 
 /**
  * 로그인
@@ -47,31 +47,7 @@ const Middle = styled.div`
 `;
 
 /* 이메일로 로그인하는 자리. 소셜 버튼과 붙어 보이지 않게 아래에 "또는" 을 둔다 */
-const LoginBtn = styled(PrimaryBtn)`
-  margin-top: 20px;
-`;
 
-const Links = styled.div`
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 15px;
-
-  button {
-    background: none;
-    border: none;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    cursor: pointer;
-    padding: 6px 2px;
-  }
-
-  i { font-style: normal; color: #D4D4D8; }
-`;
 
 const Logo = styled.img`
   width: 64px;
@@ -121,8 +97,6 @@ const MobileLogincontainer = ({ containerStyle }) => {
   const [dialog, setDialog] = useState(null);
 
   // 이메일 로그인 (형 지시 2026-08-21)
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   /* 약관에서 동의하고 돌아온 길이면 로그인 화면을 보여주지 않는다.
      버튼을 이미 한 번 눌렀는데 같은 화면이 또 나오면 안 된다 (형 지적 2026-08-18).
@@ -181,7 +155,8 @@ const MobileLogincontainer = ({ containerStyle }) => {
     await localforage.setItem("userconfig", userconfig);
     await clearGuest();   // 로그인했으면 둘러보기 표시를 지운다 (형 리뷰 2026-08-13)
     dispatch(userconfig);
-    navigate("/Mobilemain");
+    // 번호가 아직 없는 계정은 휴대폰 인증부터 — 번호로 예전 회원과 이어진다 (형 결정 2026-08-23)
+    navigate(needsPhoneVerify(userconfig) ? "/Mobilephoneverify" : "/Mobilemain");
   };
 
   /* 로그인을 시작하기 전에 약관을 받는다. 아직이면 약관 화면으로 보내고,
@@ -190,38 +165,6 @@ const MobileLogincontainer = ({ containerStyle }) => {
     if (await isAgreed()) return true;
     navigate("/Mobileagree", { state: { after: provider } });
     return false;
-  };
-
-  /* 이메일 로그인 — 이미 있는 계정으로 들어오는 길이라 약관을 다시 받지 않는다.
-     약관은 가입할 때(/Mobilesignup 앞) 받는다. */
-  const _handleEmailLogin = async () => {
-    if (busy) return;
-    const id = email.trim();
-    if (!id || !password) {
-      alertBox("로그인", "아이디(이메일)와 비밀번호를 모두 적어주세요.");
-      return;
-    }
-    setBusy(true);
-    try {
-      const cfg = await signInWithEmail({ email: id, password });
-      await done(cfg);
-    } catch (e) {
-      alertBox("로그인하지 못했습니다", authErrorText(e));
-    }
-    setBusy(false);
-  };
-
-  /* 한글 조합 중에 Enter 가 두 번 들어와 로그인이 두 번 걸리는 것을 막는다 */
-  const _handleEnter = (e) => {
-    if (e.nativeEvent?.isComposing || e.keyCode === 229) return;
-    if (e.key === "Enter") { e.preventDefault(); _handleEmailLogin(); }
-  };
-
-  /* 가입 — 약관을 아직 안 받았으면 약관부터. 가입 화면도 같은 검사를 하고 있어서
-     여기서 안 보내도 되지만, 화면이 한 번 번쩍이는 게 보기 안 좋다. */
-  const _handleSignup = async () => {
-    if (await isAgreed()) navigate("/Mobilesignup");
-    else navigate("/Mobileagree", { state: { after: "signup" } });
   };
 
   const _handleGoogle = async () => {
@@ -273,48 +216,8 @@ const MobileLogincontainer = ({ containerStyle }) => {
         <Title>구해줘 홍여사</Title>
         <Sub>동네 일손이 필요할 때, 홍여사</Sub>
 
-        {/* 아이디(이메일) · 비밀번호 (형 지시 2026-08-21) */}
-        <Field>
-          <Label htmlFor="login-email">아이디</Label>
-          <Input
-            id="login-email"
-            type="email"
-            inputMode="email"
-            autoComplete="username"
-            placeholder="가입하신 이메일"
-            value={email}
-            disabled={busy}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyDown={_handleEnter}
-          />
-        </Field>
-
-        <Field>
-          <Label htmlFor="login-password">비밀번호</Label>
-          <Input
-            id="login-password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="비밀번호"
-            value={password}
-            disabled={busy}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={_handleEnter}
-          />
-        </Field>
-
-        <LoginBtn onClick={_handleEmailLogin} disabled={busy}>
-          {busy ? "확인 중..." : "로그인"}
-        </LoginBtn>
-
-        <Links>
-          <button onClick={_handleSignup}>회원가입</button>
-          <i>·</i>
-          <button onClick={() => navigate("/Mobilefindaccount")}>아이디 · 비밀번호 찾기</button>
-        </Links>
-
-        <Divider>또는</Divider>
-
+        {/* 아이디·비밀번호 로그인은 토스 심사용으로 잠깐 넣었던 것 — 심사는 데모 웹(hongservice)이 맡게 돼 뺐다 (형 지시 2026-08-23).
+            앱은 카카오·구글만. 회원 식별은 휴대폰 번호 인증으로 잇는다. */}
         <SocialBtn $kind="kakao" onClick={_handleKakao}>
           <RiKakaoTalkFill size={20} /> 카카오로 시작하기
         </SocialBtn>

@@ -233,9 +233,9 @@ const PromoBtn = styled.div`
   background: #3C6E9F;
   border-radius: 10px;
   padding: 13px 14px;
-  cursor: pointer;
+  cursor: ${({ $static }) => ($static ? 'default' : 'pointer')};
   -webkit-tap-highlight-color: transparent;
-  &:active { transform: scale(0.98); }
+  &:active { transform: ${({ $static }) => ($static ? 'none' : 'scale(0.98)')}; }
   transition: transform .12s ease;
 `
 const PromoBtnLabel = styled.div`
@@ -420,13 +420,13 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
 
   /* 요약 버튼에서 아래 일감 목록으로 내려가는 자리 (형 리뷰 2026-08-16) */
-  const listRef = useRef(null);
-
-  const _handleScrollToList = () => {
-    listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
+  /* 숫자를 보고 눌렀으면 그 사람들이 나와야 한다 — 소개 화면 대신 실제 홍여사 목록으로 (형 지시 2026-08-23).
+     소개는 홈 맨 위 띠배너로 옮겼다. */
   const _handleAboutHong = () => {
+    navigate("/Mobileworkers");
+  };
+  /* 배너 "자세히 보기" — 네 장 모두 홍여사 알아보기(설명 페이지)로 (형 지시 2026-08-23 "자세히 보기 하나로 통일") */
+  const _handleBannerGo = () => {
     navigate("/Mobileconfigcontent", { state: { NAME: CONFIGMOVE.ABOUT, TYPE: "" } });
   };
 
@@ -1007,7 +1007,8 @@ const MobileMaincontainer =({containerStyle}) =>  {
 
               {/* 홍여사가 어떤 서비스인지 세 장으로 알려주는 자리 (형 확정 2026-08-16, /bannerlab 4안).
                   누를 데는 없다 — 배너 안에서 읽고 끝난다. */}
-              <HomePromoBanner />
+              {/* 배너를 누르면 홍여사 알아보기 (형 지시 2026-08-23, 띠배너 안은 버림) */}
+              <HomePromoBanner onNavigate={_handleBannerGo} />
 
               {/* 이 격자는 누르면 그 종류의 일 등록으로 가는 진입점이다.
                   "홍여사 서비스"는 뭘 하라는 건지 안 알려줘서 행동을 부르는 말로 바꿨다 (형 리뷰 2026-08-12) */}
@@ -1033,8 +1034,9 @@ const MobileMaincontainer =({containerStyle}) =>  {
               {(workitems.length > 0 || workercount > 0) && (
                 <Column style={{width:"100%", padding:"0 15px", margin:"22px auto 0px", boxSizing:"border-box"}}>
                   <PromoRow>
-                    <PromoBtn onClick={_handleScrollToList}>
-                      <PromoBtnLabel>내 주변 일감<RiArrowRightSLine size={18}/></PromoBtnLabel>
+                    {/* 누르면 아래 목록으로 스크롤 이동하던 것을 뺐다 — 숫자만 보여주는 칸 (형 리뷰 2026-08-23 "이동하는거 제거") */}
+                    <PromoBtn $static>
+                      <PromoBtnLabel>내 주변 일감</PromoBtnLabel>
                       <PromoBtnNum>{workitems.length}<PromoBtnUnit>건</PromoBtnUnit></PromoBtnNum>
                       <PromoBtnDesc>지금 동네에 올라온 일</PromoBtnDesc>
                     </PromoBtn>
@@ -1048,9 +1050,6 @@ const MobileMaincontainer =({containerStyle}) =>  {
               )}
 
           </Column>
-
-          {/* 위 요약 버튼이 여기로 내려온다 */}
-          <div ref={listRef} />
 
           <StickyPos>
           {/* 목록에도 제목을 붙인다. 필터와 같이 위에 붙어 있어야 스크롤해도 무엇을 보는지 안다
