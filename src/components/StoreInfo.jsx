@@ -113,7 +113,7 @@ const StoreInfo  = ({containerStyle, height})=>{
             </StoreButtonView>
 
             <StoreBusinessView>
-                <StoreBusinessText>주식회사 홍컴즈 | 대표 이행렬 | 사업자등록번호 480-86-03245 | 서울특별시 서초구 사임당로8길 13, 4층 402-제이681호 | 대표전화 070-4544-7684</StoreBusinessText>
+                <StoreBusinessText>주식회사 홍컴즈 | 대표 이행렬 | 사업자등록번호 480-86-03245 | 서울특별시 서초구 사임당로8길 13, 4층 402-제이681호 | 대표전화 070-4544-7684 | 직업정보제공사업 신고번호 서울청 제2025-9호</StoreBusinessText>
                 
             </StoreBusinessView>
             <StoreBusinessInfoView>

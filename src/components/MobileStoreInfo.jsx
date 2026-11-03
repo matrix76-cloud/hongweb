@@ -118,7 +118,8 @@ const MobileStoreInfo  = ({containerStyle, height = 200})=>{
 
             {/* 다른 회사(에듀컴) 정보가 그대로 남아 있었다 — 실제 운영 주체로 바꿨다.
                 사업자등록증 원본 기준. (형 확인 2026-08-20)
-                ※ 통신판매업 신고번호는 사업자등록증에 없는 별도 신고사항이라 아직 못 넣었다. */}
+                ※ 통신판매업 신고번호는 사업자등록증에 없는 별도 신고사항이라 아직 못 넣었다.
+                직업정보제공사업 신고번호는 노동청 요청으로 넣었다 — 신고확인증 원본 기준 (2026-11-04) */}
             <StoreBusinessView>
                     <StoreBusinessText style={{fontSize:12}}>
                     주식회사 홍컴즈 | 대표 이행렬 | 사업자등록번호 480-86-03245
@@ -128,6 +129,9 @@ const MobileStoreInfo  = ({containerStyle, height = 200})=>{
                     </StoreBusinessText>
                     <StoreBusinessText style={{fontSize:12}}>
                     대표전화 070-4544-7684
+                    </StoreBusinessText>
+                    <StoreBusinessText style={{fontSize:12}}>
+                    직업정보제공사업 신고번호 서울청 제2025-9호
                     </StoreBusinessText>
             </StoreBusinessView>
             <StoreBusinessInfoView>

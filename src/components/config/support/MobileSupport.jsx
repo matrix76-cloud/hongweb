@@ -260,7 +260,7 @@ const MobileSupport = ({ kind = "support" }) => {
 
       <Block>
         <BlockTitle>만든 곳</BlockTitle>
-        <BlockText>{"주식회사 홍컴즈\n서울특별시 서초구 사임당로8길 13, 4층\n사업자등록번호 480-86-03245"}</BlockText>
+        <BlockText>{"주식회사 홍컴즈\n서울특별시 서초구 사임당로8길 13, 4층\n사업자등록번호 480-86-03245\n직업정보제공사업 신고번호 서울청 제2025-9호"}</BlockText>
       </Block>
     </Container>
   );
