@@ -118,7 +118,7 @@ const MobileStoreInfo  = ({containerStyle, height = 200})=>{
 
             {/* 다른 회사(에듀컴) 정보가 그대로 남아 있었다 — 실제 운영 주체로 바꿨다.
                 사업자등록증 원본 기준. (형 확인 2026-08-20)
-                ※ 통신판매업 신고번호는 사업자등록증에 없는 별도 신고사항이라 아직 못 넣었다.
+                ※ 통신판매업 신고번호는 원본 신고증 없이 옛 앱(BabyWorker 등) 표기를 따라 넣었다 (형 지시 2026-11-04).
                 직업정보제공사업 신고번호는 노동청 요청으로 넣었다 — 신고확인증 원본 기준 (2026-11-04) */}
             <StoreBusinessView>
                     <StoreBusinessText style={{fontSize:12}}>
@@ -129,6 +129,9 @@ const MobileStoreInfo  = ({containerStyle, height = 200})=>{
                     </StoreBusinessText>
                     <StoreBusinessText style={{fontSize:12}}>
                     대표전화 070-4544-7684
+                    </StoreBusinessText>
+                    <StoreBusinessText style={{fontSize:12}}>
+                    통신판매업 신고번호 2024-다산-0881
                     </StoreBusinessText>
                     <StoreBusinessText style={{fontSize:12}}>
                     직업정보제공사업 신고번호 서울청 제2025-9호
